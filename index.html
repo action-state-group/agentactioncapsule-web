@@ -79,8 +79,8 @@
   .srow .lbl b{display:block;color:var(--paper);font-size:13.5px;font-weight:600;margin-top:3px}
   .srow .desc{font-size:14px;color:#C7CDD8}
   .srow .desc code{font-family:var(--mono);font-size:12.5px;background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:5px;color:#fff}
-  .srow.accent{border-color:var(--accent)}
   .srow.accent .lbl b{color:#A9BCFF}
+  .srow-tag{font-family:var(--mono);font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:#A9BCFF;border:1px solid var(--accent);border-radius:100px;padding:2px 9px;margin-right:9px;vertical-align:middle}
   .flowtag{font-family:var(--mono);font-size:11px;color:var(--muted-2);text-align:center;letter-spacing:1px;padding:2px 0}
 
   /* VERIFY CODE */
@@ -252,7 +252,7 @@
     <div class="stack-rows">
       <div class="srow accent">
         <div class="lbl">layer 1<b>The profile</b></div>
-        <div class="desc"><code>agent-action-capsule</code> — the Signed Statement format (COSE_Sign1 over <code>application/agent-action-capsule+json</code>) + the reference verifier.</div>
+        <div class="desc"><span class="srow-tag">the standard</span><code>agent-action-capsule</code> — the Signed Statement format (COSE_Sign1 over <code>application/agent-action-capsule+json</code>) + the reference verifier.</div>
       </div>
       <div class="flowtag">↓ produced by</div>
       <div class="srow">
