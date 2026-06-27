@@ -162,7 +162,8 @@
   <div class="wrap">
     <span class="eyebrow">Open SCITT profile · IETF-track · Apache-2.0</span>
     <h1>A verifiable record of <span class="hl">what an AI agent did.</span></h1>
-    <p class="lede">An Agent Action Capsule is a signed, tamper-evident record of a consequential action an agent took — sealed at the moment it acted, so any third party can verify it later <em>without trusting the operator</em>. Supply-chain attestation, applied to agent actions instead of build artifacts.</p>
+    <p class="lede">An Agent Action Capsule is a tamper-evident, content-private, independently verifiable record of what an AI agent did — checkable by anyone, <em>without trusting the operator or any single layer</em>. Supply-chain attestation, applied to agent actions instead of build artifacts.</p>
+    <p class="lede" style="font-size:15px;margin-top:10px;color:var(--muted)">The TLS of agent actions: the verifiable record is the headline; the cryptography is just how it holds.</p>
     <div class="hero-cta">
       <a class="btn btn-primary" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Read the draft <span class="arrow">↗</span></a>
       <a class="btn btn-ghost" href="#verify">Verify a capsule <span class="arrow">→</span></a>
@@ -198,7 +199,7 @@
       <div class="card">
         <div class="k">Third-party verifiable</div>
         <h3>Anyone can check, offline</h3>
-        <p>An auditor, third party, or regulator verifies the signature and the inclusion proof from the bytes alone — no access to the operator's systems, no trust required.</p>
+        <p>An auditor, reviewer, or regulator verifies the signature and the inclusion proof from the bytes alone — no access to the operator's systems, no trust required.</p>
       </div>
     </div>
   </div>
@@ -326,7 +327,7 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
     <div class="sec-head">
       <span class="eyebrow">Adapters</span>
       <h2>Seal from the framework you already use.</h2>
-      <p>One capsule, one anchor, one verify — an adapter only changes <em>where</em> you hook in. Each is a thin layer over a ~30-line base, so adding your own is small.</p>
+      <p>One capsule, one anchor, one verify — an adapter only changes <em>where</em> you hook in. Each is a thin layer over a ~30-line base, so adding your own is small. The format spreads by being the easiest thing to emit into — so integrators put it everywhere.</p>
     </div>
     <div class="interop-grid">
       <div class="ic-card">

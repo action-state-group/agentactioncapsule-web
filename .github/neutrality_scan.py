@@ -29,6 +29,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -75,9 +76,22 @@ def _line_offenders(line: str, pattern: re.Pattern[str], allow: tuple[str, ...])
     return hits
 
 
+def _git_tracked_files(root: Path) -> list[Path] | None:
+    r = subprocess.run(
+        ["git", "ls-files"],
+        cwd=root, capture_output=True, text=True
+    )
+    if r.returncode != 0:
+        return None
+    return [root / f for f in r.stdout.splitlines() if f]
+
+
 def scan(root: Path, pattern: re.Pattern[str], allow: tuple[str, ...]) -> list[str]:
+    tracked = _git_tracked_files(root)
+    candidates: list[Path] = tracked if tracked is not None else sorted(root.rglob("*"))
     offenders: list[str] = []
-    for path in sorted(root.rglob("*")):
+    for path in candidates:
+        path = Path(path)
         if not path.is_file() or path.suffix.lower() not in SCAN_SUFFIXES:
             continue
         if ".git/" in str(path):
