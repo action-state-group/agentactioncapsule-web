@@ -227,6 +227,10 @@ SIDEBAR = [
         ("quickstart", "Quickstart"),
         ("verify-a-capsule", "Verify a capsule"),
     ]),
+    ("Live", [
+        ("explore", "Explore a capsule"),
+        ("log", "The public log, live"),
+    ]),
     ("Reference", [
         ("glossary", "Glossary"),
     ]),
@@ -352,7 +356,7 @@ PAGES["what-is-a-capsule"] = dict(
     <tr><th>action / operator / developer / timestamp</th><td>what was done, the accountable tenant, the agent identity@version, and when.</td></tr>
     <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; <code>executed</code>, <code>confirmed</code>, <code>denied</code>, or <code>blocked</code>.</td></tr>
     <tr><th>effect</th><td>what was committed, plus the <strong>confirmed-effect binding</strong> so the claim and the outcome can't drift apart.</td></tr>
-    <tr><th>model_attestation</th><td>which model decided, with the action's <strong>input and output committed as digests</strong> (raw values are never stored) and best-effort compute.</td></tr>
+    <tr><th>model_attestation</th><td>which model decided, with the <strong>full input</strong> it saw (system prompt, context, tool definitions, and the action's arguments) and the <strong>output</strong> each <strong>committed as a digest</strong> (fixed-size; raw values, however large or sensitive, are never stored) plus best-effort compute.</td></tr>
     <tr><th>assurance</th><td>how far to trust it: attestation / effect / ledger modes.</td></tr>
     <tr><th>chain</th><td>links to other capsules (<code>confirms</code> / <code>supersedes</code> / <code>escalates</code>) &mdash; present only when this capsule relates to another.</td></tr>
   </tbody>
@@ -637,6 +641,14 @@ INDEX_BODY = f"""
 </div>
 
 <div class="idx-group">
+  <h2>Live &amp; interactive</h2>
+  <div class="cards">
+    <a class="dcard" href="/docs/explore.html"><div class="n">Explore a capsule</div><div class="d">Interactive: click each field, edit what goes into a digest, tamper one and watch the seal break, then verify a bundle as a skeptical auditor.</div></a>
+    <a class="dcard" href="/docs/log.html"><div class="n">The public log, live</div><div class="d">Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records. Public, verifiable, nothing fabricated.</div></a>
+  </div>
+</div>
+
+<div class="idx-group">
   <h2>Reference</h2>
   <div class="cards">
     <a class="dcard" href="/docs/glossary.html"><div class="n">Glossary</div><div class="d">SCITT, COSE_Sign1, Signed Statement, Receipt, VDS, STH, inclusion &amp; consistency proofs.</div></a>
@@ -657,6 +669,8 @@ def main():
                "Docs", INDEX_BODY, is_index=True), encoding="utf-8")
     n = 1
     for slug in ORDER:
+        if slug not in PAGES:
+            continue  # hand-written page (e.g. explore.html) — sidebar links to it but it is not generated
         p = PAGES[slug]
         body = p["body"] + go_deeper_html(slug)
         (OUT / f"{slug}.html").write_text(

@@ -167,7 +167,7 @@
     <div class="hero-cta">
       <a class="btn btn-primary" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Read the draft <span class="arrow">↗</span></a>
       <a class="btn btn-ghost" href="#verify">Verify a capsule <span class="arrow">→</span></a>
-      <a class="btn btn-ghost" href="https://anchor.agentactioncapsule.org">Live transparency log <span class="arrow">↗</span></a>
+      <a class="btn btn-ghost" href="/docs/log.html">Watch the log live <span class="arrow">→</span></a>
     </div>
     <div class="hero-meta">
       <span><span class="dot"></span> Built on IETF SCITT</span>
@@ -222,7 +222,7 @@
       <div class="card">
         <div class="k">Attestation</div>
         <h3>Which model decided, by digest</h3>
-        <p>The model and runtime that produced the action, with its input and output committed as SHA-256 digests. The proof travels; the raw values stay with you.</p>
+        <p>The model that decided, with the full input it saw — system prompt, context, tools, and the action's arguments — and the output, each committed as a SHA-256 digest. The proof travels; the raw values stay with you.</p>
       </div>
       <div class="card">
         <div class="k">Chain</div>
@@ -230,7 +230,14 @@
         <p>Confirm, supersede, and escalate links turn <span class="mono">approved → executed → confirmed</span> into one verifiable chain — the basis for review and selective disclosure.</p>
       </div>
     </div>
-    <p style="margin-top:22px;color:var(--muted);font-size:15.5px">That's the shape a build-artifact attestation doesn't give you — and the reason to standardize <em>one</em> agent-action profile together rather than reinvent it. <a href="/docs/what-is-a-capsule.html" style="color:var(--accent);text-decoration:none">What's in a capsule →</a></p>
+    <div style="margin-top:24px;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;background:#fff;padding:18px 22px">
+      <div style="min-width:0">
+        <div style="font-family:var(--mono);font-size:12px;color:var(--muted)">capsule_id <span style="color:var(--muted-2)">(the seal)</span> · <span style="color:var(--verify)">sealed ✓</span></div>
+        <div style="font-family:var(--mono);font-size:12.5px;margin-top:7px;color:var(--ink);line-height:1.7">operator <span style="color:var(--muted)">4515…10de</span> · developer <span style="color:var(--muted)">po-agent@v1</span> · decide → <b>executed</b> · input <span style="color:var(--muted)">18e7…ba81</span> · output <span style="color:var(--muted)">406f…9c54</span></div>
+      </div>
+      <a class="btn btn-primary" href="/docs/explore.html">Explore a capsule <span class="arrow">→</span></a>
+    </div>
+    <p style="margin-top:18px;color:var(--muted);font-size:15.5px">That's the shape a build-artifact attestation doesn't give you — and the reason to standardize <em>one</em> agent-action profile together rather than reinvent it. <a href="/docs/what-is-a-capsule.html" style="color:var(--accent);text-decoration:none">What's in a capsule →</a> · <a href="/docs/explore.html" style="color:var(--accent);text-decoration:none">tamper one, watch the seal break →</a></p>
   </div>
 </section>
 
@@ -290,6 +297,21 @@ agent-action-capsule verify --store ledger.jsonl
         <div class="vp"><div class="ic">2</div><div><h4>Signature + inclusion, independently</h4><p>The signature proves who sealed it; the receipt proves the log included it. Both check from the bytes.</p></div></div>
         <div class="vp"><div class="ic">3</div><div><h4>VDS-agnostic</h4><p>The same statement verifies whether the log uses RFC 9162 Merkle proofs or Microsoft CCF. The action layer never changes.</p></div></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHARE / DISCLOSURE -->
+<section class="band" id="share" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Disclosure</span>
+      <h2>Hand someone the record — not your word for it.</h2>
+      <p>Because a capsule verifies from the bytes, you can give an auditor, a reviewer, or a regulator the capsules for what your agent did and say: <em>here's what happened — don't trust me, check it yourself.</em> They confirm each seal and the chain links with no access to your systems, and the contents stay private — digests, not raw data.</p>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="/docs/explore.html#share">Verify a bundle yourself <span class="arrow">→</span></a>
+      <a class="btn btn-ghost" href="https://verify.actionstate.ai">Open the verifier <span class="arrow">↗</span></a>
     </div>
   </div>
 </section>
