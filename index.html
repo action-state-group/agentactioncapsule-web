@@ -172,7 +172,7 @@
     <div class="hero-meta">
       <span><span class="dot"></span> Built on IETF SCITT</span>
       <span><span class="dot"></span> Verifier + producer, open source</span>
-      <span><span class="dot"></span> Cross-implementation tested (RFC9162 · CCF)</span>
+      <span><span class="dot"></span> Cross-implementation tested, independent verifier</span>
     </div>
   </div>
 </header>
@@ -181,9 +181,9 @@
 <section class="band" id="what">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow">The problem</span>
+      <span class="eyebrow">Who asks for this</span>
       <h2>Agents take actions. Right now, you have to trust the operator that they happened as claimed.</h2>
-      <p>The Agent Action Capsule closes that gap with three properties — the same shape SCITT defines for software supply chains, profiled for agent actions.</p>
+      <p>An auditor, compliance team, B2B recipient, or incident-forensics team that asks <em>"did your agent really do that — and can you prove it without me trusting your logs?"</em> has no answer today. Operator logs are mutable and self-attested; they mean nothing to a party with no reason to trust you. The Agent Action Capsule closes that gap with three properties — the same shape SCITT defines for software supply chains, profiled for agent actions.</p>
     </div>
     <div class="grid3">
       <div class="card">
@@ -238,6 +238,16 @@
       <a class="btn btn-primary" href="/docs/explore.html">Explore a capsule <span class="arrow">→</span></a>
     </div>
     <p style="margin-top:18px;color:var(--muted);font-size:15.5px">That's the shape a build-artifact attestation doesn't give you — and the reason to standardize <em>one</em> agent-action profile together rather than reinvent it. <a href="/docs/what-is-a-capsule.html" style="color:var(--accent);text-decoration:none">What's in a capsule →</a> · <a href="/docs/explore.html" style="color:var(--accent);text-decoration:none">tamper one, watch the seal break →</a></p>
+    <div class="not-prove" style="margin-top:36px;background:var(--paper-2);border-radius:10px;padding:22px 26px;border-left:3px solid var(--accent)">
+      <strong>What a capsule does not prove</strong>
+      <ul style="margin:10px 0 0;padding-left:20px;color:var(--muted);font-size:15px;line-height:1.8">
+        <li><strong>Attested, not verified.</strong> It proves what the agent attested it did — not that the real-world effect occurred. A <code>dispatched</code> record does not mean the write landed.</li>
+        <li><strong>No anti-omission.</strong> It doesn't prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
+        <li><strong>Signer = key-holder.</strong> The signature proves who held the key at the moment of sealing — not that the named agent ran the action.</li>
+        <li><strong>Default may be signature-less.</strong> The base assurance level is a content hash. A producer signature requires the SCITT Signed-Statement level explicitly.</li>
+      </ul>
+      <p style="margin:10px 0 0;font-size:14px;color:var(--muted)">Full limits: <a href="/docs/what-is-a-capsule.html#what-a-capsule-does-not-prove" style="color:var(--accent);text-decoration:none">what-is-a-capsule.html →</a></p>
+    </div>
   </div>
 </section>
 
@@ -290,8 +300,9 @@ agent-action-capsule verify --store ledger.jsonl
 
   <span class="s">capsule_id</span>  9f2a…c14  <span class="ok">ok</span>
   <span class="s">capsule_id</span>  4b07…8de  <span class="ok">ok</span>
-  <span class="c"># inclusion on the public log:</span>
-  substrate.receipt_verified: <span class="ok">True</span></pre>
+  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest on the public log</span>
+  substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></pre>
+      <p style="margin:12px 0 0;padding:10px 14px;background:var(--paper-2);border-radius:6px;font-size:14px;color:var(--muted);border-left:3px solid var(--accent)"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule's digest to the public log (<code>anchored=True</code>). Surfacing the log's inclusion <em>receipt</em> back onto the emit() return is on the near-term roadmap — the receipt is verifiable against the log now, and the verifier confirms it when present.</p>
       <div class="verify-points">
         <div class="vp"><div class="ic">1</div><div><h4>Inputs &amp; outputs committed by digest</h4><p>The capsule seals SHA-256 digests of what went in and came out. Raw values stay local; the proof travels.</p></div></div>
         <div class="vp"><div class="ic">2</div><div><h4>Signature + inclusion, independently</h4><p>The signature proves who sealed it; the receipt proves the log included it. Both check from the bytes.</p></div></div>
@@ -325,14 +336,15 @@ agent-action-capsule verify --store ledger.jsonl
       <p>No protocol change. The capsule is the record layer you compose into your existing agent or MCP server — the input and output are sealed automatically.</p>
     </div>
     <div class="onramp">
-<pre class="code"><span class="c"># wrap a tool — capsule-emit seals every call</span>
-<span class="fn">@emitter.tool</span>(effect_type=<span class="s">"write_order"</span>)
+<pre class="code"><span class="k">from</span> capsule_emit.adapters.mcp <span class="k">import</span> MCPCapsuleEmitter
+
+<span class="c"># one-time setup: tenant + agent identity</span>
+emitter = MCPCapsuleEmitter(operator=<span class="s">"acme-co"</span>, developer=<span class="s">"po-agent@v1"</span>)
+
+<span class="fn">@emitter.tool</span>(<span class="s">"submit_order"</span>)  <span class="c"># seals every call</span>
 <span class="tk">def</span> <span class="fn">submit_order</span>(vendor, amount, po_number):
-    <span class="c"># your real tool logic</span>
     <span class="tk">return</span> place(vendor, amount, po_number)
 
-<span class="c"># call it normally — a sealed, anchored</span>
-<span class="c"># record is written for every invocation</span>
 submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047"</span>)</pre>
       <div class="verify-points">
         <div class="vp"><div class="ic">✓</div><div><h4>Drop-in</h4><p>One decorator over a function or MCP tool. The signature is preserved, so your MCP schema is unchanged.</p></div></div>
@@ -468,8 +480,11 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
       <div class="card">
         <div class="k">Shape it</div>
         <h3>Help the standard</h3>
-        <p>The profile is an individual IETF Internet-Draft. Review it, bring test vectors, and engage in SCITT.</p>
-        <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">Read the draft ↗</a>
+        <p>The profile is an individual IETF Internet-Draft. Review it, bring test vectors, and engage in SCITT — the list and the datatracker are the right channels.</p>
+        <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:block;margin-top:12px">Read the draft ↗</a>
+        <a href="mailto:scitt@ietf.org" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:block;margin-top:6px">scitt@ietf.org — SCITT mailing list ↗</a>
+        <a href="https://mailarchive.ietf.org/arch/browse/scitt/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:block;margin-top:6px">IETF mail archive ↗</a>
+        <a href="https://github.com/action-state-group/agent-action-capsule/issues" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:block;margin-top:6px">Spec source + issues ↗</a>
       </div>
     </div>
   </div>

@@ -371,6 +371,17 @@ PAGES["what-is-a-capsule"] = dict(
 <h2>Levels of assurance</h2>
 <p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from anchoring &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs.</p>
 
+<h2>What a capsule does not prove</h2>
+<p>Honest claims matter. Know the limits before relying on this for audit or compliance:</p>
+<ul>
+  <li><strong>Attested, not verified.</strong> A capsule proves what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
+  <li><strong>No anti-omission property.</strong> A capsule proves <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
+  <li><strong>Signer = key-holder.</strong> The signature proves who held the signing key at the moment of sealing &mdash; not that the named agent actually ran the action. Key-management discipline is outside the capsule.</li>
+  <li><strong>Default may be signature-less.</strong> The base assurance level is a content hash (tamper-evident, content-private). A producer signature binding to a key requires the SCITT Signed-Statement level explicitly.</li>
+  <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. A witness or a second independently-operated log removes this.</li>
+</ul>
+<p>These limits are features of being honest, not gaps to hide. Stating them is what makes the record trustworthy to an outside auditor.</p>
+
 <h2>Where it sits</h2>
 <p>The capsule is a <em>statement-layer</em> profile. It says nothing about which verifiable data structure a log uses &mdash; that separation is what lets the same capsule verify against different transparency services. See <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer vs the transparency layer</a>.</p>
 <p>It is one <strong>SCITT profile</strong> among others &mdash; specialized for agent actions, built on the general SCITT/COSE substrate, and interoperable with any SCITT transparency service. Adopting it means joining the standard, not forking it.</p>
@@ -514,42 +525,48 @@ r = verify_receipt(receipt, leaf_entry_hex=leaf,
 
 PAGES["quickstart"] = dict(
     title="Quickstart: seal your first capsule",
-    desc="Seal an agent action as a verifiable capsule with one decorator using capsule-emit, anchor it to a transparency log, and verify the result.",
+    desc="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.",
     crumb="Guides",
     body="""
 <h1>Quickstart: seal your first capsule</h1>
-<p class="lede">Turn an agent action into a verifiable, anchored record with one decorator. This walks from install to a verified receipt in a few minutes.</p>
+<p class="lede">From install to a verified, anchored record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API.</p>
 
-<h2>1. Install the producer</h2>
-<pre class="code"><code>pip install capsule-emit</code></pre>
+<h2>1. Install</h2>
+<pre class="code"><code>pip install "capsule-emit==0.1.1" agent-action-capsule</code></pre>
 
-<h2>2. Wrap a tool</h2>
-<p>Add one decorator over the function (or MCP tool) whose actions you want sealed. The signature is preserved, so your tool's interface does not change.</p>
-<pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> emitter
+<h2>2. Seal an action</h2>
+<p>Call <code>emit()</code> once at each consequential action. The fields below are all required.</p>
+<pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> emit
 
-<span class="fn">@emitter.tool</span>(effect_type=<span class="s">"write_order"</span>)
-<span class="k">def</span> <span class="fn">submit_order</span>(vendor, amount, po_number):
-    <span class="c"># your real tool logic</span>
-    <span class="k">return</span> place(vendor, amount, po_number)
+result = place(<span class="s">"Frobozz Supply"</span>, 4210.00, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
 
-<span class="c"># call it normally — each call seals input + output</span>
-<span class="c"># digests and registers the statement to the log</span>
-submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047"</span>)</code></pre>
+cap = emit(
+    action=<span class="s">"submit_order"</span>,
+    operator=<span class="s">"acme-co"</span>,                <span class="c"># accountable tenant (required)</span>
+    developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version (required)</span>
+    agent_input={<span class="s">"vendor"</span>: <span class="s">"Frobozz Supply"</span>, <span class="s">"total"</span>: 4210.00},
+    agent_output=result,
+    model={<span class="s">"provider"</span>: <span class="s">"anthropic"</span>, <span class="s">"model_id"</span>: <span class="s">"claude-sonnet-4-6"</span>},
+    verdict=<span class="s">"executed"</span>,               <span class="c"># executed | confirmed | denied | blocked</span>
+    effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
+)
+print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted to the log</span></code></pre>
+<div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter emits on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
 
 <h2>3. Where it anchors</h2>
-<p>By default the producer registers statements to a transparency service and keeps the returned receipt alongside the sealed statement. You can point it at any compatible service, including the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a>.</p>
+<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service, or <code>anchor=False</code> to seal locally.</p>
 
-<h2>4. Verify what you sealed</h2>
-<pre class="code"><code>pip install agent-action-capsule
-
-<span class="c"># verify a ledger of sealed actions, offline</span>
+<h2>4. Verify</h2>
+<pre class="code"><code><span class="c"># verify a ledger of sealed capsules, offline &mdash; no keys or network needed</span>
 agent-action-capsule verify --store ledger.jsonl
 
   <span class="s">capsule_id</span>  9f2a...c14  <span class="ok">ok</span>
-  substrate.receipt_verified: <span class="ok">True</span></code></pre>
+  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest on the public log</span>
+  substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></code></pre>
+<div class="callout warn"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule&rsquo;s digest to the public log (<code>cap.anchored=True</code>). The log&rsquo;s inclusion <em>receipt</em> is verifiable against the log today; surfacing it back onto the <code>emit()</code> return value is on the near-term roadmap.</div>
 <h2>Adapters: seal from your framework</h2>
-<p>You don't have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong>, which has two patterns: a companion MCP server (<code>record</code> / <code>verify</code> / <code>ledger</code> in a Goose session) and the one-decorator <code>@emitter.tool()</code> wrap that seals every tool call (verified against Goose v1.39.0). Any custom loop works via one call at the tool boundary. The per-framework adapter guides live in the producer's <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> — including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a>.</p>
-<div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail, including the hosted verifier and what each check proves.</div>
+<p>You don&rsquo;t have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a>.</p>
+<div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check proves.</div>
 """,
 )
 
@@ -637,7 +654,7 @@ INDEX_BODY = f"""
 <div class="idx-group">
   <h2>Guides</h2>
   <div class="cards">
-    <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one decorator, anchor it, and verify the result.</div></a>
+    <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one <code>emit()</code> call, anchor it, and verify. Copy-paste-runnable.</div></a>
     <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">Verify a capsule</div><div class="d">Verify in the browser, on the command line, or as a library &mdash; same checks everywhere.</div></a>
   </div>
 </div>
