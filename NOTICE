@@ -1,0 +1,20 @@
+agentactioncapsule-web
+Copyright 2024-2026 Action State Group, Inc.
+
+This product is licensed under the Apache License, Version 2.0.
+
+---
+
+Provenance, neutrality & governance
+-------------------------------------
+agentactioncapsule-web is the static website for agentactioncapsule.org — the
+neutral standard site and documentation for the Agent Action Capsule, an open
+profile on IETF SCITT for verifiable records of agent actions.
+
+It is neutral substrate. The content is product-free: it carries no commercial,
+monetization, or tiering language. It documents the open specification and the
+open-source implementations, and is designed with a clean transfer path to a
+neutral standards body or foundation when the ecosystem matures.
+
+This site links to, but does not vendor, the implementation repositories
+published under https://github.com/action-state-group (Apache-2.0).

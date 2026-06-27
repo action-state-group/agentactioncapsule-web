@@ -1,0 +1,12 @@
+# Local coordination buffers — git-ignored, not published
+inbox.md
+outbox.md
+WEBSITES-HOSTING-AND-SETUP.md
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
