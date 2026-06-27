@@ -547,6 +547,8 @@ agent-action-capsule verify --store ledger.jsonl
 
   <span class="s">capsule_id</span>  9f2a...c14  <span class="ok">ok</span>
   substrate.receipt_verified: <span class="ok">True</span></code></pre>
+<h2>Adapters: seal from your framework</h2>
+<p>You don't have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong>, which has two patterns: a companion MCP server (<code>record</code> / <code>verify</code> / <code>ledger</code> in a Goose session) and the one-decorator <code>@emitter.tool()</code> wrap that seals every tool call (verified against Goose v1.39.0). Any custom loop works via one call at the tool boundary. The per-framework adapter guides live in the producer's <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> — including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a>.</p>
 <div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail, including the hosted verifier and what each check proves.</div>
 """,
 )

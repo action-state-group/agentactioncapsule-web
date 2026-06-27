@@ -368,9 +368,10 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
         <p>Wraps the tool object — one capsule per tool call, no per-call-site code.</p>
       </div>
       <div class="ic-card">
-        <span class="badge">MCP SERVER</span>
+        <span class="badge">MCP SERVER + DECORATOR</span>
         <h3>Goose</h3>
-        <p>A companion MCP server exposing <span class="mono">record · verify · ledger</span> to a Goose session.</p>
+        <p>Two ways in: a companion MCP server (<span class="mono">record · verify · ledger</span> in a Goose session), or the one-decorator <span class="mono">@emitter.tool()</span> wrap that seals every Goose tool call. Verified against Goose v1.39.0.</p>
+        <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension ↗</a>
       </div>
       <div class="ic-card">
         <span class="badge">ANY LOOP</span>
