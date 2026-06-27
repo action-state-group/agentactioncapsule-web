@@ -11,7 +11,7 @@ Run:  python3 tools/build_docs.py
 Out:  docs/*.html  (one page per entry in PAGES, plus docs/index.html)
 
 NEUTRALITY: these pages are neutral substrate only. No product, moat, Authority,
-tiering, monetization, or bilateral language. Standards status is stated honestly
+tiering, or monetization language. Standards status is stated honestly
 (individual Internet-Draft; SCITT/COSE drafts are not yet RFCs).
 """
 from __future__ import annotations
@@ -330,7 +330,7 @@ PAGES["what-is-a-capsule"] = dict(
   <tbody>
     <tr><th>Signed</th><td>The capsule is a COSE-signed statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it. Change any byte and the signature fails.</td></tr>
     <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was included in an append-only log that cannot quietly drop or rewrite history.</td></tr>
-    <tr><th>Third-party verifiable</th><td>An auditor, counterparty, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems, no trust required.</td></tr>
+    <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems, no trust required.</td></tr>
   </tbody>
 </table>
 
