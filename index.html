@@ -204,6 +204,35 @@
   </div>
 </section>
 
+<!-- WHAT'S IN A CAPSULE -->
+<section class="band" id="anatomy">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What's sealed</span>
+      <h2>Purpose-built for agent actions — not generic attestation.</h2>
+      <p>The seal is the <code class="mono">capsule_id</code> — a SHA-256 of the whole statement; recompute it and it must match, byte for byte. And it's <em>content-private by construction</em>: a capsule carries <strong>digests</strong> of your inputs and outputs, never the raw prompts, vendors, or amounts. Around that seal it commits exactly what an agent action needs to be accountable:</p>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <div class="k">Decision</div>
+        <h3>The may/did, bound to its effect</h3>
+        <p>What the agent decided and whether it executed, was confirmed, denied, or blocked — with a confirmed-effect binding, so the claim and the real outcome can't drift apart.</p>
+      </div>
+      <div class="card">
+        <div class="k">Attestation</div>
+        <h3>Which model decided, by digest</h3>
+        <p>The model and runtime that produced the action, with its input and output committed as SHA-256 digests. The proof travels; the raw values stay with you.</p>
+      </div>
+      <div class="card">
+        <div class="k">Chain</div>
+        <h3>Trails for human-in-the-loop</h3>
+        <p>Confirm, supersede, and escalate links turn <span class="mono">approved → executed → confirmed</span> into one verifiable chain — the basis for review and selective disclosure.</p>
+      </div>
+    </div>
+    <p style="margin-top:22px;color:var(--muted);font-size:15.5px">That's the shape a build-artifact attestation doesn't give you — and the reason to standardize <em>one</em> agent-action profile together rather than reinvent it. <a href="/docs/what-is-a-capsule.html" style="color:var(--accent);text-decoration:none">What's in a capsule →</a></p>
+  </div>
+</section>
+
 <!-- STACK -->
 <section class="band stack" id="stack">
   <div class="wrap">
@@ -291,6 +320,50 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
   </div>
 </section>
 
+<!-- ADAPTERS -->
+<section class="band" id="adapters">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Adapters</span>
+      <h2>Seal from the framework you already use.</h2>
+      <p>One capsule, one anchor, one verify — an adapter only changes <em>where</em> you hook in. Each is a thin layer over a ~30-line base, so adding your own is small.</p>
+    </div>
+    <div class="interop-grid">
+      <div class="ic-card">
+        <span class="badge">DECORATOR</span>
+        <h3>MCP / any callable</h3>
+        <p>A decorator on the tool function — the input args and return value are digested automatically.</p>
+      </div>
+      <div class="ic-card">
+        <span class="badge">CALLBACK</span>
+        <h3>LangChain / LangGraph</h3>
+        <p>A callback handler on the run; the model id auto-fills where the framework exposes it.</p>
+      </div>
+      <div class="ic-card">
+        <span class="badge">TOOL WRAP</span>
+        <h3>CrewAI</h3>
+        <p>Wraps the tool object — one capsule per tool call, no per-call-site code.</p>
+      </div>
+      <div class="ic-card">
+        <span class="badge">MCP SERVER</span>
+        <h3>Goose</h3>
+        <p>A companion MCP server exposing <span class="mono">record · verify · ledger</span> to a Goose session.</p>
+      </div>
+      <div class="ic-card">
+        <span class="badge">ANY LOOP</span>
+        <h3>Hermes / custom loop</h3>
+        <p>One call at your tool boundary — the "any framework" pattern on the shared base.</p>
+      </div>
+      <div class="ic-card">
+        <span class="badge">YOURS?</span>
+        <h3>Don't see your framework?</h3>
+        <p>The base is ~30 lines. Add an adapter, or open a request — capsule producers stay one shared format.</p>
+        <a href="https://github.com/action-state-group/capsule-emit">capsule-emit ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- INTEROP -->
 <section class="band" id="interop">
   <div class="wrap">
@@ -343,6 +416,37 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
       <a class="repo" href="https://github.com/action-state-group/capsule-anchor">
         <div><div class="rn">capsule-anchor</div><div class="rd">A neutral, product-free SCITT Transparency Service. Live at anchor.agentactioncapsule.org.</div><span class="tag">Apache-2.0</span></div>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- GET INVOLVED -->
+<section class="band stack" id="get-involved">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Get involved</span>
+      <h2>One neutral standard to join — not another to fork.</h2>
+      <p>The capsule is open, Apache-2.0, and built to be donated. The useful move is to converge on one profile, not reinvent it. Three ways in:</p>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <div class="k">Adopt</div>
+        <h3>Seal your agent's actions</h3>
+        <p>Wrap a tool with one decorator, anchor each call, and verify from the bytes.</p>
+        <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">Quickstart →</a>
+      </div>
+      <div class="card">
+        <div class="k">Contribute</div>
+        <h3>Add an adapter</h3>
+        <p>Bring your framework's seam onto the shared base, or open a request — so producers stay one format.</p>
+        <a href="https://github.com/action-state-group/capsule-emit" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">capsule-emit ↗</a>
+      </div>
+      <div class="card">
+        <div class="k">Shape it</div>
+        <h3>Help the standard</h3>
+        <p>The profile is an individual IETF Internet-Draft. Review it, bring test vectors, and engage in SCITT.</p>
+        <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">Read the draft ↗</a>
+      </div>
     </div>
   </div>
 </section>
