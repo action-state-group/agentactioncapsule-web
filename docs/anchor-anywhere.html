@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quickstart: seal your first capsule &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/quickstart.html">
+<title>Anchor anywhere — what leaves your walls &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="When you anchor a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Anchor to the public log, run your own anchor in the region you choose, or self-host inside your VPC where the hash never leaves.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/anchor-anywhere.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Quickstart: seal your first capsule">
-<meta property="og:description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/quickstart.html">
+<meta property="og:title" content="Anchor anywhere — what leaves your walls">
+<meta property="og:description" content="When you anchor a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Anchor to the public log, run your own anchor in the region you choose, or self-host inside your VPC where the hash never leaves.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/anchor-anywhere.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Quickstart: seal your first capsule">
-<meta name="twitter:description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
+<meta name="twitter:title" content="Anchor anywhere — what leaves your walls">
+<meta name="twitter:description" content="When you anchor a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Anchor to the public log, run your own anchor in the region you choose, or self-host inside your VPC where the hash never leaves.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -158,9 +158,9 @@
 <a href="/docs/how-verification-works.html">How verification works</a>
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
-<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
+<a href="/docs/anchor-anywhere.html" class="active">Anchor anywhere</a>
 <h5>Guides</h5>
-<a href="/docs/quickstart.html" class="active">Quickstart</a>
+<a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
 <a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
@@ -172,50 +172,31 @@
 <a href="/docs/governance.html">Governance</a>
 </nav>
     <article>
-      <div class="crumb">Guides</div>
+      <div class="crumb">Concepts</div>
       
-<h1>Quickstart: seal your first capsule</h1>
-<p class="lede">From install to a verified, anchored record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API.</p>
+<h1>Anchor anywhere — what leaves your walls</h1>
+<p class="lede">Anchoring proves a capsule was included in a public, append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
 
-<h2>1. Install</h2>
-<pre class="code"><code>pip install "capsule-emit==0.1.1" agent-action-capsule</code></pre>
+<h2>What leaves your walls</h2>
+<p>A capsule is <a class="ln" href="/docs/what-is-a-capsule.html">content-private by construction</a>: it carries digests of inputs and outputs, not the raw values. When it's anchored, the log receives the statement's commitment — a hash — plus a timestamp. The raw content stays where you keep it, under your control. The public log stores <em>a commitment you can check</em>, not your data.</p>
 
-<h2>2. Seal an action</h2>
-<p>Call <code>emit()</code> once at each consequential action. <code>operator</code>, <code>developer</code>, <code>action</code>, <code>agent_input</code>, <code>agent_output</code>, <code>verdict</code>, and <code>effect</code> are required; <code>model</code> is optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
-<pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> emit
+<h2>Anchor anywhere — three options</h2>
+<table class="t">
+  <thead><tr><th>Where you anchor</th><th>What it gives you</th><th>What leaves your environment</th></tr></thead>
+  <tbody>
+    <tr><th>The public log</th><td>zero-setup existence proofs on a shared, open log (<code>anchor.agentactioncapsule.org</code>)</td><td>a digest + a timestamp</td></tr>
+    <tr><th>Your own anchor, in the region you choose</th><td>residency / jurisdiction control (e.g. EU, Singapore) by running the open anchor where you need it</td><td>a digest + a timestamp, kept in your jurisdiction</td></tr>
+    <tr><th>Your own anchor, inside your VPC</th><td>full control — self-host the container with your own storage</td><td>nothing — the hash never leaves your environment</td></tr>
+  </tbody>
+</table>
+<p>The capsule is <strong>anchor-agnostic</strong> (it makes no claim about the log's <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure</a>): the same statement verifies whichever log you choose, so you can move or mix anchors without changing the record.</p>
 
-result = place(<span class="s">"Frobozz Supply"</span>, 4210.00, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
+<h2>What a digest hides — and what it doesn't</h2>
+<p>A digest hides a value only when that value is hard to guess. A high-entropy input (a full prompt, a document, a key) is safe. But a <em>low-entropy</em> value — a short dollar amount, a yes/no disposition, an ID from a known list — can be recovered by hashing candidate values until one matches. For those fields, <strong>salt before hashing</strong> (commit a per-tenant salt alongside the value) so the digest can't be brute-forced. And note the capsule commits some metadata in the clear — the action type and disposition — so &ldquo;content-private&rdquo; means your <em>payloads</em> stay private, not that the capsule reveals nothing about what kind of action occurred.</p>
 
-cap = emit(
-    action=<span class="s">"submit_order"</span>,
-    operator=<span class="s">"acme-co"</span>,                <span class="c"># accountable tenant (required)</span>
-    developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version (required)</span>
-    agent_input={<span class="s">"vendor"</span>: <span class="s">"Frobozz Supply"</span>, <span class="s">"total"</span>: 4210.00},
-    agent_output=result,
-    model={<span class="s">"provider"</span>: <span class="s">"anthropic"</span>, <span class="s">"model_id"</span>: <span class="s">"claude-sonnet-4-6"</span>},
-    verdict=<span class="s">"executed"</span>,               <span class="c"># executed | confirmed | denied | blocked</span>
-    effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
-)
-print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted to the log</span></code></pre>
-<div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter emits on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
+<div class="callout">The privacy promise, in one line: <strong>we verify; we store nothing of yours but a commitment you can check</strong> — and, for guessable values, salt before you commit them.</div>
 
-<h2>3. Where it anchors</h2>
-<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service, or <code>anchor=False</code> to seal locally.</p>
-
-<h2>4. Verify</h2>
-<p>Each <code>emit()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
-<pre class="code"><code><span class="c"># verify a ledger of sealed capsules, offline &mdash; no keys or network needed</span>
-agent-action-capsule verify --store ledger.jsonl
-
-  <span class="s">capsule_id</span>  9f2a...c14  <span class="ok">ok</span>
-  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest on the public log</span>
-  substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></code></pre>
-<div class="callout warn"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule&rsquo;s digest to the public log (<code>cap.anchored=True</code>). The log&rsquo;s inclusion <em>receipt</em> is verifiable against the log today; surfacing it back onto the <code>emit()</code> return value is on the near-term roadmap.</div>
-<h2>Adapters: seal from your framework</h2>
-<p>You don&rsquo;t have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). A gateway integration (<strong>agentgateway</strong>) seals at the chokepoint every consequential action flows through &mdash; one policy point instead of N integrations (via the gateway's <code>mcpGuardrails</code> ExtMcp hook). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a> and the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter</a>.</p>
-<div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check proves.</div>
-<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/01-your-first-capsule.md">Tutorial: your first capsule &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/02-confirming-and-chaining.md">Confirming &amp; chaining &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/anchor-anywhere.html"><div class="dir">&#8592; Previous</div><div class="ttl">Anchor anywhere</div></a><a class="n" href="/docs/verify-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">Verify a capsule</div></a></div>
+      <div class="next"><a class="p" href="/docs/how-it-composes.html"><div class="dir">&#8592; Previous</div><div class="ttl">How it composes</div></a><a class="n" href="/docs/quickstart.html"><div class="dir">Next &#8594;</div><div class="ttl">Quickstart</div></a></div>
     </article>
   </div>
 </main>

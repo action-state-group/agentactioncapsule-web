@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://agentactioncapsule.org/</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/what-is-a-capsule.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/statement-vs-transparency-layer.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/what-is-a-transparency-service.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/verifiable-data-structures.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/how-verification-works.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/quickstart.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/verify-a-capsule.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/explore.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/log.html</loc></url>
-  <url><loc>https://agentactioncapsule.org/docs/glossary.html</loc></url>
+  <url><loc>https://agentactioncapsule.org/</loc><lastmod>2026-06-28</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/</loc><lastmod>2026-06-28</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/what-is-a-capsule.html</loc><lastmod>2026-06-28</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/statement-vs-transparency-layer.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/what-is-a-transparency-service.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/verifiable-data-structures.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/how-verification-works.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/whats-consequential.html</loc><lastmod>2026-06-28</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/how-it-composes.html</loc><lastmod>2026-06-28</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/anchor-anywhere.html</loc><lastmod>2026-06-28</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/quickstart.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/verify-a-capsule.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/explore.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/log.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/glossary.html</loc><lastmod>2026-06-27</lastmod></url>
+  <url><loc>https://agentactioncapsule.org/docs/governance.html</loc><lastmod>2026-06-28</lastmod></url>
 </urlset>

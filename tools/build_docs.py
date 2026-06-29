@@ -60,7 +60,11 @@ STATUS_NOTE = (
     "submitted for discussion, <em>not</em> adopted by a working group, and not a "
     "standard. It builds on the IETF SCITT and COSE drafts, which are themselves "
     "still in progress and not yet published as RFCs. RFC&nbsp;9162 (Certificate "
-    "Transparency 2.0) is a published RFC."
+    "Transparency 2.0) is a published RFC. <strong>Tracking the standard:</strong> "
+    "this profile is built to track SCITT and COSE as they finalize — as those "
+    "drafts advance and are published as RFCs, the profile and its reference "
+    "implementations will be updated to conform to the final versions, and any "
+    "breaking changes will be versioned and documented."
 )
 
 # ---------------------------------------------------------------------------
@@ -70,7 +74,7 @@ CSS = """
   :root{
     --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
     --line:#E3E3DC; --line-2:#2A313F;
-    --muted:#5C6573; --muted-2:#9AA3B2;
+    --muted:#5C6573; --muted-2:#6B7280;
     --accent:#3A5BD9; --accent-soft:#EAEEFC;
     --verify:#127A52; --verify-soft:#E6F2EC;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -79,6 +83,9 @@ CSS = """
   html{scroll-behavior:smooth}
   body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
   a{color:inherit}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
+  .skip:focus{top:8px}
   .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
   .mono{font-family:var(--mono)}
 
@@ -189,7 +196,7 @@ FOOTER = """<footer>
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open profile on IETF SCITT for verifiable records of agent actions. Neutral substrate for the agent ecosystem, stewarded by Action State Group.</p>
+        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
@@ -210,7 +217,7 @@ FOOTER = """<footer>
         </div>
       </div>
     </div>
-    <div class="foot-note">Apache-2.0 &middot; neutral substrate &middot; agentactioncapsule.org</div>
+    <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
 </footer>""".format(anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL)
 
@@ -222,6 +229,9 @@ SIDEBAR = [
         ("what-is-a-transparency-service", "What is a Transparency Service?"),
         ("verifiable-data-structures", "Verifiable Data Structures"),
         ("how-verification-works", "How verification works"),
+        ("whats-consequential", "What's consequential"),
+        ("how-it-composes", "How it composes"),
+        ("anchor-anywhere", "Anchor anywhere"),
     ]),
     ("Guides", [
         ("quickstart", "Quickstart"),
@@ -233,6 +243,9 @@ SIDEBAR = [
     ]),
     ("Reference", [
         ("glossary", "Glossary"),
+    ]),
+    ("Project", [
+        ("governance", "Governance"),
     ]),
 ]
 
@@ -281,14 +294,30 @@ PAGE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} &mdash; Agent Action Capsule docs</title>
 <meta name="description" content="{desc}">
+<link rel="canonical" href="{url}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Action Capsule">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="theme-color" content="#0B0E14">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>{css}</style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 {nav}
-<main class="wrap">
+<main class="wrap" id="main">
   <div class="docs">
     {sidebar}
     <article>
@@ -305,8 +334,9 @@ PAGE = """<!DOCTYPE html>
 
 
 def render(slug, title, desc, crumb, body, *, is_index=False):
+    url = "https://agentactioncapsule.org/docs/" if is_index else f"https://agentactioncapsule.org/docs/{slug}.html"
     return PAGE.format(
-        title=title, desc=desc, css=CSS, nav=NAV, footer=FOOTER,
+        title=title, desc=desc, css=CSS, nav=NAV, footer=FOOTER, url=url,
         sidebar=sidebar_html("index" if is_index else slug),
         crumb=crumb, body=body,
         nxt="" if is_index else next_block(slug),
@@ -332,9 +362,9 @@ PAGES["what-is-a-capsule"] = dict(
 <table class="t">
   <thead><tr><th>Property</th><th>What it means</th></tr></thead>
   <tbody>
-    <tr><th>Signed</th><td>The capsule is a COSE-signed statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it. Change any byte and the signature fails.</td></tr>
+    <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it &mdash; content-addressed by default, and COSE-signed at the Signed-Statement tier. Change any byte and verification fails.</td></tr>
     <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was included in an append-only log that cannot quietly drop or rewrite history.</td></tr>
-    <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems, no trust required.</td></tr>
+    <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems. You trust the log's key, not the operator.</td></tr>
   </tbody>
 </table>
 
@@ -367,6 +397,7 @@ PAGES["what-is-a-capsule"] = dict(
 
 <h2>Chains: approved &rarr; executed &rarr; confirmed</h2>
 <p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that proves authorization without exposing the underlying data).</p>
+<p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
 
 <h2>Levels of assurance</h2>
 <p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from anchoring &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs.</p>
@@ -384,7 +415,7 @@ PAGES["what-is-a-capsule"] = dict(
 
 <h2>Where it sits</h2>
 <p>The capsule is a <em>statement-layer</em> profile. It says nothing about which verifiable data structure a log uses &mdash; that separation is what lets the same capsule verify against different transparency services. See <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer vs the transparency layer</a>.</p>
-<p>It is one <strong>SCITT profile</strong> among others &mdash; specialized for agent actions, built on the general SCITT/COSE substrate, and interoperable with any SCITT transparency service. Adopting it means joining the standard, not forking it.</p>
+<p>It is one <strong>SCITT profile</strong> among others &mdash; specialized for agent actions, built on the general SCITT/COSE substrate, and interoperable with any SCITT transparency service. Adopting it means building on a shared profile, not forking your own.</p>
 
 <div class="callout">{STATUS_NOTE}</div>
 """,
@@ -481,7 +512,7 @@ PAGES["verifiable-data-structures"] = dict(
 </table>
 
 <h2>Why two?</h2>
-<p>Different operators run different ledger technologies. By implementing both <code>vds=1</code> and <code>vds=2</code>, the verifier proves the statement layer really is structure-independent: one Agent Action Capsule was registered to an RFC&nbsp;9162 log <em>and</em> a real CCF node, and both receipts verify under a single verifier.</p>
+<p>Different operators run different ledger technologies. The same Agent Action Capsule was registered to both an RFC&nbsp;9162 log (<code>vds=1</code>) <em>and</em> a real CCF node (<code>vds=2</code>), and both receipts check out &mdash; proving the statement layer really is structure-independent. (The reference verifier <a class="ln" href="https://github.com/action-state-group/scitt-cose">scitt-cose</a> implements <code>vds=1</code>; the CCF receipt was cross-checked against a CCF node.)</p>
 
 <h2>What stays constant</h2>
 <p>The signed statement &mdash; the capsule itself &mdash; does not change between <code>vds=1</code> and <code>vds=2</code>. Only the receipt differs. That is the whole point of separating <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer from the transparency layer</a>.</p>
@@ -535,7 +566,7 @@ PAGES["quickstart"] = dict(
 <pre class="code"><code>pip install "capsule-emit==0.1.1" agent-action-capsule</code></pre>
 
 <h2>2. Seal an action</h2>
-<p>Call <code>emit()</code> once at each consequential action. The fields below are all required.</p>
+<p>Call <code>emit()</code> once at each consequential action. <code>operator</code>, <code>developer</code>, <code>action</code>, <code>agent_input</code>, <code>agent_output</code>, <code>verdict</code>, and <code>effect</code> are required; <code>model</code> is optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
 <pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> emit
 
 result = place(<span class="s">"Frobozz Supply"</span>, 4210.00, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
@@ -557,6 +588,7 @@ print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted
 <p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service, or <code>anchor=False</code> to seal locally.</p>
 
 <h2>4. Verify</h2>
+<p>Each <code>emit()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
 <pre class="code"><code><span class="c"># verify a ledger of sealed capsules, offline &mdash; no keys or network needed</span>
 agent-action-capsule verify --store ledger.jsonl
 
@@ -565,7 +597,7 @@ agent-action-capsule verify --store ledger.jsonl
   substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></code></pre>
 <div class="callout warn"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule&rsquo;s digest to the public log (<code>cap.anchored=True</code>). The log&rsquo;s inclusion <em>receipt</em> is verifiable against the log today; surfacing it back onto the <code>emit()</code> return value is on the near-term roadmap.</div>
 <h2>Adapters: seal from your framework</h2>
-<p>You don&rsquo;t have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a>.</p>
+<p>You don&rsquo;t have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). A gateway integration (<strong>agentgateway</strong>) seals at the chokepoint every consequential action flows through &mdash; one policy point instead of N integrations (via the gateway's <code>mcpGuardrails</code> ExtMcp hook). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a> and the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter</a>.</p>
 <div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check proves.</div>
 """,
 )
@@ -600,6 +632,169 @@ r = verify_receipt(receipt, leaf_entry_hex=leaf,
   <li>Optionally, the log has stayed append-only between two tree heads (consistency).</li>
 </ul>
 <p>For the mechanics of each check, see <a class="ln" href="/docs/how-verification-works.html">how verification works</a>.</p>
+""",
+)
+
+PAGES["whats-consequential"] = dict(
+    title="What's consequential — what to seal",
+    desc="A capsule is for consequential actions, not every log line. The two-signal rule: seal what changes the world, plus reads of sensitive data; everything else is observability. Built on the field's accepted vocabulary, not a private invention.",
+    crumb="Concepts",
+    body="""
+<h1>What's consequential — what to seal</h1>
+<p class="lede">A capsule is for <em>consequential</em> actions, not every log line. The rule, in one sentence: <strong>seal what changes the world, plus reads of sensitive data; everything else is observability.</strong></p>
+
+<h2>Two signals</h2>
+<table class="t">
+  <thead><tr><th>Signal</th><th>Seal it when…</th></tr></thead>
+  <tbody>
+    <tr><th>1 · Command vs. query</th><td>the action <strong>changes state or has a side effect</strong> — places an order, moves money, sends a message, writes a record. Pure reads (list / get / search) are queries — not sealed by default.</td></tr>
+    <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>engine-side</em>, where data is classified — not at the gateway.</td></tr>
+  </tbody>
+</table>
+
+<h2>Fail-safe by default</h2>
+<p>When a tool's nature is unknown, it is <strong>sealed</strong> — the safe default is to record, not to skip. An adapter only skips a call when it is explicitly marked a read (e.g. <code>action_type="fyi"</code>, or <code>seal_reads=False</code> for tools so annotated). You opt out of sealing deliberately; you never silently lose a consequential action.</p>
+
+<h2>Grey areas</h2>
+<p>Some reads matter (exporting a customer list); some "writes" are trivial (a cache warm). Signal 2 is exactly for the first case. For the rest, when in doubt, seal — a few extra capsules cost little; a missing one is the gap that matters.</p>
+
+<h2>Why this isn't a private invention</h2>
+<p>The command-vs-query distinction is decades-old accepted vocabulary. We stand on it deliberately:</p>
+<table class="t">
+  <thead><tr><th>Prior art</th><th>What we take from it</th></tr></thead>
+  <tbody>
+    <tr><th><a class="ln" href="https://en.wikipedia.org/wiki/Command%E2%80%93query_separation">Command–Query Separation</a> — Bertrand Meyer (1988)</th><td>the foundational command-vs-query split: commands change state, queries don't.</td></tr>
+    <tr><th><a class="ln" href="https://www.rfc-editor.org/rfc/rfc9110.html#name-safe-methods">RFC 9110 — HTTP Semantics</a> (safe methods)</th><td>the web's codification of "safe" (read) vs. unsafe (state-changing) methods.</td></tr>
+    <tr><th><a class="ln" href="https://modelcontextprotocol.io/">Model Context Protocol</a> tool annotations (Anthropic / AAIF)</th><td>tool-level read-only / destructive hints — the per-tool signal an adapter reads.</td></tr>
+    <tr><th><a class="ln" href="https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C/section-164.312">HIPAA §164.312(b)</a> + <a class="ln" href="https://www.pcisecuritystandards.org/">PCI DSS</a></th><td>why a privileged <em>read</em> of regulated data is itself an auditable event (Signal 2).</td></tr>
+  </tbody>
+</table>
+<div class="callout">The canonical developer guide (the two-signal rule, the <code>seal_reads</code> knob, gateway vs. decorator patterns) lives in the producer's docs: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs">capsule-emit/docs</a>.</div>
+""",
+)
+
+PAGES["how-it-composes"] = dict(
+    title="How it composes with your stack",
+    desc="The Agent Action Capsule doesn't replace your identity, authorization, or anchoring layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.",
+    crumb="Concepts",
+    body="""
+<h1>How it composes with your stack</h1>
+<p class="lede">The capsule is one layer in a stack, not a replacement for the others. It sits alongside the layers you already use — identity, authorization, anchoring — and adds the piece none of them provide on their own: a record any third party can verify without trusting any single party.</p>
+
+<h2>Composes, doesn't replace</h2>
+<p>Most agent-trust layers answer a different question than the capsule does. Identity says <em>who</em> is acting; authorization says <em>whether</em> an action is allowed; an anchoring log says the record was <em>included</em>. The capsule answers <strong>what the agent did</strong>, in a record anyone can check — and it leans on those other layers for the rest rather than reabsorbing them. There's no need to fork your stack to adopt it.</p>
+
+<h2>How composition works: reference by digest</h2>
+<p>A capsule binds external evidence into its verifiable trail through <code>chain.relation</code>: it commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it. The verifier checks the binding; the referenced data stays where it lives. (The same mechanism links a confirmation back to the action it confirms — see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>.)</p>
+<pre class="code"><code>{
+  "action": "submit_order",
+  "operator": "acme-co",
+  "chain": {
+    "relation": "authorized-by",      // this action was permitted by …
+    "ref": "sha-256:9f2a…c14"         // digest of the grant / credential
+  }
+}</code></pre>
+<p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. The precise relation vocabulary is defined in the spec registry; to register a relation for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
+<table class="t">
+  <thead><tr><th>Layer</th><th>It answers</th><th>How the capsule composes</th></tr></thead>
+  <tbody>
+    <tr><th>Identity / delegation</th><td>who the agent is acting for</td><td>reference the identity or delegation credential by digest</td></tr>
+    <tr><th>Authorization / policy</th><td>whether the action was permitted</td><td>reference the grant or policy decision by digest</td></tr>
+    <tr><th>Anchoring / transparency log</th><td>that the record was publicly included</td><td>the SCITT receipt — the capsule is <a class="ln" href="/docs/verifiable-data-structures.html">log-agnostic</a></td></tr>
+    <tr><th>Input integrity / provenance</th><td>whether upstream inputs are authentic</td><td>reference the input-integrity evidence by digest</td></tr>
+  </tbody>
+</table>
+
+<h2>What only the capsule adds</h2>
+<p>A record of what the agent did that any third party can verify <strong>without trusting the operator, the model vendor, or the log</strong>. That neutrality is the point: it's the piece a single party's own system can't provide for itself, because a party vouching for its own actions is exactly what a verifier can't take on faith.</p>
+<div class="callout">A capsule records the bytes it is given. Authenticating <em>upstream</em> inputs — that a tool response or grounding source is genuine — is a separate, composable layer; bind its evidence by digest and the verifier checks that too. Composition, not dependency.</div>
+""",
+)
+
+PAGES["anchor-anywhere"] = dict(
+    title="Anchor anywhere — what leaves your walls",
+    desc="When you anchor a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Anchor to the public log, run your own anchor in the region you choose, or self-host inside your VPC where the hash never leaves.",
+    crumb="Concepts",
+    body="""
+<h1>Anchor anywhere — what leaves your walls</h1>
+<p class="lede">Anchoring proves a capsule was included in a public, append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
+
+<h2>What leaves your walls</h2>
+<p>A capsule is <a class="ln" href="/docs/what-is-a-capsule.html">content-private by construction</a>: it carries digests of inputs and outputs, not the raw values. When it's anchored, the log receives the statement's commitment — a hash — plus a timestamp. The raw content stays where you keep it, under your control. The public log stores <em>a commitment you can check</em>, not your data.</p>
+
+<h2>Anchor anywhere — three options</h2>
+<table class="t">
+  <thead><tr><th>Where you anchor</th><th>What it gives you</th><th>What leaves your environment</th></tr></thead>
+  <tbody>
+    <tr><th>The public log</th><td>zero-setup existence proofs on a shared, open log (<code>anchor.agentactioncapsule.org</code>)</td><td>a digest + a timestamp</td></tr>
+    <tr><th>Your own anchor, in the region you choose</th><td>residency / jurisdiction control (e.g. EU, Singapore) by running the open anchor where you need it</td><td>a digest + a timestamp, kept in your jurisdiction</td></tr>
+    <tr><th>Your own anchor, inside your VPC</th><td>full control — self-host the container with your own storage</td><td>nothing — the hash never leaves your environment</td></tr>
+  </tbody>
+</table>
+<p>The capsule is <strong>anchor-agnostic</strong> (it makes no claim about the log's <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure</a>): the same statement verifies whichever log you choose, so you can move or mix anchors without changing the record.</p>
+
+<h2>What a digest hides — and what it doesn't</h2>
+<p>A digest hides a value only when that value is hard to guess. A high-entropy input (a full prompt, a document, a key) is safe. But a <em>low-entropy</em> value — a short dollar amount, a yes/no disposition, an ID from a known list — can be recovered by hashing candidate values until one matches. For those fields, <strong>salt before hashing</strong> (commit a per-tenant salt alongside the value) so the digest can't be brute-forced. And note the capsule commits some metadata in the clear — the action type and disposition — so &ldquo;content-private&rdquo; means your <em>payloads</em> stay private, not that the capsule reveals nothing about what kind of action occurred.</p>
+
+<div class="callout">The privacy promise, in one line: <strong>we verify; we store nothing of yours but a commitment you can check</strong> — and, for guessable values, salt before you commit them.</div>
+""",
+)
+
+PAGES["governance"] = dict(
+    title="Governance — how the project is run, and where it's headed",
+    desc="The Agent Action Capsule is open and built to be donated. Stewarded today by Action State Group with the explicit intent to transfer the profile, trademark, and reference services to a neutral foundation. Governance modeled on Linux Foundation practice; co-maintainers welcome.",
+    crumb="Project",
+    body="""
+<h1>Governance</h1>
+<p class="lede">This project exists to produce a <strong>neutral, openly governed</strong> record layer for agent actions — and to give it away. This page states how it's run today, the principles it holds to, and the concrete path to a neutral home.</p>
+
+<h2>Why governed this way</h2>
+<p>Verifiable records of what AI agents do are infrastructure the whole ecosystem depends on. We think AI safety and open standards matter far too much for that layer to be controlled by any single company — so the design goal from day one is to donate it. The maintainers have stewarded openly and neutrally governed software before (the Presto Foundation, under the Linux Foundation), and this project is modeled on that practice.</p>
+
+<h2>Principles</h2>
+<table class="t">
+  <tbody>
+    <tr><th>Open</th><td>Apache-2.0 tooling; the specification under the IETF Trust's terms (BCP 78/79, code components under the Revised BSD License). Developed in public.</td></tr>
+    <tr><th>Vendor-neutral</th><td>No required product; the specification favors no vendor. Any party can implement, run, and anchor — including in their own environment.</td></tr>
+    <tr><th>Verifiable</th><td>Decisions, like capsules, happen in the open: public issues, public PRs, public discussion.</td></tr>
+    <tr><th>Donate by design</th><td>The profile, the trademark, and the reference services are intended to transfer to a neutral foundation as the ecosystem matures.</td></tr>
+  </tbody>
+</table>
+
+<h2>Where it stands today</h2>
+<p>The project is <strong>stewarded by Action State Group</strong>, which also operates the reference services (the public transparency log and the hosted verifier) for now. This is the honest current state: a single steward, structured to become neutral — not yet a multi-party foundation. We say so plainly rather than imply neutrality the structure doesn't yet have.</p>
+
+<h2>Roles</h2>
+<table class="t">
+  <tbody>
+    <tr><th>Contributors</th><td>Anyone who opens an issue or PR. Contributions are made under the DCO (sign-off); no CLA.</td></tr>
+    <tr><th>Maintainers</th><td>Review and merge changes, cut releases, and steward each repo. Co-maintainers from other organizations are explicitly welcome — earning merge rights through sustained, quality contribution.</td></tr>
+    <tr><th>Technical Steering (planned)</th><td>As independent maintainers join, a lightweight Technical Steering Committee will take over cross-repo decisions — the standard Linux-Foundation-style model.</td></tr>
+  </tbody>
+</table>
+
+<h2>How decisions are made</h2>
+<p>Changes happen by pull request and public discussion, with lazy consensus among maintainers; significant changes get an issue first. The <em>specification</em> evolves through the IETF process — it's an individual Internet-Draft (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>), and the goal is to bring it to the SCITT working group, where the WG — not this project — decides its standing.</p>
+
+<h2>Conformance to the final standard</h2>
+<p>SCITT and COSE are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those drafts advance and are published as RFCs, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
+
+<h2>The path to a neutral foundation</h2>
+<p>Donation is a commitment, not just a hope. The intended sequence:</p>
+<table class="t">
+  <thead><tr><th>Trigger</th><th>What transfers</th></tr></thead>
+  <tbody>
+    <tr><th>Independent implementers + a stable profile</th><td>governance moves to a Technical Steering Committee with multi-org maintainers</td></tr>
+    <tr><th>Foundation home selected</th><td>the <code>agentactioncapsule.org</code> domain, the &ldquo;Agent Action Capsule&rdquo; trademark, and the reference services transfer to the neutral home</td></tr>
+    <tr><th>Spec adoption</th><td>change control of the profile follows the IETF process on WG adoption / RFC publication</td></tr>
+  </tbody>
+</table>
+<p>Candidate homes are neutral, foundation-style bodies in the open-source / standards world; the specific home will be chosen with the community rather than announced unilaterally.</p>
+
+<h2>Scope &amp; boundaries</h2>
+<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the open/commercial line is transparent, not implied.</p>
+
+<div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. A community chat (Discord/Slack) is coming soon.</div>
 """,
 )
 

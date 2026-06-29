@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verifiable Data Structures: RFC 9162 vs CCF &mdash; Agent Action Capsule docs</title>
 <meta name="description" content="A verifiable data structure (VDS) is how a transparency log proves inclusion and consistency. SCITT receipts identify the VDS: vds=1 is RFC9162_SHA256, vds=2 is CCF (ccf.v1).">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/verifiable-data-structures.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Action Capsule">
+<meta property="og:title" content="Verifiable Data Structures: RFC 9162 vs CCF">
+<meta property="og:description" content="A verifiable data structure (VDS) is how a transparency log proves inclusion and consistency. SCITT receipts identify the VDS: vds=1 is RFC9162_SHA256, vds=2 is CCF (ccf.v1).">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/verifiable-data-structures.html">
+<meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Verifiable Data Structures: RFC 9162 vs CCF">
+<meta name="twitter:description" content="A verifiable data structure (VDS) is how a transparency log proves inclusion and consistency. SCITT receipts identify the VDS: vds=1 is RFC9162_SHA256, vds=2 is CCF (ccf.v1).">
+<meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="theme-color" content="#0B0E14">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +27,7 @@
   :root{
     --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
     --line:#E3E3DC; --line-2:#2A313F;
-    --muted:#5C6573; --muted-2:#9AA3B2;
+    --muted:#5C6573; --muted-2:#6B7280;
     --accent:#3A5BD9; --accent-soft:#EAEEFC;
     --verify:#127A52; --verify-soft:#E6F2EC;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -21,6 +36,9 @@
   html{scroll-behavior:smooth}
   body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
   a{color:inherit}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
+  .skip:focus{top:8px}
   .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
   .mono{font-family:var(--mono)}
 
@@ -113,6 +131,7 @@
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <nav>
   <div class="nav-in">
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
@@ -126,7 +145,7 @@
     </div>
   </div>
 </nav>
-<main class="wrap">
+<main class="wrap" id="main">
   <div class="docs">
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
@@ -137,14 +156,20 @@
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
 <a href="/docs/verifiable-data-structures.html" class="active">Verifiable Data Structures</a>
 <a href="/docs/how-verification-works.html">How verification works</a>
+<a href="/docs/whats-consequential.html">What's consequential</a>
+<a href="/docs/how-it-composes.html">How it composes</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
+<a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<h5>Project</h5>
+<a href="/docs/governance.html">Governance</a>
 </nav>
     <article>
       <div class="crumb">Concepts</div>
@@ -165,7 +190,7 @@
 </table>
 
 <h2>Why two?</h2>
-<p>Different operators run different ledger technologies. By implementing both <code>vds=1</code> and <code>vds=2</code>, the verifier proves the statement layer really is structure-independent: one Agent Action Capsule was registered to an RFC&nbsp;9162 log <em>and</em> a real CCF node, and both receipts verify under a single verifier.</p>
+<p>Different operators run different ledger technologies. The same Agent Action Capsule was registered to both an RFC&nbsp;9162 log (<code>vds=1</code>) <em>and</em> a real CCF node (<code>vds=2</code>), and both receipts check out &mdash; proving the statement layer really is structure-independent. (The reference verifier <a class="ln" href="https://github.com/action-state-group/scitt-cose">scitt-cose</a> implements <code>vds=1</code>; the CCF receipt was cross-checked against a CCF node.)</p>
 
 <h2>What stays constant</h2>
 <p>The signed statement &mdash; the capsule itself &mdash; does not change between <code>vds=1</code> and <code>vds=2</code>. Only the receipt differs. That is the whole point of separating <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer from the transparency layer</a>.</p>
@@ -180,7 +205,7 @@
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open profile on IETF SCITT for verifiable records of agent actions. Neutral substrate for the agent ecosystem, stewarded by Action State Group.</p>
+        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
@@ -201,7 +226,7 @@
         </div>
       </div>
     </div>
-    <div class="foot-note">Apache-2.0 &middot; neutral substrate &middot; agentactioncapsule.org</div>
+    <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
 </footer>
 </body>

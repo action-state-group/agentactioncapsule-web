@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quickstart: seal your first capsule &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/quickstart.html">
+<title>How it composes with your stack &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="The Agent Action Capsule doesn't replace your identity, authorization, or anchoring layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/how-it-composes.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Quickstart: seal your first capsule">
-<meta property="og:description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/quickstart.html">
+<meta property="og:title" content="How it composes with your stack">
+<meta property="og:description" content="The Agent Action Capsule doesn't replace your identity, authorization, or anchoring layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/how-it-composes.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Quickstart: seal your first capsule">
-<meta name="twitter:description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
+<meta name="twitter:title" content="How it composes with your stack">
+<meta name="twitter:description" content="The Agent Action Capsule doesn't replace your identity, authorization, or anchoring layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -157,10 +157,10 @@
 <a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
 <a href="/docs/how-verification-works.html">How verification works</a>
 <a href="/docs/whats-consequential.html">What's consequential</a>
-<a href="/docs/how-it-composes.html">How it composes</a>
+<a href="/docs/how-it-composes.html" class="active">How it composes</a>
 <a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
-<a href="/docs/quickstart.html" class="active">Quickstart</a>
+<a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
 <a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
@@ -172,50 +172,40 @@
 <a href="/docs/governance.html">Governance</a>
 </nav>
     <article>
-      <div class="crumb">Guides</div>
+      <div class="crumb">Concepts</div>
       
-<h1>Quickstart: seal your first capsule</h1>
-<p class="lede">From install to a verified, anchored record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API.</p>
+<h1>How it composes with your stack</h1>
+<p class="lede">The capsule is one layer in a stack, not a replacement for the others. It sits alongside the layers you already use — identity, authorization, anchoring — and adds the piece none of them provide on their own: a record any third party can verify without trusting any single party.</p>
 
-<h2>1. Install</h2>
-<pre class="code"><code>pip install "capsule-emit==0.1.1" agent-action-capsule</code></pre>
+<h2>Composes, doesn't replace</h2>
+<p>Most agent-trust layers answer a different question than the capsule does. Identity says <em>who</em> is acting; authorization says <em>whether</em> an action is allowed; an anchoring log says the record was <em>included</em>. The capsule answers <strong>what the agent did</strong>, in a record anyone can check — and it leans on those other layers for the rest rather than reabsorbing them. There's no need to fork your stack to adopt it.</p>
 
-<h2>2. Seal an action</h2>
-<p>Call <code>emit()</code> once at each consequential action. <code>operator</code>, <code>developer</code>, <code>action</code>, <code>agent_input</code>, <code>agent_output</code>, <code>verdict</code>, and <code>effect</code> are required; <code>model</code> is optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
-<pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> emit
+<h2>How composition works: reference by digest</h2>
+<p>A capsule binds external evidence into its verifiable trail through <code>chain.relation</code>: it commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it. The verifier checks the binding; the referenced data stays where it lives. (The same mechanism links a confirmation back to the action it confirms — see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>.)</p>
+<pre class="code"><code>{
+  "action": "submit_order",
+  "operator": "acme-co",
+  "chain": {
+    "relation": "authorized-by",      // this action was permitted by …
+    "ref": "sha-256:9f2a…c14"         // digest of the grant / credential
+  }
+}</code></pre>
+<p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. The precise relation vocabulary is defined in the spec registry; to register a relation for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
+<table class="t">
+  <thead><tr><th>Layer</th><th>It answers</th><th>How the capsule composes</th></tr></thead>
+  <tbody>
+    <tr><th>Identity / delegation</th><td>who the agent is acting for</td><td>reference the identity or delegation credential by digest</td></tr>
+    <tr><th>Authorization / policy</th><td>whether the action was permitted</td><td>reference the grant or policy decision by digest</td></tr>
+    <tr><th>Anchoring / transparency log</th><td>that the record was publicly included</td><td>the SCITT receipt — the capsule is <a class="ln" href="/docs/verifiable-data-structures.html">log-agnostic</a></td></tr>
+    <tr><th>Input integrity / provenance</th><td>whether upstream inputs are authentic</td><td>reference the input-integrity evidence by digest</td></tr>
+  </tbody>
+</table>
 
-result = place(<span class="s">"Frobozz Supply"</span>, 4210.00, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
+<h2>What only the capsule adds</h2>
+<p>A record of what the agent did that any third party can verify <strong>without trusting the operator, the model vendor, or the log</strong>. That neutrality is the point: it's the piece a single party's own system can't provide for itself, because a party vouching for its own actions is exactly what a verifier can't take on faith.</p>
+<div class="callout">A capsule records the bytes it is given. Authenticating <em>upstream</em> inputs — that a tool response or grounding source is genuine — is a separate, composable layer; bind its evidence by digest and the verifier checks that too. Composition, not dependency.</div>
 
-cap = emit(
-    action=<span class="s">"submit_order"</span>,
-    operator=<span class="s">"acme-co"</span>,                <span class="c"># accountable tenant (required)</span>
-    developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version (required)</span>
-    agent_input={<span class="s">"vendor"</span>: <span class="s">"Frobozz Supply"</span>, <span class="s">"total"</span>: 4210.00},
-    agent_output=result,
-    model={<span class="s">"provider"</span>: <span class="s">"anthropic"</span>, <span class="s">"model_id"</span>: <span class="s">"claude-sonnet-4-6"</span>},
-    verdict=<span class="s">"executed"</span>,               <span class="c"># executed | confirmed | denied | blocked</span>
-    effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
-)
-print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted to the log</span></code></pre>
-<div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter emits on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
-
-<h2>3. Where it anchors</h2>
-<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service, or <code>anchor=False</code> to seal locally.</p>
-
-<h2>4. Verify</h2>
-<p>Each <code>emit()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
-<pre class="code"><code><span class="c"># verify a ledger of sealed capsules, offline &mdash; no keys or network needed</span>
-agent-action-capsule verify --store ledger.jsonl
-
-  <span class="s">capsule_id</span>  9f2a...c14  <span class="ok">ok</span>
-  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest on the public log</span>
-  substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></code></pre>
-<div class="callout warn"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule&rsquo;s digest to the public log (<code>cap.anchored=True</code>). The log&rsquo;s inclusion <em>receipt</em> is verifiable against the log today; surfacing it back onto the <code>emit()</code> return value is on the near-term roadmap.</div>
-<h2>Adapters: seal from your framework</h2>
-<p>You don&rsquo;t have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). A gateway integration (<strong>agentgateway</strong>) seals at the chokepoint every consequential action flows through &mdash; one policy point instead of N integrations (via the gateway's <code>mcpGuardrails</code> ExtMcp hook). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a> and the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter</a>.</p>
-<div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check proves.</div>
-<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/01-your-first-capsule.md">Tutorial: your first capsule &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/02-confirming-and-chaining.md">Confirming &amp; chaining &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/anchor-anywhere.html"><div class="dir">&#8592; Previous</div><div class="ttl">Anchor anywhere</div></a><a class="n" href="/docs/verify-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">Verify a capsule</div></a></div>
+      <div class="next"><a class="p" href="/docs/whats-consequential.html"><div class="dir">&#8592; Previous</div><div class="ttl">What's consequential</div></a><a class="n" href="/docs/anchor-anywhere.html"><div class="dir">Next &#8594;</div><div class="ttl">Anchor anywhere</div></a></div>
     </article>
   </div>
 </main>

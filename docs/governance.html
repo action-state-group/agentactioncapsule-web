@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quickstart: seal your first capsule &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/quickstart.html">
+<title>Governance — how the project is run, and where it's headed &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="The Agent Action Capsule is open and built to be donated. Stewarded today by Action State Group with the explicit intent to transfer the profile, trademark, and reference services to a neutral foundation. Governance modeled on Linux Foundation practice; co-maintainers welcome.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/governance.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Quickstart: seal your first capsule">
-<meta property="og:description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/quickstart.html">
+<meta property="og:title" content="Governance — how the project is run, and where it's headed">
+<meta property="og:description" content="The Agent Action Capsule is open and built to be donated. Stewarded today by Action State Group with the explicit intent to transfer the profile, trademark, and reference services to a neutral foundation. Governance modeled on Linux Foundation practice; co-maintainers welcome.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/governance.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Quickstart: seal your first capsule">
-<meta name="twitter:description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
+<meta name="twitter:title" content="Governance — how the project is run, and where it's headed">
+<meta name="twitter:description" content="The Agent Action Capsule is open and built to be donated. Stewarded today by Action State Group with the explicit intent to transfer the profile, trademark, and reference services to a neutral foundation. Governance modeled on Linux Foundation practice; co-maintainers welcome.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -160,7 +160,7 @@
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
-<a href="/docs/quickstart.html" class="active">Quickstart</a>
+<a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
 <a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
@@ -169,53 +169,63 @@
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
 <h5>Project</h5>
-<a href="/docs/governance.html">Governance</a>
+<a href="/docs/governance.html" class="active">Governance</a>
 </nav>
     <article>
-      <div class="crumb">Guides</div>
+      <div class="crumb">Project</div>
       
-<h1>Quickstart: seal your first capsule</h1>
-<p class="lede">From install to a verified, anchored record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API.</p>
+<h1>Governance</h1>
+<p class="lede">This project exists to produce a <strong>neutral, openly governed</strong> record layer for agent actions — and to give it away. This page states how it's run today, the principles it holds to, and the concrete path to a neutral home.</p>
 
-<h2>1. Install</h2>
-<pre class="code"><code>pip install "capsule-emit==0.1.1" agent-action-capsule</code></pre>
+<h2>Why governed this way</h2>
+<p>Verifiable records of what AI agents do are infrastructure the whole ecosystem depends on. We think AI safety and open standards matter far too much for that layer to be controlled by any single company — so the design goal from day one is to donate it. The maintainers have stewarded openly and neutrally governed software before (the Presto Foundation, under the Linux Foundation), and this project is modeled on that practice.</p>
 
-<h2>2. Seal an action</h2>
-<p>Call <code>emit()</code> once at each consequential action. <code>operator</code>, <code>developer</code>, <code>action</code>, <code>agent_input</code>, <code>agent_output</code>, <code>verdict</code>, and <code>effect</code> are required; <code>model</code> is optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
-<pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> emit
+<h2>Principles</h2>
+<table class="t">
+  <tbody>
+    <tr><th>Open</th><td>Apache-2.0 tooling; the specification under the IETF Trust's terms (BCP 78/79, code components under the Revised BSD License). Developed in public.</td></tr>
+    <tr><th>Vendor-neutral</th><td>No required product; the specification favors no vendor. Any party can implement, run, and anchor — including in their own environment.</td></tr>
+    <tr><th>Verifiable</th><td>Decisions, like capsules, happen in the open: public issues, public PRs, public discussion.</td></tr>
+    <tr><th>Donate by design</th><td>The profile, the trademark, and the reference services are intended to transfer to a neutral foundation as the ecosystem matures.</td></tr>
+  </tbody>
+</table>
 
-result = place(<span class="s">"Frobozz Supply"</span>, 4210.00, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
+<h2>Where it stands today</h2>
+<p>The project is <strong>stewarded by Action State Group</strong>, which also operates the reference services (the public transparency log and the hosted verifier) for now. This is the honest current state: a single steward, structured to become neutral — not yet a multi-party foundation. We say so plainly rather than imply neutrality the structure doesn't yet have.</p>
 
-cap = emit(
-    action=<span class="s">"submit_order"</span>,
-    operator=<span class="s">"acme-co"</span>,                <span class="c"># accountable tenant (required)</span>
-    developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version (required)</span>
-    agent_input={<span class="s">"vendor"</span>: <span class="s">"Frobozz Supply"</span>, <span class="s">"total"</span>: 4210.00},
-    agent_output=result,
-    model={<span class="s">"provider"</span>: <span class="s">"anthropic"</span>, <span class="s">"model_id"</span>: <span class="s">"claude-sonnet-4-6"</span>},
-    verdict=<span class="s">"executed"</span>,               <span class="c"># executed | confirmed | denied | blocked</span>
-    effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
-)
-print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted to the log</span></code></pre>
-<div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter emits on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
+<h2>Roles</h2>
+<table class="t">
+  <tbody>
+    <tr><th>Contributors</th><td>Anyone who opens an issue or PR. Contributions are made under the DCO (sign-off); no CLA.</td></tr>
+    <tr><th>Maintainers</th><td>Review and merge changes, cut releases, and steward each repo. Co-maintainers from other organizations are explicitly welcome — earning merge rights through sustained, quality contribution.</td></tr>
+    <tr><th>Technical Steering (planned)</th><td>As independent maintainers join, a lightweight Technical Steering Committee will take over cross-repo decisions — the standard Linux-Foundation-style model.</td></tr>
+  </tbody>
+</table>
 
-<h2>3. Where it anchors</h2>
-<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service, or <code>anchor=False</code> to seal locally.</p>
+<h2>How decisions are made</h2>
+<p>Changes happen by pull request and public discussion, with lazy consensus among maintainers; significant changes get an issue first. The <em>specification</em> evolves through the IETF process — it's an individual Internet-Draft (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>), and the goal is to bring it to the SCITT working group, where the WG — not this project — decides its standing.</p>
 
-<h2>4. Verify</h2>
-<p>Each <code>emit()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
-<pre class="code"><code><span class="c"># verify a ledger of sealed capsules, offline &mdash; no keys or network needed</span>
-agent-action-capsule verify --store ledger.jsonl
+<h2>Conformance to the final standard</h2>
+<p>SCITT and COSE are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those drafts advance and are published as RFCs, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
 
-  <span class="s">capsule_id</span>  9f2a...c14  <span class="ok">ok</span>
-  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest on the public log</span>
-  substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></code></pre>
-<div class="callout warn"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule&rsquo;s digest to the public log (<code>cap.anchored=True</code>). The log&rsquo;s inclusion <em>receipt</em> is verifiable against the log today; surfacing it back onto the <code>emit()</code> return value is on the near-term roadmap.</div>
-<h2>Adapters: seal from your framework</h2>
-<p>You don&rsquo;t have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). A gateway integration (<strong>agentgateway</strong>) seals at the chokepoint every consequential action flows through &mdash; one policy point instead of N integrations (via the gateway's <code>mcpGuardrails</code> ExtMcp hook). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a> and the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter</a>.</p>
-<div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check proves.</div>
-<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/01-your-first-capsule.md">Tutorial: your first capsule &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/02-confirming-and-chaining.md">Confirming &amp; chaining &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/anchor-anywhere.html"><div class="dir">&#8592; Previous</div><div class="ttl">Anchor anywhere</div></a><a class="n" href="/docs/verify-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">Verify a capsule</div></a></div>
+<h2>The path to a neutral foundation</h2>
+<p>Donation is a commitment, not just a hope. The intended sequence:</p>
+<table class="t">
+  <thead><tr><th>Trigger</th><th>What transfers</th></tr></thead>
+  <tbody>
+    <tr><th>Independent implementers + a stable profile</th><td>governance moves to a Technical Steering Committee with multi-org maintainers</td></tr>
+    <tr><th>Foundation home selected</th><td>the <code>agentactioncapsule.org</code> domain, the &ldquo;Agent Action Capsule&rdquo; trademark, and the reference services transfer to the neutral home</td></tr>
+    <tr><th>Spec adoption</th><td>change control of the profile follows the IETF process on WG adoption / RFC publication</td></tr>
+  </tbody>
+</table>
+<p>Candidate homes are neutral, foundation-style bodies in the open-source / standards world; the specific home will be chosen with the community rather than announced unilaterally.</p>
+
+<h2>Scope &amp; boundaries</h2>
+<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the open/commercial line is transparent, not implied.</p>
+
+<div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. A community chat (Discord/Slack) is coming soon.</div>
+
+      <div class="next"><a class="p" href="/docs/glossary.html"><div class="dir">&#8592; Previous</div><div class="ttl">Glossary</div></a></div>
     </article>
   </div>
 </main>
