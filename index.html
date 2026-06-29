@@ -4,7 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent Action Capsule — a verifiable record of what an AI agent did</title>
-<meta name="description" content="The Agent Action Capsule is an open SCITT profile: a signed, verifiable record of a consequential action an AI agent took, that any third party can verify without trusting the operator. Neutral, open source, IETF-track.">
+<meta name="description" content="As AI agents start taking consequential actions, the only proof one happened as intended is the operator's word. An Agent Action Capsule is a tamper-evident, content-private record anyone can verify — without trusting the operator. Open SCITT profile, Apache-2.0, early-stage.">
+<link rel="canonical" href="https://agentactioncapsule.org/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Action Capsule">
+<meta property="og:title" content="Agent Action Capsule — a verifiable record of what an AI agent did">
+<meta property="og:description" content="A tamper-evident, content-private record of what an AI agent did — checkable by anyone, without trusting the operator. Open SCITT profile, Apache-2.0.">
+<meta property="og:url" content="https://agentactioncapsule.org/">
+<meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent Action Capsule — a verifiable record of what an AI agent did">
+<meta name="twitter:description" content="A tamper-evident, content-private record of what an AI agent did — checkable by anyone, without trusting the operator.">
+<meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="theme-color" content="#0B0E14">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,13 +27,31 @@
   :root{
     --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
     --line:#E3E3DC; --line-2:#2A313F;
-    --muted:#5C6573; --muted-2:#9AA3B2;
+    --muted:#5C6573; --muted-2:#6B7280;
     --accent:#3A5BD9; --accent-soft:#EAEEFC;
     --verify:#127A52; --verify-soft:#E6F2EC;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
+  .skip:focus{top:8px}
+  .sw-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .sw-tab{font-family:var(--mono);font-size:13px;padding:7px 14px;border:1px solid var(--line);border-radius:100px;background:#fff;color:var(--muted);cursor:pointer;white-space:nowrap}
+  .sw-tab:hover{border-color:var(--ink);color:var(--ink)}
+  .sw-tab.active{border-color:var(--ink);color:var(--ink);font-weight:600}
+  .sw-panel{margin-bottom:16px}
+  .sw.js .sw-panel{display:none}
+  .sw.js .sw-panel.active{display:block}
+  .sw-fw{font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px}
+  .sw-fw b{color:var(--ink)}
+  .sw-box{position:relative}
+  .sw-box pre{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.65;border:1px solid var(--line-2);margin:0}
+  .sw-copy{position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:11px;color:#cfd6e4;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14);border-radius:6px;padding:4px 9px;cursor:pointer}
+  .sw-copy:hover{background:rgba(255,255,255,0.13)}
+  .sw-link{display:inline-block;margin-top:8px;font-family:var(--mono);font-size:13px;color:var(--accent);text-decoration:none}
+  .sw-note{margin-top:16px;font-size:14px;color:var(--muted)}
   body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
   a{color:inherit}
   .wrap{max-width:1080px;margin:0 auto;padding:0 32px}
@@ -68,6 +101,17 @@
   .card .k{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
   .card h3{font-size:17px;font-weight:600;letter-spacing:-0.3px;margin-bottom:8px}
   .card p{font-size:14.5px;color:var(--muted)}
+
+  /* HOW IT FITS — compose table */
+  .fit{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:4px}
+  .fit th,.fit td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+  .fit thead th{font-family:var(--mono);font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .fit tbody th{font-weight:600;color:var(--ink)}
+  .fit td{color:var(--muted)}
+  .fit tr.cap th,.fit tr.cap td{background:var(--paper-2);color:var(--ink);font-weight:600;border-bottom:none}
+  .fit .ex{display:block;font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:400;margin-top:3px;letter-spacing:.2px}
+  .fit-note{color:var(--muted);font-size:15px;margin-top:18px}
+  @media(max-width:640px){.fit th,.fit td{padding:10px 9px;font-size:12.5px}}
 
   /* STACK DIAGRAM */
   .stack{background:var(--ink);color:var(--paper);border-color:var(--line-2)}
@@ -124,10 +168,10 @@
   .foot-brand{max-width:38ch}
   .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
   .foot-cols{display:flex;gap:56px;flex-wrap:wrap}
-  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
+  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
-  .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
+  .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);font-family:var(--mono)}
 
   @media(max-width:860px){
     .wrap,.nav-in{padding-left:22px;padding-right:22px}
@@ -142,6 +186,7 @@
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
 <nav>
   <div class="nav-in">
@@ -157,39 +202,53 @@
   </div>
 </nav>
 
+<main id="main">
+
 <!-- HERO -->
 <header class="hero">
   <div class="wrap">
-    <span class="eyebrow">Open SCITT profile · IETF-track · Apache-2.0</span>
+    <span class="eyebrow">Open SCITT profile · early-stage draft (IETF Internet-Draft) · open source</span>
     <h1>A verifiable record of <span class="hl">what an AI agent did.</span></h1>
-    <p class="lede">An Agent Action Capsule is a tamper-evident, content-private, independently verifiable record of what an AI agent did — checkable by anyone, <em>without trusting the operator or any single layer</em>. Supply-chain attestation, applied to agent actions instead of build artifacts.</p>
-    <p class="lede" style="font-size:15px;margin-top:10px;color:var(--muted)">The TLS of agent actions: the verifiable record is the headline; the cryptography is just how it holds.</p>
+    <p class="lede">AI agents are just starting to take consequential actions — placing orders, moving money, changing records. When one does, the only proof it happened as intended is the operator's own word. An Agent Action Capsule fixes that: a tamper-evident, content-private record of the action that <em>anyone can verify from the record itself — without trusting the operator</em>.</p>
+    <p class="lede" style="font-size:15px;margin-top:10px;color:var(--muted)">It's early — for the technology and for this profile. The aim is to get the <em>record</em> of what agents do right while it's still being figured out: in the open, verifiable by anyone, and built to be donated so it ends up owned by no one. (Roughly the role TLS plays for a connection, applied to an agent's actions.)</p>
     <div class="hero-cta">
       <a class="btn btn-primary" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Read the draft <span class="arrow">↗</span></a>
       <a class="btn btn-ghost" href="#verify">Verify a capsule <span class="arrow">→</span></a>
       <a class="btn btn-ghost" href="/docs/log.html">Watch the log live <span class="arrow">→</span></a>
     </div>
     <div class="hero-meta">
-      <span><span class="dot"></span> Built on IETF SCITT</span>
+      <span><span class="dot"></span> Built on the SCITT protocol</span>
       <span><span class="dot"></span> Verifier + producer, open source</span>
-      <span><span class="dot"></span> Cross-implementation tested, independent verifier</span>
+      <span><span class="dot"></span> Cross-implementation tested (RFC9162 · CCF)</span>
     </div>
   </div>
 </header>
+
+<!-- IN PLAIN TERMS -->
+<section class="band" id="plain" style="background:var(--paper-2)">
+  <div class="wrap" style="max-width:780px">
+    <div class="sec-head">
+      <span class="eyebrow">In plain terms</span>
+      <h2 style="font-size:clamp(22px,2.4vw,28px)">A tamper-evident receipt for what your AI agent did.</h2>
+    </div>
+    <p style="color:var(--muted);font-size:17px">Say your agent pays an invoice. Six months later an auditor asks: did it really only pay approved vendors, for the right amounts? Today your only answer is your own logs — your word for it. An Agent Action Capsule is a signed, privacy-preserving receipt of each consequential action, so you can hand the auditor proof they can check for themselves — without giving them access to your systems, and without asking them to trust you.</p>
+    <p style="color:var(--muted);font-size:15px;margin-top:14px"><strong>Who it's for today:</strong> agent developers who want verifiable records, and standards / security folks. It's early and built in the open — not yet a turnkey compliance product. <a href="/docs/what-is-a-capsule.html" style="color:var(--accent);text-decoration:none">What exactly is a capsule? →</a></p>
+  </div>
+</section>
 
 <!-- WHAT IT IS -->
 <section class="band" id="what">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow">Who asks for this</span>
+      <span class="eyebrow">The problem</span>
       <h2>Agents take actions. Right now, you have to trust the operator that they happened as claimed.</h2>
-      <p>An auditor, compliance team, B2B recipient, or incident-forensics team that asks <em>"did your agent really do that — and can you prove it without me trusting your logs?"</em> has no answer today. Operator logs are mutable and self-attested; they mean nothing to a party with no reason to trust you. The Agent Action Capsule closes that gap with three properties — the same shape SCITT defines for software supply chains, profiled for agent actions.</p>
+      <p>The Agent Action Capsule closes that gap with three properties — the same shape <strong>SCITT</strong> (the IETF effort standardizing transparency for signed statements, currently Internet-Drafts) defines for software supply chains, profiled for agent actions.</p>
     </div>
     <div class="grid3">
       <div class="card">
         <div class="k">Signed</div>
         <h3>Sealed at the moment of action</h3>
-        <p>A capsule is a COSE-signed statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it. Tamper any byte and verification fails.</p>
+        <p>A capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it — content-addressed by default, and COSE-signed at the Signed-Statement tier (COSE is the standard format for signing records like this). Tamper any byte and verification fails.</p>
       </div>
       <div class="card">
         <div class="k">Transparent</div>
@@ -199,8 +258,109 @@
       <div class="card">
         <div class="k">Third-party verifiable</div>
         <h3>Anyone can check, offline</h3>
-        <p>An auditor, reviewer, or regulator verifies the signature and the inclusion proof from the bytes alone — no access to the operator's systems, no trust required.</p>
+        <p>An auditor, reviewer, or regulator verifies the signature and the inclusion proof from the bytes alone — no access to the operator's systems. You trust the log's key, not the operator.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADD IT TO YOUR STACK -->
+<section class="band" id="adapters" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Add it to your stack</span>
+      <h2>Seal from the framework you already use.</h2>
+      <p>One capsule, one anchor, one verify — an adapter only changes <em>where</em> you hook in, over a ~30-line base. No protocol change; input and output are sealed automatically. Adapters seal <em>consequential</em> actions (writes + sensitive reads), not every call — <a href="/docs/whats-consequential.html" style="color:var(--accent);text-decoration:none">what counts? →</a> Pick your runtime and copy the code:</p>
+    </div>
+    <div class="sw" id="sw">
+      <div class="sw-tabs" role="tablist">
+        <button class="sw-tab" data-fw="goose">Goose</button>
+        <button class="sw-tab" data-fw="mcp">MCP</button>
+        <button class="sw-tab" data-fw="langchain">LangChain</button>
+        <button class="sw-tab" data-fw="crewai">CrewAI</button>
+        <button class="sw-tab" data-fw="hermes">Hermes</button>
+        <button class="sw-tab" data-fw="agentgateway">agentgateway</button>
+      </div>
+
+      <div class="sw-panel" data-fw="goose">
+        <div class="sw-fw"><b>Goose</b> — pip install capsule-emit · FastMCP extension</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from mcp.server.fastmcp import FastMCP
+from capsule_emit.adapters.mcp import MCPCapsuleEmitter
+
+server  = FastMCP("po-agent")
+emitter = MCPCapsuleEmitter(operator="acme-co", developer="goose-agent@v1")
+
+@server.tool()                            # Goose connects over MCP
+@emitter.tool(effect_type="write_order")  # capsule-emit seals every call
+def submit_order(vendor, amount, po_number):
+    return place(vendor, amount, po_number)
+
+server.run()   # stdio — add to Goose as an extension</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· verified end-to-end against Goose v1.39.0</span>
+      </div>
+
+      <div class="sw-panel" data-fw="mcp">
+        <div class="sw-fw"><b>MCP / any callable</b> — pip install capsule-emit</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.mcp import MCPCapsuleEmitter
+
+emitter = MCPCapsuleEmitter(operator="acme-co", developer="po-agent@v1")
+
+@emitter.tool("submit_order")     # one line — every call sealed + anchored
+def submit_order(vendor, amount, po_number):
+    return place(vendor, amount, po_number)</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/mcp.md">MCP adapter docs ↗</a>
+      </div>
+
+      <div class="sw-panel" data-fw="langchain">
+        <div class="sw-fw"><b>LangChain / LangGraph</b> — pip install capsule-emit langchain-core</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.langchain import LangChainCapsuleEmitter
+
+emitter = LangChainCapsuleEmitter(operator="acme-co", developer="research-agent@v1")
+
+# attach as a callback — every tool call on the run is sealed
+agent.invoke(payload, config={"callbacks": [emitter]})</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/langchain.md">LangChain adapter docs ↗</a>
+      </div>
+
+      <div class="sw-panel" data-fw="crewai">
+        <div class="sw-fw"><b>CrewAI</b> — pip install capsule-emit crewai</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.crewai import CrewAICapsuleEmitter
+
+emitter = CrewAICapsuleEmitter(operator="acme-co", developer="ops-agent@v1")
+
+safe_tool = emitter.wrap(my_tool)        # one capsule per tool call
+agent = Agent(role="AP clerk", tools=[safe_tool])</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/crewai.md">CrewAI adapter docs ↗</a>
+      </div>
+
+      <div class="sw-panel" data-fw="hermes">
+        <div class="sw-fw"><b>Hermes / any custom loop</b> — pip install capsule-emit</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.hermes import HermesCapsuleEmitter
+
+emitter = HermesCapsuleEmitter(operator="acme-co", developer="hermes-agent@v1")
+
+result = execute_tool(name, inputs)
+emitter.after_tool(name, inputs, result)   # one line at the tool boundary</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/hermes.md">Hermes adapter docs ↗</a>
+      </div>
+
+      <div class="sw-panel" data-fw="agentgateway">
+        <div class="sw-fw"><b>agentgateway</b> — seal at the gateway chokepoint (one policy point, not N integrations)</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code># 1. run the capsule-emit policy service (gRPC ExtMcp hook)
+pip install "capsule-emit[agentgateway]"
+capsule-emit-agentgateway          # listens on :50051
+
+# 2. point agentgateway at it — seal tools/call only (in config.yaml)
+mcpGuardrails:
+  processors:
+    - kind: remote
+      host: "localhost:50051"
+      methods: { "tools/call": full }   # reads pass through
+      failureMode: failOpen             # capsule outage degrades gracefully</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· verified against agentgateway's ExtMcp gRPC hook</span>
+      </div>
+
+      <p class="sw-note">Don't see your framework? The base is ~30 lines — <a href="https://github.com/action-state-group/capsule-emit" style="color:var(--accent);text-decoration:none">add an adapter or open a request ↗</a>. Full guides live in <a href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters" style="color:var(--accent);text-decoration:none">capsule-emit/docs/adapters</a>.</p>
     </div>
   </div>
 </section>
@@ -211,7 +371,7 @@
     <div class="sec-head">
       <span class="eyebrow">What's sealed</span>
       <h2>Purpose-built for agent actions — not generic attestation.</h2>
-      <p>The seal is the <code class="mono">capsule_id</code> — a SHA-256 of the whole statement; recompute it and it must match, byte for byte. And it's <em>content-private by construction</em>: a capsule carries <strong>digests</strong> of your inputs and outputs, never the raw prompts, vendors, or amounts. Around that seal it commits exactly what an agent action needs to be accountable:</p>
+      <p>Its tamper-evident seal is the <code class="mono">capsule_id</code> — a SHA-256 of the statement's canonical form (RFC 8785 JCS); recompute it and it must match. And it's <em>content-private by construction</em>: a capsule carries <strong>digests</strong> of your inputs and outputs, never the raw prompts, vendors, or amounts. Around that seal it commits exactly what an agent action needs to be accountable:</p>
     </div>
     <div class="grid3">
       <div class="card">
@@ -238,16 +398,6 @@
       <a class="btn btn-primary" href="/docs/explore.html">Explore a capsule <span class="arrow">→</span></a>
     </div>
     <p style="margin-top:18px;color:var(--muted);font-size:15.5px">That's the shape a build-artifact attestation doesn't give you — and the reason to standardize <em>one</em> agent-action profile together rather than reinvent it. <a href="/docs/what-is-a-capsule.html" style="color:var(--accent);text-decoration:none">What's in a capsule →</a> · <a href="/docs/explore.html" style="color:var(--accent);text-decoration:none">tamper one, watch the seal break →</a></p>
-    <div class="not-prove" style="margin-top:36px;background:var(--paper-2);border-radius:10px;padding:22px 26px;border-left:3px solid var(--accent)">
-      <strong>What a capsule does not prove</strong>
-      <ul style="margin:10px 0 0;padding-left:20px;color:var(--muted);font-size:15px;line-height:1.8">
-        <li><strong>Attested, not verified.</strong> It proves what the agent attested it did — not that the real-world effect occurred. A <code>dispatched</code> record does not mean the write landed.</li>
-        <li><strong>No anti-omission.</strong> It doesn't prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
-        <li><strong>Signer = key-holder.</strong> The signature proves who held the key at the moment of sealing — not that the named agent ran the action.</li>
-        <li><strong>Default may be signature-less.</strong> The base assurance level is a content hash. A producer signature requires the SCITT Signed-Statement level explicitly.</li>
-      </ul>
-      <p style="margin:10px 0 0;font-size:14px;color:var(--muted)">Full limits: <a href="/docs/what-is-a-capsule.html#what-a-capsule-does-not-prove" style="color:var(--accent);text-decoration:none">what-is-a-capsule.html →</a></p>
-    </div>
   </div>
 </section>
 
@@ -272,7 +422,7 @@
       <div class="flowtag">↓ registered to · receipt verified by</div>
       <div class="srow">
         <div class="lbl">layer 3<b>The verifier</b></div>
-        <div class="desc"><code>scitt-cose</code> — verifies SCITT receipts: RFC9162_SHA256 (vds=1) and CCF ccf.v1 (vds=2).</div>
+        <div class="desc"><code>scitt-cose</code> — verifies SCITT receipts across verifiable-data-structures (<code>vds</code> = the log's proof format): RFC9162_SHA256 (vds=1) and CCF ccf.v1 (vds=2).</div>
       </div>
       <div class="flowtag">↓ anchored to</div>
       <div class="srow">
@@ -283,12 +433,34 @@
   </div>
 </section>
 
+<!-- HOW IT FITS / COMPOSE -->
+<section class="band" id="fit" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How it fits your stack</span>
+      <h2>Composes with what you already run — it doesn't replace it.</h2>
+      <p>Identity, authorization, payments, runtime gates — each proves its own slice, and each is self-attested about it. The capsule composes with all of them by digest-reference, and adds the one thing none can self-provide: a record checkable by someone who trusts neither the operator nor any single layer.</p>
+    </div>
+    <table class="fit">
+      <thead><tr><th>Layer</th><th>Answers</th><th>Doesn't answer</th></tr></thead>
+      <tbody>
+        <tr><th>Identity <span class="ex">e.g. SPIFFE/WIMSE, agent IDs</span></th><td><em>who</em> the agent is</td><td>what it did</td></tr>
+        <tr><th>Authorization <span class="ex">e.g. OAuth/AAuth, GNAP, policy</span></th><td>what it <em>may</em> do</td><td>what it actually did, and the outcome</td></tr>
+        <tr><th>Payments / settlement <span class="ex">e.g. AP2</span></th><td>whether a human authorized the spend</td><td>what was actually done, end-to-end</td></tr>
+        <tr><th>Runtime gate / observability <span class="ex">e.g. a policy gateway, your logs</span></th><td>what <em>you say</em> happened</td><td>nothing to a party who doesn't trust you — it's self-attested</td></tr>
+        <tr class="cap"><th>Agent Action Capsule</th><td>what it provably <em>did</em></td><td>composes with all of the above</td></tr>
+      </tbody>
+    </table>
+    <p class="fit-note">Each layer is self-attested about its own slice; the capsule is the independent record of what was actually done that they all commit into. Adopting it doesn't fork your stack — it references the others' evidence by digest. <a href="/docs/how-it-composes.html" style="color:var(--accent);text-decoration:none">How it composes →</a> · <a href="/docs/whats-consequential.html" style="color:var(--accent);text-decoration:none">what's worth sealing →</a></p>
+  </div>
+</section>
+
 <!-- VERIFY -->
 <section class="band" id="verify">
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Verify</span>
-      <h2>From the bytes. Offline. No network, no trust.</h2>
+      <h2>From the bytes. Offline. Trust the log's key — not the operator.</h2>
       <p>This is what an auditor runs against a ledger of capsules. Tamper any field and <code class="mono">ok</code> turns false.</p>
     </div>
     <div class="verify-grid">
@@ -300,9 +472,8 @@ agent-action-capsule verify --store ledger.jsonl
 
   <span class="s">capsule_id</span>  9f2a…c14  <span class="ok">ok</span>
   <span class="s">capsule_id</span>  4b07…8de  <span class="ok">ok</span>
-  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest on the public log</span>
-  substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></pre>
-      <p style="margin:12px 0 0;padding:10px 14px;background:var(--paper-2);border-radius:6px;font-size:14px;color:var(--muted);border-left:3px solid var(--accent)"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule's digest to the public log (<code>anchored=True</code>). Surfacing the log's inclusion <em>receipt</em> back onto the emit() return is on the near-term roadmap — the receipt is verifiable against the log now, and the verifier confirms it when present.</p>
+  <span class="c"># inclusion on the public log:</span>
+  substrate.receipt_verified: <span class="ok">True</span></pre>
       <div class="verify-points">
         <div class="vp"><div class="ic">1</div><div><h4>Inputs &amp; outputs committed by digest</h4><p>The capsule seals SHA-256 digests of what went in and came out. Raw values stay local; the proof travels.</p></div></div>
         <div class="vp"><div class="ic">2</div><div><h4>Signature + inclusion, independently</h4><p>The signature proves who sealed it; the receipt proves the log included it. Both check from the bytes.</p></div></div>
@@ -327,76 +498,32 @@ agent-action-capsule verify --store ledger.jsonl
   </div>
 </section>
 
-<!-- ON-RAMP / MCP -->
-<section class="band" style="background:var(--paper-2)">
+<!-- WHAT LEAVES YOUR WALLS -->
+<section class="band" id="leaves">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow">The on-ramp</span>
-      <h2>Any MCP tool call → a verifiable record, in one decorator.</h2>
-      <p>No protocol change. The capsule is the record layer you compose into your existing agent or MCP server — the input and output are sealed automatically.</p>
+      <span class="eyebrow">What leaves your walls</span>
+      <h2>Only a hash leaves. Anchor anywhere — including your own VPC.</h2>
+      <p>A capsule is content-private by construction. When you anchor it, the only thing that travels to the log is a <em>digest and a timestamp</em> — never prompts, payloads, reasoning, or PII. The raw content stays under your control.</p>
     </div>
-    <div class="onramp">
-<pre class="code"><span class="k">from</span> capsule_emit.adapters.mcp <span class="k">import</span> MCPCapsuleEmitter
-
-<span class="c"># one-time setup: tenant + agent identity</span>
-emitter = MCPCapsuleEmitter(operator=<span class="s">"acme-co"</span>, developer=<span class="s">"po-agent@v1"</span>)
-
-<span class="fn">@emitter.tool</span>(<span class="s">"submit_order"</span>)  <span class="c"># seals every call</span>
-<span class="tk">def</span> <span class="fn">submit_order</span>(vendor, amount, po_number):
-    <span class="tk">return</span> place(vendor, amount, po_number)
-
-submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047"</span>)</pre>
-      <div class="verify-points">
-        <div class="vp"><div class="ic">✓</div><div><h4>Drop-in</h4><p>One decorator over a function or MCP tool. The signature is preserved, so your MCP schema is unchanged.</p></div></div>
-        <div class="vp"><div class="ic">✓</div><div><h4>Auto-anchored</h4><p>Each call seals input + output digests and fires the statement to the transparency log. Verifiable immediately.</p></div></div>
-        <div class="vp"><div class="ic">✓</div><div><h4>Adapter, not lock-in</h4><p>MCP today; the same producer composes into other agent runtimes. The substrate is neutral and donatable.</p></div></div>
+    <div class="grid3">
+      <div class="card">
+        <div class="k">Public log</div>
+        <h3>Zero-setup proofs</h3>
+        <p>Anchor to the shared, open log at <code>anchor.agentactioncapsule.org</code>. A digest + timestamp leaves; your data never does.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ADAPTERS -->
-<section class="band" id="adapters">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="eyebrow">Adapters</span>
-      <h2>Seal from the framework you already use.</h2>
-      <p>One capsule, one anchor, one verify — an adapter only changes <em>where</em> you hook in. Each is a thin layer over a ~30-line base, so adding your own is small. The format spreads by being the easiest thing to emit into — so integrators put it everywhere.</p>
-    </div>
-    <div class="interop-grid">
-      <div class="ic-card">
-        <span class="badge">DECORATOR</span>
-        <h3>MCP / any callable</h3>
-        <p>A decorator on the tool function — the input args and return value are digested automatically.</p>
+      <div class="card">
+        <div class="k">Your region</div>
+        <h3>Residency control</h3>
+        <p>Run the open anchor in the region or jurisdiction you need (e.g. EU, Singapore). The hash stays in your jurisdiction.</p>
       </div>
-      <div class="ic-card">
-        <span class="badge">CALLBACK</span>
-        <h3>LangChain / LangGraph</h3>
-        <p>A callback handler on the run; the model id auto-fills where the framework exposes it.</p>
-      </div>
-      <div class="ic-card">
-        <span class="badge">TOOL WRAP</span>
-        <h3>CrewAI</h3>
-        <p>Wraps the tool object — one capsule per tool call, no per-call-site code.</p>
-      </div>
-      <div class="ic-card">
-        <span class="badge">MCP SERVER + DECORATOR</span>
-        <h3>Goose</h3>
-        <p>Two ways in: a companion MCP server (<span class="mono">record · verify · ledger</span> in a Goose session), or the one-decorator <span class="mono">@emitter.tool()</span> wrap that seals every Goose tool call. Verified against Goose v1.39.0.</p>
-        <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension ↗</a>
-      </div>
-      <div class="ic-card">
-        <span class="badge">ANY LOOP</span>
-        <h3>Hermes / custom loop</h3>
-        <p>One call at your tool boundary — the "any framework" pattern on the shared base.</p>
-      </div>
-      <div class="ic-card">
-        <span class="badge">YOURS?</span>
-        <h3>Don't see your framework?</h3>
-        <p>The base is ~30 lines. Add an adapter, or open a request — capsule producers stay one shared format.</p>
-        <a href="https://github.com/action-state-group/capsule-emit">capsule-emit ↗</a>
+      <div class="card">
+        <div class="k">Your VPC</div>
+        <h3>Nothing leaves</h3>
+        <p>Self-host the anchor container inside your own environment — then even the hash never leaves your walls.</p>
       </div>
     </div>
+    <p class="fit-note">The capsule is anchor-agnostic, so you can move or mix anchors without changing the record. One caveat: a digest only hides values that aren't guessable — for low-entropy fields (a short amount, a known ID), salt before hashing. <a href="/docs/anchor-anywhere.html" style="color:var(--accent);text-decoration:none">What a digest hides →</a></p>
   </div>
 </section>
 
@@ -410,15 +537,15 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
     </div>
     <div class="interop-grid">
       <div class="ic-card">
-        <span class="badge">MERGED · IETF SCITT WG</span>
+        <span class="badge">TEST VECTORS · CONTRIBUTED UPSTREAM · NOT A WG ENDORSEMENT</span>
         <h3>Shared test vectors</h3>
-        <p>RFC9162_SHA256 cross-implementation vectors are merged into the SCITT working group's examples repository — a reference anyone can verify against.</p>
+        <p>Our RFC9162_SHA256 cross-implementation vectors were contributed to, and merged into, the SCITT working group's <em>examples</em> repository — a reference anyone can verify against. It's a merged contribution, <strong>not</strong> a WG endorsement of this profile.</p>
         <a href="https://github.com/ietf-wg-scitt/examples">ietf-wg-scitt/examples ↗</a>
       </div>
       <div class="ic-card">
-        <span class="badge">VERIFIED · MICROSOFT CCF</span>
+        <span class="badge">TESTED AGAINST · MICROSOFT CCF</span>
         <h3>Two-party, two logs</h3>
-        <p>One capsule, registered to our RFC9162 log <em>and</em> a real Microsoft CCF node — both receipts verify under one verifier. CCF uses vds=2; we implemented it alongside vds=1.</p>
+        <p>One capsule, registered to our RFC9162 log <em>and</em> a real Microsoft CCF node — both receipts verify under our verifier stack. (CCF uses vds=2; RFC 9162 uses vds=1.) Tested against CCF; not a Microsoft endorsement.</p>
         <a href="https://github.com/action-state-group/scitt-cose">scitt-cose ↗</a>
       </div>
       <div class="ic-card">
@@ -436,22 +563,36 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Open source</span>
-      <h2>Every layer is public and Apache-2.0.</h2>
-      <p>Read it, run it, fork it. The substrate is neutral by design — built to be donated, not owned.</p>
+      <h2>Every layer is open source.</h2>
+      <p>Read it, run it, fork it. The tooling is Apache-2.0; the specification follows the IETF Trust's terms (BCP 78/79, with code components under the Revised BSD License). Built to be donated to a neutral home, not owned.</p>
     </div>
     <div class="repos">
       <a class="repo" href="https://github.com/action-state-group/agent-action-capsule">
-        <div><div class="rn">agent-action-capsule</div><div class="rd">The SCITT profile + reference verifier. The spec source and the bytes-level check.</div><span class="tag">Apache-2.0</span></div>
+        <div><div class="rn">agent-action-capsule</div><div class="rd">The SCITT profile + reference verifier. The spec source and the bytes-level check.</div><span class="tag">BCP 78/79 · BSD-3</span></div>
       </a>
       <a class="repo" href="https://github.com/action-state-group/capsule-emit">
         <div><div class="rn">capsule-emit</div><div class="rd">The producer library and adapters — the one-decorator on-ramp for agents and MCP servers.</div><span class="tag">Apache-2.0</span></div>
       </a>
       <a class="repo" href="https://github.com/action-state-group/scitt-cose">
-        <div><div class="rn">scitt-cose</div><div class="rd">The SCITT receipt verifier — RFC9162_SHA256 and Microsoft CCF (vds=1 + vds=2).</div><span class="tag">Apache-2.0</span></div>
+        <div><div class="rn">scitt-cose</div><div class="rd">The SCITT receipt verifier — RFC9162_SHA256 (vds=1), cross-checked against Microsoft CCF (vds=2).</div><span class="tag">Apache-2.0</span></div>
       </a>
       <a class="repo" href="https://github.com/action-state-group/capsule-anchor">
-        <div><div class="rn">capsule-anchor</div><div class="rd">A neutral, product-free SCITT Transparency Service. Live at anchor.agentactioncapsule.org.</div><span class="tag">Apache-2.0</span></div>
+        <div><div class="rn">capsule-anchor</div><div class="rd">An open, product-free SCITT Transparency Service. Reference instance live at anchor.agentactioncapsule.org.</div><span class="tag">Apache-2.0</span></div>
       </a>
+    </div>
+    <p style="margin-top:22px;color:var(--muted);font-size:15px;max-width:760px"><strong>Scope.</strong> The open project is the <strong>record layer</strong> — the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on those constraints at runtime (enforcement) is a separate concern you compose with a policy gateway: the capsule records what happened, it doesn't gate. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">How the project is governed →</a></p>
+  </div>
+</section>
+
+<!-- WHO'S BEHIND THIS -->
+<section class="band" id="who" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Who's behind this</span>
+      <h2>Built by an agent developer who wanted proof, not promises.</h2>
+      <p>The Agent Action Capsule was created by <strong>Steven Mih</strong> — a startup founder and agent developer with a long background in open source, including helping steward openly and neutrally governed software (the Presto Foundation, under the Linux Foundation). He built it after hitting the wall everyone building agents hits: once an agent takes a real action, the only "proof" it happened as intended is the operator's own word. The capsule is the answer — a verifiable record anyone can check, built to be owned by no one.</p>
+      <p style="margin-top:14px"><strong>Why build it this way?</strong> Verifiable records of what agents do are infrastructure the whole ecosystem depends on — and we think AI safety and open standards matter far too much for that layer to be controlled by any single company. So the design goal from day one is to give it away.</p>
+      <p style="margin-top:14px"><strong>Where it stands today.</strong> The project is stewarded by Action State Group, which also operates the reference services (the public log and the verifier) for now — with the explicit intent to donate the profile, the trademark, and the services to a neutral foundation as the ecosystem matures. The governance model is public and modeled on Linux Foundation practice, and co-maintainers are welcome to join. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read the governance model →</a> · comments on the draft are welcome at <a href="mailto:spec@actionstate.ai" style="color:var(--accent);text-decoration:none">spec@actionstate.ai</a> and in the IETF SCITT working group.</p>
     </div>
   </div>
 </section>
@@ -461,8 +602,8 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Get involved</span>
-      <h2>One neutral standard to join — not another to fork.</h2>
-      <p>The capsule is open, Apache-2.0, and built to be donated. The useful move is to converge on one profile, not reinvent it. Three ways in:</p>
+      <h2>An open profile to shape together — not another silo to fork.</h2>
+      <p>The capsule is open and built to be donated. The useful move is to improve one shared profile together — feedback, competing ideas, and adapters all welcome. Ways in:</p>
     </div>
     <div class="grid3">
       <div class="card">
@@ -480,15 +621,15 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
       <div class="card">
         <div class="k">Shape it</div>
         <h3>Help the standard</h3>
-        <p>The profile is an individual IETF Internet-Draft. Review it, bring test vectors, and engage in SCITT — the list and the datatracker are the right channels.</p>
-        <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:block;margin-top:12px">Read the draft ↗</a>
-        <a href="mailto:scitt@ietf.org" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:block;margin-top:6px">scitt@ietf.org — SCITT mailing list ↗</a>
-        <a href="https://mailarchive.ietf.org/arch/browse/scitt/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:block;margin-top:6px">IETF mail archive ↗</a>
-        <a href="https://github.com/action-state-group/agent-action-capsule/issues" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:block;margin-top:6px">Spec source + issues ↗</a>
+        <p>The profile is an individual IETF Internet-Draft. Review it, bring test vectors, and engage in SCITT.</p>
+        <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">Read the draft ↗</a>
       </div>
     </div>
+    <p class="fit-note">New here? <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read how the project is governed →</a> · Join the conversation on <a href="https://github.com/action-state-group" style="color:var(--accent);text-decoration:none">GitHub</a> — a community chat (Discord/Slack) is coming soon.</p>
   </div>
 </section>
+
+</main>
 
 <!-- FOOTER -->
 <footer>
@@ -496,7 +637,7 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open profile on IETF SCITT for verifiable records of agent actions. Neutral substrate for the agent ecosystem, stewarded by Action State Group.</p>
+        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
@@ -517,9 +658,28 @@ submit_order(<span class="s">"Frobozz"</span>, 4210.00, <span class="s">"PO-0047
         </div>
       </div>
     </div>
-    <div class="foot-note">Apache-2.0 · neutral substrate · agentactioncapsule.org</div>
+    <div class="foot-note">Open source · built to be donated · agentactioncapsule.org</div>
   </div>
 </footer>
 
+<script>
+(function(){
+  var sw=document.getElementById('sw'); if(!sw) return;
+  sw.classList.add('js');
+  var tabs=sw.querySelectorAll('.sw-tab'), panels=sw.querySelectorAll('.sw-panel');
+  function show(fw){
+    tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.fw===fw); });
+    panels.forEach(function(p){ p.classList.toggle('active', p.dataset.fw===fw); });
+  }
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.dataset.fw); }); });
+  show('goose');
+  sw.querySelectorAll('.sw-copy').forEach(function(b){
+    b.addEventListener('click', function(){
+      var code=b.parentElement.querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(function(){ var o=b.textContent; b.textContent='copied'; setTimeout(function(){ b.textContent=o; },1400); });
+    });
+  });
+})();
+</script>
 </body>
 </html>

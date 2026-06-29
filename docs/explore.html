@@ -5,19 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Explore a capsule — Agent Action Capsule</title>
 <meta name="description" content="An interactive Agent Action Capsule: see what each field records, edit what goes into a digest and watch it change, tamper a field and watch the seal break (real SHA-256), see how capsules chain, then verify a bundle as a skeptical auditor — without trusting the operator.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/explore.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Action Capsule">
+<meta property="og:title" content="Explore a capsule — interactive">
+<meta property="og:description" content="Edit what goes into a digest, tamper a field and watch the seal break (real SHA-256), then verify a bundle as a skeptical auditor.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/explore.html">
+<meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="theme-color" content="#0B0E14">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
-    --line:#E3E3DC; --line-2:#2A313F; --muted:#5C6573; --muted-2:#9AA3B2;
+    --line:#E3E3DC; --line-2:#2A313F; --muted:#5C6573; --muted-2:#6B7280;
     --accent:#3A5BD9; --accent-soft:#EAEEFC; --verify:#127A52; --verify-soft:#E6F2EC;
     --fail:#B3261E; --fail-soft:#FBEAE8;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
+  .skip:focus{top:8px}
   body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
   a{color:inherit}
   .wrap{max-width:1080px;margin:0 auto;padding:0 32px}
@@ -84,6 +100,7 @@
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <nav>
   <div class="nav-in">
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
@@ -97,6 +114,9 @@
     </div>
   </div>
 </nav>
+
+<main id="main">
+<noscript><div class="wrap" style="padding:24px 0"><div class="card" style="border:1px solid var(--line);border-radius:14px;padding:18px 22px">This page is interactive and needs JavaScript to compute SHA-256 in your browser. With JS off, read <a href="/docs/what-is-a-capsule.html" style="color:var(--accent)">What's in a capsule</a> for the same concepts, or verify a real capsule at <a href="https://verify.actionstate.ai" style="color:var(--accent)">verify.actionstate.ai</a>.</div></div></noscript>
 
 <header class="hero">
   <div class="wrap">
@@ -119,7 +139,7 @@
         <div class="seal"><span class="lbl">capsule_id <span>(the seal)</span></span><span class="val" id="capId">…</span></div>
         <div id="rows"></div>
       </div>
-      <div class="panel">
+      <div class="panel" aria-live="polite">
         <div class="pk" id="pkey">what this records</div>
         <div class="pb" id="pbody">Click any field. Together they answer <strong>who</strong> is accountable, <strong>which agent</strong>, <strong>what</strong> it did and the real effect, the <strong>decision</strong> (the may/did verdict), the <strong>evidence</strong> (model + input/output by digest), <strong>when</strong>, and <strong>how it links</strong> to other actions. Press <em>Tamper</em> to change a realistic field and watch the seal break.</div>
       </div>
@@ -184,12 +204,14 @@
   </div>
 </section>
 
+</main>
+
 <footer>
   <div class="wrap">
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open profile on IETF SCITT for verifiable records of agent actions. Neutral substrate for the agent ecosystem, stewarded by Action State Group.</p>
+        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col"><h5>Standard</h5><a href="/">Overview</a><a href="/docs/">Docs</a><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft ↗</a></div>
@@ -197,7 +219,7 @@
         <div class="foot-col"><h5>Source</h5><a href="https://github.com/action-state-group">GitHub ↗</a><a href="https://github.com/ietf-wg-scitt/examples">Test vectors ↗</a></div>
       </div>
     </div>
-    <div class="foot-note">Apache-2.0 · neutral substrate · agentactioncapsule.org</div>
+    <div class="foot-note">Open source · built to be donated · agentactioncapsule.org</div>
   </div>
 </footer>
 
