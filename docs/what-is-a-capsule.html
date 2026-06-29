@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>What is an Agent Action Capsule? &mdash; Agent Action Capsule docs</title>
 <meta name="description" content="An Agent Action Capsule is a signed, tamper-evident record of a consequential action an AI agent took, verifiable by any third party without trusting the operator.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/what-is-a-capsule.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Action Capsule">
+<meta property="og:title" content="What is an Agent Action Capsule?">
+<meta property="og:description" content="An Agent Action Capsule is a signed, tamper-evident record of a consequential action an AI agent took, verifiable by any third party without trusting the operator.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/what-is-a-capsule.html">
+<meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What is an Agent Action Capsule?">
+<meta name="twitter:description" content="An Agent Action Capsule is a signed, tamper-evident record of a consequential action an AI agent took, verifiable by any third party without trusting the operator.">
+<meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="theme-color" content="#0B0E14">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +27,7 @@
   :root{
     --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
     --line:#E3E3DC; --line-2:#2A313F;
-    --muted:#5C6573; --muted-2:#9AA3B2;
+    --muted:#5C6573; --muted-2:#6B7280;
     --accent:#3A5BD9; --accent-soft:#EAEEFC;
     --verify:#127A52; --verify-soft:#E6F2EC;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -21,6 +36,9 @@
   html{scroll-behavior:smooth}
   body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
   a{color:inherit}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
+  .skip:focus{top:8px}
   .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
   .mono{font-family:var(--mono)}
 
@@ -113,6 +131,7 @@
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <nav>
   <div class="nav-in">
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
@@ -126,7 +145,7 @@
     </div>
   </div>
 </nav>
-<main class="wrap">
+<main class="wrap" id="main">
   <div class="docs">
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
@@ -137,14 +156,20 @@
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
 <a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
 <a href="/docs/how-verification-works.html">How verification works</a>
+<a href="/docs/whats-consequential.html">What's consequential</a>
+<a href="/docs/how-it-composes.html">How it composes</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
+<a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<h5>Project</h5>
+<a href="/docs/governance.html">Governance</a>
 </nav>
     <article>
       <div class="crumb">Concepts</div>
@@ -158,9 +183,9 @@
 <table class="t">
   <thead><tr><th>Property</th><th>What it means</th></tr></thead>
   <tbody>
-    <tr><th>Signed</th><td>The capsule is a COSE-signed statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it. Change any byte and the signature fails.</td></tr>
+    <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it &mdash; content-addressed by default, and COSE-signed at the Signed-Statement tier. Change any byte and verification fails.</td></tr>
     <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was included in an append-only log that cannot quietly drop or rewrite history.</td></tr>
-    <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems, no trust required.</td></tr>
+    <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems. You trust the log's key, not the operator.</td></tr>
   </tbody>
 </table>
 
@@ -193,6 +218,7 @@
 
 <h2>Chains: approved &rarr; executed &rarr; confirmed</h2>
 <p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that proves authorization without exposing the underlying data).</p>
+<p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
 
 <h2>Levels of assurance</h2>
 <p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from anchoring &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs.</p>
@@ -210,9 +236,9 @@
 
 <h2>Where it sits</h2>
 <p>The capsule is a <em>statement-layer</em> profile. It says nothing about which verifiable data structure a log uses &mdash; that separation is what lets the same capsule verify against different transparency services. See <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer vs the transparency layer</a>.</p>
-<p>It is one <strong>SCITT profile</strong> among others &mdash; specialized for agent actions, built on the general SCITT/COSE substrate, and interoperable with any SCITT transparency service. Adopting it means joining the standard, not forking it.</p>
+<p>It is one <strong>SCITT profile</strong> among others &mdash; specialized for agent actions, built on the general SCITT/COSE substrate, and interoperable with any SCITT transparency service. Adopting it means building on a shared profile, not forking your own.</p>
 
-<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile is an individual IETF Internet-Draft (<code>draft-mih-scitt-agent-action-capsule</code>) — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. It builds on the IETF SCITT and COSE drafts, which are themselves still in progress and not yet published as RFCs. RFC&nbsp;9162 (Certificate Transparency 2.0) is a published RFC.</div>
+<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile is an individual IETF Internet-Draft (<code>draft-mih-scitt-agent-action-capsule</code>) — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. It builds on the IETF SCITT and COSE drafts, which are themselves still in progress and not yet published as RFCs. RFC&nbsp;9162 (Certificate Transparency 2.0) is a published RFC. <strong>Tracking the standard:</strong> this profile is built to track SCITT and COSE as they finalize — as those drafts advance and are published as RFCs, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented.</div>
 <div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/concepts.md">Concepts, in plain words &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/anatomy.md">Anatomy of a capsule &#x2197;</a></div>
       <div class="next"><a class="p" href="/docs/"><div class="dir">&#8592; Previous</div><div class="ttl">Overview</div></a><a class="n" href="/docs/statement-vs-transparency-layer.html"><div class="dir">Next &#8594;</div><div class="ttl">Statement vs transparency layer</div></a></div>
     </article>
@@ -223,7 +249,7 @@
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open profile on IETF SCITT for verifiable records of agent actions. Neutral substrate for the agent ecosystem, stewarded by Action State Group.</p>
+        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
@@ -244,7 +270,7 @@
         </div>
       </div>
     </div>
-    <div class="foot-note">Apache-2.0 &middot; neutral substrate &middot; agentactioncapsule.org</div>
+    <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
 </footer>
 </body>

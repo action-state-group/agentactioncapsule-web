@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Documentation &mdash; Agent Action Capsule docs</title>
 <meta name="description" content="Concepts and guides for the Agent Action Capsule, the open profile for verifiable records of agent actions.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Action Capsule">
+<meta property="og:title" content="Documentation">
+<meta property="og:description" content="Concepts and guides for the Agent Action Capsule, the open profile for verifiable records of agent actions.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/">
+<meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Documentation">
+<meta name="twitter:description" content="Concepts and guides for the Agent Action Capsule, the open profile for verifiable records of agent actions.">
+<meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="theme-color" content="#0B0E14">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +27,7 @@
   :root{
     --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
     --line:#E3E3DC; --line-2:#2A313F;
-    --muted:#5C6573; --muted-2:#9AA3B2;
+    --muted:#5C6573; --muted-2:#6B7280;
     --accent:#3A5BD9; --accent-soft:#EAEEFC;
     --verify:#127A52; --verify-soft:#E6F2EC;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -21,6 +36,9 @@
   html{scroll-behavior:smooth}
   body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
   a{color:inherit}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
+  .skip:focus{top:8px}
   .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
   .mono{font-family:var(--mono)}
 
@@ -113,6 +131,7 @@
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <nav>
   <div class="nav-in">
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
@@ -126,7 +145,7 @@
     </div>
   </div>
 </nav>
-<main class="wrap">
+<main class="wrap" id="main">
   <div class="docs">
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
@@ -137,14 +156,20 @@
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
 <a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
 <a href="/docs/how-verification-works.html">How verification works</a>
+<a href="/docs/whats-consequential.html">What's consequential</a>
+<a href="/docs/how-it-composes.html">How it composes</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
+<a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<h5>Project</h5>
+<a href="/docs/governance.html">Governance</a>
 </nav>
     <article>
       <div class="crumb">Docs</div>
@@ -168,6 +193,7 @@
   <div class="cards">
     <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one <code>emit()</code> call, anchor it, and verify. Copy-paste-runnable.</div></a>
     <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">Verify a capsule</div><div class="d">Verify in the browser, on the command line, or as a library &mdash; same checks everywhere.</div></a>
+    <a class="dcard" href="/docs/a2a-ap2-example.html"><div class="n">A2A + AP2 example</div><div class="d">A2A callee seals a neutral capsule on every AP2 payment. CartMandate is the &ldquo;may&rdquo; &mdash; the capsule is the &ldquo;did.&rdquo; Runnable, anchored, verifiable.</div></a>
   </div>
 </div>
 
@@ -188,7 +214,7 @@
 
 <div class="callout deeper"><strong>Building on it?</strong> Implementation, tutorials, and adapter guides live in the canonical <code>capsule-emit</code> docs: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs">capsule-emit/docs &#x2197;</a>. These pages cover the standard-level concepts; the repo docs cover hands-on usage.</div>
 
-<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile is an individual IETF Internet-Draft (<code>draft-mih-scitt-agent-action-capsule</code>) — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. It builds on the IETF SCITT and COSE drafts, which are themselves still in progress and not yet published as RFCs. RFC&nbsp;9162 (Certificate Transparency 2.0) is a published RFC.</div>
+<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile is an individual IETF Internet-Draft (<code>draft-mih-scitt-agent-action-capsule</code>) — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. It builds on the IETF SCITT and COSE drafts, which are themselves still in progress and not yet published as RFCs. RFC&nbsp;9162 (Certificate Transparency 2.0) is a published RFC. <strong>Tracking the standard:</strong> this profile is built to track SCITT and COSE as they finalize — as those drafts advance and are published as RFCs, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented.</div>
 
       
     </article>
@@ -199,7 +225,7 @@
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open profile on IETF SCITT for verifiable records of agent actions. Neutral substrate for the agent ecosystem, stewarded by Action State Group.</p>
+        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
@@ -220,7 +246,7 @@
         </div>
       </div>
     </div>
-    <div class="foot-note">Apache-2.0 &middot; neutral substrate &middot; agentactioncapsule.org</div>
+    <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
 </footer>
 </body>
