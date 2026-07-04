@@ -296,7 +296,7 @@ def submit_order(vendor, amount, po_number):
     return place(vendor, amount, po_number)
 
 server.run()   # stdio — add to Goose as an extension</code></pre></div>
-        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· verified end-to-end against Goose v1.39.0</span>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/tree/main/examples/goose-capsule/evidence" style="color:var(--muted);text-decoration:underline">verified end-to-end against Goose v1.39.0 ↗</a></span>
       </div>
 
       <div class="sw-panel" data-fw="mcp">
@@ -357,7 +357,7 @@ mcpGuardrails:
       host: "localhost:50051"
       methods: { "tools/call": full }   # reads pass through
       failureMode: failOpen             # capsule outage degrades gracefully</code></pre></div>
-        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· verified against agentgateway's ExtMcp gRPC hook</span>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/tree/main/examples/agentgateway-capsule/evidence" style="color:var(--muted);text-decoration:underline">verified at ExtMcp gRPC protocol boundary ↗</a></span>
       </div>
 
       <p class="sw-note">Don't see your framework? The base is ~30 lines — <a href="https://github.com/action-state-group/capsule-emit" style="color:var(--accent);text-decoration:none">add an adapter or open a request ↗</a>. Full guides live in <a href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters" style="color:var(--accent);text-decoration:none">capsule-emit/docs/adapters</a>.</p>
