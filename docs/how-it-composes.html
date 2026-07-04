@@ -162,7 +162,6 @@
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
-<a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
@@ -205,6 +204,11 @@
 <p>A record of what the agent did that any third party can verify <strong>without trusting the operator, the model vendor, or the log</strong>. That neutrality is the point: it's the piece a single party's own system can't provide for itself, because a party vouching for its own actions is exactly what a verifier can't take on faith.</p>
 <div class="callout">A capsule records the bytes it is given. Authenticating <em>upstream</em> inputs — that a tool response or grounding source is genuine — is a separate, composable layer; bind its evidence by digest and the verifier checks that too. Composition, not dependency.</div>
 
+<h2>The four-leg accountability picture</h2>
+<p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
+<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
+<div class="callout"><strong>Composition stub.</strong> A neutral, four-leg composition architecture — covering how CAN / WHO / WHAT / AUDIT interoperate across implementations — is forthcoming as a separate specification. Cross-links will be added here once that work posts. The shared-digest binding above is the seam.</div>
+
       <div class="next"><a class="p" href="/docs/whats-consequential.html"><div class="dir">&#8592; Previous</div><div class="ttl">What's consequential</div></a><a class="n" href="/docs/anchor-anywhere.html"><div class="dir">Next &#8594;</div><div class="ttl">Anchor anywhere</div></a></div>
     </article>
   </div>
@@ -214,7 +218,7 @@
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
+        <p>An open, individual profile (an IETF Internet-Draft; not WG-adopted) built on the SCITT Architecture (<a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:inherit">RFC&nbsp;9943</a>), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">

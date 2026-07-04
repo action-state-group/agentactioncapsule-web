@@ -162,7 +162,6 @@
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
-<a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
@@ -238,7 +237,7 @@
 <p>The capsule is a <em>statement-layer</em> profile. It says nothing about which verifiable data structure a log uses &mdash; that separation is what lets the same capsule verify against different transparency services. See <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer vs the transparency layer</a>.</p>
 <p>It is one <strong>SCITT profile</strong> among others &mdash; specialized for agent actions, built on the general SCITT/COSE substrate, and interoperable with any SCITT transparency service. Adopting it means building on a shared profile, not forking your own.</p>
 
-<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile is an individual IETF Internet-Draft (<code>draft-mih-scitt-agent-action-capsule</code>) — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. It builds on the IETF SCITT and COSE drafts, which are themselves still in progress and not yet published as RFCs. RFC&nbsp;9162 (Certificate Transparency 2.0) is a published RFC. <strong>Tracking the standard:</strong> this profile is built to track SCITT and COSE as they finalize — as those drafts advance and are published as RFCs, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented.</div>
+<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile is an individual IETF Internet-Draft (<code>draft-mih-scitt-agent-action-capsule</code>) — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. It builds on the IETF SCITT Architecture (now <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) and the COSE receipt specifications, which are still in progress. RFC&nbsp;9162 (Certificate Transparency 2.0) is also a published RFC. <strong>Tracking the standard:</strong> this profile is built to track SCITT and COSE as they finalize — as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented.</div>
 <div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/concepts.md">Concepts, in plain words &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/anatomy.md">Anatomy of a capsule &#x2197;</a></div>
       <div class="next"><a class="p" href="/docs/"><div class="dir">&#8592; Previous</div><div class="ttl">Overview</div></a><a class="n" href="/docs/statement-vs-transparency-layer.html"><div class="dir">Next &#8594;</div><div class="ttl">Statement vs transparency layer</div></a></div>
     </article>
@@ -249,7 +248,7 @@
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
+        <p>An open, individual profile (an IETF Internet-Draft; not WG-adopted) built on the SCITT Architecture (<a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:inherit">RFC&nbsp;9943</a>), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">

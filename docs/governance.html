@@ -162,7 +162,6 @@
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
-<a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
@@ -206,7 +205,7 @@
 <p>Changes happen by pull request and public discussion, with lazy consensus among maintainers; significant changes get an issue first. The <em>specification</em> evolves through the IETF process — it's an individual Internet-Draft (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>), and the goal is to bring it to the SCITT working group, where the WG — not this project — decides its standing.</p>
 
 <h2>Conformance to the final standard</h2>
-<p>SCITT and COSE are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those drafts advance and are published as RFCs, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
+<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; COSE receipt specifications are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
 
 <h2>The path to a neutral foundation</h2>
 <p>Donation is a commitment, not just a hope. The intended sequence:</p>
@@ -221,7 +220,7 @@
 <p>Candidate homes are neutral, foundation-style bodies in the open-source / standards world; the specific home will be chosen with the community rather than announced unilaterally.</p>
 
 <h2>Scope &amp; boundaries</h2>
-<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the open/commercial line is transparent, not implied.</p>
+<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the boundary between the open record layer and runtime enforcement is explicit, not implied.</p>
 
 <div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. A community chat (Discord/Slack) is coming soon.</div>
 
@@ -234,7 +233,7 @@
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
+        <p>An open, individual profile (an IETF Internet-Draft; not WG-adopted) built on the SCITT Architecture (<a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:inherit">RFC&nbsp;9943</a>), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
