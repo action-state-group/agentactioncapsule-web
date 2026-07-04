@@ -217,7 +217,7 @@
       <a class="btn btn-ghost" href="/docs/log.html">Watch the log live <span class="arrow">→</span></a>
     </div>
     <div class="hero-meta">
-      <span><span class="dot"></span> Built on the SCITT protocol</span>
+      <span><span class="dot"></span> Built on IETF SCITT (RFC&nbsp;9943)</span>
       <span><span class="dot"></span> Verifier + producer, open source</span>
       <span><span class="dot"></span> Cross-implementation tested (RFC9162 · CCF)</span>
     </div>
@@ -242,7 +242,7 @@
     <div class="sec-head">
       <span class="eyebrow">The problem</span>
       <h2>Agents take actions. Right now, you have to trust the operator that they happened as claimed.</h2>
-      <p>The Agent Action Capsule closes that gap with three properties — the same shape <strong>SCITT</strong> (the IETF effort standardizing transparency for signed statements, currently Internet-Drafts) defines for software supply chains, profiled for agent actions.</p>
+      <p>The Agent Action Capsule closes that gap with three properties — the same shape <strong>SCITT</strong> (the IETF effort standardizing transparency for signed statements, now standardized in <a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:var(--accent);text-decoration:none">RFC&nbsp;9943</a> (the SCITT Architecture), with COSE receipt specifications still in progress) defines for software supply chains, profiled for agent actions.</p>
     </div>
     <div class="grid3">
       <div class="card">
@@ -442,13 +442,13 @@ mcpGuardrails:
       <p>Identity, authorization, payments, runtime gates — each proves its own slice, and each is self-attested about it. The capsule composes with all of them by digest-reference, and adds the one thing none can self-provide: a record checkable by someone who trusts neither the operator nor any single layer.</p>
     </div>
     <table class="fit">
-      <thead><tr><th>Layer</th><th>Answers</th><th>Doesn't answer</th></tr></thead>
+      <thead><tr><th>Leg</th><th>Answers</th><th>Doesn't answer</th></tr></thead>
       <tbody>
-        <tr><th>Identity <span class="ex">e.g. SPIFFE/WIMSE, agent IDs</span></th><td><em>who</em> the agent is</td><td>what it did</td></tr>
-        <tr><th>Authorization <span class="ex">e.g. OAuth/AAuth, GNAP, policy</span></th><td>what it <em>may</em> do</td><td>what it actually did, and the outcome</td></tr>
+        <tr><th>WHO — Identity <span class="ex">e.g. SPIFFE/WIMSE, agent IDs</span></th><td>which accountable principal — <em>who</em> the agent is</td><td>what it did</td></tr>
+        <tr><th>CAN — Authorization <span class="ex">e.g. OAuth/AAuth, GNAP, policy</span></th><td>what it <em>may</em> do</td><td>what it actually did, and the outcome</td></tr>
         <tr><th>Payments / settlement <span class="ex">e.g. AP2</span></th><td>whether a human authorized the spend</td><td>what was actually done, end-to-end</td></tr>
-        <tr><th>Runtime gate / observability <span class="ex">e.g. a policy gateway, your logs</span></th><td>what <em>you say</em> happened</td><td>nothing to a party who doesn't trust you — it's self-attested</td></tr>
-        <tr class="cap"><th>Agent Action Capsule</th><td>what it provably <em>did</em></td><td>composes with all of the above</td></tr>
+        <tr><th>AUDIT — Runtime gate / observability <span class="ex">e.g. a policy gateway, your logs</span></th><td>what <em>you say</em> happened</td><td>nothing to a party who doesn't trust you — it's self-attested</td></tr>
+        <tr class="cap"><th>WHAT — Agent Action Capsule</th><td>what it provably <em>did</em></td><td>composes with all of the above</td></tr>
       </tbody>
     </table>
     <p class="fit-note">Each layer is self-attested about its own slice; the capsule is the independent record of what was actually done that they all commit into. Adopting it doesn't fork your stack — it references the others' evidence by digest. <a href="/docs/how-it-composes.html" style="color:var(--accent);text-decoration:none">How it composes →</a> · <a href="/docs/whats-consequential.html" style="color:var(--accent);text-decoration:none">what's worth sealing →</a></p>
@@ -549,9 +549,9 @@ agent-action-capsule verify --store ledger.jsonl
         <a href="https://github.com/action-state-group/scitt-cose">scitt-cose ↗</a>
       </div>
       <div class="ic-card">
-        <span class="badge">IN MOTION · IETF 126</span>
+        <span class="badge">PREPARING · IETF 126</span>
         <h3>Implementation report</h3>
-        <p>An implementation report to the SCITT working group at IETF 126 (Vienna), bringing the verifier and the shared vectors to the plug-fest.</p>
+        <p>We intend to bring an implementation report and the shared test vectors to the SCITT working group at IETF 126 (Vienna) — connecting the verifier, the vectors, and the plug-fest.</p>
         <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule ↗</a>
       </div>
     </div>
@@ -637,7 +637,7 @@ agent-action-capsule verify --store ledger.jsonl
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
+        <p>An open, individual profile (an IETF Internet-Draft; not WG-adopted) built on the SCITT Architecture (<a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:inherit">RFC&nbsp;9943</a>), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">

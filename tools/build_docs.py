@@ -12,7 +12,8 @@ Out:  docs/*.html  (one page per entry in PAGES, plus docs/index.html)
 
 NEUTRALITY: these pages are neutral substrate only. No product, moat, Authority,
 tiering, or monetization language. Standards status is stated honestly
-(individual Internet-Draft; SCITT/COSE drafts are not yet RFCs).
+(individual Internet-Draft; SCITT Architecture = RFC 9943; COSE receipt drafts
+still in progress).
 """
 from __future__ import annotations
 
@@ -58,11 +59,13 @@ STATUS_NOTE = (
     "<strong>Status.</strong> The Agent Action Capsule profile is an individual "
     "IETF Internet-Draft (<code>draft-mih-scitt-agent-action-capsule</code>) — "
     "submitted for discussion, <em>not</em> adopted by a working group, and not a "
-    "standard. It builds on the IETF SCITT and COSE drafts, which are themselves "
-    "still in progress and not yet published as RFCs. RFC&nbsp;9162 (Certificate "
-    "Transparency 2.0) is a published RFC. <strong>Tracking the standard:</strong> "
+    "standard. It builds on the IETF SCITT Architecture (now "
+    "<a class=\"ln\" href=\"https://www.rfc-editor.org/rfc/rfc9943\">RFC&nbsp;9943</a>) "
+    "and the COSE receipt specifications, which are still in progress. "
+    "RFC&nbsp;9162 (Certificate Transparency 2.0) is also a published RFC. "
+    "<strong>Tracking the standard:</strong> "
     "this profile is built to track SCITT and COSE as they finalize — as those "
-    "drafts advance and are published as RFCs, the profile and its reference "
+    "specifications advance, the profile and its reference "
     "implementations will be updated to conform to the final versions, and any "
     "breaking changes will be versioned and documented."
 )
@@ -196,7 +199,7 @@ FOOTER = """<footer>
     <div class="foot-in">
       <div class="foot-brand">
         <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-        <p>An open, individual profile built on the SCITT protocol (an IETF Internet-Draft; not WG-adopted), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
+        <p>An open, individual profile (an IETF Internet-Draft; not WG-adopted) built on the SCITT Architecture (<a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:inherit">RFC&nbsp;9943</a>), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
@@ -507,7 +510,7 @@ PAGES["verifiable-data-structures"] = dict(
     <tr><th>Basis</th><td>RFC&nbsp;9162 (Certificate Transparency 2.0) Merkle trees, SHA-256</td><td>Microsoft CCF (Confidential Consortium Framework) ledger receipts</td></tr>
     <tr><th>Proof shape</th><td>Merkle inclusion path + signed tree head</td><td>CCF ledger inclusion proof signed by the service identity</td></tr>
     <tr><th>Verify with</th><td>the log's public key + the leaf digest</td><td>the CCF service certificate / identity</td></tr>
-    <tr><th>Published status</th><td>RFC&nbsp;9162 is a published RFC</td><td>CCF is an open-source framework; the SCITT mapping is a draft</td></tr>
+    <tr><th>Published status</th><td>RFC&nbsp;9162 is a published RFC; the SCITT Architecture is <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a></td><td>CCF is an open-source framework; the SCITT mapping is a draft</td></tr>
   </tbody>
 </table>
 
@@ -708,6 +711,11 @@ PAGES["how-it-composes"] = dict(
 <h2>What only the capsule adds</h2>
 <p>A record of what the agent did that any third party can verify <strong>without trusting the operator, the model vendor, or the log</strong>. That neutrality is the point: it's the piece a single party's own system can't provide for itself, because a party vouching for its own actions is exactly what a verifier can't take on faith.</p>
 <div class="callout">A capsule records the bytes it is given. Authenticating <em>upstream</em> inputs — that a tool response or grounding source is genuine — is a separate, composable layer; bind its evidence by digest and the verifier checks that too. Composition, not dependency.</div>
+
+<h2>The four-leg accountability picture</h2>
+<p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
+<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
+<div class="callout"><strong>Composition stub.</strong> A neutral, four-leg composition architecture — covering how CAN / WHO / WHAT / AUDIT interoperate across implementations — is forthcoming as a separate specification. Cross-links will be added here once that work posts. The shared-digest binding above is the seam.</div>
 """,
 )
 
@@ -777,7 +785,7 @@ PAGES["governance"] = dict(
 <p>Changes happen by pull request and public discussion, with lazy consensus among maintainers; significant changes get an issue first. The <em>specification</em> evolves through the IETF process — it's an individual Internet-Draft (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>), and the goal is to bring it to the SCITT working group, where the WG — not this project — decides its standing.</p>
 
 <h2>Conformance to the final standard</h2>
-<p>SCITT and COSE are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those drafts advance and are published as RFCs, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
+<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; COSE receipt specifications are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
 
 <h2>The path to a neutral foundation</h2>
 <p>Donation is a commitment, not just a hope. The intended sequence:</p>
@@ -792,7 +800,7 @@ PAGES["governance"] = dict(
 <p>Candidate homes are neutral, foundation-style bodies in the open-source / standards world; the specific home will be chosen with the community rather than announced unilaterally.</p>
 
 <h2>Scope &amp; boundaries</h2>
-<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the open/commercial line is transparent, not implied.</p>
+<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the boundary between the open record layer and runtime enforcement is explicit, not implied.</p>
 
 <div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. A community chat (Discord/Slack) is coming soon.</div>
 """,
@@ -808,7 +816,7 @@ PAGES["glossary"] = dict(
 <table class="t">
   <thead><tr><th>Term</th><th>Definition</th></tr></thead>
   <tbody>
-    <tr><th>SCITT</th><td>Supply Chain Integrity, Transparency, and Trust &mdash; the IETF working group and architecture for registering signed statements in transparency services. Its specifications are drafts, not yet RFCs.</td></tr>
+    <tr><th>SCITT</th><td>Supply Chain Integrity, Transparency, and Trust &mdash; the IETF working group and architecture for registering signed statements in transparency services. Its Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; some COSE receipt specifications are still drafts.</td></tr>
     <tr><th>SCITT profile</th><td>A specialization of the general SCITT signed-statement format for a domain. The Agent Action Capsule is the profile for <em>agent actions</em> &mdash; it builds on SCITT/COSE and interoperates with any SCITT transparency service, rather than being a separate standard.</td></tr>
     <tr><th>COSE</th><td>CBOR Object Signing and Encryption &mdash; the signature format used for statements and receipts.</td></tr>
     <tr><th>COSE_Sign1</th><td>A single-signer COSE structure: one signature over a protected header and payload. The envelope an Agent Action Capsule uses.</td></tr>
