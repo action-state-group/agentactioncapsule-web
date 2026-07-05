@@ -12,8 +12,8 @@ Out:  docs/*.html  (one page per entry in PAGES, plus docs/index.html)
 
 NEUTRALITY: these pages are neutral substrate only. No product, moat, Authority,
 tiering, or monetization language. Standards status is stated honestly
-(individual Internet-Draft; SCITT Architecture = RFC 9943; COSE receipt drafts
-still in progress).
+(individual Internet-Draft; SCITT Architecture = RFC 9943; COSE Receipts = RFC 9942,
+in AUTH48 final review, pre-publication).
 """
 from __future__ import annotations
 
@@ -61,7 +61,9 @@ STATUS_NOTE = (
     "submitted for discussion, <em>not</em> adopted by a working group, and not a "
     "standard. It builds on the IETF SCITT Architecture (now "
     "<a class=\"ln\" href=\"https://www.rfc-editor.org/rfc/rfc9943\">RFC&nbsp;9943</a>) "
-    "and the COSE receipt specifications, which are still in progress. "
+    "and the COSE Receipts specification, which has been approved and assigned "
+    "<a class=\"ln\" href=\"https://datatracker.ietf.org/doc/draft-ietf-cose-merkle-tree-proofs/\">RFC&nbsp;9942</a> "
+    "&mdash; now in AUTH48 (final editorial review) ahead of publication. "
     "RFC&nbsp;9162 (Certificate Transparency 2.0) is also a published RFC. "
     "<strong>Tracking the standard:</strong> "
     "this profile is built to track SCITT and COSE as they finalize — as those "
