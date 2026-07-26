@@ -38,6 +38,9 @@ SCAN_SUFFIXES = (
     ".yml", ".yaml", ".json",
 )
 
+# Well-known extensionless text files that must also be scanned.
+SCAN_NAMES = frozenset({"NOTICE", "COPYING", "README"})
+
 
 def _load_config() -> tuple[re.Pattern[str], tuple[str, ...]]:
     raw = os.environ.get("NEUTRALITY_TERMS", "").strip()
@@ -92,7 +95,9 @@ def scan(root: Path, pattern: re.Pattern[str], allow: tuple[str, ...]) -> list[s
     offenders: list[str] = []
     for path in candidates:
         path = Path(path)
-        if not path.is_file() or path.suffix.lower() not in SCAN_SUFFIXES:
+        if not path.is_file() or (
+            path.suffix.lower() not in SCAN_SUFFIXES and path.name not in SCAN_NAMES
+        ):
             continue
         if ".git/" in str(path):
             continue
