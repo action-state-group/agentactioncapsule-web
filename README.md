@@ -16,9 +16,10 @@ robots.txt, sitemap.xml
 LICENSE, NOTICE         Apache-2.0
 ```
 
-Neutral substrate: no product / moat / Authority / tiering / monetization language. The three
-neutral surfaces (this site, `anchor.agentactioncapsule.org`, `verify.actionstate.ai`) share one
-visual system and a common cross-site nav + footer.
+Neutral substrate: documents the open specification and the open-source implementations only;
+no product or business content. The three neutral surfaces (this site,
+`anchor.agentactioncapsule.org`, `verify.actionstate.ai`) share one visual system and a common
+cross-site nav + footer.
 
 ## Run locally
 

@@ -10,8 +10,8 @@ shared chrome (tokens, nav, footer, sidebar) DRY at authoring time.
 Run:  python3 tools/build_docs.py
 Out:  docs/*.html  (one page per entry in PAGES, plus docs/index.html)
 
-NEUTRALITY: these pages are neutral substrate only. No product, moat, Authority,
-tiering, or monetization language. Standards status is stated honestly
+NEUTRALITY: these pages are neutral substrate only. No product or business content.
+Standards status is stated honestly
 (individual Internet-Draft; SCITT Architecture = RFC 9943; COSE Receipts = RFC 9942,
 in AUTH48 final review, pre-publication).
 """
