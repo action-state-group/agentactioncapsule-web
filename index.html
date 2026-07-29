@@ -194,7 +194,7 @@
     <div class="nav-links">
       <a class="active" href="/">Standard</a>
       <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
-      <a href="https://verify.actionstate.ai">Verifier</a>
+      <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source ↗</a>
       <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) ↗</a>
@@ -208,7 +208,7 @@
 <header class="hero">
   <div class="wrap">
     <span class="eyebrow">Open SCITT profile · early-stage draft (IETF Internet-Draft) · open source</span>
-    <h1>A verifiable record of <span class="hl">what an AI agent did.</span></h1>
+    <h1>Prove what your agent did &mdash;<br><span class="hl">to someone who doesn&rsquo;t trust you.</span></h1>
     <p class="lede">AI agents are just starting to take consequential actions — placing orders, moving money, changing records. When one does, the only proof it happened as intended is the operator's own word. An Agent Action Capsule fixes that: a tamper-evident, content-private record of the action that <em>anyone can verify from the record itself — without trusting the operator</em>.</p>
     <p class="lede" style="font-size:15px;margin-top:10px;color:var(--muted)">It's early — for the technology and for this profile. The aim is to get the <em>record</em> of what agents do right while it's still being figured out: in the open, verifiable by anyone, and built to be donated so it ends up owned by no one. (Roughly the role TLS plays for a connection, applied to an agent's actions.)</p>
     <div class="hero-cta">
@@ -242,7 +242,7 @@
     <div class="sec-head">
       <span class="eyebrow">The problem</span>
       <h2>Agents take actions. Right now, you have to trust the operator that they happened as claimed.</h2>
-      <p>The Agent Action Capsule closes that gap with three properties — the same shape <strong>SCITT</strong> (the IETF effort standardizing transparency for signed statements, now standardized in <a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:var(--accent);text-decoration:none">RFC&nbsp;9943</a> (the SCITT Architecture), with the COSE Receipts specification approved as <a href="https://datatracker.ietf.org/doc/draft-ietf-cose-merkle-tree-proofs/" style="color:var(--accent);text-decoration:none">RFC&nbsp;9942</a> and in AUTH48, ahead of publication) defines for software supply chains, profiled for agent actions.</p>
+      <p>The Agent Action Capsule closes that gap with three properties — the same shape <strong>SCITT</strong> (the IETF effort standardizing transparency for signed statements, now standardized in <a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:var(--accent);text-decoration:none">RFC&nbsp;9943</a> (the SCITT Architecture), with the COSE Receipts specification now published as <a href="https://www.rfc-editor.org/rfc/rfc9942" style="color:var(--accent);text-decoration:none">RFC&nbsp;9942</a>) defines for software supply chains, profiled for agent actions.</p>
     </div>
     <div class="grid3">
       <div class="card">
@@ -455,6 +455,40 @@ mcpGuardrails:
   </div>
 </section>
 
+
+<!-- CPB — CANONICAL PAYLOAD BINDING -->
+<section class="band" id="cpb" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Canonical Payload Binding</span>
+      <h2>The composition crux: every profile speaks the same binding language.</h2>
+      <p>The Agent Action Capsule seals SHA-256 digests of your inputs and outputs — not the raw bytes. The precise construction (how those digests are canonicalized and committed) is defined in a companion IETF draft: the <strong>Canonical Payload Binding</strong> (CPB). CPB is the shared layer that lets capsules compose across profiles, frameworks, and implementations without drift.</p>
+    </div>
+    <div class="grid3">
+      <div class="card">
+        <div class="k">jcs-n</div>
+        <h3>One canonicalization</h3>
+        <p>RFC 8785 JCS over the normalized value — the same algorithm any independent implementation can run to recompute the digest.</p>
+      </div>
+      <div class="card">
+        <div class="k">Typed reference</div>
+        <h3>Reference by digest, not copy</h3>
+        <p>External evidence (authorization grants, policy decisions, upstream receipts) binds by its SHA-256 digest. The referenced data stays where it lives; only the commitment travels.</p>
+      </div>
+      <div class="card">
+        <div class="k">Spec-pure</div>
+        <h3>Second independent implementation</h3>
+        <p>The CPB vector suite is the acceptance gate. The Python reference lib and the TypeScript SDK both pass the same 21+ vectors — byte-compatible, independently verified.</p>
+      </div>
+    </div>
+    <p style="margin-top:28px;font-size:14px;color:var(--muted)">
+      Spec: <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">draft-mih-sokolov-scitt-payload-binding-01 ↗</a>&ensp;&middot;&ensp;
+      Registry: <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/cpb-provisional-registry.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">provisional registry ↗</a>&ensp;&middot;&ensp;
+      Vectors: <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/test-vectors" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">test vectors ↗</a>
+    </p>
+  </div>
+</section>
+
 <!-- VERIFY -->
 <section class="band" id="verify">
   <div class="wrap">
@@ -493,8 +527,40 @@ agent-action-capsule verify --store ledger.jsonl
     </div>
     <div class="hero-cta">
       <a class="btn btn-primary" href="/docs/explore.html#share">Verify a bundle yourself <span class="arrow">→</span></a>
-      <a class="btn btn-ghost" href="https://verify.actionstate.ai">Open the verifier <span class="arrow">↗</span></a>
+      <a class="btn btn-ghost" href="https://verify.agentactioncapsule.org">Open the verifier <span class="arrow">↗</span></a>
     </div>
+  </div>
+</section>
+
+
+<!-- ADOPTION LADDER -->
+<section class="band" id="adopt-ladder">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Adoption path</span>
+      <h2>One config change per rung — start in ten minutes, scale as you need.</h2>
+    </div>
+    <div class="grid3" style="align-items:start">
+      <div class="card">
+        <div class="k" style="color:var(--verify)">Rung 1 · Stub</div>
+        <h3>Structured records, offline verify</h3>
+        <p>Set <code>CAPSULE_ANCHOR=false</code>. Structured records, local ledger file, offline verification. Zero services. The ten-minute first touch — no network, no account.</p>
+        <p style="margin-top:10px;font-size:13px;color:var(--muted)">Page renders: <em>self-attested / not anchored</em></p>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--verify)">Rung 2 · Self-hosted anchor</div>
+        <h3>Real receipts, your trust domain</h3>
+        <p>Deploy your own <code>capsule-anchor</code> instance. Real inclusion receipts within your org — tamper-evident across teams, honest internal separation of duties.</p>
+        <p style="margin-top:10px;font-size:13px;color:var(--muted)">Policy descriptor tier: <em>self-operated</em></p>
+      </div>
+      <div class="card">
+        <div class="k" style="color:var(--verify)">Rung 3 · Public anchor</div>
+        <h3>Third-party verifiable</h3>
+        <p>One config change: point at the public anchor. Records become third-party-verifiable; permalinks are shareable. No signup, no key, no cost.</p>
+        <p style="margin-top:10px;font-size:13px;color:var(--muted)">Policy descriptor tier: <em>public</em></p>
+      </div>
+    </div>
+    <p style="margin-top:24px;font-size:14px;color:var(--muted)">Full adoption guide: <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">ADOPT.md ↗</a></p>
   </div>
 </section>
 
@@ -552,7 +618,7 @@ agent-action-capsule verify --store ledger.jsonl
         <span class="badge">PREPARING · IETF 126</span>
         <h3>Implementation report</h3>
         <p>We intend to bring an implementation report and the shared test vectors to the SCITT working group at IETF 126 (Vienna) — connecting the verifier, the vectors, and the plug-fest.</p>
-        <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule ↗</a>
+        AAC: <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-02 ↗</a>&ensp;&middot;&ensp;CPB: <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-01 ↗</a>
       </div>
     </div>
   </div>
@@ -597,6 +663,19 @@ agent-action-capsule verify --store ledger.jsonl
   </div>
 </section>
 
+
+<!-- PLAYGROUND SLOT -->
+<section class="band" id="playground" style="background:var(--paper-2)">
+  <div class="wrap" style="max-width:780px;text-align:center">
+    <span class="eyebrow">Playground</span>
+    <h2 style="font-size:clamp(24px,3vw,34px);letter-spacing:-0.6px;margin:12px 0 16px">Mint your own capsule — in under 60 seconds.</h2>
+    <p style="font-size:17px;color:var(--muted);margin-bottom:28px">One button. No signup. No install. Your agent action sealed client-side, anchored to the public log, and handed back as a shareable permalink anyone can verify.</p>
+    <p style="font-size:14px;color:var(--muted);font-family:var(--mono);border:1px dashed var(--line);border-radius:12px;padding:20px 24px;display:inline-block">
+      Playground launching soon &mdash; see the <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none">quickstart</a> to seal your first capsule now.
+    </p>
+  </div>
+</section>
+
 <!-- GET INVOLVED -->
 <section class="band stack" id="get-involved">
   <div class="wrap">
@@ -626,7 +705,15 @@ agent-action-capsule verify --store ledger.jsonl
         <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">Read the draft ↗</a>
       </div>
     </div>
-    <p class="fit-note">New here? <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read how the project is governed →</a> · Join the conversation on <a href="https://github.com/action-state-group" style="color:var(--accent);text-decoration:none">GitHub</a> — a community chat (Discord/Slack) is coming soon.</p>
+    <div class="sec-head" style="margin-top:44px;margin-bottom:20px">
+      <span class="eyebrow">Adopters &amp; interop</span>
+      <h2 style="font-size:clamp(18px,2vw,24px);letter-spacing:-0.4px;margin:8px 0 8px">Who's already using it.</h2>
+    </div>
+    <div style="border:1px dashed var(--line);border-radius:12px;padding:22px 26px;font-size:14px;color:var(--muted);font-family:var(--mono)">
+      Adopter quotes and interop results arriving here. Building? <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none">Start with ADOPT.md ↗</a> &mdash; 30-minute self-serve path from zero to anchored, verified capsule.
+    </div>
+
+    <p class="fit-note">New here? <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read how the project is governed →</a> · Join the conversation on <a href="https://github.com/action-state-group" style="color:var(--accent);text-decoration:none">GitHub</a>.</p>
   </div>
 </section>
 
@@ -645,13 +732,15 @@ agent-action-capsule verify --store ledger.jsonl
           <h5>Standard</h5>
           <a href="/">Overview</a>
           <a href="/docs/">Docs</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft ↗</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (‑02) ↗</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (‑01) ↗</a>
           <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide ↗</a>
+          <a href="/playground.html">Playground</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
           <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
-          <a href="https://verify.actionstate.ai">Verifier</a>
+          <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
           <h5>Source</h5>
