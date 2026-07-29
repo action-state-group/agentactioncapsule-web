@@ -138,7 +138,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
-      <a href="https://verify.actionstate.ai">Verifier</a>
+      <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
       <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) &#x2197;</a>
@@ -169,6 +169,7 @@
 <a href="/docs/glossary.html">Glossary</a>
 <h5>Project</h5>
 <a href="/docs/governance.html">Governance</a>
+<a href="/ip">Patent posture</a>
 </nav>
     <article>
       <div class="crumb">Guides</div>
@@ -177,7 +178,9 @@
 <p class="lede">From install to a verified, anchored record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API.</p>
 
 <h2>1. Install</h2>
-<pre class="code"><code>pip install "capsule-emit==0.1.1" agent-action-capsule</code></pre>
+<pre class="code"><code>pip install capsule-emit agent-action-capsule  # 0.3.2 or later</code></pre>
+
+<div class="callout"><strong>Where you start matters.</strong> By default, <code>emit()</code> anchors to the public log. If you want to try locally first with no network or services, set <code>CAPSULE_ANCHOR=false</code> (or pass <code>anchor=False</code>): you get structured records and a local ledger file you can verify offline, with the page showing <em>self-attested / not anchored</em>. One config change moves you to anchoring when you&rsquo;re ready. See the <a class="ln" href="#where-it-anchors">adoption ladder</a>.</div>
 
 <h2>2. Seal an action</h2>
 <p>Call <code>emit()</code> once at each consequential action. <code>operator</code>, <code>developer</code>, <code>action</code>, <code>agent_input</code>, <code>agent_output</code>, <code>verdict</code>, and <code>effect</code> are required; <code>model</code> is optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
@@ -199,7 +202,7 @@ print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted
 <div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter emits on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
 
 <h2>3. Where it anchors</h2>
-<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service, or <code>anchor=False</code> to seal locally.</p>
+<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>CAPSULE_ANCHOR=false</code> (or <code>anchor=False</code>) to seal locally; set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
 
 <h2>4. Verify</h2>
 <p>Each <code>emit()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
@@ -235,7 +238,7 @@ agent-action-capsule verify --store ledger.jsonl
         <div class="foot-col">
           <h5>Services</h5>
           <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
-          <a href="https://verify.actionstate.ai">Verifier</a>
+          <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
           <h5>Source</h5>

@@ -92,7 +92,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
-      <a href="https://verify.actionstate.ai">Verifier</a>
+      <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source ↗</a>
       <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) ↗</a>
@@ -127,7 +127,7 @@
 
     <div class="fallback" id="fallback">
       <h3 id="fbTitle">The public log is live — read it on the transparency service</h3>
-      <p id="fbBody">This page loads recent records live from the public anchor. If the live feed can't load here yet, the log is still public and running now — open it at <a href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org ↗</a>, or verify any receipt at <a href="https://verify.actionstate.ai">verify.actionstate.ai ↗</a>.</p>
+      <p id="fbBody">This page loads recent records live from the public anchor. If the live feed can't load here yet, the log is still public and running now — open it at <a href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org ↗</a>, or verify any receipt at <a href="https://verify.agentactioncapsule.org">verify.agentactioncapsule.org ↗</a>.</p>
     </div>
 
     <p class="note">This view reads the anchor's public, read-only endpoints (<span class="mono">/anchor/sth</span>, <span class="mono">/anchor/transparency-log</span>) directly in your browser and refreshes on its own. Nothing here is stored or fabricated — if the live feed can't load, it says so rather than showing placeholder data.</p>
@@ -145,7 +145,7 @@
       </div>
       <div class="foot-cols">
         <div class="foot-col"><h5>Standard</h5><a href="/">Overview</a><a href="/docs/">Docs</a><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft ↗</a></div>
-        <div class="foot-col"><h5>Services</h5><a href="https://anchor.agentactioncapsule.org">Transparency Log</a><a href="https://verify.actionstate.ai">Verifier</a></div>
+        <div class="foot-col"><h5>Services</h5><a href="https://anchor.agentactioncapsule.org">Transparency Log</a><a href="https://verify.agentactioncapsule.org">Verifier</a></div>
         <div class="foot-col"><h5>Source</h5><a href="https://github.com/action-state-group">GitHub ↗</a><a href="https://github.com/ietf-wg-scitt/examples">Test vectors ↗</a></div>
       </div>
     </div>
@@ -167,7 +167,7 @@
     document.getElementById("stats").style.display="none";document.getElementById("live").style.display="none";
     document.getElementById("fallback").style.display="block";document.getElementById("liveword").textContent="public log";
     document.getElementById("fbTitle").textContent="The log is live — open it on the transparency service";
-    document.getElementById("fbBody").innerHTML="The live feed couldn't load here yet (the anchor doesn't permit cross-origin reads from this page). The log is public and running now — open it directly at <a href=\""+ANCHOR+"\">anchor.agentactioncapsule.org ↗</a>, or check any receipt at <a href=\"https://verify.actionstate.ai\">verify.actionstate.ai ↗</a>.";
+    document.getElementById("fbBody").innerHTML="The live feed couldn't load here yet (the anchor doesn't permit cross-origin reads from this page). The log is public and running now — open it directly at <a href=\""+ANCHOR+"\">anchor.agentactioncapsule.org ↗</a>, or check any receipt at <a href=\"https://verify.agentactioncapsule.org\">verify.agentactioncapsule.org ↗</a>.";
   }
 
   function renderFeed(entries){
