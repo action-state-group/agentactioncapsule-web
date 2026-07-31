@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Governance — how the project is run, and where it's headed &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="The Agent Action Capsule is open and built to be donated. Stewarded today by Action State Group with the explicit intent to transfer the profile, trademark, and reference services to a neutral foundation. Governance modeled on Linux Foundation practice; co-maintainers welcome.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/governance.html">
+<title>Bilateral Attestation &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="When two organizations act together, one record owned by one party isn't evidence. Bilateral attestation gives each party proof of the other's commitment &mdash; verifiable by a third party who trusts neither.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/bilateral.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Governance — how the project is run, and where it's headed">
-<meta property="og:description" content="The Agent Action Capsule is open and built to be donated. Stewarded today by Action State Group with the explicit intent to transfer the profile, trademark, and reference services to a neutral foundation. Governance modeled on Linux Foundation practice; co-maintainers welcome.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/governance.html">
+<meta property="og:title" content="Bilateral Attestation">
+<meta property="og:description" content="When two organizations act together, one record owned by one party isn't evidence. Bilateral attestation gives each party proof of the other's commitment — verifiable by a third party who trusts neither.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/bilateral.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Governance — how the project is run, and where it's headed">
-<meta name="twitter:description" content="The Agent Action Capsule is open and built to be donated. Stewarded today by Action State Group with the explicit intent to transfer the profile, trademark, and reference services to a neutral foundation. Governance modeled on Linux Foundation practice; co-maintainers welcome.">
+<meta name="twitter:title" content="Bilateral Attestation">
+<meta name="twitter:description" content="When two organizations act together, one record owned by one party isn't evidence. Bilateral attestation gives each party proof of the other's commitment — verifiable by a third party who trusts neither.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -128,6 +128,12 @@
     .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-links::-webkit-scrollbar{display:none}
   }
+  .steps{counter-reset:step;margin:6px 0 24px;display:flex;flex-direction:column;gap:0}
+  .step{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:none}
+  .step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+  .step-body h3{font-size:16px;font-weight:600;margin-bottom:5px}
+  .step-body p{font-size:14px;color:var(--muted);margin:0}
 </style>
 </head>
 <body>
@@ -168,66 +174,98 @@
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
 <h5>Extensions</h5>
-<a href="/docs/bilateral.html">Bilateral attestation</a>
+<a href="/docs/bilateral.html" class="active">Bilateral attestation</a>
 <h5>Project</h5>
-<a href="/docs/governance.html" class="active">Governance</a>
+<a href="/docs/governance.html">Governance</a>
 <a href="/ip">Patent posture</a>
 </nav>
     <article>
-      <div class="crumb">Project</div>
-      
-<h1>Governance</h1>
-<p class="lede">This project exists to produce a <strong>neutral, openly governed</strong> record layer for agent actions — and to give it away. This page states how it's run today, the principles it holds to, and the concrete path to a neutral home.</p>
+      <div class="crumb">Extensions</div>
 
-<h2>Why governed this way</h2>
-<p>Verifiable records of what AI agents do are infrastructure the whole ecosystem depends on. We think AI safety and open standards matter far too much for that layer to be controlled by any single company — so the design goal from day one is to donate it. The maintainers have stewarded openly and neutrally governed software before (the Presto Foundation, under the Linux Foundation), and this project is modeled on that practice.</p>
+<h1>Bilateral Attestation</h1>
+<p class="lede">When two organizations act together across a trust boundary, one record — owned by one side, deniable by the other — isn't evidence. Bilateral attestation gives each organization proof of the other's commitment, verifiable by a third party who trusts neither.</p>
 
-<h2>Principles</h2>
+<h2>The problem it solves</h2>
+<p>Each side keeps its own log. A dispute reduces to <em>my log versus your log</em>. Neither log carries the other party's agreement; either side can later claim the terms were different. The record exists, but it proves nothing a relying party can check independently.</p>
+<p>Bilateral attestation replaces that with a four-move exchange that produces a record both parties have signed, each party holds proof of the other's signature, and the combined record can be anchored so a third party who trusts neither organization can verify it end-to-end.</p>
+
+<h2>The four moves</h2>
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h3>Request attestation</h3>
+      <p>The requesting party signs a statement over the action and its material terms, naming the intended performer. The requester is now bound: it cannot later deny having asked, or having asked on these terms.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h3>Constraint evaluation</h3>
+      <p>The performing party verifies the requester's organizational identity and evaluates the request against deterministic constraints <em>at the boundary where the action takes effect</em> — not at the transport edge. No verified request attestation, no consequential action.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h3>Action attestation</h3>
+      <p>The performing party signs a statement referencing the request by digest, recording the constraint results and the disposition — executed, blocked, denied, escalated, timed out. Every outcome is a first-class record; refusals carry the same fidelity as performance.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h3>Acknowledgment</h3>
+      <p>Each party acknowledges the other's attestation. When both acknowledge, each is bound to its part and holds proof of the other's. The record is complete.</p>
+    </div>
+  </div>
+</div>
+
+<div class="callout">The two capsules are joined by a shared <code>action_digest</code> — SHA-256 of the canonicalized action — so a third party who receives both can confirm they describe the same action without either org having to reveal the action's content.</div>
+
+<h2>Refusals are first-class</h2>
+<p>A declined request is a completed exchange, not a failed one. The action attestation records <em>that</em> the request was declined and <em>on what constraint basis</em>. The requester's acknowledgment is verifiable evidence contradicting any later claim that the request was never answered.</p>
+<p>For the performing party, a bilaterally-acknowledged refusal is stronger evidence than a unilateral one — the counterparty that was refused has signed the record. For the requesting party, a pattern of acknowledged refusals is now provable by its counterparties.</p>
+
+<h2>Graceful degradation</h2>
+<p>Counterparties will be of mixed capability. A performing party whose counterpart cannot produce request attestations may proceed under policy, producing its own action attestation unilaterally and recording a <strong>reduced-assurance indicator</strong> in place of the missing attestations. The record format is the same; the assurance marking differs. A fully-bilateral record and a degraded record are never confusable.</p>
+
+<h2>What it composes with</h2>
 <table class="t">
+  <thead><tr><th>Layer</th><th>Relationship</th></tr></thead>
   <tbody>
-    <tr><th>Open</th><td>Apache-2.0 tooling; the specification under the IETF Trust's terms (BCP 78/79, code components under the Revised BSD License). Developed in public.</td></tr>
-    <tr><th>Vendor-neutral</th><td>No required product; the specification favors no vendor. Any party can implement, run, and anchor — including in their own environment.</td></tr>
-    <tr><th>Verifiable</th><td>Decisions, like capsules, happen in the open: public issues, public PRs, public discussion.</td></tr>
-    <tr><th>Donate by design</th><td>The profile, the trademark, and the reference services are intended to transfer to a neutral foundation as the ecosystem matures.</td></tr>
+    <tr><th>Agent Action Capsule</th><td>Carries the attestations. The disposition vocabulary — <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>deferred</code>, <code>escalated</code> — is reused verbatim.</td></tr>
+    <tr><th>Delegation receipts</th><td>A request attestation may reference a delegation receipt authorizing the requesting agent.</td></tr>
+    <tr><th>SCITT transparency log</th><td>Anchoring both capsules makes the record verifiable by parties who trust neither organization.</td></tr>
+    <tr><th>Remote attestation (RATS)</th><td>RATS attests platform state; bilateral attestation attests actions. Orthogonal layers that compose.</td></tr>
   </tbody>
 </table>
 
-<h2>Where it stands today</h2>
-<p>The project is <strong>stewarded by Action State Group</strong>, which also operates the reference services (the public transparency log and the hosted verifier) for now. This is the honest current state: a single steward, structured to become neutral — not yet a multi-party foundation. We say so plainly rather than imply neutrality the structure doesn't yet have.</p>
+<h2>The Internet-Draft</h2>
+<p>The bilateral attestation exchange is specified as a companion Internet-Draft to the Agent Action Capsule profile:</p>
+<p><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-00 &#x2197;</a></p>
+<p>The draft fixes the exchange, the binding obligations, and the disposition semantics. Wire encodings are TBD for a future revision; the current draft specifies that JCS (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a>) will be used for deterministic canonicalization when wire formats are defined.</p>
 
-<h2>Roles</h2>
-<table class="t">
-  <tbody>
-    <tr><th>Contributors</th><td>Anyone who opens an issue or PR. Contributions are made under the DCO (sign-off); no CLA.</td></tr>
-    <tr><th>Maintainers</th><td>Review and merge changes, cut releases, and steward each repo. Co-maintainers from other organizations are explicitly welcome — earning merge rights through sustained, quality contribution.</td></tr>
-    <tr><th>Technical Steering (planned)</th><td>As independent maintainers join, a lightweight Technical Steering Committee will take over cross-repo decisions — the standard Linux-Foundation-style model.</td></tr>
-  </tbody>
-</table>
+<h2>Open-source implementation</h2>
+<p>A reference implementation is available in two packages:</p>
+<ul>
+  <li><strong><a class="ln" href="https://github.com/action-state-group/capsule-emit">capsule-emit</a></strong> — <code>capsule_emit.bilateral</code>: <code>BilateralHandshake</code> state machine, canonical payload functions, and <code>seal_request</code> / <code>seal_action</code> / <code>seal_bilateral</code> capsule helpers.</li>
+  <li><strong><a class="ln" href="https://github.com/action-state-group/agent-action-capsule">agent-action-capsule</a></strong> — <code>agent_action_capsule.bilateral</code>: <code>verify_pair(capsule_a, capsule_b)</code> — checks individual Class-1 verify, shared action digest, and chain linkage.</li>
+</ul>
+<pre class="code"><code><span class="c"># Run the four-move demo (HMAC-SHA256 demo signer)</span>
+pip install capsule-emit agent-action-capsule
+git clone https://github.com/action-state-group/capsule-emit
+python examples/bilateral/demo.py --no-anchor
 
-<h2>How decisions are made</h2>
-<p>Changes happen by pull request and public discussion, with lazy consensus among maintainers; significant changes get an issue first. The <em>specification</em> evolves through the IETF process — it's an individual Internet-Draft (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>), and the goal is to bring it to the SCITT working group, where the WG — not this project — decides its standing.</p>
+<span class="c"># Verify the capsule pair</span>
+<span class="k">from</span> agent_action_capsule.bilateral <span class="k">import</span> verify_pair
+pvr = verify_pair(capsule_a, capsule_b)
+<span class="ok">assert</span> pvr.ok
+<span class="ok">assert</span> pvr.shared_digest == action_digest</code></pre>
 
-<h2>Conformance to the final standard</h2>
-<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; COSE receipt specifications are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
+<div class="callout warn">The demo uses HMAC-SHA256 with symmetric keys for simplicity. Production deployments should use asymmetric signatures (Ed25519 or equivalent) with keys bound to verifiable organizational identity.</div>
 
-<h2>The path to a neutral foundation</h2>
-<p>Donation is a commitment, not just a hope. The intended sequence:</p>
-<table class="t">
-  <thead><tr><th>Trigger</th><th>What transfers</th></tr></thead>
-  <tbody>
-    <tr><th>Independent implementers + a stable profile</th><td>governance moves to a Technical Steering Committee with multi-org maintainers</td></tr>
-    <tr><th>Foundation home selected</th><td>the <code>agentactioncapsule.org</code> domain, the &ldquo;Agent Action Capsule&rdquo; trademark, and the reference services transfer to the neutral home</td></tr>
-    <tr><th>Spec adoption</th><td>change control of the profile follows the IETF process on WG adoption / RFC publication</td></tr>
-  </tbody>
-</table>
-<p>Candidate homes are neutral, foundation-style bodies in the open-source / standards world; the specific home will be chosen with the community rather than announced unilaterally.</p>
-
-<h2>Scope &amp; boundaries</h2>
-<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the boundary between the open record layer and runtime enforcement is explicit, not implied.</p>
-
-<div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. Join the conversation on <a class="ln" href="https://github.com/action-state-group">GitHub</a>.</div>
-
-      <div class="next"><a class="p" href="/docs/glossary.html"><div class="dir">&#8592; Previous</div><div class="ttl">Glossary</div></a></div>
+      <div class="next"><a class="p" href="/docs/how-it-composes.html"><div class="dir">&#8592; Back</div><div class="ttl">How it composes</div></a><a class="n" href="/docs/glossary.html"><div class="dir">Reference &#8594;</div><div class="ttl">Glossary</div></a></div>
     </article>
   </div>
 </main>
@@ -255,10 +293,18 @@
           <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
           <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
         </div>
+        <div class="foot-col">
+          <h5>Project</h5>
+          <a href="/docs/governance.html">Governance</a>
+          <a href="/ip">Patent posture</a>
+        </div>
       </div>
     </div>
     <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
 </footer>
+</body>
+</html>
+
 </body>
 </html>
