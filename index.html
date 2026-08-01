@@ -193,6 +193,7 @@
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a class="active" href="/">Standard</a>
+      <a href="/cpb.html">Composition (CPB)</a>
       <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
@@ -460,9 +461,9 @@ mcpGuardrails:
 <section class="band" id="cpb" style="background:var(--paper-2)">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow">Canonical Payload Binding</span>
+      <span class="eyebrow">Canonical Payload Binding &amp; Composition</span>
       <h2>The composition crux: every profile speaks the same binding language.</h2>
-      <p>The Agent Action Capsule seals SHA-256 digests of your inputs and outputs — not the raw bytes. The precise construction (how those digests are canonicalized and committed) is defined in a companion IETF draft: the <strong>Canonical Payload Binding</strong> (CPB). CPB is the shared layer that lets capsules compose across profiles, frameworks, and implementations without drift.</p>
+      <p>The Agent Action Capsule seals SHA-256 digests of your inputs and outputs — not the raw bytes. The precise construction (how those digests are canonicalized, derived, and referenced across profiles) is defined in a companion IETF draft: the <strong>Canonical Payload Binding</strong> (CPB). A second companion draft, <strong>Agent Accountability: Composition and Conformance</strong>, defines how independently-verifiable profiles — CAN, WHO, WHAT, AUDIT — compose into one record by a shared action digest, and the conformance-vector suite that tests it. CPB is the shared seam that makes that composition possible without drift.</p>
     </div>
     <div class="grid3">
       <div class="card">
@@ -476,15 +477,20 @@ mcpGuardrails:
         <p>External evidence (authorization grants, policy decisions, upstream receipts) binds by its SHA-256 digest. The referenced data stays where it lives; only the commitment travels.</p>
       </div>
       <div class="card">
-        <div class="k">Spec-pure</div>
-        <h3>Second independent implementation</h3>
-        <p>The CPB vector suite is the acceptance gate. The Python reference lib and the TypeScript SDK both pass the same 21+ vectors — byte-compatible, independently verified.</p>
+        <div class="k">Open registry</div>
+        <h3>Owner-authored, conformance-checked</h3>
+        <p>The Agent Action Capsule is the first registered payload profile; MachineMandate is registering as the second. Each entry is owner-authored and checked against a real conformance-vector suite — mutation-tested, not a rubber stamp.</p>
       </div>
     </div>
-    <p style="margin-top:28px;font-size:14px;color:var(--muted)">
-      Spec: <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">draft-mih-sokolov-scitt-payload-binding-01 ↗</a>&ensp;&middot;&ensp;
-      Registry: <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/cpb-provisional-registry.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">provisional registry ↗</a>&ensp;&middot;&ensp;
-      Vectors: <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/test-vectors" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">test vectors ↗</a>
+    <p style="margin-top:20px;font-size:14.5px;color:var(--muted)">Conformance status: the Python reference implementation passes the full CPB vector suite (CI-verified); a second independent implementation, in TypeScript, is in progress.</p>
+    <p style="margin-top:24px">
+      <a class="btn btn-ghost" href="/cpb.html">The full picture — composition, the open registry, and the conformance bar <span class="arrow">→</span></a>
+    </p>
+    <p style="margin-top:24px;font-size:14px;color:var(--muted)">
+      CPB spec: <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">draft-mih-sokolov-scitt-payload-binding-01 ↗</a>&ensp;&middot;&ensp;
+      Composition spec: <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">draft-mih-sato-agent-accountability-composition-00 ↗</a>&ensp;&middot;&ensp;
+      Registry: <a href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">registries of record ↗</a>&ensp;&middot;&ensp;
+      Vectors: <a href="https://github.com/action-state-group/scitt-payload-binding/tree/main/vectors" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">conformance vectors ↗</a>
     </p>
   </div>
 </section>
@@ -731,9 +737,11 @@ agent-action-capsule verify --store ledger.jsonl
         <div class="foot-col">
           <h5>Standard</h5>
           <a href="/">Overview</a>
+          <a href="/cpb.html">Composition (CPB)</a>
           <a href="/docs/">Docs</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (‑02) ↗</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (‑01) ↗</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (‑00) ↗</a>
           <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide ↗</a>
           <a href="/playground.html">Playground</a>
         </div>
