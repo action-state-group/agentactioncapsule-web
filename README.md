@@ -18,7 +18,7 @@ LICENSE, NOTICE         Apache-2.0
 
 Neutral substrate: documents the open specification and the open-source implementations only;
 no product or business content. The three neutral surfaces (this site,
-`anchor.agentactioncapsule.org`, `verify.actionstate.ai`) share one visual system and a common
+`anchor.agentactioncapsule.org`, `verify.agentactioncapsule.org`) share one visual system and a common
 cross-site nav + footer.
 
 ## Run locally
