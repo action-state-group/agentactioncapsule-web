@@ -24,7 +24,7 @@ OUT = pathlib.Path(__file__).resolve().parent.parent / "docs"
 DRAFT_URL = "https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/"
 ORG_URL = "https://github.com/action-state-group"
 ANCHOR_URL = "https://anchor.agentactioncapsule.org"
-VERIFY_URL = "https://verify.actionstate.ai"
+VERIFY_URL = "https://verify.agentactioncapsule.org"
 
 # Hybrid docs model: the site owns standard-level CONCEPTS; the canonical
 # implementation/usage docs live in capsule-emit/docs (one fact, one home). Each
@@ -492,7 +492,7 @@ PAGES["what-is-a-transparency-service"] = dict(
 
 <h2>The trust model</h2>
 <p>What you verify yourself: each signature, each inclusion proof, and consistency between any two tree heads &mdash; all from the bytes, offline. What the log commits to operationally: durable append-only storage, non-equivocation (one consistent view for everyone), and a stable, published signing key.</p>
-<div class="callout">A live, neutral implementation runs at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a>. To check a receipt without running anything, use the <a class="ln" href="https://verify.actionstate.ai">hosted verifier</a>.</div>
+<div class="callout">A live, neutral implementation runs at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a>. To check a receipt without running anything, use the <a class="ln" href="https://verify.agentactioncapsule.org">hosted verifier</a>.</div>
 """,
 )
 
@@ -555,7 +555,7 @@ r = verify_receipt(receipt, leaf_entry_hex=leaf,
   <li>You do not need the raw inputs or outputs &mdash; verification uses digests.</li>
   <li>You do not need network access to the operator &mdash; you need the public key and the proof.</li>
 </ul>
-<div class="callout">Try it without installing anything at the <a class="ln" href="https://verify.actionstate.ai">hosted verifier</a>, or run the same library yourself &mdash; see <a class="ln" href="/docs/verify-a-capsule.html">Verify a capsule</a>.</div>
+<div class="callout">Try it without installing anything at the <a class="ln" href="https://verify.agentactioncapsule.org">hosted verifier</a>, or run the same library yourself &mdash; see <a class="ln" href="/docs/verify-a-capsule.html">Verify a capsule</a>.</div>
 """,
 )
 
@@ -617,7 +617,7 @@ PAGES["verify-a-capsule"] = dict(
 
 <h2>In the browser</h2>
 <p>The fastest way to check a single receipt or signed statement is the hosted verifier. Paste a receipt or statement (and a key, if you want the signature checked) and read the verdict and reasons. It is stateless &mdash; nothing you submit is stored.</p>
-<div class="callout">Open <a class="ln" href="https://verify.actionstate.ai">verify.actionstate.ai</a>. The page runs the identical library you can install locally; for maximal privacy, verify locally instead.</div>
+<div class="callout">Open <a class="ln" href="https://verify.agentactioncapsule.org">verify.agentactioncapsule.org</a>. The page runs the identical library you can install locally; for maximal privacy, verify locally instead.</div>
 
 <h2>On the command line</h2>
 <pre class="code"><code>pip install agent-action-capsule
