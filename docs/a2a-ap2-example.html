@@ -133,7 +133,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Composition (CPB)</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -155,7 +155,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html">Composition (CPB)</a>
-<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
+<a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -165,6 +165,7 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -178,7 +179,7 @@
 <p class="lede">How an A2A callee seals a neutral verifiable record on every payment action. The AP2 CartMandate is the &ldquo;may&rdquo; &mdash; the capsule is the &ldquo;did.&rdquo; Two protocols, one seam.</p>
 
 <h2>The compose pattern</h2>
-<p>A2A (Agent-to-Agent protocol) and AP2 (A2A Payment Profile) handle authorization &mdash; who permitted this payment, for how much, to whom. They do not handle the <em>neutral anchored record</em> of what the agent actually did. That&rsquo;s where the capsule fits: it binds the authorization to the outcome in a single sealed, content-private, independently verifiable record.</p>
+<p>A2A (Agent-to-Agent protocol) and AP2 (A2A Payment Profile) handle authorization &mdash; who permitted this payment, for how much, to whom. They do not handle the <em>neutral witnessed record</em> of what the agent actually did. That&rsquo;s where the capsule fits: it binds the authorization to the outcome in a single sealed, content-private, independently verifiable record.</p>
 
 <table class="t">
   <thead><tr><th>Layer</th><th>Protocol</th><th>What it proves</th></tr></thead>
@@ -307,12 +308,12 @@ Mode:   sandbox (DRY_RUN)
   <span class="ok">✓</span>  dispatched capsule_id: cb96…714c
   <span class="ok">✓</span>  confirmed capsule_id:  00fe…034
      chains → dispatched: cb9678f17cc3d96c…
-  <span class="ok">✓</span>  SCITT anchored:  dispatch leaf=5, confirm leaf=4
+  <span class="ok">✓</span>  SCITT witnessed:  dispatch leaf=5, confirm leaf=4
 
   <span class="ok">✓</span>  refusal capsule_id: 16be…3b3
      verdict_class:  blocked
      effect.status:  planned  <span class="c">← 'planned' = NEVER dispatched</span>
-  <span class="ok">✓</span>  SCITT anchored: leaf=6
+  <span class="ok">✓</span>  SCITT witnessed: leaf=6
 
   [0] <span class="ok">VALID  ✓</span>  cb9678f17cc3d96c56cd…  verdict=executed effect.status=dispatched
   [1] <span class="ok">VALID  ✓</span>  00feb2159a5ed32d903e…  verdict=executed effect.status=confirmed
@@ -320,7 +321,7 @@ Mode:   sandbox (DRY_RUN)
 
   All capsules VALID <span class="ok">✓</span></code></pre>
 
-<div class="callout ok">Every capsule is anchored to the <a class="ln" href="https://anchor.agentactioncapsule.org">public SCITT transparency log</a>. After running the example, visit the log explorer to see your capsule digests in the tree.</div>
+<div class="callout ok">Every capsule is witnessed by the <a class="ln" href="https://anchor.agentactioncapsule.org">public SCITT transparency log</a>. After running the example, visit the log explorer to see your capsule digests in the tree.</div>
 
 <h2>Verify</h2>
 
@@ -330,7 +331,7 @@ agent-action-capsule verify --store /path/to/a2a_ap2_ledger.jsonl
 <span class="c"># Inspect the live log</span>
 curl https://anchor.agentactioncapsule.org/anchor/transparency-log</code></pre>
 
-<div class="callout warn"><strong>Content-private by construction.</strong> The AP2 CartMandate, payee details, amounts, and payment outcomes never leave your process &mdash; only their SHA-256 digests travel in the capsule and to the anchor. Pass <code>salt_digests=False</code> only when you need deterministic digests for cross-system comparison (as in this example for reproducibility).</div>
+<div class="callout warn"><strong>Content-private by construction.</strong> The AP2 CartMandate, payee details, amounts, and payment outcomes never leave your process &mdash; only their SHA-256 digests travel in the capsule and to the witness. Pass <code>salt_digests=False</code> only when you need deterministic digests for cross-system comparison (as in this example for reproducibility).</div>
 
 <h2>What this is not</h2>
 <ul>
@@ -362,7 +363,7 @@ curl https://anchor.agentactioncapsule.org/anchor/transparency-log</code></pre>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">

@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What is an Agent Action Capsule? &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="An Agent Action Capsule is a signed, tamper-evident record of a consequential action an AI agent took, verifiable by any third party without trusting the operator.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/what-is-a-capsule.html">
+<title>Witness anywhere — what leaves your walls &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="When you witness a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Witness at the public log, run your own witness in the region you choose, or self-host inside your VPC where the hash never leaves.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/witness-anywhere.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="What is an Agent Action Capsule?">
-<meta property="og:description" content="An Agent Action Capsule is a signed, tamper-evident record of a consequential action an AI agent took, verifiable by any third party without trusting the operator.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/what-is-a-capsule.html">
+<meta property="og:title" content="Witness anywhere — what leaves your walls">
+<meta property="og:description" content="When you witness a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Witness at the public log, run your own witness in the region you choose, or self-host inside your VPC where the hash never leaves.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/witness-anywhere.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="What is an Agent Action Capsule?">
-<meta name="twitter:description" content="An Agent Action Capsule is a signed, tamper-evident record of a consequential action an AI agent took, verifiable by any third party without trusting the operator.">
+<meta name="twitter:title" content="Witness anywhere — what leaves your walls">
+<meta name="twitter:description" content="When you witness a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Witness at the public log, run your own witness in the region you choose, or self-host inside your VPC where the hash never leaves.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -152,7 +152,7 @@
 <h5>Documentation</h5>
 <a href="/docs/">Overview</a>
 <h5>Concepts</h5>
-<a href="/docs/what-is-a-capsule.html" class="active">What is a Capsule?</a>
+<a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
 <a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
@@ -160,7 +160,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html">Composition (CPB)</a>
-<a href="/docs/witness-anywhere.html">Witness anywhere</a>
+<a href="/docs/witness-anywhere.html" class="active">Witness anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -178,77 +178,32 @@
 </nav>
     <article>
       <div class="crumb">Concepts</div>
-      
-<h1>What is an Agent Action Capsule?</h1>
-<p class="lede">An Agent Action Capsule is a signed, tamper-evident record of a consequential action an AI agent took &mdash; sealed at the moment it acted, so any third party can verify later what happened, without trusting the operator who ran the agent.</p>
-<p style="color:var(--muted);font-size:15px;margin-top:-10px">One line: <code>receipt = seal(payload)</code>. See the <a class="ln" href="/docs/translation.html">word-for-word translation</a> across dev / auditor / spec registers.</p>
 
-<p>Agents increasingly take real actions: they place orders, move files, send messages, change records. Today, the only evidence that an action happened as described is the operator's own word. The Agent Action Capsule closes that gap by borrowing the shape that software supply-chain security already uses for build artifacts &mdash; a signed statement registered to a transparency log &mdash; and applying it to <em>agent actions</em>.</p>
+<h1>Witness anywhere — what leaves your walls</h1>
+<p class="lede">Witnessing proves a capsule was included in a public, append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
 
-<h2>The three properties</h2>
+<h2>What leaves your walls</h2>
+<p>A capsule is <a class="ln" href="/docs/what-is-a-capsule.html">content-private by construction</a>: it carries digests of inputs and outputs, not the raw values. When it's witnessed, the log receives the statement's commitment — a hash — plus a timestamp. The raw content stays where you keep it, under your control. The public log stores <em>a commitment you can check</em>, not your data.</p>
+
+<h2>Witness anywhere — three options</h2>
 <table class="t">
-  <thead><tr><th>Property</th><th>What it means</th></tr></thead>
+  <thead><tr><th>Where you witness</th><th>What it gives you</th><th>What leaves your environment</th></tr></thead>
   <tbody>
-    <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it &mdash; content-addressed by default, and COSE-signed at the Signed-Statement tier. Change any byte and verification fails.</td></tr>
-    <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was witnessed into an append-only log that cannot quietly drop or rewrite history.</td></tr>
-    <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems. You trust the log's key, not the operator.</td></tr>
+    <tr><th>The public log</th><td>zero-setup existence proofs on a shared, open log (<code>anchor.agentactioncapsule.org</code>)</td><td>a digest + a timestamp</td></tr>
+    <tr><th>Your own witness, in the region you choose</th><td>residency / jurisdiction control (e.g. EU, Singapore) by running the open witness log where you need it</td><td>a digest + a timestamp, kept in your jurisdiction</td></tr>
+    <tr><th>Your own witness, inside your VPC</th><td>full control — self-host the container with your own storage</td><td>nothing — the hash never leaves your environment</td></tr>
   </tbody>
 </table>
+<p>The capsule is <strong>witness-agnostic</strong> (it makes no claim about the log's <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure</a>): the same statement verifies whichever log you choose, so you can move or mix witnesses without changing the record. This is also true of vendor lock-in more broadly: no vendor, including us, controls where your capsules get witnessed.</p>
 
-<div class="callout deeper">Jump to <a class="ln" href="#does-not-prove">what a capsule does <em>not</em> prove</a> &mdash; the auditor-register honesty section &mdash; or keep reading for the field-level mechanism.</div>
+<h2>What a digest hides — and what it doesn't</h2>
+<p>A digest hides a value only when that value is hard to guess. A high-entropy input (a full prompt, a document, a key) is safe. But a <em>low-entropy</em> value — a short dollar amount, a yes/no disposition, an ID from a known list — can be recovered by hashing candidate values until one matches. For those fields, <strong>salt before hashing</strong> (commit a per-tenant salt alongside the value) so the digest can't be brute-forced. And note the capsule commits some metadata in the clear — the action type and disposition — so &ldquo;content-private&rdquo; means your <em>payloads</em> stay private, not that the capsule reveals nothing about what kind of action occurred.</p>
 
-<h2>What a capsule commits to</h2>
-<p>A capsule is a <code>COSE_Sign1</code> envelope over the media type <code>application/agent-action-capsule+json</code>. The payload commits to:</p>
-<ul>
-  <li>the <strong>action</strong> performed (an effect type and its identifying fields);</li>
-  <li><strong>input and output digests</strong> &mdash; SHA-256 of what went in and what came out, so raw values stay local while the proof travels;</li>
-  <li>the <strong>producing context</strong> &mdash; the model and runtime that generated the action.</li>
-</ul>
-<p>Because inputs and outputs are committed <em>by digest</em>, a capsule proves integrity without disclosing sensitive payloads.</p>
+<div class="callout">The privacy promise, in one line: <strong>we verify; we store nothing of yours but a commitment you can check</strong> — and, for guessable values, salt before you commit them.</div>
 
-<h2>What gets sealed &mdash; the fields</h2>
-<p>The seal is the <code>capsule_id</code>: the SHA-256 of the canonical capsule. Recompute it and it must match byte-for-byte &mdash; that hash <em>is</em> the seal. Around it, a capsule commits the parts an agent action needs to be accountable:</p>
-<table class="t">
-  <thead><tr><th>Field</th><th>What it commits</th></tr></thead>
-  <tbody>
-    <tr><th>capsule_id</th><td>SHA-256 of the canonical capsule &mdash; the seal / content address.</td></tr>
-    <tr><th>action / operator / developer / timestamp</th><td>what was done, the accountable tenant, the agent identity@version, and when.</td></tr>
-    <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; <code>executed</code>, <code>confirmed</code>, <code>denied</code>, or <code>blocked</code>.</td></tr>
-    <tr><th>effect</th><td>what was committed, plus the <strong>confirmed-effect binding</strong> so the claim and the outcome can't drift apart.</td></tr>
-    <tr><th>model_attestation</th><td>which model decided, with the <strong>full input</strong> it saw (system prompt, context, tool definitions, and the action's arguments) and the <strong>output</strong> each <strong>committed as a digest</strong> (fixed-size; raw values, however large or sensitive, are never stored) plus best-effort compute.</td></tr>
-    <tr><th>assurance</th><td>how far to trust it: attestation / effect / ledger modes.</td></tr>
-    <tr><th>chain</th><td>links to other capsules (<code>confirms</code> / <code>supersedes</code> / <code>escalates</code>) &mdash; present only when this capsule relates to another.</td></tr>
-  </tbody>
-</table>
+<div class="callout deeper">Vocabulary check: <a class="ln" href="/docs/translation.html">see the word-for-word translation</a> across dev / auditor / spec registers — including why we say &ldquo;witness&rdquo;, not &ldquo;anchor&rdquo;.</div>
 
-<h2>Content-private by construction</h2>
-<p>Each evidence layer is <strong>hashed, and only the digest is committed</strong> &mdash; the raw prompt, vendor, or amount is never inside the capsule. You can hand someone a capsule and they learn <em>what happened</em> and can verify the seal, without seeing your inputs or outputs. Reveal a raw value later only when you choose, and anyone can re-hash it against the committed digest.</p>
-
-<h2>Chains: approved &rarr; executed &rarr; confirmed</h2>
-<p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that proves authorization without exposing the underlying data).</p>
-<p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
-
-<h2>Levels of assurance</h2>
-<p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from witnessing &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs. The full ladder is self-attested &rarr; witnessed &rarr; countersigned; see the <a class="ln" href="/docs/translation.html">translation page</a> for the auditor-register definition of each rung.</p>
-
-<h2 id="does-not-prove">What this actually establishes &mdash; what a capsule does not prove</h2>
-<p>Honest claims matter. Know the limits before relying on this for audit or compliance:</p>
-<ul>
-  <li><strong>Attested, not verified.</strong> A capsule proves what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
-  <li><strong>No anti-omission property.</strong> A capsule proves <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
-  <li><strong>Signer = key-holder.</strong> The signature proves who held the signing key at the moment of sealing &mdash; not that the named agent actually ran the action. Key-management discipline is outside the capsule.</li>
-  <li><strong>Default may be signature-less.</strong> The base assurance level is a content hash (tamper-evident, content-private). A producer signature binding to a key requires the SCITT Signed-Statement level explicitly.</li>
-  <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. A witness or a second independently-operated log removes this.</li>
-</ul>
-<p>These limits are features of being honest, not gaps to hide. Stating them is what makes the record trustworthy to an outside auditor.</p>
-
-<h2>Where it sits</h2>
-<p>The capsule is a <em>statement-layer</em> profile. It says nothing about which verifiable data structure a log uses &mdash; that separation is what lets the same capsule verify against different transparency services. See <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer vs the transparency layer</a>.</p>
-<p>It is one <strong>SCITT profile</strong> among others &mdash; specialized for agent actions, built on the general SCITT/COSE substrate, and interoperable with any SCITT transparency service. Adopting it means building on a shared profile, not forking your own.</p>
-
-<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-02</a>) is an individual IETF Internet-Draft — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. A companion draft, the <strong>Canonical Payload Binding</strong> (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-01</a>), defines the shared canonicalization and digest-binding layer. Both build on the IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).</div>
-<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/concepts.md">Concepts, in plain words &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/anatomy.md">Anatomy of a capsule &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/"><div class="dir">&#8592; Previous</div><div class="ttl">Overview</div></a><a class="n" href="/docs/statement-vs-transparency-layer.html"><div class="dir">Next &#8594;</div><div class="ttl">Statement vs transparency layer</div></a></div>
+      <div class="next"><a class="p" href="/docs/how-it-composes.html"><div class="dir">&#8592; Previous</div><div class="ttl">How it composes</div></a><a class="n" href="/docs/quickstart.html"><div class="dir">Next &#8594;</div><div class="ttl">Quickstart</div></a></div>
     </article>
   </div>
 </main>

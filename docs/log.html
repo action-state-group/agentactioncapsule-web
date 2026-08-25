@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The public log, live — Agent Action Capsule</title>
-<meta name="description" content="A live view of the public transparency log: total entries, latest signed checkpoint, how long it has been operating, and the most recent appended records — fetched in real time from the public anchor. Early-stage and small; the log is public so anyone can read and verify it.">
+<meta name="description" content="A live view of the public transparency log: total entries, latest signed checkpoint, how long it has been operating, and the most recent appended records — fetched in real time from the public witness. Early-stage and small; the log is public so anyone can read and verify it.">
 <link rel="canonical" href="https://agentactioncapsule.org/docs/log.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
 <meta property="og:title" content="The public log, live">
-<meta property="og:description" content="A live view of the public transparency log — entries, latest checkpoint, and recent records, fetched from the public anchor. Early-stage; public and verifiable.">
+<meta property="og:description" content="A live view of the public transparency log — entries, latest checkpoint, and recent records, fetched from the public witness. Early-stage; public and verifiable.">
 <meta property="og:url" content="https://agentactioncapsule.org/docs/log.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -92,7 +92,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Composition (CPB)</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source ↗</a>
@@ -109,14 +109,14 @@
     <div class="crumb">Docs · The log</div>
     <div class="live"><span class="pulse"></span> <span id="liveword">connecting…</span></div>
     <h1>The public log</h1>
-    <p>The append-only transparency log, read live from the public anchor: total entries, the latest signed checkpoint, how long it's been running, and the most recent records. It's <strong>early and small</strong> — that's the point of showing it honestly: it's public, so anyone can read it and verify any entry, and it only grows. Records carry a payload hash, never your data.</p>
+    <p>The append-only transparency log, read live from the public witness: total entries, the latest signed checkpoint, how long it's been running, and the most recent records. It's <strong>early and small</strong> — that's the point of showing it honestly: it's public, so anyone can read it and verify any entry, and it only grows. Records carry a payload hash, never your data.</p>
   </div>
 </header>
 
 <section class="band">
   <div class="wrap">
     <div class="stats" id="stats" style="display:none" aria-live="polite">
-      <div class="stat"><div class="l">Entries</div><div class="n" id="sEntries">—</div><div class="s">records anchored</div></div>
+      <div class="stat"><div class="l">Entries</div><div class="n" id="sEntries">—</div><div class="s">records witnessed</div></div>
       <div class="stat"><div class="l">Latest checkpoint</div><div class="n" id="sCheck" style="font-size:18px">—</div><div class="s" id="sRoot">signed tree head</div></div>
       <div class="stat"><div class="l">Operating since</div><div class="n" id="sSince" style="font-size:18px">—</div><div class="s">first appended entry</div></div>
     </div>
@@ -128,10 +128,10 @@
 
     <div class="fallback" id="fallback">
       <h3 id="fbTitle">The public log is live — read it on the transparency service</h3>
-      <p id="fbBody">This page loads recent records live from the public anchor. If the live feed can't load here yet, the log is still public and running now — open it at <a href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org ↗</a>, or verify any receipt at <a href="https://verify.agentactioncapsule.org">verify.agentactioncapsule.org ↗</a>.</p>
+      <p id="fbBody">This page loads recent records live from the public witness. If the live feed can't load here yet, the log is still public and running now — open it at <a href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org ↗</a>, or verify any receipt at <a href="https://verify.agentactioncapsule.org">verify.agentactioncapsule.org ↗</a>.</p>
     </div>
 
-    <p class="note">This view reads the anchor's public, read-only endpoints (<span class="mono">/anchor/sth</span>, <span class="mono">/anchor/transparency-log</span>) directly in your browser and refreshes on its own. Nothing here is stored or fabricated — if the live feed can't load, it says so rather than showing placeholder data.</p>
+    <p class="note">This view reads the witness's public, read-only endpoints (<span class="mono">/anchor/sth</span>, <span class="mono">/anchor/transparency-log</span>) directly in your browser and refreshes on its own. Nothing here is stored or fabricated — if the live feed can't load, it says so rather than showing placeholder data.</p>
   </div>
 </section>
 
@@ -146,7 +146,7 @@
       </div>
       <div class="foot-cols">
         <div class="foot-col"><h5>Standard</h5><a href="/">Overview</a><a href="/docs/">Docs</a><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft ↗</a></div>
-        <div class="foot-col"><h5>Services</h5><a href="https://anchor.agentactioncapsule.org">Transparency Log</a><a href="https://verify.agentactioncapsule.org">Verifier</a></div>
+        <div class="foot-col"><h5>Services</h5><a href="https://witness.agentactioncapsule.org">Transparency Log</a><a href="https://verify.agentactioncapsule.org">Verifier</a></div>
         <div class="foot-col"><h5>Source</h5><a href="https://github.com/action-state-group">GitHub ↗</a><a href="https://github.com/ietf-wg-scitt/examples">Test vectors ↗</a></div>
       </div>
     </div>
@@ -168,7 +168,7 @@
     document.getElementById("stats").style.display="none";document.getElementById("live").style.display="none";
     document.getElementById("fallback").style.display="block";document.getElementById("liveword").textContent="public log";
     document.getElementById("fbTitle").textContent="The log is live — open it on the transparency service";
-    document.getElementById("fbBody").innerHTML="The live feed couldn't load here yet (the anchor doesn't permit cross-origin reads from this page). The log is public and running now — open it directly at <a href=\""+ANCHOR+"\">anchor.agentactioncapsule.org ↗</a>, or check any receipt at <a href=\"https://verify.agentactioncapsule.org\">verify.agentactioncapsule.org ↗</a>.";
+    document.getElementById("fbBody").innerHTML="The live feed couldn't load here yet (the witness doesn't permit cross-origin reads from this page). The log is public and running now — open it directly at <a href=\""+ANCHOR+"\">anchor.agentactioncapsule.org ↗</a>, or check any receipt at <a href=\"https://verify.agentactioncapsule.org\">verify.agentactioncapsule.org ↗</a>.";
   }
 
   function renderFeed(entries){

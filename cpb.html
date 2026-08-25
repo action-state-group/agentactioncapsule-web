@@ -128,7 +128,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a class="active" href="/cpb.html">Composition (CPB)</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -150,7 +150,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html" class="active">Composition (CPB)</a>
-<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
+<a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -159,6 +159,7 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -188,7 +189,7 @@
   </tbody>
 </table>
 <p class="lede" style="font-size:14.5px">Any conforming profile may fill a slot; the set is open by design — belief-provenance is a named extension socket. Each slot may root in a different trust anchor, and the composition holds even if any one party is compromised or under review: no slot is a required root of trust for another.</p>
-<div class="callout">A record can be produced at different assurance levels. <strong>Self-attested</strong> (signed by the agent or operator, held by an interested party) is a valid baseline. <strong>Anchored / third-party-verifiable</strong> means the record, or a digest of it, is registered to a SCITT transparency service, so a party who trusts neither the agent nor the operator can verify its existence, its content at registration, and non-equivocation. The composition doesn't mandate the anchored tier — it specifies how any conforming profile can reach it, and how that's tested.</div>
+<div class="callout">A record can be produced at different assurance levels. <strong>Self-attested</strong> (signed by the agent or operator, held by an interested party) is a valid baseline. <strong>Witnessed / third-party-verifiable</strong> means the record, or a digest of it, is registered to a SCITT transparency service, so a party who trusts neither the agent nor the operator can verify its existence, its content at registration, and non-equivocation. The composition doesn't mandate the witnessed tier — it specifies how any conforming profile can reach it, and how that's tested. (See the full <a class="ln" href="/docs/translation.html">ladder — self-attested &rarr; witnessed &rarr; countersigned</a>.)</div>
 
 <h2>The binding mechanism: CPB</h2>
 <table class="t">
@@ -254,7 +255,7 @@
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
