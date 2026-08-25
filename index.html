@@ -194,7 +194,7 @@
     <div class="nav-links">
       <a class="active" href="/">Standard</a>
       <a href="/cpb.html">Composition (CPB)</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source ↗</a>
@@ -213,14 +213,16 @@
     <p class="lede">AI agents are just starting to take consequential actions — placing orders, moving money, changing records. When one does, the only proof it happened as intended is the operator's own word. An Agent Action Capsule fixes that: a tamper-evident, content-private record of the action that <em>anyone can verify from the record itself — without trusting the operator</em>.</p>
     <p class="lede" style="font-size:15px;margin-top:10px;color:var(--muted)">It's early — for the technology and for this profile. The aim is to get the <em>record</em> of what agents do right while it's still being figured out: in the open, verifiable by anyone, and built to be donated so it ends up owned by no one. (Roughly the role TLS plays for a connection, applied to an agent's actions.)</p>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Read the draft <span class="arrow">↗</span></a>
-      <a class="btn btn-ghost" href="#verify">Verify a capsule <span class="arrow">→</span></a>
-      <a class="btn btn-ghost" href="/docs/log.html">Watch the log live <span class="arrow">→</span></a>
+      <a class="btn btn-primary" href="/docs/quickstart.html">Add receipts to my agent <span class="arrow">→</span></a>
+      <a class="btn btn-ghost" href="#verify">Prove what happened <span class="arrow">→</span></a>
+      <a class="btn btn-ghost" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Read the draft <span class="arrow">↗</span></a>
     </div>
+    <p style="margin-top:18px;font-size:15px;color:var(--muted)"><code class="mono" style="background:var(--ink-2);color:#E8ECF4;padding:2px 8px;border-radius:6px">pip install capsule-emit</code> &rarr; <code class="mono" style="background:var(--ink-2);color:#E8ECF4;padding:2px 8px;border-radius:6px">receipt = seal(payload)</code> — a signed, witnessed record a stranger can verify. No config, keys, or account required. <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none">See it as real, runnable code &rarr;</a></p>
     <div class="hero-meta">
       <span><span class="dot"></span> Built on IETF SCITT (RFC&nbsp;9943)</span>
       <span><span class="dot"></span> Verifier + producer, open source</span>
       <span><span class="dot"></span> Cross-implementation tested (RFC9162 · CCF)</span>
+      <span><a href="/docs/log.html" style="color:inherit;text-decoration:none;border-bottom:1px dotted var(--muted)">Watch the log live →</a></span>
     </div>
   </div>
 </header>
@@ -230,9 +232,9 @@
   <div class="wrap" style="max-width:780px">
     <div class="sec-head">
       <span class="eyebrow">In plain terms</span>
-      <h2 style="font-size:clamp(22px,2.4vw,28px)">A tamper-evident receipt for what your AI agent did.</h2>
+      <h2 style="font-size:clamp(22px,2.4vw,28px)">A tamper-evident record of what your AI agent did.</h2>
     </div>
-    <p style="color:var(--muted);font-size:17px">Say your agent pays an invoice. Six months later an auditor asks: did it really only pay approved vendors, for the right amounts? Today your only answer is your own logs — your word for it. An Agent Action Capsule is a signed, privacy-preserving receipt of each consequential action, so you can hand the auditor proof they can check for themselves — without giving them access to your systems, and without asking them to trust you.</p>
+    <p style="color:var(--muted);font-size:17px">Say your agent pays an invoice. Six months later an auditor asks: did it really only pay approved vendors, for the right amounts? Today your only answer is your own logs — your word for it. An Agent Action Capsule is a signed, privacy-preserving capsule of each consequential action, witnessed by an independent log, so you can hand the auditor proof they can check for themselves — without giving them access to your systems, and without asking them to trust you.</p>
     <p style="color:var(--muted);font-size:15px;margin-top:14px"><strong>Who it's for today:</strong> agent developers who want verifiable records, and standards / security folks. It's early and built in the open — not yet a turnkey compliance product. <a href="/docs/what-is-a-capsule.html" style="color:var(--accent);text-decoration:none">What exactly is a capsule? →</a></p>
   </div>
 </section>
@@ -253,7 +255,7 @@
       </div>
       <div class="card">
         <div class="k">Transparent</div>
-        <h3>Anchored to an append-only log</h3>
+        <h3>Witnessed by an independent log</h3>
         <p>The statement is registered to a SCITT Transparency Service, which returns a receipt proving inclusion. The log can't quietly drop or rewrite history.</p>
       </div>
       <div class="card">
@@ -271,7 +273,7 @@
     <div class="sec-head">
       <span class="eyebrow">Add it to your stack</span>
       <h2>Seal from the framework you already use.</h2>
-      <p>One capsule, one anchor, one verify — an adapter only changes <em>where</em> you hook in, over a ~30-line base. No protocol change; input and output are sealed automatically. Adapters seal <em>consequential</em> actions (writes + sensitive reads), not every call — <a href="/docs/whats-consequential.html" style="color:var(--accent);text-decoration:none">what counts? →</a> Pick your runtime and copy the code:</p>
+      <p>One capsule, one witness, one verify — an adapter only changes <em>where</em> you hook in, over a ~30-line base. No protocol change; input and output are sealed automatically. Adapters seal <em>consequential</em> actions (writes + sensitive reads), not every call — <a href="/docs/whats-consequential.html" style="color:var(--accent);text-decoration:none">what counts? →</a> Pick your runtime and copy the code:</p>
     </div>
     <div class="sw" id="sw">
       <div class="sw-tabs" role="tablist">
@@ -306,7 +308,7 @@ server.run()   # stdio — add to Goose as an extension</code></pre></div>
 
 emitter = MCPCapsuleEmitter(operator="acme-co", developer="po-agent@v1")
 
-@emitter.tool("submit_order")     # one line — every call sealed + anchored
+@emitter.tool("submit_order")     # one line — every call sealed + witnessed
 def submit_order(vendor, amount, po_number):
     return place(vendor, amount, po_number)</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/mcp.md">MCP adapter docs ↗</a>
@@ -425,7 +427,7 @@ mcpGuardrails:
         <div class="lbl">layer 3<b>The verifier</b></div>
         <div class="desc"><code>scitt-cose</code> — verifies SCITT receipts across verifiable-data-structures (<code>vds</code> = the log's proof format): RFC9162_SHA256 (vds=1) and CCF ccf.v1 (vds=2).</div>
       </div>
-      <div class="flowtag">↓ anchored to</div>
+      <div class="flowtag">↓ witnessed by</div>
       <div class="srow">
         <div class="lbl">layer 4<b>The log</b></div>
         <div class="desc"><code>capsule-anchor</code> — a neutral, product-free SCITT Transparency Service. Live at <code>anchor.agentactioncapsule.org</code>.</div>
@@ -551,18 +553,18 @@ agent-action-capsule verify --store ledger.jsonl
         <div class="k" style="color:var(--verify)">Rung 1 · Stub</div>
         <h3>Structured records, offline verify</h3>
         <p>Set <code>CAPSULE_ANCHOR=false</code>. Structured records, local ledger file, offline verification. Zero services. The ten-minute first touch — no network, no account.</p>
-        <p style="margin-top:10px;font-size:13px;color:var(--muted)">Page renders: <em>self-attested / not anchored</em></p>
+        <p style="margin-top:10px;font-size:13px;color:var(--muted)">Page renders: <em>self-attested / not witnessed</em></p>
       </div>
       <div class="card">
-        <div class="k" style="color:var(--verify)">Rung 2 · Self-hosted anchor</div>
+        <div class="k" style="color:var(--verify)">Rung 2 · Self-hosted witness</div>
         <h3>Real receipts, your trust domain</h3>
         <p>Deploy your own <code>capsule-anchor</code> instance. Real inclusion receipts within your org — tamper-evident across teams, honest internal separation of duties.</p>
         <p style="margin-top:10px;font-size:13px;color:var(--muted)">Policy descriptor tier: <em>self-operated</em></p>
       </div>
       <div class="card">
-        <div class="k" style="color:var(--verify)">Rung 3 · Public anchor</div>
+        <div class="k" style="color:var(--verify)">Rung 3 · Public witness</div>
         <h3>Third-party verifiable</h3>
-        <p>One config change: point at the public anchor. Records become third-party-verifiable; permalinks are shareable. No signup, no key, no cost.</p>
+        <p>One config change: point at the public witness. Records become third-party-verifiable; permalinks are shareable. No signup, no key, no cost.</p>
         <p style="margin-top:10px;font-size:13px;color:var(--muted)">Policy descriptor tier: <em>public</em></p>
       </div>
     </div>
@@ -575,27 +577,27 @@ agent-action-capsule verify --store ledger.jsonl
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">What leaves your walls</span>
-      <h2>Only a hash leaves. Anchor anywhere — including your own VPC.</h2>
-      <p>A capsule is content-private by construction. When you anchor it, the only thing that travels to the log is a <em>digest and a timestamp</em> — never prompts, payloads, reasoning, or PII. The raw content stays under your control.</p>
+      <h2>Only a hash leaves. Witness anywhere — including your own VPC.</h2>
+      <p>A capsule is content-private by construction. When you witness it, the only thing that travels to the log is a <em>digest and a timestamp</em> — never prompts, payloads, reasoning, or PII. The raw content stays under your control.</p>
     </div>
     <div class="grid3">
       <div class="card">
         <div class="k">Public log</div>
         <h3>Zero-setup proofs</h3>
-        <p>Anchor to the shared, open log at <code>anchor.agentactioncapsule.org</code>. A digest + timestamp leaves; your data never does.</p>
+        <p>Witness at the shared, open log at <code>anchor.agentactioncapsule.org</code>. A digest + timestamp leaves; your data never does.</p>
       </div>
       <div class="card">
         <div class="k">Your region</div>
         <h3>Residency control</h3>
-        <p>Run the open anchor in the region or jurisdiction you need (e.g. EU, Singapore). The hash stays in your jurisdiction.</p>
+        <p>Run the open witness log in the region or jurisdiction you need (e.g. EU, Singapore). The hash stays in your jurisdiction.</p>
       </div>
       <div class="card">
         <div class="k">Your VPC</div>
         <h3>Nothing leaves</h3>
-        <p>Self-host the anchor container inside your own environment — then even the hash never leaves your walls.</p>
+        <p>Self-host the witness (<code>capsule-anchor</code>) container inside your own environment — then even the hash never leaves your walls.</p>
       </div>
     </div>
-    <p class="fit-note">The capsule is anchor-agnostic, so you can move or mix anchors without changing the record. One caveat: a digest only hides values that aren't guessable — for low-entropy fields (a short amount, a known ID), salt before hashing. <a href="/docs/anchor-anywhere.html" style="color:var(--accent);text-decoration:none">What a digest hides →</a></p>
+    <p class="fit-note">The capsule is witness-agnostic, so you can move or mix witnesses without changing the record. One caveat: a digest only hides values that aren't guessable — for low-entropy fields (a short amount, a known ID), salt before hashing. <a href="/docs/witness-anywhere.html" style="color:var(--accent);text-decoration:none">What a digest hides →</a></p>
   </div>
 </section>
 
@@ -652,7 +654,7 @@ agent-action-capsule verify --store ledger.jsonl
         <div><div class="rn">capsule-anchor</div><div class="rd">An open, product-free SCITT Transparency Service. Reference instance live at anchor.agentactioncapsule.org.</div><span class="tag">Apache-2.0</span></div>
       </a>
     </div>
-    <p style="margin-top:22px;color:var(--muted);font-size:15px;max-width:760px"><strong>Scope.</strong> The open project is the <strong>record layer</strong> — the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on those constraints at runtime (enforcement) is a separate concern you compose with a policy gateway: the capsule records what happened, it doesn't gate. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">How the project is governed →</a></p>
+    <p style="margin-top:22px;color:var(--muted);font-size:15px;max-width:760px"><strong>Scope.</strong> The open project is the <strong>record layer</strong> — the profile, the producer (with example constraint manifests), the verifier, and the witness log. Acting on those constraints at runtime (enforcement) is a separate concern you compose with a policy gateway: the capsule records what happened, it doesn't gate. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">How the project is governed →</a></p>
   </div>
 </section>
 
@@ -675,7 +677,7 @@ agent-action-capsule verify --store ledger.jsonl
   <div class="wrap" style="max-width:780px;text-align:center">
     <span class="eyebrow">Playground</span>
     <h2 style="font-size:clamp(24px,3vw,34px);letter-spacing:-0.6px;margin:12px 0 16px">Mint your own capsule — in under 60 seconds.</h2>
-    <p style="font-size:17px;color:var(--muted);margin-bottom:28px">One button. No signup. No install. Your agent action sealed client-side, anchored to the public log, and handed back as a shareable permalink anyone can verify.</p>
+    <p style="font-size:17px;color:var(--muted);margin-bottom:28px">One button. No signup. No install. Your agent action sealed client-side, witnessed by the public log, and handed back as a shareable permalink anyone can verify.</p>
     <p style="font-size:14px;color:var(--muted);font-family:var(--mono);border:1px dashed var(--line);border-radius:12px;padding:20px 24px;display:inline-block">
       Playground launching soon &mdash; see the <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none">quickstart</a> to seal your first capsule now.
     </p>
@@ -694,7 +696,7 @@ agent-action-capsule verify --store ledger.jsonl
       <div class="card">
         <div class="k">Adopt</div>
         <h3>Seal your agent's actions</h3>
-        <p>Wrap a tool with one decorator, anchor each call, and verify from the bytes.</p>
+        <p>Wrap a tool with one decorator, witness each call, and verify from the bytes.</p>
         <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">Quickstart →</a>
         <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:8px">Adopters — start here ↗</a>
       </div>
@@ -716,7 +718,7 @@ agent-action-capsule verify --store ledger.jsonl
       <h2 style="font-size:clamp(18px,2vw,24px);letter-spacing:-0.4px;margin:8px 0 8px">Who's already using it.</h2>
     </div>
     <div style="border:1px dashed var(--line);border-radius:12px;padding:22px 26px;font-size:14px;color:var(--muted);font-family:var(--mono)">
-      Adopter quotes and interop results arriving here. Building? <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none">Start with ADOPT.md ↗</a> &mdash; 30-minute self-serve path from zero to anchored, verified capsule.
+      Adopter quotes and interop results arriving here. Building? <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none">Start with ADOPT.md ↗</a> &mdash; 30-minute self-serve path from zero to a witnessed, verified capsule.
     </div>
 
     <p class="fit-note">New here? <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read how the project is governed →</a> · Join the conversation on <a href="https://github.com/action-state-group" style="color:var(--accent);text-decoration:none">GitHub</a>.</p>
@@ -747,7 +749,7 @@ agent-action-capsule verify --store ledger.jsonl
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">

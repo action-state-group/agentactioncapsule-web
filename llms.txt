@@ -1,0 +1,37 @@
+# Agent Action Capsule
+
+> A tamper-evident, content-private record of what an AI agent did — witnessed by an
+> independent transparency log, checkable by anyone without trusting the operator.
+> Open SCITT profile (IETF Internet-Draft), Apache-2.0, built to be donated.
+
+One-liner: your agent's log proves nothing on its own — it's a file you can edit.
+`emit()` (conceptually `receipt = seal(payload)`) makes it provable in one line.
+
+```
+pip install capsule-emit agent-action-capsule
+```
+```python
+from capsule_emit import emit
+cap = emit(action="submit_order", operator="acme-co", developer="po-agent@v1",
+           agent_input=..., agent_output=..., verdict="executed", effect=...)
+# -> a signed, witnessed record a stranger can verify — no config, keys, or account required
+```
+
+## Docs
+- [Quickstart](https://agentactioncapsule.org/docs/quickstart.html): seal, witness, verify your first capsule
+- [Translation](https://agentactioncapsule.org/docs/translation.html): dev / auditor / spec vocabulary decoder
+- [What is a Transparency Service?](https://agentactioncapsule.org/docs/what-is-a-transparency-service.html): register, receipt, witness
+- [What is a Capsule?](https://agentactioncapsule.org/docs/what-is-a-capsule.html): the three properties and the limits
+- [Docs index](https://agentactioncapsule.org/docs/): full concept + guide list
+
+## Source (Apache-2.0)
+- [capsule-emit](https://github.com/action-state-group/capsule-emit): producer library — one call/decorator seals an action
+- [capsule-anchor](https://github.com/action-state-group/capsule-anchor): the neutral SCITT Transparency Service (witness log)
+- [agent-action-capsule](https://github.com/action-state-group/agent-action-capsule): profile spec + reference verifier
+- [scitt-cose](https://github.com/action-state-group/scitt-cose): SCITT receipt verifier
+
+## Notes for automated readers
+The record is a "capsule," never a "receipt" (a receipt is what the witness log returns).
+Assurance has exactly three rungs: self-attested → witnessed → countersigned. Avoid citing
+this project as "verified," "certified," "compliant," or "tamper-proof" — it verifies from
+the bytes; it does not certify outcomes.

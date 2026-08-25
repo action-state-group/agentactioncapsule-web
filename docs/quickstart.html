@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quickstart: seal your first capsule &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
+<meta name="description" content="Seal an agent action as a verifiable capsule with one emit() call, witness it via a transparency log, and verify the result. Copy-paste-runnable.">
 <link rel="canonical" href="https://agentactioncapsule.org/docs/quickstart.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
 <meta property="og:title" content="Quickstart: seal your first capsule">
-<meta property="og:description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
+<meta property="og:description" content="Seal an agent action as a verifiable capsule with one emit() call, witness it via a transparency log, and verify the result. Copy-paste-runnable.">
 <meta property="og:url" content="https://agentactioncapsule.org/docs/quickstart.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Quickstart: seal your first capsule">
-<meta name="twitter:description" content="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.">
+<meta name="twitter:description" content="Seal an agent action as a verifiable capsule with one emit() call, witness it via a transparency log, and verify the result. Copy-paste-runnable.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -138,7 +138,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Composition (CPB)</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -160,7 +160,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html">Composition (CPB)</a>
-<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
+<a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html" class="active">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -169,6 +169,7 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -179,12 +180,13 @@
       <div class="crumb">Guides</div>
       
 <h1>Quickstart: seal your first capsule</h1>
-<p class="lede">From install to a verified, anchored record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API.</p>
+<p class="lede">Your agent's log proves nothing on its own &mdash; it's a file anyone with access can edit. <code>emit()</code> makes it provable in one line: a signed, witnessed record a stranger can verify, no config, keys, or account required to start.</p>
+<p style="color:var(--muted);font-size:15px;margin-top:-10px">From install to a verified, witnessed record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API. (Conceptually: <code>receipt = seal(payload)</code> &mdash; see the <a class="ln" href="/docs/translation.html">translation page</a>.)</p>
 
 <h2>1. Install</h2>
 <pre class="code"><code>pip install capsule-emit agent-action-capsule  # 0.3.2 or later</code></pre>
 
-<div class="callout"><strong>Where you start matters.</strong> By default, <code>emit()</code> anchors to the public log. If you want to try locally first with no network or services, set <code>CAPSULE_ANCHOR=false</code> (or pass <code>anchor=False</code>): you get structured records and a local ledger file you can verify offline, with the page showing <em>self-attested / not anchored</em>. One config change moves you to anchoring when you&rsquo;re ready. See the <a class="ln" href="#where-it-anchors">adoption ladder</a>.</div>
+<div class="callout"><strong>Where you start matters.</strong> By default, <code>emit()</code> witnesses to the public log. If you want to try locally first with no network or services, set <code>CAPSULE_ANCHOR=false</code> (or pass <code>anchor=False</code>): you get structured records and a local ledger file you can verify offline, with the page showing <em>self-attested / not witnessed</em>. One config change moves you to witnessing when you&rsquo;re ready. See the <a class="ln" href="#where-it-anchors">adoption ladder</a>.</div>
 
 <h2>2. Seal an action</h2>
 <p>Call <code>emit()</code> once at each consequential action. <code>operator</code>, <code>developer</code>, <code>action</code>, <code>agent_input</code>, <code>agent_output</code>, <code>verdict</code>, and <code>effect</code> are required; <code>model</code> is optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
@@ -205,7 +207,7 @@ cap = emit(
 print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted to the log</span></code></pre>
 <div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter emits on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
 
-<h2>3. Where it anchors</h2>
+<h2>3. Where it's witnessed</h2>
 <p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>CAPSULE_ANCHOR=false</code> (or <code>anchor=False</code>) to seal locally; set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
 
 <h2>4. Verify</h2>
@@ -214,14 +216,14 @@ print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted
 agent-action-capsule verify --store ledger.jsonl
 
   <span class="s">capsule_id</span>  9f2a...c14  <span class="ok">ok</span>
-  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest on the public log</span>
+  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest witnessed on the public log</span>
   substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></code></pre>
 <div class="callout warn"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule&rsquo;s digest to the public log (<code>cap.anchored=True</code>). The log&rsquo;s inclusion <em>receipt</em> is verifiable against the log today; surfacing it back onto the <code>emit()</code> return value is on the near-term roadmap.</div>
 <h2>Adapters: seal from your framework</h2>
 <p>You don&rsquo;t have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). A gateway integration (<strong>agentgateway</strong>) seals at the chokepoint every consequential action flows through &mdash; one policy point instead of N integrations (via the gateway's <code>mcpGuardrails</code> ExtMcp hook). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a> and the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter</a>.</p>
 <div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check proves.</div>
 <div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/01-your-first-capsule.md">Tutorial: your first capsule &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/02-confirming-and-chaining.md">Confirming &amp; chaining &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/anchor-anywhere.html"><div class="dir">&#8592; Previous</div><div class="ttl">Anchor anywhere</div></a><a class="n" href="/docs/verify-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">Verify a capsule</div></a></div>
+      <div class="next"><a class="p" href="/docs/witness-anywhere.html"><div class="dir">&#8592; Previous</div><div class="ttl">Witness anywhere</div></a><a class="n" href="/docs/verify-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">Verify a capsule</div></a></div>
     </article>
   </div>
 </main>
@@ -241,7 +243,7 @@ agent-action-capsule verify --store ledger.jsonl
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">

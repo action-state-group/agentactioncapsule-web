@@ -144,7 +144,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Composition (CPB)</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -166,7 +166,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html">Composition (CPB)</a>
-<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
+<a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -175,6 +175,7 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html" class="active">Bilateral attestation</a>
 <h5>Project</h5>
@@ -189,7 +190,7 @@
 
 <h2>The problem it solves</h2>
 <p>Each side keeps its own log. A dispute reduces to <em>my log versus your log</em>. Neither log carries the other party's agreement; either side can later claim the terms were different. The record exists, but it proves nothing a relying party can check independently.</p>
-<p>Bilateral attestation replaces that with a four-move exchange that produces a record both parties have signed, each party holds proof of the other's signature, and the combined record can be anchored so a third party who trusts neither organization can verify it end-to-end.</p>
+<p>Bilateral attestation replaces that with a four-move exchange that produces a record both parties have signed, each party holds proof of the other's signature, and the combined record can be witnessed so a third party who trusts neither organization can verify it end-to-end.</p>
 
 <h2>The four moves</h2>
 <div class="steps">
@@ -238,7 +239,7 @@
   <tbody>
     <tr><th>Agent Action Capsule</th><td>Carries the attestations. The disposition vocabulary — <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>deferred</code>, <code>escalated</code> — is reused verbatim.</td></tr>
     <tr><th>Delegation receipts</th><td>A request attestation may reference a delegation receipt authorizing the requesting agent.</td></tr>
-    <tr><th>SCITT transparency log</th><td>Anchoring both capsules makes the record verifiable by parties who trust neither organization.</td></tr>
+    <tr><th>SCITT transparency log</th><td>Witnessing both capsules makes the record verifiable by parties who trust neither organization.</td></tr>
     <tr><th>Remote attestation (RATS)</th><td>RATS attests platform state; bilateral attestation attests actions. Orthogonal layers that compose.</td></tr>
   </tbody>
 </table>
@@ -287,7 +288,7 @@ pvr = verify_pair(capsule_a, capsule_b)
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
