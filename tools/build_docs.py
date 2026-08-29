@@ -22,9 +22,12 @@ import pathlib
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs"
 
 DRAFT_URL = "https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/"
+CPB_DRAFT_URL = "https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/"
 ORG_URL = "https://github.com/action-state-group"
 ANCHOR_URL = "https://anchor.agentactioncapsule.org"
 VERIFY_URL = "https://verify.agentactioncapsule.org"
+CPB_URL = "/cpb.html"
+IP_URL = "/ip"
 
 # Hybrid docs model: the site owns standard-level CONCEPTS; the canonical
 # implementation/usage docs live in capsule-emit/docs (one fact, one home). Each
@@ -56,20 +59,15 @@ def go_deeper_html(slug: str) -> str:
 
 # Honest standards-status line, reused wherever status is relevant.
 STATUS_NOTE = (
-    "<strong>Status.</strong> The Agent Action Capsule profile is an individual "
-    "IETF Internet-Draft (<code>draft-mih-scitt-agent-action-capsule</code>) — "
-    "submitted for discussion, <em>not</em> adopted by a working group, and not a "
-    "standard. It builds on the IETF SCITT Architecture (now "
-    "<a class=\"ln\" href=\"https://www.rfc-editor.org/rfc/rfc9943\">RFC&nbsp;9943</a>) "
-    "and the COSE Receipts specification, which has been approved and assigned "
-    "<a class=\"ln\" href=\"https://datatracker.ietf.org/doc/draft-ietf-cose-merkle-tree-proofs/\">RFC&nbsp;9942</a> "
-    "&mdash; now in AUTH48 (final editorial review) ahead of publication. "
-    "RFC&nbsp;9162 (Certificate Transparency 2.0) is also a published RFC. "
-    "<strong>Tracking the standard:</strong> "
-    "this profile is built to track SCITT and COSE as they finalize — as those "
-    "specifications advance, the profile and its reference "
-    "implementations will be updated to conform to the final versions, and any "
-    "breaking changes will be versioned and documented."
+    "<strong>Status.</strong> The Agent Action Capsule profile "
+    f'(<a class="ln" href="{DRAFT_URL}">draft-mih-scitt-agent-action-capsule-02</a>) '
+    "is an individual IETF Internet-Draft — submitted for discussion, <em>not</em> "
+    "adopted by a working group, and not a standard. A companion draft, the "
+    "<strong>Canonical Payload Binding</strong> "
+    f'(<a class="ln" href="{CPB_DRAFT_URL}">draft-mih-sokolov-scitt-payload-binding-01</a>), '
+    "defines the shared canonicalization and digest-binding layer. Both build on the "
+    'IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) '
+    'and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).'
 )
 
 # ---------------------------------------------------------------------------
@@ -187,6 +185,7 @@ NAV = """<nav>
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a href="/">Standard</a>
+      <a href="{cpb}">Composition (CPB)</a>
       <a href="{anchor}">Transparency Log</a>
       <a href="{verify}">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
@@ -194,9 +193,24 @@ NAV = """<nav>
       <a href="{draft}">Draft (IETF) &#x2197;</a>
     </div>
   </div>
-</nav>""".format(anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL)
+</nav>""".format(cpb=CPB_URL, anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL)
 
-FOOTER = """<footer>
+# NOTE: the "Project" foot-col (Governance + Patent posture) is live today only on
+# docs/index.html and docs/governance.html, not the other 11 generated pages — an
+# inconsistency in the committed site, not a deliberate per-page design. Reconciling
+# to match live content byte-for-byte (docs-site-generator-output-drift) means
+# reproducing that inconsistency here rather than silently "fixing" it by expanding
+# scope to editing 11 pages of committed content; flagged for a follow-up decision.
+_FOOTER_PROJECT_COL = """
+        <div class="foot-col">
+          <h5>Project</h5>
+          <a href="/docs/governance.html">Governance</a>
+          <a href="{ip}">Patent posture</a>
+        </div>""".format(ip=IP_URL)
+
+
+def footer_html(include_project: bool) -> str:
+    return """<footer>
   <div class="wrap">
     <div class="foot-in">
       <div class="foot-brand">
@@ -219,12 +233,15 @@ FOOTER = """<footer>
           <h5>Source</h5>
           <a href="{org}">GitHub &#x2197;</a>
           <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
-        </div>
+        </div>{project_col}
       </div>
     </div>
     <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
-</footer>""".format(anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL)
+</footer>""".format(
+        anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL,
+        project_col=_FOOTER_PROJECT_COL if include_project else "",
+    )
 
 # Sidebar groups: (group label, [(slug, short-title)])
 SIDEBAR = [
@@ -268,6 +285,13 @@ def sidebar_html(active_slug: str) -> str:
         for slug, title in items:
             cls = ' class="active"' if slug == active_slug else ""
             out.append(f'<a href="/docs/{slug}.html"{cls}>{title}</a>')
+            if slug == "how-it-composes":
+                out.append(f'<a href="{CPB_URL}">Composition (CPB)</a>')
+        if label == "Reference":
+            out.append('<h5>Extensions</h5>')
+            out.append('<a href="/docs/bilateral.html">Bilateral attestation</a>')
+        if label == "Project":
+            out.append(f'<a href="{IP_URL}">Patent posture</a>')
     out.append("</nav>")
     return "\n".join(out)
 
@@ -341,7 +365,8 @@ PAGE = """<!DOCTYPE html>
 def render(slug, title, desc, crumb, body, *, is_index=False):
     url = "https://agentactioncapsule.org/docs/" if is_index else f"https://agentactioncapsule.org/docs/{slug}.html"
     return PAGE.format(
-        title=title, desc=desc, css=CSS, nav=NAV, footer=FOOTER, url=url,
+        title=title, desc=desc, css=CSS, nav=NAV, url=url,
+        footer=footer_html(is_index or slug == "governance"),
         sidebar=sidebar_html("index" if is_index else slug),
         crumb=crumb, body=body,
         nxt="" if is_index else next_block(slug),
@@ -568,7 +593,9 @@ PAGES["quickstart"] = dict(
 <p class="lede">From install to a verified, anchored record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API.</p>
 
 <h2>1. Install</h2>
-<pre class="code"><code>pip install "capsule-emit==0.1.1" agent-action-capsule</code></pre>
+<pre class="code"><code>pip install capsule-emit agent-action-capsule  # 0.3.2 or later</code></pre>
+
+<div class="callout"><strong>Where you start matters.</strong> By default, <code>emit()</code> anchors to the public log. If you want to try locally first with no network or services, set <code>CAPSULE_ANCHOR=false</code> (or pass <code>anchor=False</code>): you get structured records and a local ledger file you can verify offline, with the page showing <em>self-attested / not anchored</em>. One config change moves you to anchoring when you&rsquo;re ready. See the <a class="ln" href="#where-it-anchors">adoption ladder</a>.</div>
 
 <h2>2. Seal an action</h2>
 <p>Call <code>emit()</code> once at each consequential action. <code>operator</code>, <code>developer</code>, <code>action</code>, <code>agent_input</code>, <code>agent_output</code>, <code>verdict</code>, and <code>effect</code> are required; <code>model</code> is optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
@@ -590,7 +617,7 @@ print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted
 <div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter emits on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
 
 <h2>3. Where it anchors</h2>
-<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service, or <code>anchor=False</code> to seal locally.</p>
+<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>CAPSULE_ANCHOR=false</code> (or <code>anchor=False</code>) to seal locally; set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
 
 <h2>4. Verify</h2>
 <p>Each <code>emit()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
@@ -717,7 +744,7 @@ PAGES["how-it-composes"] = dict(
 <h2>The four-leg accountability picture</h2>
 <p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
 <p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
-<div class="callout"><strong>Composition stub.</strong> A neutral, four-leg composition architecture — covering how CAN / WHO / WHAT / AUDIT interoperate across implementations — is forthcoming as a separate specification. Cross-links will be added here once that work posts. The shared-digest binding above is the seam.</div>
+<div class="callout deeper"><strong>Canonical Payload Binding (CPB)</strong> is the companion spec that defines exactly how digests are canonicalized and committed across profiles. CPB is the shared seam: any conforming profile that uses jcs-n canonicalization and typed digest references can compose with a capsule without a custom adapter. A second companion draft, <strong>Agent Accountability: Composition and Conformance</strong>, specifies the CAN/WHO/WHAT/AUDIT composition model itself. Full story — the mechanism, the open registry, and the conformance bar — on the <a class="ln" href="/cpb.html">Composition (CPB) page</a>. Spec: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-01 &#x2197;</a> &middot; Registry: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md">registries of record &#x2197;</a> &middot; Vectors: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/tree/main/vectors">conformance vectors &#x2197;</a></div>
 """,
 )
 
@@ -804,7 +831,7 @@ PAGES["governance"] = dict(
 <h2>Scope &amp; boundaries</h2>
 <p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the boundary between the open record layer and runtime enforcement is explicit, not implied.</p>
 
-<div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. A community chat (Discord/Slack) is coming soon.</div>
+<div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. Join the conversation on <a class="ln" href="https://github.com/action-state-group">GitHub</a>.</div>
 """,
 )
 
