@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Composition &amp; Canonical Payload Binding (CPB) &mdash; Agent Action Capsule</title>
-<meta name="description" content="How independently-verifiable profiles — CAN, WHO, WHAT, AUDIT — compose into one record by a shared action digest, the binding mechanism that makes it possible (CPB), the open registry, and the conformance bar every entry has to clear.">
+<title>CBOR Payload Binding (CPB) &mdash; Agent Action Capsule</title>
+<meta name="description" content="CPB is a small, single-purpose spec: how a payload binds to a SCITT receipt, and how a payload class declares and resolves its canonical form. What it is, why it helps (the never-reject invariant), and the machine-readable payload-class registry.">
 <link rel="canonical" href="https://agentactioncapsule.org/cpb.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Composition &amp; Canonical Payload Binding (CPB)">
-<meta property="og:description" content="How independently-verifiable profiles compose into one record by a shared action digest, the binding mechanism (CPB), the open registry, and the conformance bar every entry has to clear.">
+<meta property="og:title" content="CBOR Payload Binding (CPB)">
+<meta property="og:description" content="A small, single-purpose spec: how a payload binds to a SCITT receipt, how a payload class is declared and resolved, and the payload-class registry.">
 <meta property="og:url" content="https://agentactioncapsule.org/cpb.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Composition &amp; Canonical Payload Binding (CPB)">
-<meta name="twitter:description" content="How independently-verifiable profiles compose into one record by a shared action digest, the binding mechanism (CPB), the open registry, and the conformance bar every entry has to clear.">
+<meta name="twitter:title" content="CBOR Payload Binding (CPB)">
+<meta name="twitter:description" content="A small, single-purpose spec: how a payload binds to a SCITT receipt, how a payload class is declared and resolved, and the payload-class registry.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -127,8 +127,8 @@
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a href="/">Standard</a>
-      <a class="active" href="/cpb.html">Composition (CPB)</a>
-      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+      <a class="active" href="/cpb.html">Payload Binding (CPB)</a>
+      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -149,8 +149,8 @@
 <a href="/docs/how-verification-works.html">How verification works</a>
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
-<a href="/cpb.html" class="active">Composition (CPB)</a>
-<a href="/docs/witness-anywhere.html">Witness anywhere</a>
+<a href="/cpb.html" class="active">Payload Binding (CPB)</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -159,7 +159,6 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
-<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -167,72 +166,56 @@
 <a href="/ip">Patent posture</a>
 </nav>
     <article>
-      <div class="crumb">Framework</div>
+      <div class="crumb">Specification</div>
 
-<h1>Composition &amp; Canonical Payload Binding</h1>
-<p class="lede">Two companion IETF drafts sit underneath the Agent Action Capsule. One defines how independently-verifiable profiles compose into a single accountable record. The other defines the binding mechanism that makes that composition possible without drift. This page covers both, the open registry they share, and the conformance bar every entry has to clear.</p>
+<h1>CBOR Payload Binding (CPB)</h1>
+<p class="lede">CPB is a small, single-purpose IETF draft that answers one question: how does a payload bind to a SCITT receipt? It defines how a payload class declares its canonical form and how any verifier resolves it — nothing more. This page covers the spec, the concrete problem it solves, and the machine-readable payload-class registry.</p>
 
-<h2>Two drafts, one seam</h2>
-<p><strong>Agent Accountability: Composition and Conformance</strong> (<code>draft-mih-sato-agent-accountability-composition-00</code>) is the framework. It defines a set of interchangeable question-slots — <strong>CAN</strong> (was the action permitted?), <strong>WHO</strong> (which accountable human authorized it?), <strong>WHAT</strong> (what did the agent actually do?), <strong>AUDIT</strong> (did the runtime enforce correctly?) — and specifies how independently-verifiable profiles answering each question compose into one record, plus a shared conformance-vector suite for testing that composition. It complements existing audit-architecture and record-format work rather than replacing it.</p>
-<p><strong>Canonical Payload Binding</strong> (CPB, <code>draft-mih-sokolov-scitt-payload-binding-01</code>) is the mechanism. It defines the shared construction — canonicalization, identifier derivation, and typed reference — that any payload profile declares once and inherits everywhere, so profiles can compose across implementations without a custom adapter per pair. The Agent Action Capsule is CPB's first registered payload profile.</p>
-<p>Put together: composition says <em>which questions</em> a record needs to answer and how the answers join up; CPB says <em>how the join itself is computed</em>, byte for byte, so any two independent implementations land on the same digest.</p>
-
-<h2>How records compose: a shared action digest</h2>
-<p>Profiles compose by reference to a shared subject digest over the action — <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — the join key every slot refers to. Digest equality is a join key, not proof of truth, authorization, or sufficiency on its own: native profile verification, digest recomputation, and receipt verification remain separate results that a conforming verifier must never collapse into one opaque boolean.</p>
-<table class="t">
-  <thead><tr><th>Slot</th><th>Answers</th><th>First-instance profile</th></tr></thead>
-  <tbody>
-    <tr><th>CAN — Authorization</th><td>was the agent permitted to act?</td><td>e.g. OAuth/AAuth, GNAP, policy engines</td></tr>
-    <tr><th>WHO — Named-human authorization</th><td>which accountable human (or quorum) authorized this exact action, before it ran?</td><td>a device-bound authorization receipt, offline-verifiable against the signer's key</td></tr>
-    <tr class="cap"><th>WHAT — Agent Action Capsule</th><td>what did the agent actually do? (verdict-complete, byte-stable)</td><td>the Agent Action Capsule profile</td></tr>
-    <tr><th>AUDIT — Runtime gate</th><td>did the runtime enforce correctly, in causal order, tamper-evidently?</td><td>a policy gateway or observability log</td></tr>
-  </tbody>
-</table>
-<p class="lede" style="font-size:14.5px">Any conforming profile may fill a slot; the set is open by design — belief-provenance is a named extension socket. Each slot may root in a different trust anchor, and the composition holds even if any one party is compromised or under review: no slot is a required root of trust for another.</p>
-<div class="callout">A record can be produced at different assurance levels. <strong>Self-attested</strong> (signed by the agent or operator, held by an interested party) is a valid baseline. <strong>Witnessed / third-party-verifiable</strong> means the record, or a digest of it, is registered to a SCITT transparency service, so a party who trusts neither the agent nor the operator can verify its existence, its content at registration, and non-equivocation. The composition doesn't mandate the witnessed tier — it specifies how any conforming profile can reach it, and how that's tested. (See the full <a class="ln" href="/docs/translation.html">ladder — self-attested &rarr; witnessed &rarr; countersigned</a>.)</div>
-
-<h2>The binding mechanism: CPB</h2>
+<h2>The spec</h2>
+<p>Every profile that seals structured content into a SCITT Signed Statement re-derives the same few moves. CPB (<code>draft-mih-sokolov-scitt-payload-binding</code>) defines those moves once, as a reusable binding, so a profile inherits them instead of restating the mechanics:</p>
 <table class="t">
   <thead><tr><th>Move</th><th>What it does</th></tr></thead>
   <tbody>
-    <tr><th>Canonicalize — <code>jcs-n</code></th><td>RFC 8785 JCS over the normalized value (null, empty-array, empty-object members removed bottom-up), SHA-256, lowercase hex. One algorithm any independent implementation can run to recompute the same digest.</td></tr>
-    <tr><th>Derive identifier</th><td>A content-addressed identifier derived from the canonical form, over a declared exclusion set (fields like <code>capsule_id</code> or <code>chain</code> that can't be self-referential).</td></tr>
-    <tr><th>Typed reference</th><td>External evidence — an authorization grant, a policy decision, an upstream receipt — binds by its typed digest reference. The referenced data stays where it lives; only the commitment travels, and a verifier checks representation, exclusion-set context, and digest together, not the hex string alone.</td></tr>
+    <tr><th>Canonical form</th><td>A payload class declares one canonicalization algorithm (e.g. RFC 8785 JCS over the payload) so any independent implementation reduces the same content to the same bytes.</td></tr>
+    <tr><th>Derived identifier</th><td>A content-addressed identifier is derived from that canonical form, over a declared exclusion set — the fields (such as a self-referential identifier) that can't be inside their own digest.</td></tr>
+    <tr><th>Receipt binding</th><td>The SCITT receipt is placed in the unprotected header of the Signed Statement, binding the receipt to that exact payload — so a receipt is unambiguously <em>about this payload class and this record</em>.</td></tr>
+    <tr><th>Typed reference</th><td>One record cites another by its typed digest reference across profile boundaries. The referenced data stays where it lives; only the commitment travels, resolved through its declared payload class.</td></tr>
   </tbody>
 </table>
-<p>A payload profile declares its canonicalization algorithm and exclusion set once, in the Artifact Type Registry, and inherits derived-identifier and typed-reference semantics without restating the mechanics itself.</p>
+<p>A payload class declares its canonicalization algorithm and exclusion set <strong>once</strong>, in the registry below, obtains an interoperable derived identifier, and inherits statement-to-receipt binding and typed-reference semantics without restating any of it. That is the whole of CPB: a way to declare a payload class and resolve it.</p>
+<div class="callout">CPB is deliberately narrow. It is the <em>binding</em> — canonical form, identifier, receipt placement, typed reference. It is not the payload's semantics (each payload class owns those) and it is not how independently-verifiable records join into one accountable record — that model lives with the <a class="ln" href="/#compose">Agent Action Capsule standard</a>.</div>
 
-<h2>The open registry</h2>
-<p>CPB keeps one registry home for the whole profile family: a Payload Canonicalization Algorithm Registry and an Artifact Type Registry, both interim records pending IANA registration on RFC publication. <strong>The Agent Action Capsule is the first registered payload profile</strong> (<code>agent-action-capsule</code>, status <em>Registered</em>). <strong>MachineMandate is registering as the second</strong> — an owner-authored entry, pending the owner's confirmation of its digest-context fields.</p>
-<p>Entries are owner-authored wherever possible, and the registration path is a three-rung ladder by provenance:</p>
+<h2>Why it helps</h2>
+<p>Without a shared binding, "a receipt for this payload" is an assertion made <em>about</em> the bytes, out of band; two verifiers can disagree on which bytes a receipt actually covers, and a payload class defined only inside a closed product makes them disagree on what a value even means. CPB pins the answer: the receipt sits in the Signed Statement's unprotected header over a canonical form the payload class declared publicly, so any verifier resolves the same identifier and the same receipt-to-payload binding from the bytes alone. A receipt is unambiguously about this payload class and this record.</p>
+<h3>The never-reject invariant</h3>
+<p>CPB is built so that a verifier which hasn't updated <strong>degrades honestly instead of failing wrong</strong>. A verifier MUST treat an unregistered value as informational and MUST NOT reject a record solely because it carries a value the verifier doesn't recognize. The digest commits whatever bytes are present, so an unknown value breaks only <em>semantic interpretation</em>, never <em>digest verification</em>: an older verifier still confirms the seal and the receipt, and simply reports the unfamiliar value as uninterpreted rather than rejecting a valid record. New values can enter the vocabulary without a flag day.</p>
+<div class="callout warn">Digest equality is a binding, not proof of truth or sufficiency. Native payload verification, identifier recomputation, and receipt verification stay <strong>separate results</strong> — a conforming verifier must never collapse them into one opaque boolean.</div>
+
+<h2>The registry</h2>
+<p>CPB keeps one machine-readable home for the whole payload-class family: a <strong>Payload Canonicalization Algorithm Registry</strong> and an <strong>Artifact Type Registry</strong>, both interim registries of record pending the corresponding IANA registries on RFC publication. Registration policy is <strong>Specification Required</strong> (RFC 8126), with a Designated Expert per entry, and <strong>entries are immutable in behavior</strong> — a behavior change registers as a new entry rather than editing history.</p>
+<p>The <strong>Agent Action Capsule</strong> is the first registered artifact type; <strong>machine-mandate</strong> is registered as the second (owner-confirmed). The algorithm registry carries <code>jcs</code> (RFC 8785 JCS) and <code>as-transmitted</code> as registered algorithms. Proposed entries under discussion with their owners — for example the <code>mesh-inference-exchange</code> payload class — are tracked provisionally, in a separate provisional registry, until their vectors and pinning are complete.</p>
+<p>Entries are owner-authored wherever possible, and how an entry is added depends on its provenance — a three-rung ladder:</p>
 <table class="t">
   <thead><tr><th>Rung</th><th>Status</th><th>What it means</th></tr></thead>
   <tbody>
-    <tr><th>1 — Owner-authored</th><td><code>owner-confirmed</code></td><td>the profile's own author or owner supplies every field and opens the PR. Highest provenance; the preferred path.</td></tr>
-    <tr><th>2 — Third-party-documented</th><td><code>third-party-documented</code></td><td>someone other than the owner registers publicly pinned artifacts (exact spec revision + commit), names themselves as registrant, and makes no endorsement claim on the owner's behalf. Upgrades to owner-confirmed on any owner acknowledgment.</td></tr>
-    <tr><th>3 — Provisional</th><td><code>provisional</code></td><td>a reference resolves, but the vector set is incomplete or the specification isn't pinned precisely enough yet.</td></tr>
+    <tr><th>1 &mdash; Owner-authored</th><td><code>owner-confirmed</code></td><td>the payload class's own author or owner supplies every field and opens the PR. Highest provenance; the preferred path.</td></tr>
+    <tr><th>2 &mdash; Third-party-documented</th><td><code>third-party-documented</code></td><td>someone other than the owner registers from publicly pinned artifacts (exact spec revision + commit), names themselves as registrant, and makes no endorsement claim on the owner's behalf. Upgrades to <code>owner-confirmed</code> on owner acknowledgment.</td></tr>
+    <tr><th>3 &mdash; Provisional</th><td><code>provisional</code></td><td>a reference resolves, but the vector set is incomplete or the specification isn't pinned precisely enough yet. Held in the provisional registry until it is.</td></tr>
   </tbody>
 </table>
-<p>Entries are immutable once merged — a behavior change registers as a new entry rather than editing history — and CPB editors never fill in an owner's digest-context fields on their behalf.</p>
-
-<h2>Conformance rigor: mutants, not a rubber stamp</h2>
-<p>Registering a profile isn't a form submission. Every fired conformance-check category has to survive a <strong>mutation-probe self-test</strong>: for each category, the suite auto-generates a <em>condition-removed mutant</em> — the input with the very defect the check exists to catch — and asserts the checker actually flips to failure on it. A check that stays green against its own mutant is reported <strong>assertion-free</strong> and fails CI. A required conformance vector set must also be two-sided: positive vectors with pinned expected values, and negative (MUST-FAIL) vectors — negatives-only can't catch an implementation that's too strict, and positives-only can't catch one that accepts malformed input.</p>
-<p>This is what makes registration a real bar rather than a checkbox: the suite doesn't just confirm a passing implementation looks right, it confirms the checks themselves would have caught the implementation being wrong.</p>
-
-<h2>Implementation status</h2>
-<p>The CPB conformance-vector suite is the acceptance gate. The <strong>Python reference implementation</strong> passes the full current suite, CI-verified across both positive and MUST-FAIL vectors. A second independent implementation, in <strong>TypeScript</strong>, is in progress — it currently passes an earlier vector snapshot and is being brought current with the full suite.</p>
+<p>CPB editors never fill in an owner's digest-context fields on their behalf, and a construction fully specified by a published standard (an algorithm defined by an RFC) is recorded as <code>standards-referenced</code> — there is no owner to acknowledge it. To add or vendor an entry, open a PR against the registry of record; the entry template and the per-registry ladder are documented alongside it.</p>
 
 <h2>Read the source</h2>
 <ul>
-  <li>CPB spec: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-01 &#x2197;</a></li>
-  <li>Composition spec: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">draft-mih-sato-agent-accountability-composition-00 &#x2197;</a></li>
+  <li>CPB spec: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding &#x2197;</a></li>
   <li>Registries of record: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md">REGISTRY.md &#x2197;</a></li>
-  <li>Conformance vectors: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/tree/main/vectors">scitt-payload-binding/vectors &#x2197;</a></li>
-  <li>Reference implementation (Python): <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding">scitt-payload-binding &#x2197;</a></li>
-  <li>Agent Action Capsule — the first registered profile: <a class="ln" href="https://github.com/action-state-group/agent-action-capsule">agent-action-capsule &#x2197;</a></li>
+  <li>Provisional registry: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/blob/main/spec/cpb-provisional-registry.md">cpb-provisional-registry.md &#x2197;</a></li>
+  <li>Reference implementation &amp; vectors: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding">scitt-payload-binding &#x2197;</a></li>
+  <li>Agent Action Capsule &mdash; the first registered payload class: <a class="ln" href="https://github.com/action-state-group/agent-action-capsule">agent-action-capsule &#x2197;</a></li>
+  <li>How records compose into one accountable record: <a class="ln" href="/#compose">Composition, on the Standard &#x2197;</a></li>
 </ul>
 
-      <div class="next"><a class="p" href="/docs/how-it-composes.html"><div class="dir">&#8592; Related</div><div class="ttl">How it composes with your stack</div></a><a class="n" href="/docs/what-is-a-capsule.html"><div class="dir">Concepts &#8594;</div><div class="ttl">What is a Capsule?</div></a></div>
+      <div class="next"><a class="p" href="/#compose"><div class="dir">&#8592; Related</div><div class="ttl">How records compose</div></a><a class="n" href="/docs/what-is-a-capsule.html"><div class="dir">Concepts &#8594;</div><div class="ttl">What is a Capsule?</div></a></div>
     </article>
   </div>
 </main>
@@ -247,21 +230,20 @@
         <div class="foot-col">
           <h5>Standard</h5>
           <a href="/">Overview</a>
-          <a href="/cpb.html">Composition (CPB)</a>
+          <a href="/cpb.html">Payload Binding (CPB)</a>
           <a href="/docs/">Docs</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (&#8209;02) &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (&#8209;01) &#x2197;</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (&#8209;00) &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
           <h5>Source</h5>
           <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
-          <a href="https://github.com/action-state-group/scitt-payload-binding/tree/main/vectors">Conformance vectors &#x2197;</a>
+          <a href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md">Payload-class registry &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Project</h5>

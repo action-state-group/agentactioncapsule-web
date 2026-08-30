@@ -193,7 +193,7 @@
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a class="active" href="/">Standard</a>
-      <a href="/cpb.html">Composition (CPB)</a>
+      <a href="/cpb.html">Payload Binding (CPB)</a>
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
@@ -459,40 +459,34 @@ mcpGuardrails:
 </section>
 
 
-<!-- CPB — CANONICAL PAYLOAD BINDING -->
-<section class="band" id="cpb" style="background:var(--paper-2)">
+<!-- COMPOSITION — how records join into one accountable record -->
+<section class="band" id="compose" style="background:var(--paper-2)">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow">Canonical Payload Binding &amp; Composition</span>
-      <h2>The composition crux: every profile speaks the same binding language.</h2>
-      <p>The Agent Action Capsule seals SHA-256 digests of your inputs and outputs — not the raw bytes. The precise construction (how those digests are canonicalized, derived, and referenced across profiles) is defined in a companion IETF draft: the <strong>Canonical Payload Binding</strong> (CPB). A second companion draft, <strong>Agent Accountability: Composition and Conformance</strong>, defines how independently-verifiable profiles — CAN, WHO, WHAT, AUDIT — compose into one record by a shared action digest, and the conformance-vector suite that tests it. CPB is the shared seam that makes that composition possible without drift.</p>
+      <span class="eyebrow">Composition</span>
+      <h2>Independently-verifiable records, joined by a shared action digest.</h2>
+      <p>An accountable record often needs to answer more than one question — was the action permitted, which human authorized it, what the agent actually did, did the runtime enforce correctly. The Agent Action Capsule answers <em>what it did</em>. It composes with records that answer the others: each is produced and verified on its own, and they join by <strong>reference to a shared digest over the action</strong> — the join key every record refers to.</p>
     </div>
-    <div class="grid3">
-      <div class="card">
-        <div class="k">jcs-n</div>
-        <h3>One canonicalization</h3>
-        <p>RFC 8785 JCS over the normalized value — the same algorithm any independent implementation can run to recompute the digest.</p>
-      </div>
-      <div class="card">
-        <div class="k">Typed reference</div>
-        <h3>Reference by digest, not copy</h3>
-        <p>External evidence (authorization grants, policy decisions, upstream receipts) binds by its SHA-256 digest. The referenced data stays where it lives; only the commitment travels.</p>
-      </div>
-      <div class="card">
-        <div class="k">Open registry</div>
-        <h3>Owner-authored, conformance-checked</h3>
-        <p>The Agent Action Capsule is the first registered payload profile; MachineMandate is registering as the second. Each entry is owner-authored and checked against a real conformance-vector suite — mutation-tested, not a rubber stamp.</p>
-      </div>
-    </div>
-    <p style="margin-top:20px;font-size:14.5px;color:var(--muted)">Conformance status: the Python reference implementation passes the full CPB vector suite (CI-verified); a second independent implementation, in TypeScript, is in progress.</p>
-    <p style="margin-top:24px">
-      <a class="btn btn-ghost" href="/cpb.html">The full picture — composition, the open registry, and the conformance bar <span class="arrow">→</span></a>
+    <table class="fit">
+      <thead><tr><th>Slot</th><th>Answers</th><th>Filled by</th></tr></thead>
+      <tbody>
+        <tr><th>CAN — Authorization <span class="ex">e.g. OAuth/AAuth, GNAP, policy</span></th><td>was the agent permitted to act?</td><td>an authorization record</td></tr>
+        <tr><th>WHO — Named-human authorization <span class="ex">e.g. a device-bound authorization receipt</span></th><td>which accountable human authorized this exact action, before it ran?</td><td>an offline-verifiable authorization receipt</td></tr>
+        <tr class="cap"><th>WHAT — Agent Action Capsule</th><td>what did the agent actually do? (verdict-complete, byte-stable)</td><td>the Agent Action Capsule</td></tr>
+        <tr><th>AUDIT — Runtime gate <span class="ex">e.g. a policy gateway, observability log</span></th><td>did the runtime enforce correctly, in causal order, tamper-evidently?</td><td>a gateway or observability record</td></tr>
+      </tbody>
+    </table>
+    <p class="fit-note">Any conforming record may fill a slot; the set is open by design. Each slot may root in a different trust anchor, and the join holds even if one party is compromised or under review — no slot is a required root of trust for another. Digest equality is a join key, not proof of truth, authorization, or sufficiency: each record's native verification, digest recomputation, and receipt verification stay separate results that a verifier must never collapse into one boolean. <a href="/docs/how-it-composes.html" style="color:var(--accent);text-decoration:none">How it composes with your stack →</a></p>
+    <div style="margin-top:20px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;color:var(--muted)">A record can be produced at different assurance levels. <strong style="color:var(--ink)">Self-attested</strong> (signed by the agent or operator) is a valid baseline. <strong style="color:var(--ink)">Anchored / third-party-verifiable</strong> means the record, or a digest of it, is registered to a SCITT transparency service, so a party who trusts neither the agent nor the operator can verify its existence and non-equivocation. Composition doesn't mandate the anchored tier — it specifies how any conforming record can reach it.</div>
+
+    <h3 style="font-size:19px;font-weight:700;letter-spacing:-0.3px;margin:36px 0 10px">The binding underneath: CPB</h3>
+    <p style="color:var(--muted);font-size:16px;max-width:64ch">For records to join on the same digest, they need one shared way to compute it. That is the <strong>CBOR Payload Binding</strong> (CPB) — a small companion IETF draft that defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form. Each payload class declares its canonicalization and exclusion set once, in an open registry, and inherits receipt binding and typed digest reference without restating the mechanics. The Agent Action Capsule is CPB's first registered payload class.</p>
+    <p style="margin-top:20px">
+      <a class="btn btn-ghost" href="/cpb.html">CPB — the spec, why it helps, and the registry <span class="arrow">→</span></a>
     </p>
     <p style="margin-top:24px;font-size:14px;color:var(--muted)">
-      CPB spec: <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">draft-mih-sokolov-scitt-payload-binding-01 ↗</a>&ensp;&middot;&ensp;
-      Composition spec: <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">draft-mih-sato-agent-accountability-composition-00 ↗</a>&ensp;&middot;&ensp;
-      Registry: <a href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">registries of record ↗</a>&ensp;&middot;&ensp;
-      Vectors: <a href="https://github.com/action-state-group/scitt-payload-binding/tree/main/vectors" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">conformance vectors ↗</a>
+      CPB spec: <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">draft-mih-sokolov-scitt-payload-binding ↗</a>&ensp;&middot;&ensp;
+      Registry: <a href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">payload-class registry of record ↗</a>
     </p>
   </div>
 </section>
@@ -739,7 +733,8 @@ agent-action-capsule verify --store ledger.jsonl
         <div class="foot-col">
           <h5>Standard</h5>
           <a href="/">Overview</a>
-          <a href="/cpb.html">Composition (CPB)</a>
+          <a href="/#compose">Composition</a>
+          <a href="/cpb.html">Payload Binding (CPB)</a>
           <a href="/docs/">Docs</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (‑02) ↗</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (‑01) ↗</a>
