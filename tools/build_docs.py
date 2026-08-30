@@ -60,11 +60,11 @@ def go_deeper_html(slug: str) -> str:
 # Honest standards-status line, reused wherever status is relevant.
 STATUS_NOTE = (
     "<strong>Status.</strong> The Agent Action Capsule profile "
-    f'(<a class="ln" href="{DRAFT_URL}">draft-mih-scitt-agent-action-capsule-02</a>) '
+    f'(<a class="ln" href="{DRAFT_URL}">draft-mih-scitt-agent-action-capsule-04</a>) '
     "is an individual IETF Internet-Draft — submitted for discussion, <em>not</em> "
     "adopted by a working group, and not a standard. A companion draft, the "
     "<strong>Canonical Payload Binding</strong> "
-    f'(<a class="ln" href="{CPB_DRAFT_URL}">draft-mih-sokolov-scitt-payload-binding-01</a>), '
+    f'(<a class="ln" href="{CPB_DRAFT_URL}">draft-mih-sokolov-scitt-payload-binding-02</a>), '
     "defines the shared canonicalization and digest-binding layer. Both build on the "
     'IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) '
     'and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).'
