@@ -69,7 +69,10 @@ cert is auto-provisioned once DNS resolves.
 ## Standards status
 
 `draft-mih-scitt-agent-action-capsule` is an **individual** IETF Internet-Draft — not WG-adopted,
-not a standard. SCITT/COSE specs are drafts, **not yet RFCs**. RFC 9162 is a published RFC.
+not a standard. The SCITT substrate it builds on is now published: the SCITT Architecture is
+**RFC 9943** and COSE Receipts are **RFC 9942** (both June 2026); RFC 9162 is also a published RFC.
+(The COSE Merkle Tree Proofs wire format — `draft-ietf-cose-merkle-tree-proofs` — remains an
+Internet-Draft.)
 
 ## License
 
