@@ -302,6 +302,7 @@
     {tag:"exe",rel:"executed",t:"2026-06-27T14:02:08Z",who:"po-agent@v1",act:"write_order",verdict:"executed",tf:"verdict"},
     {tag:"con",rel:"confirmed",t:"2026-06-27T14:05:31Z",who:"human:ops-lead",act:"write_order",verdict:"confirmed",tf:"who"}
   ];
+  CH.forEach(function(c){c.verdict0=c.verdict; c.who0=c.who;});  // originals, so Reset can restore the tampered field
   function chCanon(c){return ["act="+c.act,"verdict="+c.verdict,"who="+c.who,"t="+c.t,"parent="+(c.parent||"")].join("|");}
   var bundleTampered=false;
   async function sealChain(){
@@ -330,6 +331,7 @@
   };
   document.getElementById("btnResetBundle").onclick=async function(){
     bundleTampered=false; document.getElementById("btnTamperBundle").textContent="Tamper one in the bundle";
+    CH.forEach(function(c){c.verdict=c.verdict0; c.who=c.who0;});  // restore the tampered field, not just re-seal it
     await sealChain(); CH.forEach(function(c){c.vr=undefined;}); renderChain("auditCards",true); renderChain("chainCards",false);
     document.getElementById("auditSummary").textContent="Not yet verified. Press “Verify as the auditor”.";
   };
