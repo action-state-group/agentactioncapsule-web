@@ -280,9 +280,14 @@
       this.textContent="Tamper a field";
     }
   };
-  document.getElementById("btnReset").onclick=function(){
-    F.forEach(function(f){st[f.k]=f.v;}); orig=null; hitKey=null; document.getElementById("btnTamper").textContent="Tamper a field";
-    render(); recompute(); setPanel("what this records","Click any field to see what it records about what the agent did.");
+  document.getElementById("btnReset").onclick=async function(){
+    F.forEach(function(f){st[f.k]=f.v;});
+    // the two digest fields are computed from raw at init (not their "…" placeholder); restoring
+    // them to f.v would leave canon() != the sealed baseline, so the seal would read broken forever.
+    st["agent_input_digest"]=sid(await sha(raw.inp));
+    st["agent_output_digest"]=sid(await sha(raw.out));
+    orig=null; hitKey=null; document.getElementById("btnTamper").textContent="Tamper a field";
+    render(); await recompute(); setPanel("what this records","Click any field to see what it records about what the agent did.");
   };
 
   /* ---- section 2: editable digests ---- */
