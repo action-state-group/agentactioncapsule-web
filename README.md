@@ -39,7 +39,93 @@ Edit content in `tools/build_docs.py` (the `PAGES` dict + `INDEX_BODY`), then re
 python3 tools/build_docs.py     # rewrites docs/*.html
 ```
 
-## Deploy to Cloud Run (gated — Steven only)
+## Automated deploy
+
+`.github/workflows/deploy.yml` deploys to Cloud Run automatically on every push to `main`, so
+"merged" always means "live". The deploy job is gated on `neutrality-gate` (a self-contained
+re-run of the same reserved-vocabulary scan the PR gate runs) — it never runs if that scan fails
+or the `NEUTRALITY_TERMS` secret is missing, so a direct push to `main` that bypassed PR review
+still cannot ship non-neutral content.
+
+Auth is keyless **Workload Identity Federation** via `google-github-actions/auth@v2` — no
+long-lived service-account key is stored in this repo. This requires a **one-time GCP setup**,
+gated to whoever holds `fluxxom` project admin (Steven). The workflow only consumes the result;
+it does not create or touch any of the following.
+
+**1. Enable the required APIs:**
+
+```sh
+gcloud services enable \
+  iamcredentials.googleapis.com \
+  sts.googleapis.com \
+  run.googleapis.com \
+  cloudbuild.googleapis.com \
+  artifactregistry.googleapis.com \
+  --project fluxxom
+```
+
+**2. Create a Workload Identity Pool + Provider bound to this repo:**
+
+```sh
+gcloud iam workload-identity-pools create "github-actions" \
+  --project fluxxom \
+  --location global \
+  --display-name "GitHub Actions"
+
+gcloud iam workload-identity-pools providers create-oidc "agentactioncapsule-web" \
+  --project fluxxom \
+  --location global \
+  --workload-identity-pool "github-actions" \
+  --display-name "agentactioncapsule-web" \
+  --attribute-mapping "google.subject=assertion.sub,attribute.repository=assertion.repository" \
+  --attribute-condition "assertion.repository=='action-state-group/agentactioncapsule-web'" \
+  --issuer-uri "https://token.actions.githubusercontent.com"
+```
+
+**3. Create the deploy service account and grant it the roles it needs to source-deploy to Cloud
+Run:**
+
+```sh
+gcloud iam service-accounts create "deploy-agentactioncapsule-site" \
+  --project fluxxom \
+  --display-name "Cloud Run deploy — agentactioncapsule-site"
+
+SA="deploy-agentactioncapsule-site@fluxxom.iam.gserviceaccount.com"
+
+for role in roles/run.admin roles/iam.serviceAccountUser roles/cloudbuild.builds.editor \
+            roles/artifactregistry.writer roles/logging.viewer; do
+  gcloud projects add-iam-policy-binding fluxxom \
+    --member "serviceAccount:${SA}" \
+    --role "${role}"
+done
+```
+
+**4. Allow the GitHub repo (via the WIF pool) to impersonate that service account:**
+
+```sh
+PROJECT_NUMBER=$(gcloud projects describe fluxxom --format='value(projectNumber)')
+
+gcloud iam service-accounts add-iam-policy-binding "${SA}" \
+  --project fluxxom \
+  --role roles/iam.workloadIdentityUser \
+  --member "principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-actions/attribute.repository/action-state-group/agentactioncapsule-web"
+```
+
+**5. Add repo variables** (Settings → Secrets and variables → Actions → Variables — these are
+resource identifiers, not secrets):
+
+- `GCP_WIF_PROVIDER` — full provider resource name, from:
+  ```sh
+  gcloud iam workload-identity-pools providers describe "agentactioncapsule-web" \
+    --project fluxxom --location global \
+    --workload-identity-pool "github-actions" --format='value(name)'
+  ```
+- `GCP_DEPLOY_SA_EMAIL` — `deploy-agentactioncapsule-site@fluxxom.iam.gserviceaccount.com`
+
+Confirm the `NEUTRALITY_TERMS` secret (already required by `neutrality.yml`) is set — the deploy
+gate depends on it too.
+
+## Manual deploy (break-glass fallback, gated — Steven only)
 
 ```sh
 # from this directory:
