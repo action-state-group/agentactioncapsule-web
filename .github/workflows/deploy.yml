@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: Apache-2.0
+# Auto-deploy — on push to `main`, deploy this static site to Cloud Run so
+# "merged" always means "live". Auth is keyless Workload Identity Federation
+# (google-github-actions/auth@v2); no long-lived service-account key is
+# stored in this repo.
+#
+# Fail-closed: the `deploy` job depends on `neutrality-gate`, a self-contained
+# re-run of the same reserved-vocabulary scan used on PRs (see neutrality.yml
+# and .github/neutrality_scan.py). This means a direct push to `main` that
+# bypassed PR review still cannot ship non-neutral content — the deploy job
+# simply never runs if the scan fails or the NEUTRALITY_TERMS secret is
+# missing (the scanner is fail-closed on a missing secret; see its docstring).
+#
+# One-time GCP setup (WIF pool/provider, deploy service account, repo
+# vars/secrets) is documented in README.md under "Automated deploy" and is
+# run by a human with GCP access — this workflow only consumes the result.
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  neutrality-gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Neutrality scanner self-test (span-based allow-phrase fix)
+        run: python .github/neutrality_scan.py --self-test
+
+      - name: Reserved-vocabulary neutrality scan (term list from secret)
+        env:
+          NEUTRALITY_TERMS: ${{ secrets.NEUTRALITY_TERMS }}
+        run: python .github/neutrality_scan.py .
+
+  deploy:
+    needs: neutrality-gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required for keyless WIF auth — no long-lived key
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        name: Authenticate to Google Cloud (Workload Identity Federation)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SA_EMAIL }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: agentactioncapsule-site
+          project_id: fluxxom
+          region: us-central1
+          source: .
+          flags: --allow-unauthenticated
