@@ -101,6 +101,7 @@
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
   .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
+  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
   .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
@@ -180,6 +181,16 @@
       
 <h1>Documentation</h1>
 <p class="lede">Concepts and short guides for the Agent Action Capsule &mdash; the open profile for verifiable records of what an AI agent did, and the transparency layer it builds on.</p>
+
+<div class="idx-group">
+  <h2>Start here</h2>
+  <p class="note">Read a ledger before you write one. Steps 1 and 2 install nothing &mdash; you read two real ledgers and check them yourself; step 3 is where you produce one.</p>
+  <div class="cards">
+    <a class="dcard" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/see-a-ledger.md"><div class="n">1 &middot; See a ledger &#x2197;</div><div class="d">Two real agent runs shown beside the capsules that record them &mdash; the run you hold vs. the ledger anyone can check. Nothing to install.</div></a>
+    <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">2 &middot; Verify one yourself</div><div class="d">Signature, then inclusion proof &mdash; from the bytes alone, in the browser, on the command line, or as a library.</div></a>
+    <a class="dcard" href="/docs/quickstart.html"><div class="n">3 &middot; Produce your own</div><div class="d">Now seal a capsule with one <code>emit()</code> call, anchor it, and verify it. Copy-paste-runnable.</div></a>
+  </div>
+</div>
 
 <div class="idx-group">
   <h2>Concepts</h2>
