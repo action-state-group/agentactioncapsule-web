@@ -315,14 +315,14 @@ def submit_order(vendor, amount, po_number):
       </div>
 
       <div class="sw-panel" data-fw="langchain">
-        <div class="sw-fw"><b>LangChain / LangGraph</b> — pip install capsule-emit langchain-core</div>
-        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.langchain import LangChainCapsuleEmitter
+        <div class="sw-fw"><b>LangChain / LangGraph</b> — pip install "capsule-emit[langchain]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.langchain_listener import LangChainCapsuleListener
 
-emitter = LangChainCapsuleEmitter(operator="acme-co", developer="research-agent@v1")
+listener = LangChainCapsuleListener(operator="acme-co", developer="research-agent@v1")
 
-# attach as a callback — every tool call on the run is sealed
-agent.invoke(payload, config={"callbacks": [emitter]})</code></pre></div>
-        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/langchain.md">LangChain adapter docs ↗</a>
+# attach as a callback — planned then confirmed, one chained pair per tool call
+agent.invoke(payload, config={"callbacks": [listener]})</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/langchain.md">LangChain adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/langchain-ai/docs/blob/20543fdf51304bdc8b4808711b4f9d9aca131c0c/scripts/data/integration_external_docs.yaml#L1863-L1865" style="color:var(--muted);text-decoration:underline">listed in LangChain’s integrations docs ↗</a></span>
       </div>
 
       <div class="sw-panel" data-fw="crewai">
