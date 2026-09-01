@@ -101,6 +101,7 @@
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
   .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
+  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
   .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
@@ -138,7 +139,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Payload Binding (CPB)</a>
-      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -160,7 +161,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html">Payload Binding (CPB)</a>
-<a href="/docs/witness-anywhere.html">Witness anywhere</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -169,7 +170,6 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
-<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -181,7 +181,6 @@
       
 <h1>What is an Agent Action Capsule?</h1>
 <p class="lede">An Agent Action Capsule is a signed, tamper-evident record of a consequential action an AI agent took &mdash; sealed at the moment it acted, so any third party can verify later what happened, without trusting the operator who ran the agent.</p>
-<p style="color:var(--muted);font-size:15px;margin-top:-10px">One line: <code>receipt = seal(payload)</code>. See the <a class="ln" href="/docs/translation.html">word-for-word translation</a> across dev / auditor / spec registers.</p>
 
 <p>Agents increasingly take real actions: they place orders, move files, send messages, change records. Today, the only evidence that an action happened as described is the operator's own word. The Agent Action Capsule closes that gap by borrowing the shape that software supply-chain security already uses for build artifacts &mdash; a signed statement registered to a transparency log &mdash; and applying it to <em>agent actions</em>.</p>
 
@@ -190,12 +189,10 @@
   <thead><tr><th>Property</th><th>What it means</th></tr></thead>
   <tbody>
     <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it &mdash; content-addressed by default, and COSE-signed at the Signed-Statement tier. Change any byte and verification fails.</td></tr>
-    <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was witnessed into an append-only log that cannot quietly drop or rewrite history.</td></tr>
+    <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was included in an append-only log that cannot quietly drop or rewrite history.</td></tr>
     <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems. You trust the log's key, not the operator.</td></tr>
   </tbody>
 </table>
-
-<div class="callout deeper">Jump to <a class="ln" href="#does-not-prove">what a capsule does <em>not</em> prove</a> &mdash; the auditor-register honesty section &mdash; or keep reading for the field-level mechanism.</div>
 
 <h2>What a capsule commits to</h2>
 <p>A capsule is a <code>COSE_Sign1</code> envelope over the media type <code>application/agent-action-capsule+json</code>. The payload commits to:</p>
@@ -229,9 +226,9 @@
 <p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
 
 <h2>Levels of assurance</h2>
-<p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from witnessing &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs. The full ladder is self-attested &rarr; witnessed &rarr; countersigned; see the <a class="ln" href="/docs/translation.html">translation page</a> for the auditor-register definition of each rung.</p>
+<p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from anchoring &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs.</p>
 
-<h2 id="does-not-prove">What this actually establishes &mdash; what a capsule does not prove</h2>
+<h2>What a capsule does not prove</h2>
 <p>Honest claims matter. Know the limits before relying on this for audit or compliance:</p>
 <ul>
   <li><strong>Attested, not verified.</strong> A capsule proves what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
@@ -268,7 +265,7 @@
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">

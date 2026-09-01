@@ -101,6 +101,7 @@
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
   .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
+  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
   .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
@@ -138,7 +139,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Payload Binding (CPB)</a>
-      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -160,7 +161,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html">Payload Binding (CPB)</a>
-<a href="/docs/witness-anywhere.html">Witness anywhere</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -169,7 +170,6 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
-<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -187,22 +187,14 @@
   <thead><tr><th>Layer</th><th>Answers</th><th>Form</th></tr></thead>
   <tbody>
     <tr><th>Statement</th><td>What action happened, signed by whom?</td><td>A <code>COSE_Sign1</code> Signed Statement (the Agent Action Capsule profile).</td></tr>
-    <tr><th>Transparency</th><td>Was this statement recorded in an append-only log, and can that be proven?</td><td>A transparency service that registers the statement and witnesses it, returning a receipt.</td></tr>
+    <tr><th>Transparency</th><td>Was this statement recorded in an append-only log, and can that be proven?</td><td>A transparency service that registers the statement and returns a receipt.</td></tr>
   </tbody>
 </table>
 
 <h2>Why the separation matters</h2>
-<p>Keeping the statement independent of the log means a single capsule can be witnessed by more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
+<p>Keeping the statement independent of the log means a single capsule can be anchored to more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
 
-<h2>What this actually establishes</h2>
-<details open>
-<summary style="cursor:pointer;font-weight:600">Auditor register &mdash; why the split is not just tidiness</summary>
-<div style="margin-top:12px">
-<p>A statement's validity as a <em>signed claim</em> &mdash; who said what, intact from the bytes &mdash; does not depend on any single log's uptime, jurisdiction, or continued existence. Only its <em>witnessed</em> status depends on the log: a statement can be self-attested today and witnessed tomorrow (or witnessed by a second, independent log later) without the statement itself changing at all. That's what makes "move or mix witnesses without changing the record" true, not a marketing claim &mdash; it follows directly from the layers being independently defined. See the <a class="ln" href="/docs/translation.html">translation page</a> for how Registration, Receipt, and Witnessing are three distinct things that this separation keeps from blurring together.</p>
-</div>
-</details>
-
-<h2>How it works &mdash; the stack</h2>
+<h2>The stack</h2>
 <p>Each layer is a separate, open-source library so the boundaries stay honest:</p>
 <table class="t">
   <thead><tr><th>Component</th><th>Role</th></tr></thead>
@@ -210,7 +202,7 @@
     <tr><th>agent-action-capsule</th><td>The profile &mdash; the Signed Statement format and the reference verifier.</td></tr>
     <tr><th>capsule-emit</th><td>The producer &mdash; seal an action in one call, or wrap an existing tool with one decorator.</td></tr>
     <tr><th>scitt-cose</th><td>The verifier &mdash; checks SCITT receipts across verifiable data structures.</td></tr>
-    <tr><th>capsule-anchor</th><td>The log &mdash; a neutral transparency service implementation (the witness).</td></tr>
+    <tr><th>capsule-anchor</th><td>The log &mdash; a neutral transparency service implementation.</td></tr>
   </tbody>
 </table>
 <div class="callout">Read next: <a class="ln" href="/docs/what-is-a-transparency-service.html">what a transparency service is</a>, and how it differs from a verifier.</div>
@@ -235,7 +227,7 @@
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">

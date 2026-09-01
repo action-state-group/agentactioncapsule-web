@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>How it composes with your stack &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="The Agent Action Capsule doesn't replace your identity, authorization, or witnessing layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
+<meta name="description" content="The Agent Action Capsule doesn't replace your identity, authorization, or anchoring layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
 <link rel="canonical" href="https://agentactioncapsule.org/docs/how-it-composes.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
 <meta property="og:title" content="How it composes with your stack">
-<meta property="og:description" content="The Agent Action Capsule doesn't replace your identity, authorization, or witnessing layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
+<meta property="og:description" content="The Agent Action Capsule doesn't replace your identity, authorization, or anchoring layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
 <meta property="og:url" content="https://agentactioncapsule.org/docs/how-it-composes.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="How it composes with your stack">
-<meta name="twitter:description" content="The Agent Action Capsule doesn't replace your identity, authorization, or witnessing layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
+<meta name="twitter:description" content="The Agent Action Capsule doesn't replace your identity, authorization, or anchoring layers — it composes with them by referencing their evidence by digest, and adds the one thing they don't: a record any third party can verify without trusting any single party.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -101,6 +101,7 @@
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
   .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
+  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
   .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
@@ -138,7 +139,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Payload Binding (CPB)</a>
-      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -160,7 +161,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html" class="active">How it composes</a>
 <a href="/cpb.html">Payload Binding (CPB)</a>
-<a href="/docs/witness-anywhere.html">Witness anywhere</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -169,7 +170,6 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
-<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -180,20 +180,12 @@
       <div class="crumb">Concepts</div>
       
 <h1>How it composes with your stack</h1>
-<p class="lede">The capsule is one layer in a stack, not a replacement for the others. It sits alongside the layers you already use — identity, authorization, witnessing — and adds the piece none of them provide on their own: a record any third party can verify without trusting any single party.</p>
+<p class="lede">The capsule is one layer in a stack, not a replacement for the others. It sits alongside the layers you already use — identity, authorization, anchoring — and adds the piece none of them provide on their own: a record any third party can verify without trusting any single party.</p>
 
 <h2>Composes, doesn't replace</h2>
-<p>Most agent-trust layers answer a different question than the capsule does. Identity says <em>who</em> is acting; authorization says <em>whether</em> an action is allowed; a witnessing log says the record was <em>included</em>. The capsule answers <strong>what the agent did</strong>, in a record anyone can check — and it leans on those other layers for the rest rather than reabsorbing them. There's no need to fork your stack to adopt it. One line: <code>compose([...])</code> — see the <a class="ln" href="/docs/translation.html">translation page</a> for the dev/auditor/spec breakdown of every verb, including <code>compose</code>.</p>
+<p>Most agent-trust layers answer a different question than the capsule does. Identity says <em>who</em> is acting; authorization says <em>whether</em> an action is allowed; an anchoring log says the record was <em>included</em>. The capsule answers <strong>what the agent did</strong>, in a record anyone can check — and it leans on those other layers for the rest rather than reabsorbing them. There's no need to fork your stack to adopt it.</p>
 
-<h2>What this actually establishes</h2>
-<details open>
-<summary style="cursor:pointer;font-weight:600">Auditor register &mdash; what composition proves, and what it doesn't</summary>
-<div style="margin-top:12px">
-<p>Composition is a <strong>membership claim, not a new assertion</strong>. Binding an authorization grant, identity credential, or upstream evidence by digest says only <em>this action cites that artifact</em> — it does not re-verify that artifact's own truth, and it does not upgrade a self-attested layer into a witnessed one. If the referenced grant was itself never witnessed, composing it into a capsule doesn't witness it retroactively; the capsule just proves the reference existed and was intact at seal time. Each composed layer's own assurance level stays exactly what it was.</p>
-</div>
-</details>
-
-<h2>How it works: reference by digest</h2>
+<h2>How composition works: reference by digest</h2>
 <p>A capsule binds external evidence into its verifiable trail through <code>chain.relation</code>: it commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it. The verifier checks the binding; the referenced data stays where it lives. (The same mechanism links a confirmation back to the action it confirms — see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>.)</p>
 <pre class="code"><code>{
   "action": "submit_order",
@@ -209,7 +201,7 @@
   <tbody>
     <tr><th>Identity / delegation</th><td>who the agent is acting for</td><td>reference the identity or delegation credential by digest</td></tr>
     <tr><th>Authorization / policy</th><td>whether the action was permitted</td><td>reference the grant or policy decision by digest</td></tr>
-    <tr><th>Witnessing / transparency log</th><td>that the record was publicly included</td><td>the SCITT receipt — the capsule is <a class="ln" href="/docs/verifiable-data-structures.html">log-agnostic</a></td></tr>
+    <tr><th>Anchoring / transparency log</th><td>that the record was publicly included</td><td>the SCITT receipt — the capsule is <a class="ln" href="/docs/verifiable-data-structures.html">log-agnostic</a></td></tr>
     <tr><th>Input integrity / provenance</th><td>whether upstream inputs are authentic</td><td>reference the input-integrity evidence by digest</td></tr>
   </tbody>
 </table>
@@ -220,10 +212,10 @@
 
 <h2>The four-leg accountability picture</h2>
 <p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
-<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's witnessed record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
+<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
 <div class="callout deeper">The <strong>CAN/WHO/WHAT/AUDIT composition model</strong> — how independently-verifiable records join on a shared action digest — is laid out on the <a class="ln" href="/#compose">Standard's Composition section</a>. Underneath it, the <strong>Canonical Payload Binding (CPB)</strong> is the small companion spec that lets every record compute the same digest: it defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form, so any conforming profile composes with a capsule without a custom adapter. CPB — the spec, why it helps, and the open registry — on the <a class="ln" href="/cpb.html">Payload Binding (CPB) page</a>. Spec: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding &#x2197;</a> &middot; Registry: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md">payload-class registry of record &#x2197;</a></div>
 
-      <div class="next"><a class="p" href="/docs/whats-consequential.html"><div class="dir">&#8592; Previous</div><div class="ttl">What's consequential</div></a><a class="n" href="/docs/witness-anywhere.html"><div class="dir">Next &#8594;</div><div class="ttl">Witness anywhere</div></a></div>
+      <div class="next"><a class="p" href="/docs/whats-consequential.html"><div class="dir">&#8592; Previous</div><div class="ttl">What's consequential</div></a><a class="n" href="/docs/anchor-anywhere.html"><div class="dir">Next &#8594;</div><div class="ttl">Anchor anywhere</div></a></div>
     </article>
   </div>
 </main>
@@ -243,7 +235,7 @@
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">

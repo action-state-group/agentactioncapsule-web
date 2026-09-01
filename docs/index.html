@@ -101,6 +101,7 @@
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
   .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
+  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
   .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
@@ -138,7 +139,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Payload Binding (CPB)</a>
-      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -160,7 +161,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html">Payload Binding (CPB)</a>
-<a href="/docs/witness-anywhere.html">Witness anywhere</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -169,7 +170,6 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
-<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -183,11 +183,21 @@
 <p class="lede">Concepts and short guides for the Agent Action Capsule &mdash; the open profile for verifiable records of what an AI agent did, and the transparency layer it builds on.</p>
 
 <div class="idx-group">
+  <h2>Start here</h2>
+  <p class="note">Read a ledger before you write one. Steps 1 and 2 install nothing &mdash; you read two real ledgers and check them yourself; step 3 is where you produce one.</p>
+  <div class="cards">
+    <a class="dcard" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/see-a-ledger.md"><div class="n">1 &middot; See a ledger &#x2197;</div><div class="d">Two real agent runs shown beside the capsules that record them &mdash; the run you hold vs. the ledger anyone can check. Nothing to install.</div></a>
+    <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">2 &middot; Verify one yourself</div><div class="d">Signature, then inclusion proof &mdash; from the bytes alone, in the browser, on the command line, or as a library.</div></a>
+    <a class="dcard" href="/docs/quickstart.html"><div class="n">3 &middot; Produce your own</div><div class="d">Now seal a capsule with one <code>emit()</code> call, anchor it, and verify it. Copy-paste-runnable.</div></a>
+  </div>
+</div>
+
+<div class="idx-group">
   <h2>Concepts</h2>
   <div class="cards">
     <a class="dcard" href="/docs/what-is-a-capsule.html"><div class="n">What is an Agent Action Capsule?</div><div class="d">A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable.</div></a>
     <a class="dcard" href="/docs/statement-vs-transparency-layer.html"><div class="n">Statement vs transparency layer</div><div class="d">What happened vs where it is recorded &mdash; and why the statement is structure-independent.</div></a>
-    <a class="dcard" href="/docs/what-is-a-transparency-service.html"><div class="n">What is a Transparency Service?</div><div class="d">Register, receipt, witness &mdash; and the boundary between a transparency service and a verifier.</div></a>
+    <a class="dcard" href="/docs/what-is-a-transparency-service.html"><div class="n">What is a Transparency Service?</div><div class="d">Register, receipt, anchor &mdash; and the boundary between a transparency service and a verifier.</div></a>
     <a class="dcard" href="/docs/verifiable-data-structures.html"><div class="n">Verifiable Data Structures</div><div class="d">RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them.</div></a>
     <a class="dcard" href="/docs/how-verification-works.html"><div class="n">How verification works</div><div class="d">Two independent checks: signature, then inclusion proof &mdash; both from the bytes, offline.</div></a>
   </div>
@@ -196,7 +206,7 @@
 <div class="idx-group">
   <h2>Guides</h2>
   <div class="cards">
-    <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one <code>emit()</code> call, witness it, and verify. Copy-paste-runnable.</div></a>
+    <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one <code>emit()</code> call, anchor it, and verify. Copy-paste-runnable.</div></a>
     <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">Verify a capsule</div><div class="d">Verify in the browser, on the command line, or as a library &mdash; same checks everywhere.</div></a>
   </div>
 </div>
@@ -213,7 +223,6 @@
   <h2>Reference</h2>
   <div class="cards">
     <a class="dcard" href="/docs/glossary.html"><div class="n">Glossary</div><div class="d">SCITT, COSE_Sign1, Signed Statement, Receipt, VDS, STH, inclusion &amp; consistency proofs.</div></a>
-    <a class="dcard" href="/docs/translation.html"><div class="n">Translation: dev / auditor / spec</div><div class="d">The same nouns and verbs in three registers &mdash; the canonical vocabulary decoder, including the three-rung ladder.</div></a>
   </div>
 </div>
 
@@ -241,7 +250,7 @@
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">

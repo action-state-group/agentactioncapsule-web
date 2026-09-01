@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>What is a Transparency Service? &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="A SCITT Transparency Service registers signed statements, issues receipts, and witnesses them into an append-only log. It is high-trust infrastructure — and it is not a verifier.">
+<meta name="description" content="A SCITT Transparency Service registers signed statements, issues receipts, and anchors them to an append-only log. It is high-trust infrastructure — and it is not a verifier.">
 <link rel="canonical" href="https://agentactioncapsule.org/docs/what-is-a-transparency-service.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
 <meta property="og:title" content="What is a Transparency Service?">
-<meta property="og:description" content="A SCITT Transparency Service registers signed statements, issues receipts, and witnesses them into an append-only log. It is high-trust infrastructure — and it is not a verifier.">
+<meta property="og:description" content="A SCITT Transparency Service registers signed statements, issues receipts, and anchors them to an append-only log. It is high-trust infrastructure — and it is not a verifier.">
 <meta property="og:url" content="https://agentactioncapsule.org/docs/what-is-a-transparency-service.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="What is a Transparency Service?">
-<meta name="twitter:description" content="A SCITT Transparency Service registers signed statements, issues receipts, and witnesses them into an append-only log. It is high-trust infrastructure — and it is not a verifier.">
+<meta name="twitter:description" content="A SCITT Transparency Service registers signed statements, issues receipts, and anchors them to an append-only log. It is high-trust infrastructure — and it is not a verifier.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -101,6 +101,7 @@
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
   .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
+  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
   .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
@@ -138,7 +139,7 @@
     <div class="nav-links">
       <a href="/">Standard</a>
       <a href="/cpb.html">Payload Binding (CPB)</a>
-      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -160,7 +161,7 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/cpb.html">Payload Binding (CPB)</a>
-<a href="/docs/witness-anywhere.html">Witness anywhere</a>
+<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -169,7 +170,6 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
-<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -180,53 +180,33 @@
       <div class="crumb">Concepts</div>
       
 <h1>What is a Transparency Service?</h1>
-<p class="lede">A Transparency Service (TS) registers signed statements, issues a receipt proving inclusion, and witnesses them into an append-only log &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
-<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> (today's API: <code>emit()</code>) registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
+<p class="lede">A Transparency Service (TS) registers signed statements, issues a receipt proving inclusion, and anchors them to an append-only log &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
 
-<h2>The notary analogy</h2>
-<p>Think of it like a notary. A notary doesn't read your document for truth and doesn't vouch that what it says is accurate &mdash; a notary confirms <em>that a specific document existed, in a specific form, at a specific time</em>, and stamps a record of that fact into a public book anyone can check later. A Transparency Service does the same thing for a capsule's digest: it doesn't know or care what the capsule says, only that it existed, unaltered, as of a given moment &mdash; and, via the append-only log, that the moment can't quietly be moved later.</p>
-
-<h2>Why it's like a git push</h2>
-<p>Unpushed commits on your laptop can be rewritten, reordered, or dropped without a trace &mdash; <code>git commit --amend</code>, <code>git rebase</code>, anything goes, because only you can see them. Once you <code>git push</code> to a shared remote, that history is checkable by anyone with access: force-pushing over it leaves evidence, and a stranger who cloned the repo before the rewrite can prove what used to be there. A self-attested capsule is the unpushed commit &mdash; internally consistent, but only your word that it hasn't been quietly edited since. Witnessing it is the push: an independent, append-only copy now exists that you don't control alone.</p>
-
-<div class="callout deeper">Vocabulary check: <a class="ln" href="/docs/translation.html">see the word-for-word translation</a> across dev / auditor / spec registers.</div>
-
-<h2>What this actually establishes</h2>
-<details open>
-<summary style="cursor:pointer;font-weight:600">Auditor register &mdash; what the record proves, and what it doesn't</summary>
-<div style="margin-top:12px">
-<p>A witnessed record is <strong>not a true record</strong>. The Transparency Service attests existence, order, and completeness &mdash; never accuracy or intent. It never grades the content up: it doesn't know whether the underlying action was appropriate, only that the statement describing it existed at a given time and hasn't been silently dropped or rewritten since.</p>
-<p>Independently checkable without trusting the log operator: each signature (from the bytes), each inclusion proof (that the leaf is really in the tree), and consistency between any two tree heads (that history wasn't rewritten). Still resting on operational trust in the log operator: durable storage, non-equivocation (one consistent view for everyone), and a stable, published signing key &mdash; that's the trust commitment a Transparency Service carries that a verifier does not.</p>
-<p><strong>Registration &ne; Receipt &ne; Witnessing.</strong> Registration is the act of submitting the statement. A Receipt is the signed proof the service hands back. Witnessing is the log operator co-signing the checkpoint so the log can't equivocate later &mdash; three distinct things, often conflated. &ldquo;Anchor&rdquo; is avoided as a verb here because it collides with the unrelated PKI term <em>trust anchor</em>.</p>
-</div>
-</details>
-
-<h2>How it works</h2>
-<p>What it does, mechanically:</p>
+<h2>What it does</h2>
 <ol>
   <li><strong>Register.</strong> Accepts a <code>COSE_Sign1</code> signed statement and appends its digest as a leaf in the log.</li>
   <li><strong>Receipt.</strong> Returns a signed inclusion proof you can verify offline against the log's public key.</li>
-  <li><strong>Witness.</strong> Publishes a signed tree head and the proofs that keep the log append-only over time.</li>
+  <li><strong>Anchor.</strong> Publishes a signed tree head and the proofs that keep the log append-only over time.</li>
 </ol>
 
-<h3>What it is &mdash; and is NOT</h3>
+<h2>What it is &mdash; and is NOT</h2>
 <p>A <em>verifier</em> checks evidence and holds nothing. A <em>transparency service</em> holds state and carries operational trust. Conflating the two is the most common mistake, so the boundary is worth stating plainly:</p>
 <table class="t">
   <thead><tr><th></th><th>Verifier</th><th>Transparency Service</th></tr></thead>
   <tbody>
-    <tr><th>Operation</th><td>verify only</td><td>register statements, issue receipts, witness</td></tr>
+    <tr><th>Operation</th><td>verify only</td><td>register statements, issue receipts, anchor</td></tr>
     <tr><th>State</th><td>none (stateless)</td><td>a durable, append-only log</td></tr>
     <tr><th>Trust commitment</th><td>none &mdash; verify it yourself</td><td>uptime, integrity, non-equivocation</td></tr>
     <tr><th>Risk class</th><td>low (read-only utility)</td><td>high (operational trust infrastructure)</td></tr>
     <tr><th>Who must trust whom</th><td>nobody trusts the operator</td><td>the ecosystem trusts the log operator</td></tr>
   </tbody>
 </table>
-<p>A verifier that begins storing submissions, issuing receipts, or witnessing has silently become a transparency service with all of its obligations.</p>
+<p>A verifier that begins storing submissions, issuing receipts, or anchoring has silently become a transparency service with all of its obligations.</p>
 
-<h3>The trust model</h3>
+<h2>The trust model</h2>
 <p>What you verify yourself: each signature, each inclusion proof, and consistency between any two tree heads &mdash; all from the bytes, offline. What the log commits to operationally: durable append-only storage, non-equivocation (one consistent view for everyone), and a stable, published signing key.</p>
-<div class="callout">A live, neutral implementation runs at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> (also reachable as the witness log; the anchor. hostname is frozen, cited in prior materials). To check a receipt without running anything, use the <a class="ln" href="https://verify.agentactioncapsule.org">hosted verifier</a>.</div>
-<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/the-public-log-explained.md">The public log, explained &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/why-anchoring.md">Why witnessing makes it trustworthy &#x2197;</a></div>
+<div class="callout">A live, neutral implementation runs at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a>. To check a receipt without running anything, use the <a class="ln" href="https://verify.agentactioncapsule.org">hosted verifier</a>.</div>
+<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/the-public-log-explained.md">The public log, explained &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/why-anchoring.md">Why anchoring makes it trustworthy &#x2197;</a></div>
       <div class="next"><a class="p" href="/docs/statement-vs-transparency-layer.html"><div class="dir">&#8592; Previous</div><div class="ttl">Statement vs transparency layer</div></a><a class="n" href="/docs/verifiable-data-structures.html"><div class="dir">Next &#8594;</div><div class="ttl">Verifiable Data Structures</div></a></div>
     </article>
   </div>
@@ -247,7 +227,7 @@
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
