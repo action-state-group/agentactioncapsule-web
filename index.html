@@ -193,7 +193,6 @@
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a class="active" href="/">Standard</a>
-      <a href="/cpb.html">Payload Binding (CPB)</a>
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
@@ -479,14 +478,10 @@ mcpGuardrails:
     <p class="fit-note">Any conforming record may fill a slot; the set is open by design. Each slot may root in a different trust anchor, and the join holds even if one party is compromised or under review — no slot is a required root of trust for another. Digest equality is a join key, not proof of truth, authorization, or sufficiency: each record's native verification, digest recomputation, and receipt verification stay separate results that a verifier must never collapse into one boolean. <a href="/docs/how-it-composes.html" style="color:var(--accent);text-decoration:none">How it composes with your stack →</a></p>
     <div style="margin-top:20px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;color:var(--muted)">A record can be produced at different assurance levels. <strong style="color:var(--ink)">Self-attested</strong> (signed by the agent or operator) is a valid baseline. <strong style="color:var(--ink)">Anchored / third-party-verifiable</strong> means the record, or a digest of it, is registered to a SCITT transparency service, so a party who trusts neither the agent nor the operator can verify its existence and non-equivocation. Composition doesn't mandate the anchored tier — it specifies how any conforming record can reach it.</div>
 
-    <h3 style="font-size:19px;font-weight:700;letter-spacing:-0.3px;margin:36px 0 10px">The binding underneath: CPB</h3>
-    <p style="color:var(--muted);font-size:16px;max-width:64ch">For records to join on the same digest, they need one shared way to compute it. That is the <strong>Canonical Payload Binding</strong> (CPB) — a small companion IETF draft that defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form. Each payload class declares its canonicalization and exclusion set once, in an open registry, and inherits receipt binding and typed digest reference without restating the mechanics. The Agent Action Capsule is CPB's first registered payload class.</p>
+    <h3 style="font-size:19px;font-weight:700;letter-spacing:-0.3px;margin:36px 0 10px">The binding underneath</h3>
+    <p style="color:var(--muted);font-size:16px;max-width:64ch">For records to join on the same digest they need one shared way to compute it. The Agent Action Capsule declares its canonical form through the <strong>Canonical Payload Binding</strong> (CPB), a separate IETF draft with its own open, cross-organization registry; AAC is one registered artifact type there among peers.</p>
     <p style="margin-top:20px">
-      <a class="btn btn-ghost" href="/cpb.html">CPB — the spec, why it helps, and the registry <span class="arrow">→</span></a>
-    </p>
-    <p style="margin-top:24px;font-size:14px;color:var(--muted)">
-      CPB spec: <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">draft-mih-sokolov-scitt-payload-binding ↗</a>&ensp;&middot;&ensp;
-      Registry: <a href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono)">payload-class registry of record ↗</a>
+      <a class="btn btn-ghost" href="https://canonicalpayloadbinding.org/">canonicalpayloadbinding.org ↗</a>
     </p>
   </div>
 </section>
@@ -734,13 +729,13 @@ agent-action-capsule verify --store ledger.jsonl
           <h5>Standard</h5>
           <a href="/">Overview</a>
           <a href="/#compose">Composition</a>
-          <a href="/cpb.html">Payload Binding (CPB)</a>
           <a href="/docs/">Docs</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (‑04) ↗</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (‑02) ↗</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (‑00) ↗</a>
           <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide ↗</a>
           <a href="/playground.html">Playground</a>
+          <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding ↗</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
