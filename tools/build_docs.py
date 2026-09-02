@@ -26,7 +26,7 @@ CPB_DRAFT_URL = "https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payloa
 ORG_URL = "https://github.com/action-state-group"
 ANCHOR_URL = "https://anchor.agentactioncapsule.org"
 VERIFY_URL = "https://verify.agentactioncapsule.org"
-CPB_URL = "/cpb.html"
+CPB_SITE_URL = "https://canonicalpayloadbinding.org/"
 IP_URL = "/ip"
 
 # Hybrid docs model: the site owns standard-level CONCEPTS; the canonical
@@ -64,7 +64,8 @@ STATUS_NOTE = (
     "is an individual IETF Internet-Draft — submitted for discussion, <em>not</em> "
     "adopted by a working group, and not a standard. A companion draft, the "
     "<strong>Canonical Payload Binding</strong> "
-    f'(<a class="ln" href="{CPB_DRAFT_URL}">draft-mih-sokolov-scitt-payload-binding-02</a>), '
+    f'(<a class="ln" href="{CPB_DRAFT_URL}">draft-mih-sokolov-scitt-payload-binding-02</a>; '
+    f'<a class="ln" href="{CPB_SITE_URL}">site</a>), '
     "defines the shared canonicalization and digest-binding layer. Both build on the "
     'IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) '
     'and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).'
@@ -185,7 +186,6 @@ NAV = """<nav>
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a href="/">Standard</a>
-      <a href="{cpb}">Payload Binding (CPB)</a>
       <a href="{anchor}">Transparency Log</a>
       <a href="{verify}">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
@@ -193,7 +193,7 @@ NAV = """<nav>
       <a href="{draft}">Draft (IETF) &#x2197;</a>
     </div>
   </div>
-</nav>""".format(cpb=CPB_URL, anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL)
+</nav>""".format(anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL)
 
 # NOTE: the "Project" foot-col (Governance + Patent posture) is live today only on
 # docs/index.html and docs/governance.html, not the other 11 generated pages — an
@@ -223,6 +223,7 @@ def footer_html(include_project: bool) -> str:
           <a href="/">Overview</a>
           <a href="/docs/">Docs</a>
           <a href="{draft}">Internet-Draft &#x2197;</a>
+          <a href="{cpb_site}">Canonical Payload Binding ↗</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
@@ -240,6 +241,7 @@ def footer_html(include_project: bool) -> str:
   </div>
 </footer>""".format(
         anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL,
+        cpb_site=CPB_SITE_URL,
         project_col=_FOOTER_PROJECT_COL if include_project else "",
     )
 
@@ -285,8 +287,6 @@ def sidebar_html(active_slug: str) -> str:
         for slug, title in items:
             cls = ' class="active"' if slug == active_slug else ""
             out.append(f'<a href="/docs/{slug}.html"{cls}>{title}</a>')
-            if slug == "how-it-composes":
-                out.append(f'<a href="{CPB_URL}">Payload Binding (CPB)</a>')
         if label == "Reference":
             out.append('<h5>Extensions</h5>')
             out.append('<a href="/docs/bilateral.html">Bilateral attestation</a>')
@@ -744,7 +744,7 @@ PAGES["how-it-composes"] = dict(
 <h2>The four-leg accountability picture</h2>
 <p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
 <p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
-<div class="callout deeper">The <strong>CAN/WHO/WHAT/AUDIT composition model</strong> — how independently-verifiable records join on a shared action digest — is laid out on the <a class="ln" href="/#compose">Standard's Composition section</a>. Underneath it, the <strong>Canonical Payload Binding (CPB)</strong> is the small companion spec that lets every record compute the same digest: it defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form, so any conforming profile composes with a capsule without a custom adapter. CPB — the spec, why it helps, and the open registry — on the <a class="ln" href="/cpb.html">Payload Binding (CPB) page</a>. Spec: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding &#x2197;</a> &middot; Registry: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md">payload-class registry of record &#x2197;</a></div>
+<div class="callout deeper">The <strong>CAN/WHO/WHAT/AUDIT composition model</strong> — how independently-verifiable records join on a shared action digest — is laid out on the <a class="ln" href="/#compose">Standard's Composition section</a>. Underneath it, the <strong>Canonical Payload Binding (CPB)</strong> is the small companion spec that lets every record compute the same digest: it defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form, so any conforming profile composes with a capsule without a custom adapter. CPB has its own site and registry: <a class="ln" href="https://canonicalpayloadbinding.org/">canonicalpayloadbinding.org &#x2197;</a>.</div>
 """,
 )
 
