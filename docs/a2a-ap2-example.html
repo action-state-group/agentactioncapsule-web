@@ -145,7 +145,11 @@
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
 <a href="/docs/">Overview</a>
+<h5>Use cases</h5>
+<a href="/docs/use-cases.html">Use cases</a>
+<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
 <h5>Concepts</h5>
+<a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
@@ -218,11 +222,11 @@
 <p>Two capsules seal the approved path: one at dispatch (before the payment completes) and one when the network confirms. The second chains to the first via <code>chain.parent_capsule_id</code>.</p>
 
 <pre class="code"><code><span class="c"># Step 1: seal immediately at dispatch — before payment completes</span>
-dispatched = emit(
+dispatched = seal(
+    task.input_dict(),   <span class="c"># AP2 CartMandate → agent_input_digest</span>
     action=<span class="s">"send_payment"</span>,
     operator=<span class="s">"action-state-group"</span>,
     developer=<span class="s">"ap2-payment-agent@v1"</span>,
-    agent_input=task.input_dict(),   <span class="c"># AP2 CartMandate → agent_input_digest</span>
     agent_output=<span class="k">None</span>,
     verdict=<span class="s">"executed"</span>,
     effect={<span class="s">"type"</span>: <span class="s">"send_payment"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
@@ -234,10 +238,10 @@ dispatched = emit(
 result = execute_payment(mandate, amount)
 
 <span class="c"># Step 3: seal the confirmation — chains to dispatched</span>
-confirmed = emit(
+confirmed = seal(
+    task.input_dict(),   <span class="c"># same mandate → same digest</span>
     action=<span class="s">"send_payment"</span>,
     <span class="c"># …same operator / developer…</span>
-    agent_input=task.input_dict(),   <span class="c"># same mandate → same digest</span>
     agent_output=result.as_dict(),   <span class="c"># payment outcome → response_digest</span>
     verdict=<span class="s">"executed"</span>,
     effect={<span class="s">"type"</span>: <span class="s">"send_payment"</span>, <span class="s">"status"</span>: <span class="s">"confirmed"</span>},
@@ -248,10 +252,10 @@ confirmed = emit(
 <h3>Scenario B &mdash; over-limit refusal</h3>
 <p>One capsule seals the refusal. <code>effect.status: "planned"</code> is the invariant that the payment was evaluated but <em>never dispatched</em>. The payment network never sees it; the capsule is the only sealed evidence.</p>
 
-<pre class="code"><code>refusal = emit(
+<pre class="code"><code>refusal = seal(
+    task.input_dict(),   <span class="c"># the mandate we evaluated</span>
     action=<span class="s">"send_payment"</span>,
     <span class="c"># …operator / developer…</span>
-    agent_input=task.input_dict(),   <span class="c"># the mandate we evaluated</span>
     agent_output={
         <span class="s">"refusal_reason"</span>: <span class="s">"over_agent_spend_limit"</span>,
         <span class="s">"requested"</span>: amount.as_dict(),

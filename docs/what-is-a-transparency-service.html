@@ -150,7 +150,11 @@
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
 <a href="/docs/">Overview</a>
+<h5>Use cases</h5>
+<a href="/docs/use-cases.html">Use cases</a>
+<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
 <h5>Concepts</h5>
+<a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html" class="active">What is a Transparency Service?</a>
@@ -179,7 +183,7 @@
       
 <h1>What is a Transparency Service?</h1>
 <p class="lede">A Transparency Service (TS) registers signed statements, issues a receipt proving inclusion, and witnesses them into an append-only log &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
-<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> (today's API: <code>emit()</code>) registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
+<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
 
 <h2>The notary analogy</h2>
 <p>Think of it like a notary. A notary doesn't read your document for truth and doesn't vouch that what it says is accurate &mdash; a notary confirms <em>that a specific document existed, in a specific form, at a specific time</em>, and stamps a record of that fact into a public book anyone can check later. A Transparency Service does the same thing for a capsule's digest: it doesn't know or care what the capsule says, only that it existed, unaltered, as of a given moment &mdash; and, via the append-only log, that the moment can't quietly be moved later.</p>
