@@ -137,7 +137,6 @@
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a href="/">Standard</a>
-      <a href="/cpb.html">Payload Binding (CPB)</a>
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
@@ -159,7 +158,6 @@
 <a href="/docs/how-verification-works.html">How verification works</a>
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html" class="active">How it composes</a>
-<a href="/cpb.html">Payload Binding (CPB)</a>
 <a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
@@ -221,7 +219,7 @@
 <h2>The four-leg accountability picture</h2>
 <p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
 <p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's witnessed record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
-<div class="callout deeper">The <strong>CAN/WHO/WHAT/AUDIT composition model</strong> — how independently-verifiable records join on a shared action digest — is laid out on the <a class="ln" href="/#compose">Standard's Composition section</a>. Underneath it, the <strong>Canonical Payload Binding (CPB)</strong> is the small companion spec that lets every record compute the same digest: it defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form, so any conforming profile composes with a capsule without a custom adapter. CPB — the spec, why it helps, and the open registry — on the <a class="ln" href="/cpb.html">Payload Binding (CPB) page</a>. Spec: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding &#x2197;</a> &middot; Registry: <a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/blob/main/REGISTRY.md">payload-class registry of record &#x2197;</a></div>
+<div class="callout deeper">The <strong>CAN/WHO/WHAT/AUDIT composition model</strong> — how independently-verifiable records join on a shared action digest — is laid out on the <a class="ln" href="/#compose">Standard's Composition section</a>. Underneath it, the <strong>Canonical Payload Binding (CPB)</strong> is the small companion spec that lets every record compute the same digest: it defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form, so any conforming profile composes with a capsule without a custom adapter. CPB has its own site and registry: <a class="ln" href="https://canonicalpayloadbinding.org/">canonicalpayloadbinding.org &#x2197;</a>.</div>
 
       <div class="next"><a class="p" href="/docs/whats-consequential.html"><div class="dir">&#8592; Previous</div><div class="ttl">What's consequential</div></a><a class="n" href="/docs/witness-anywhere.html"><div class="dir">Next &#8594;</div><div class="ttl">Witness anywhere</div></a></div>
     </article>
@@ -240,6 +238,7 @@
           <a href="/">Overview</a>
           <a href="/docs/">Docs</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft &#x2197;</a>
+          <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding ↗</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
