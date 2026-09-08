@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The statement layer vs the transparency layer &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="The Agent Action Capsule separates the signed statement (what happened) from the transparency layer (where it is recorded). The statement is verifiable-data-structure agnostic.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/statement-vs-transparency-layer.html">
+<title>AAC/CLL/SCITT record profile (a2a-task-evidence) — independent proposal — Agent Action Capsule</title>
+<meta name="description" content="The base record profile referenced by the A2A Verifiable Task Evidence Extension proposal: a CPB-derived evidence ID, an AAC Producer Envelope, a signed CLL checkpoint, and SCITT registration.">
+<link rel="canonical" href="https://agentactioncapsule.org/profiles/a2a-task-evidence/aac-cll-scitt/v1/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="The statement layer vs the transparency layer">
-<meta property="og:description" content="The Agent Action Capsule separates the signed statement (what happened) from the transparency layer (where it is recorded). The statement is verifiable-data-structure agnostic.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/statement-vs-transparency-layer.html">
+<meta property="og:title" content="AAC/CLL/SCITT record profile (a2a-task-evidence) — independent proposal — Agent Action Capsule">
+<meta property="og:description" content="The base record profile referenced by the A2A Verifiable Task Evidence Extension proposal: a CPB-derived evidence ID, an AAC Producer Envelope, a signed CLL checkpoint, and SCITT registration.">
+<meta property="og:url" content="https://agentactioncapsule.org/profiles/a2a-task-evidence/aac-cll-scitt/v1/">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The statement layer vs the transparency layer">
-<meta name="twitter:description" content="The Agent Action Capsule separates the signed statement (what happened) from the transparency layer (where it is recorded). The statement is verifiable-data-structure agnostic.">
+<meta name="twitter:title" content="AAC/CLL/SCITT record profile (a2a-task-evidence) — independent proposal — Agent Action Capsule">
+<meta name="twitter:description" content="The base record profile referenced by the A2A Verifiable Task Evidence Extension proposal: a CPB-derived evidence ID, an AAC Producer Envelope, a signed CLL checkpoint, and SCITT registration.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -101,7 +101,6 @@
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
   .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
-  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
   .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
@@ -129,6 +128,12 @@
     .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-links::-webkit-scrollbar{display:none}
   }
+  .steps{counter-reset:step;margin:6px 0 24px;display:flex;flex-direction:column;gap:0}
+  .step{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:none}
+  .step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+  .step-body h3{font-size:16px;font-weight:600;margin-bottom:5px}
+  .step-body p{font-size:14px;color:var(--muted);margin:0}
 </style>
 </head>
 <body>
@@ -138,7 +143,7 @@
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a href="/">Standard</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -147,71 +152,22 @@
   </div>
 </nav>
 <main class="wrap" id="main">
-  <div class="docs">
-    <nav class="side" aria-label="Docs">
-<h5>Documentation</h5>
-<a href="/docs/">Overview</a>
-<h5>Use cases</h5>
-<a href="/docs/use-cases.html">Use cases</a>
-<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
-<h5>Concepts</h5>
-<a href="/docs/witness-landing.html">You've reached a witness</a>
-<a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
-<a href="/docs/statement-vs-transparency-layer.html" class="active">Statement vs transparency layer</a>
-<a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
-<a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
-<a href="/docs/how-verification-works.html">How verification works</a>
-<a href="/docs/whats-consequential.html">What's consequential</a>
-<a href="/docs/how-it-composes.html">How it composes</a>
-<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
-<h5>Guides</h5>
-<a href="/docs/quickstart.html">Quickstart</a>
-<a href="/docs/verify-a-capsule.html">Verify a capsule</a>
-<h5>Live</h5>
-<a href="/docs/explore.html">Explore a capsule</a>
-<a href="/docs/log.html">The public log, live</a>
-<h5>Reference</h5>
-<a href="/docs/glossary.html">Glossary</a>
-<h5>Extensions</h5>
-<a href="/docs/bilateral.html">Bilateral attestation</a>
-<h5>Project</h5>
-<a href="/docs/governance.html">Governance</a>
-<a href="/ip">Patent posture</a>
-</nav>
-    <article>
-      <div class="crumb">Concepts</div>
-      
-<h1>The statement layer vs the transparency layer</h1>
-<p class="lede">Two concerns, deliberately kept apart: <strong>what happened</strong> (a signed statement) and <strong>where it is recorded</strong> (a transparency log). The statement never depends on which log technology you choose.</p>
+  <article style="max-width:760px;padding:40px 0 64px">
+    <div class="crumb">Proposals</div>
+<div class="callout warn"><strong>Independent proposal.</strong> Not an official A2A extension; not sponsored; not endorsed by the A2A project. Draft v3.1, 2026-09-04.</div>
 
-<h2>Two layers</h2>
-<table class="t">
-  <thead><tr><th>Layer</th><th>Answers</th><th>Form</th></tr></thead>
-  <tbody>
-    <tr><th>Statement</th><td>What action happened, signed by whom?</td><td>A <code>COSE_Sign1</code> Signed Statement (the Agent Action Capsule profile).</td></tr>
-    <tr><th>Transparency</th><td>Was this statement recorded in an append-only log, and can that be proven?</td><td>A transparency service that registers the statement and returns a receipt.</td></tr>
-  </tbody>
-</table>
+<h1>AAC / CLL / SCITT record profile for A2A Task Evidence</h1>
+<p class="lede">This URI identifies the base record profile referenced by the <a class="ln" href="/extensions/a2a-task-evidence/v1/">A2A Verifiable Task Evidence Extension</a> proposal: <code>recordProfile: "https://agentactioncapsule.org/profiles/a2a-task-evidence/aac-cll-scitt/v1"</code>.</p>
 
-<h2>Why the separation matters</h2>
-<p>Keeping the statement independent of the log means a single capsule can be anchored to more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
+<h2>What this profile is</h2>
+<p>The base profile binds one path from a Task Evidence payload to external registration: a Canonical Payload Binding (CPB)&ndash;derived evidence ID, an Agent Action Capsule (AAC) Producer Envelope over that ID, inclusion in a signed Checkpointed Local Log (CLL) checkpoint, and registration of that checkpoint as a SCITT Signed Statement with a Transparency Service Receipt. An optional checkpoint-aware witness adds a separate continuity assertion.</p>
+<p>The normative definition &mdash; the evidence graph, the eight distinct bundle objects, the immutable core manifest, and the verification-result properties this profile populates &mdash; lives in the extension proposal itself and is not duplicated here:</p>
+<p><a class="ln" href="/extensions/a2a-task-evidence/v1/#base-evidence-graph">&#167;10 The base evidence graph &rarr;</a></p>
 
-<h2>The stack</h2>
-<p>Each layer is a separate, open-source library so the boundaries stay honest:</p>
-<table class="t">
-  <thead><tr><th>Component</th><th>Role</th></tr></thead>
-  <tbody>
-    <tr><th>agent-action-capsule</th><td>The profile &mdash; the Signed Statement format and the reference verifier.</td></tr>
-    <tr><th>capsule-emit</th><td>The producer &mdash; seal an action in one call, or wrap an existing tool with one decorator.</td></tr>
-    <tr><th>scitt-cose</th><td>The verifier &mdash; checks SCITT receipts across verifiable data structures.</td></tr>
-    <tr><th>capsule-anchor</th><td>The log &mdash; a neutral transparency service implementation.</td></tr>
-  </tbody>
-</table>
-<div class="callout">Read next: <a class="ln" href="/docs/what-is-a-transparency-service.html">what a transparency service is</a>, and how it differs from a verifier.</div>
-<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/going-deeper.md">Going deeper — the layers &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/what-is-a-capsule.html"><div class="dir">&#8592; Previous</div><div class="ttl">What is a Capsule?</div></a><a class="n" href="/docs/what-is-a-transparency-service.html"><div class="dir">Next &#8594;</div><div class="ttl">What is a Transparency Service?</div></a></div>
-    </article>
-  </div>
+<h2>Status</h2>
+<p>This is a provisional identifier for an independent proposal (v3.1, 2026-09-04). It is not yet a durable published specification; before deployment, this URI must identify one, per the parent proposal's <a class="ln" href="/extensions/a2a-task-evidence/v1/#discovery">discovery section</a>.</p>
+
+  </article>
 </main>
 <footer>
   <div class="wrap">
@@ -230,13 +186,18 @@
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
           <h5>Source</h5>
           <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
           <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h5>Project</h5>
+          <a href="/docs/governance.html">Governance</a>
+          <a href="/ip">Patent posture</a>
         </div>
       </div>
     </div>
