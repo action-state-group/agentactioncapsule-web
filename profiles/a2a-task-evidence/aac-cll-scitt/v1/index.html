@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Documentation &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="Concepts and guides for the Agent Action Capsule, the open profile for verifiable records of agent actions.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/">
+<title>AAC/CLL/SCITT record profile (a2a-task-evidence) — independent proposal — Agent Action Capsule</title>
+<meta name="description" content="The base record profile referenced by the A2A Verifiable Task Evidence Extension proposal: a CPB-derived evidence ID, an AAC Producer Envelope, a signed CLL checkpoint, and SCITT registration.">
+<link rel="canonical" href="https://agentactioncapsule.org/profiles/a2a-task-evidence/aac-cll-scitt/v1/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Documentation">
-<meta property="og:description" content="Concepts and guides for the Agent Action Capsule, the open profile for verifiable records of agent actions.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/">
+<meta property="og:title" content="AAC/CLL/SCITT record profile (a2a-task-evidence) — independent proposal — Agent Action Capsule">
+<meta property="og:description" content="The base record profile referenced by the A2A Verifiable Task Evidence Extension proposal: a CPB-derived evidence ID, an AAC Producer Envelope, a signed CLL checkpoint, and SCITT registration.">
+<meta property="og:url" content="https://agentactioncapsule.org/profiles/a2a-task-evidence/aac-cll-scitt/v1/">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Documentation">
-<meta name="twitter:description" content="Concepts and guides for the Agent Action Capsule, the open profile for verifiable records of agent actions.">
+<meta name="twitter:title" content="AAC/CLL/SCITT record profile (a2a-task-evidence) — independent proposal — Agent Action Capsule">
+<meta name="twitter:description" content="The base record profile referenced by the A2A Verifiable Task Evidence Extension proposal: a CPB-derived evidence ID, an AAC Producer Envelope, a signed CLL checkpoint, and SCITT registration.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -128,6 +128,12 @@
     .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-links::-webkit-scrollbar{display:none}
   }
+  .steps{counter-reset:step;margin:6px 0 24px;display:flex;flex-direction:column;gap:0}
+  .step{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:none}
+  .step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+  .step-body h3{font-size:16px;font-weight:600;margin-bottom:5px}
+  .step-body p{font-size:14px;color:var(--muted);margin:0}
 </style>
 </head>
 <body>
@@ -146,89 +152,22 @@
   </div>
 </nav>
 <main class="wrap" id="main">
-  <div class="docs">
-    <nav class="side" aria-label="Docs">
-<h5>Documentation</h5>
-<a href="/docs/" class="active">Overview</a>
-<h5>Concepts</h5>
-<a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
-<a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
-<a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
-<a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
-<a href="/docs/how-verification-works.html">How verification works</a>
-<a href="/docs/whats-consequential.html">What's consequential</a>
-<a href="/docs/how-it-composes.html">How it composes</a>
-<a href="/docs/witness-anywhere.html">Witness anywhere</a>
-<h5>Guides</h5>
-<a href="/docs/quickstart.html">Quickstart</a>
-<a href="/docs/verify-a-capsule.html">Verify a capsule</a>
-<h5>Live</h5>
-<a href="/docs/explore.html">Explore a capsule</a>
-<a href="/docs/log.html">The public log, live</a>
-<h5>Reference</h5>
-<a href="/docs/glossary.html">Glossary</a>
-<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
-<h5>Extensions</h5>
-<a href="/docs/bilateral.html">Bilateral attestation</a>
-<h5>Project</h5>
-<a href="/docs/governance.html">Governance</a>
-<a href="/ip">Patent posture</a>
-</nav>
-    <article>
-      <div class="crumb">Docs</div>
-      
-<h1>Documentation</h1>
-<p class="lede">Concepts and short guides for the Agent Action Capsule &mdash; the open profile for verifiable records of what an AI agent did, and the transparency layer it builds on.</p>
+  <article style="max-width:760px;padding:40px 0 64px">
+    <div class="crumb">Proposals</div>
+<div class="callout warn"><strong>Independent proposal.</strong> Not an official A2A extension; not sponsored; not endorsed by the A2A project. Draft v3.1, 2026-09-04.</div>
 
-<div class="idx-group">
-  <h2>Concepts</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/what-is-a-capsule.html"><div class="n">What is an Agent Action Capsule?</div><div class="d">A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable.</div></a>
-    <a class="dcard" href="/docs/statement-vs-transparency-layer.html"><div class="n">Statement vs transparency layer</div><div class="d">What happened vs where it is recorded &mdash; and why the statement is structure-independent.</div></a>
-    <a class="dcard" href="/docs/what-is-a-transparency-service.html"><div class="n">What is a Transparency Service?</div><div class="d">Register, receipt, witness &mdash; and the boundary between a transparency service and a verifier.</div></a>
-    <a class="dcard" href="/docs/verifiable-data-structures.html"><div class="n">Verifiable Data Structures</div><div class="d">RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them.</div></a>
-    <a class="dcard" href="/docs/how-verification-works.html"><div class="n">How verification works</div><div class="d">Two independent checks: signature, then inclusion proof &mdash; both from the bytes, offline.</div></a>
-  </div>
-</div>
+<h1>AAC / CLL / SCITT record profile for A2A Task Evidence</h1>
+<p class="lede">This URI identifies the base record profile referenced by the <a class="ln" href="/extensions/a2a-task-evidence/v1/">A2A Verifiable Task Evidence Extension</a> proposal: <code>recordProfile: "https://agentactioncapsule.org/profiles/a2a-task-evidence/aac-cll-scitt/v1"</code>.</p>
 
-<div class="idx-group">
-  <h2>Guides</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one <code>emit()</code> call, witness it, and verify. Copy-paste-runnable.</div></a>
-    <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">Verify a capsule</div><div class="d">Verify in the browser, on the command line, or as a library &mdash; same checks everywhere.</div></a>
-  </div>
-</div>
+<h2>What this profile is</h2>
+<p>The base profile binds one path from a Task Evidence payload to external registration: a Canonical Payload Binding (CPB)&ndash;derived evidence ID, an Agent Action Capsule (AAC) Producer Envelope over that ID, inclusion in a signed Checkpointed Local Log (CLL) checkpoint, and registration of that checkpoint as a SCITT Signed Statement with a Transparency Service Receipt. An optional checkpoint-aware witness adds a separate continuity assertion.</p>
+<p>The normative definition &mdash; the evidence graph, the eight distinct bundle objects, the immutable core manifest, and the verification-result properties this profile populates &mdash; lives in the extension proposal itself and is not duplicated here:</p>
+<p><a class="ln" href="/extensions/a2a-task-evidence/v1/#base-evidence-graph">&#167;10 The base evidence graph &rarr;</a></p>
 
-<div class="idx-group">
-  <h2>Live &amp; interactive</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/explore.html"><div class="n">Explore a capsule</div><div class="d">Interactive: click each field, edit what goes into a digest, tamper one and watch the seal break, then verify a bundle as a skeptical auditor.</div></a>
-    <a class="dcard" href="/docs/log.html"><div class="n">The public log, live</div><div class="d">Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records. Public, verifiable, nothing fabricated.</div></a>
-  </div>
-</div>
+<h2>Status</h2>
+<p>This is a provisional identifier for an independent proposal (v3.1, 2026-09-04). It is not yet a durable published specification; before deployment, this URI must identify one, per the parent proposal's <a class="ln" href="/extensions/a2a-task-evidence/v1/#discovery">discovery section</a>.</p>
 
-<div class="idx-group">
-  <h2>Reference</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/glossary.html"><div class="n">Glossary</div><div class="d">SCITT, COSE_Sign1, Signed Statement, Receipt, VDS, STH, inclusion &amp; consistency proofs.</div></a>
-    <a class="dcard" href="/docs/translation.html"><div class="n">Translation: dev / auditor / spec</div><div class="d">The same nouns and verbs in three registers &mdash; the canonical vocabulary decoder, including the three-rung ladder.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Proposals</h2>
-  <div class="cards">
-    <a class="dcard" href="/extensions/a2a-task-evidence/v1/"><div class="n">A2A Verifiable Task Evidence Extension</div><div class="d">Independent proposal (not an official A2A extension): a portable, checkable evidence object for one terminal A2A Task.</div></a>
-  </div>
-</div>
-
-<div class="callout deeper"><strong>Building on it?</strong> Implementation, tutorials, and adapter guides live in the canonical <code>capsule-emit</code> docs: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs">capsule-emit/docs &#x2197;</a>. These pages cover the standard-level concepts; the repo docs cover hands-on usage.</div>
-
-<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-04</a>) is an individual IETF Internet-Draft — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. A companion draft, the <strong>Canonical Payload Binding</strong> (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-02</a>; <a class="ln" href="https://canonicalpayloadbinding.org/">site</a>), defines the shared canonicalization and digest-binding layer. Both build on the IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).</div>
-
-      
-    </article>
-  </div>
+  </article>
 </main>
 <footer>
   <div class="wrap">
