@@ -151,7 +151,11 @@
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
 <a href="/docs/">Overview</a>
+<h5>Use cases</h5>
+<a href="/docs/use-cases.html">Use cases</a>
+<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
 <h5>Concepts</h5>
+<a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html" class="active">What is a Transparency Service?</a>
@@ -178,7 +182,8 @@
       <div class="crumb">Concepts</div>
       
 <h1>What is a Transparency Service?</h1>
-<p class="lede">A Transparency Service (TS) registers signed statements, issues a receipt proving inclusion, and anchors them to an append-only log &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
+<p class="lede">A Transparency Service (TS) registers signed statements, issues a receipt proving inclusion, and witnesses them into an append-only log &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
+<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
 
 <h2>What it does</h2>
 <ol>

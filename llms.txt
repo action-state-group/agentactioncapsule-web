@@ -18,6 +18,7 @@ cap = emit(action="submit_order", operator="acme-co", developer="po-agent@v1",
 ```
 
 ## Docs
+- [You've reached a witness](https://agentactioncapsule.org/docs/witness-landing.html): arrived from a checkpoint or receipt? start here
 - [Quickstart](https://agentactioncapsule.org/docs/quickstart.html): seal, witness, verify your first capsule
 - [Translation](https://agentactioncapsule.org/docs/translation.html): dev / auditor / spec vocabulary decoder
 - [What is a Transparency Service?](https://agentactioncapsule.org/docs/what-is-a-transparency-service.html): register, receipt, witness

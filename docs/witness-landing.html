@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The statement layer vs the transparency layer &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="The Agent Action Capsule separates the signed statement (what happened) from the transparency layer (where it is recorded). The statement is verifiable-data-structure agnostic.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/statement-vs-transparency-layer.html">
+<title>You've reached a witness &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="Followed a link from a checkpoint or a receipt? Here's what a witness is, what it proves and never proves, and how to check it yourself in about five minutes.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/witness-landing.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="The statement layer vs the transparency layer">
-<meta property="og:description" content="The Agent Action Capsule separates the signed statement (what happened) from the transparency layer (where it is recorded). The statement is verifiable-data-structure agnostic.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/statement-vs-transparency-layer.html">
+<meta property="og:title" content="You've reached a witness">
+<meta property="og:description" content="Followed a link from a checkpoint or a receipt? Here's what a witness is, what it proves and never proves, and how to check it yourself in about five minutes.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/witness-landing.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The statement layer vs the transparency layer">
-<meta name="twitter:description" content="The Agent Action Capsule separates the signed statement (what happened) from the transparency layer (where it is recorded). The statement is verifiable-data-structure agnostic.">
+<meta name="twitter:title" content="You've reached a witness">
+<meta name="twitter:description" content="Followed a link from a checkpoint or a receipt? Here's what a witness is, what it proves and never proves, and how to check it yourself in about five minutes.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -91,22 +91,22 @@
   .callout{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;margin:6px 0 20px}
   .callout.warn{border-left-color:var(--verify)}
   .callout.deeper{border-left-color:var(--verify);background:var(--verify-soft)}
+  .honesty{list-style:none;margin:0 0 16px 0}
+  .honesty li{padding:10px 0 10px 26px;position:relative;border-bottom:1px solid var(--line);font-size:14.5px}
+  .honesty li:last-child{border-bottom:none}
+  .honesty li::before{content:'\2717';position:absolute;left:0;top:10px;color:var(--verify);font-weight:700}
+  .steps{display:flex;flex-direction:column;gap:10px;margin:6px 0 22px}
+  .step{display:grid;grid-template-columns:32px 1fr;gap:14px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff;text-decoration:none;transition:border-color .15s}
+  .step:hover{border-color:var(--ink)}
+  .step .num{font-family:var(--mono);font-weight:700;color:var(--accent);font-size:15px}
+  .step .ttl{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:3px}
+  .step .d{font-size:13.5px;color:var(--muted)}
   .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
   .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
   .next a:hover{border-color:var(--ink)}
   .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
   .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
   .next a.n{text-align:right}
-
-  /* DOCS INDEX CARDS */
-  .idx-group{margin-bottom:34px}
-  .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
-  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
-  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-  .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
-  .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
-  .dcard .n{font-size:16px;font-weight:600;letter-spacing:-0.2px;margin-bottom:6px}
-  .dcard .d{font-size:13.5px;color:var(--muted)}
 
   /* FOOTER — canonical */
   footer{padding:48px 0 56px;border-top:1px solid var(--line)}
@@ -124,7 +124,6 @@
     .side{position:static;max-height:none;border-bottom:1px solid var(--line);padding-bottom:16px;display:flex;flex-wrap:wrap;gap:6px 16px}
     .side h5{width:100%;margin:8px 0 2px}
     .side a{border-left:none;padding:3px 0}
-    .cards{grid-template-columns:1fr}
     .nav-in{gap:12px}
     .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-links::-webkit-scrollbar{display:none}
@@ -138,7 +137,8 @@
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a href="/">Standard</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="/cpb.html">Payload Binding (CPB)</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -155,15 +155,16 @@
 <a href="/docs/use-cases.html">Use cases</a>
 <a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
 <h5>Concepts</h5>
-<a href="/docs/witness-landing.html">You've reached a witness</a>
+<a href="/docs/witness-landing.html" class="active">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
-<a href="/docs/statement-vs-transparency-layer.html" class="active">Statement vs transparency layer</a>
+<a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
 <a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
 <a href="/docs/how-verification-works.html">How verification works</a>
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
-<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
+<a href="/cpb.html">Payload Binding (CPB)</a>
+<a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -172,6 +173,7 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -180,36 +182,54 @@
 </nav>
     <article>
       <div class="crumb">Concepts</div>
-      
-<h1>The statement layer vs the transparency layer</h1>
-<p class="lede">Two concerns, deliberately kept apart: <strong>what happened</strong> (a signed statement) and <strong>where it is recorded</strong> (a transparency log). The statement never depends on which log technology you choose.</p>
 
-<h2>Two layers</h2>
+<h1>You've reached a witness</h1>
+<p class="lede">You probably followed a link from a checkpoint, a receipt, or a post about one. Here's the whole idea in about five minutes: what a checkpoint is, what a witness does and does not prove, and how to check any of it yourself &mdash; without asking you to trust us.</p>
+
+<h2>What is a checkpoint?</h2>
+<p>A checkpoint is one signed value &mdash; 32 bytes &mdash; that commits an entire log's history to date. Whoever holds the log can recompute that value from every entry they've recorded; if even one byte of one past entry changed, the checkpoint would no longer match. It's <strong>witnessed</strong> when an independent party co-signs it, which is what turns "trust me, my log is complete" into something a stranger &mdash; you &mdash; can check without trusting anyone.</p>
+
+<h2>What this witness proves &mdash; and what it never does</h2>
+<p>A witness is infrastructure, not a verdict. It commits to three things, checkable from the bytes alone:</p>
+<ul>
+  <li><strong>Existence</strong> &mdash; the record was in the log at a point in time.</li>
+  <li><strong>Order</strong> &mdash; where it fell relative to everything else.</li>
+  <li><strong>Completeness</strong> &mdash; nothing between two checkpoints was quietly dropped or rewritten.</li>
+</ul>
+<p>It never says anything about whether the content was true. These are the claims this project will not round up, anywhere &mdash; the same wording an auditor reading the spec would use:</p>
+<ul class="honesty">
+  <li>A witnessed record is not a true record. The stamp attests existence/order/completeness, never accuracy.</li>
+  <li>A derived verdict is not an adjudicated one. <code>verify</code> never grades up: absence &ne; forgery, unsigned &ne; invalid.</li>
+  <li>Coverage is the range, not the population.</li>
+  <li>Registration &ne; Receipt &ne; Witnessing. Registration is the act, a Receipt is what the service returns, witnessing is a party co-signing the checkpoint so the log can't equivocate.</li>
+</ul>
+<p style="color:var(--muted);font-size:14.5px">Word-for-word, in three registers &mdash; dev, auditor, spec &mdash; on the <a class="ln" href="/docs/translation.html">translation page</a>.</p>
+
+<h2>The grade you'll see</h2>
+<p>Not every checkpoint this witness shows you was built the same way, and the label tells you which:</p>
 <table class="t">
-  <thead><tr><th>Layer</th><th>Answers</th><th>Form</th></tr></thead>
+  <thead><tr><th>Grade</th><th>What it means</th></tr></thead>
   <tbody>
-    <tr><th>Statement</th><td>What action happened, signed by whom?</td><td>A <code>COSE_Sign1</code> Signed Statement (the Agent Action Capsule profile).</td></tr>
-    <tr><th>Transparency</th><td>Was this statement recorded in an append-only log, and can that be proven?</td><td>A transparency service that registers the statement and returns a receipt.</td></tr>
+    <tr><th><code>mmr-verified</code></th><td>This witness holds the underlying log entries itself and independently recomputed the checkpoint from them. It rebuilt the tree; the root matches.</td></tr>
+    <tr><th><code>countersigned-observed</code></th><td>The checkpoint was minted by a different log this witness doesn't hold the entries for. This witness checked the signature and co-signed it &mdash; so a stranger can't be shown two different versions &mdash; but it did not rebuild the tree behind it.</td></tr>
   </tbody>
 </table>
+<p>These two are never presented as one guarantee. A <code>countersigned-observed</code> checkpoint is not proof this witness recomputed anything; it's proof the checkpoint you're looking at is the one everyone else sees too.</p>
 
-<h2>Why the separation matters</h2>
-<p>Keeping the statement independent of the log means a single capsule can be anchored to more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
+<h2>Run your own</h2>
+<p>This witness runs on <a class="ln" href="https://github.com/action-state-group">open-source infrastructure</a> &mdash; auditable in full, Apache-2.0. You don't have to take our copy's word for anything you can check yourself, and you don't have to use our copy at all: run your own witness in the region you choose, or self-host it inside your own network where nothing but a digest ever leaves. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a> for the options.</p>
+<p>We built this to have no single point of trust, including us. We'd like our competitors running this same log, side by side with ours &mdash; more independent witnesses is strictly better for everyone checking a record, including the operators of any one of them.</p>
 
-<h2>The stack</h2>
-<p>Each layer is a separate, open-source library so the boundaries stay honest:</p>
-<table class="t">
-  <thead><tr><th>Component</th><th>Role</th></tr></thead>
-  <tbody>
-    <tr><th>agent-action-capsule</th><td>The profile &mdash; the Signed Statement format and the reference verifier.</td></tr>
-    <tr><th>capsule-emit</th><td>The producer &mdash; seal an action in one call, or wrap an existing tool with one decorator.</td></tr>
-    <tr><th>scitt-cose</th><td>The verifier &mdash; checks SCITT receipts across verifiable data structures.</td></tr>
-    <tr><th>capsule-anchor</th><td>The log &mdash; a neutral transparency service implementation.</td></tr>
-  </tbody>
-</table>
-<div class="callout">Read next: <a class="ln" href="/docs/what-is-a-transparency-service.html">what a transparency service is</a>, and how it differs from a verifier.</div>
-<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/going-deeper.md">Going deeper — the layers &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/what-is-a-capsule.html"><div class="dir">&#8592; Previous</div><div class="ttl">What is a Capsule?</div></a><a class="n" href="/docs/what-is-a-transparency-service.html"><div class="dir">Next &#8594;</div><div class="ttl">What is a Transparency Service?</div></a></div>
+<h2>Try it yourself, in order</h2>
+<div class="steps">
+  <a class="step" href="https://verify.agentactioncapsule.org"><div class="num">1</div><div><div class="ttl">Verify a witnessed checkpoint</div><div class="d">Paste or drop a checkpoint at the verifier and see the strip: verified, what it covers, and its grade &mdash; entirely offline, in your browser.</div></div></a>
+  <a class="step" href="/docs/quickstart.html"><div class="num">2</div><div><div class="ttl">Seal your first capsule</div><div class="d">One call witnesses your own first record, end to end &mdash; then flip a byte and watch verification fail.</div></div></a>
+  <a class="step" href="/docs/governance.html"><div class="num">3</div><div><div class="ttl">Find out who's behind this</div><div class="d">An open, individual IETF Internet-Draft, stewarded by Action State Group, built to be donated to a neutral home. Source, governance, and patent posture are all public.</div></div></a>
+</div>
+
+<div class="callout deeper">Where to go next: <a class="ln" href="https://verify.agentactioncapsule.org">verifier</a> &middot; <a class="ln" href="/docs/">docs</a> &middot; <a class="ln" href="https://github.com/action-state-group">source</a>.</div>
+
+      <div class="next"><a class="p" href="/docs/"><div class="dir">&#8592; Previous</div><div class="ttl">Overview</div></a><a class="n" href="/docs/what-is-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">What is a Capsule?</div></a></div>
     </article>
   </div>
 </main>
@@ -226,11 +246,10 @@
           <a href="/">Overview</a>
           <a href="/docs/">Docs</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft &#x2197;</a>
-          <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding ↗</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
