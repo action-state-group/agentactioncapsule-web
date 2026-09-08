@@ -21,6 +21,13 @@ no product or business content. The three neutral surfaces (this site,
 `anchor.agentactioncapsule.org`, `verify.agentactioncapsule.org`) share one visual system and a common
 cross-site nav + footer.
 
+**CPB moved out (2026-09-02):** Canonical Payload Binding is a separate spec with its own
+registry and peers beyond AAC; it no longer lives on this site. CPB pages live in
+`scitt-payload-binding/site/`, deployed as the `cpb-site` Cloud Run service at
+[canonicalpayloadbinding.org](https://canonicalpayloadbinding.org/). This site only redirects
+`/cpb.html` and `/cpb` out to it (see `nginx.conf`); AAC links to the CPB site like any other
+registrant would, in the footer only.
+
 ## Run locally
 
 ```sh
