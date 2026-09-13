@@ -235,7 +235,7 @@
 <table class="t">
   <thead><tr><th>Layer</th><th>Relationship</th></tr></thead>
   <tbody>
-    <tr><th>Agent Action Capsule</th><td>Carries the attestations. The disposition vocabulary — <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>deferred</code>, <code>escalated</code> — is reused verbatim.</td></tr>
+    <tr><th>Agent Action Capsule</th><td>Carries the attestations. The disposition vocabulary — <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>deferred</code>, <code>expired</code>, <code>escalated</code> — is reused verbatim.</td></tr>
     <tr><th>Delegation receipts</th><td>A request attestation may reference a delegation receipt authorizing the requesting agent.</td></tr>
     <tr><th>SCITT transparency log</th><td>Witnessing both capsules makes the record verifiable by parties who trust neither organization.</td></tr>
     <tr><th>Remote attestation (RATS)</th><td>RATS attests platform state; bilateral attestation attests actions. Orthogonal layers that compose.</td></tr>
@@ -308,5 +308,3 @@ pvr = verify_pair(capsule_a, capsule_b)
 </body>
 </html>
 
-</body>
-</html>
