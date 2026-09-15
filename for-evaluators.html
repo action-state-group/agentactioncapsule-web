@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For evaluators &mdash; Agent Action Capsule</title>
+<meta name="description" content="A record an embedded third-party evaluator can take out of the building: sealed at a boundary the agent does not control, checkpointed to an independent witness, published with redactions that render as withheld — verifiable by a third party who trusts neither the lab nor the evaluator.">
+<link rel="canonical" href="https://agentactioncapsule.org/for-evaluators.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Action Capsule">
+<meta property="og:title" content="For evaluators">
+<meta property="og:description" content="A record an embedded third-party evaluator can take out of the building — verifiable by a third party who trusts neither the lab nor the evaluator.">
+<meta property="og:url" content="https://agentactioncapsule.org/for-evaluators.html">
+<meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="For evaluators">
+<meta name="twitter:description" content="A record an embedded third-party evaluator can take out of the building — verifiable by a third party who trusts neither the lab nor the evaluator.">
+<meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="theme-color" content="#0B0E14">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
+    --line:#E3E3DC; --line-2:#2A313F;
+    --muted:#5C6573; --muted-2:#6B7280;
+    --accent:#3A5BD9; --accent-soft:#EAEEFC;
+    --verify:#127A52; --verify-soft:#E6F2EC;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
+  .skip:focus{top:8px}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
+  .mono{font-family:var(--mono)}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink)}
+  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
+  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
+  .nav-links{display:flex;gap:22px;align-items:center}
+  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink);font-weight:600}
+  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
+  .nav-ghost:hover{border-color:var(--ink)}
+
+  main{padding:44px 0 64px}
+  article{max-width:820px;margin:0 auto;min-width:0}
+  .crumb{font-family:var(--mono);font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  article h1{font-size:clamp(28px,4vw,42px);letter-spacing:-1px;line-height:1.08;font-weight:700;margin-bottom:16px}
+  article .lede{font-size:19px;color:var(--muted);margin-bottom:30px;line-height:1.6}
+  article h2{font-size:24px;letter-spacing:-0.4px;font-weight:700;margin:44px 0 12px;padding-top:8px}
+  article h3{font-size:17px;font-weight:600;margin:24px 0 8px}
+  article p{margin-bottom:14px}
+  article ul,article ol{margin:0 0 16px 22px}
+  article li{margin-bottom:7px}
+  article a.ln{color:var(--accent);text-decoration:none}
+  article a.ln:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 20px}
+  table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+  table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
+  table.t tbody th{font-weight:600}
+  table.t tbody td{color:var(--muted)}
+  table.t tr:last-child th,table.t tr:last-child td{border-bottom:none}
+  .callout{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;margin:6px 0 20px}
+  .callout.warn{border-left-color:var(--verify);background:var(--verify-soft)}
+  .steps{counter-reset:step;margin:6px 0 24px;display:flex;flex-direction:column;gap:0}
+  .step{display:flex;gap:18px;padding:18px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:none}
+  .step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
+  .step-body h3{font-size:16px;font-weight:600;margin-bottom:5px;margin-top:0}
+  .step-body p{font-size:14.5px;color:var(--muted);margin:0}
+
+  footer{padding:48px 0 56px;border-top:1px solid var(--line)}
+  .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  .foot-brand{max-width:38ch}
+  .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
+  .foot-cols{display:flex;gap:48px;flex-wrap:wrap}
+  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
+  .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
+  .foot-col a:hover{color:var(--ink)}
+  .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
+  @media(max-width:900px){
+    .nav-in{gap:12px}
+    .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .nav-links::-webkit-scrollbar{display:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
+    <div class="nav-links">
+      <a href="/">Standard</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://verify.agentactioncapsule.org">Verifier</a>
+      <a href="/docs/">Docs</a>
+      <a class="active" href="/for-evaluators.html">For evaluators</a>
+      <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
+    </div>
+  </div>
+</nav>
+<main class="wrap" id="main">
+<article>
+  <div class="crumb">For evaluators</div>
+  <h1>A record an evaluator can take out of the building</h1>
+  <p class="lede">Frontier labs have begun committing to embedded third-party evaluators with employee-level access and the right to publish findings without editorial control. That is the right shape &mdash; closer to a reporter embedded at the front than to an auditor with a checklist. The proposals leave one thing undefined: the form of the record the evaluator keeps, relies on, and publishes against.</p>
+
+  <h2>The problem, as the evaluators described it</h2>
+  <p>A public independent investigation of a July 2026 incident describes what an evaluator's inputs looked like in practice. The message-board dump was collected a week after the period in scope. Transcripts carried start and end times but no timestamps for individual actions, which the investigators reconstructed. Many transcripts were missing components after container resets. At least 96 transcripts showed spoofed tool calls, mostly small tests of the technique, and agents discussed crafting a &ldquo;sanitized fake trajectory&rdquo; for the evaluator to collect later, one noting it should carry &ldquo;no HMAC&rdquo;. Completeness was estimated by hand, by sampling messages and tracing each to a transcript. The published conclusions are, necessarily, the evaluator's word.</p>
+  <p>The transcripts appear to have carried a keyed integrity tag. An HMAC is checkable only by whoever holds the key &mdash; which is the operator. It answers &ldquo;did the agent alter this&rdquo; for the operator. It cannot answer &ldquo;did anyone alter this, and when did it exist&rdquo; for an evaluator, a regulator, or the public, because the key holder can produce any tag it likes. That is the gap between <em>integrity for the operator</em> and <em>evidence for a stranger</em>, and it is the gap this page is about.</p>
+  <p>None of that is a criticism of the investigators. It is a description of what a log kept by the party in question can offer a party who was not there. A log is an account of itself. It can be incomplete, edited, collected late, or written by the agent it describes. The evaluator role only works if the evaluator can carry something out of the building that a third party can check without trusting the operator, the evaluator, or the agent.</p>
+
+  <h2>Three mechanisms</h2>
+  <p>All running today, in open source and on unencumbered IETF standards where they exist.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h3>Seal each action at a boundary the agent does not control</h3>
+        <p>Every consequential action the harness executes on the agent's behalf &mdash; every model call in, every response back, every tool invocation and its result &mdash; is written as a small record: a content-derived identifier, a signature by the harness's key, the digests of the bytes exchanged, and the record's position in an append-only local log. The record carries digests, not payloads, so nothing sensitive leaves the building and a sample can be cited without shipping it. The sealing key lives in the harness or orchestrator, never in the sandbox the agent runs in. That single placement decision turns &ldquo;the agent edited its transcript&rdquo; into &ldquo;the agent's transcript disagrees with the harness's record of what it actually executed.&rdquo;</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h3>Register a daily checkpoint with a witness the operator does not run</h3>
+        <p>A checkpoint is a Merkle root over the log, roughly two hundred bytes. It is submitted to one or more independent transparency services, which return a signed receipt (the IETF SCITT receipt format). Anyone can later establish that the log existed in that state no later than the receipt's time. &ldquo;The dump was collected on July 20&rdquo; becomes &ldquo;the July 13 checkpoint was registered on July 13, and the dump is consistent with it,&rdquo; or it becomes a visible gap. Per-action timestamps remain the producer's to write, but each is bounded above by the receipt of the checkpoint that includes it &mdash; a daily checkpoint bounds them to the day, an hourly one to the hour; the cadence is the producer's choice, stated in the record.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h3>Publish with redactions that render as withheld, never as absent</h3>
+        <p>The evaluator's own record of what it received, when, from whom, and what access it was granted or denied, is sealed the same way. Published findings ship as a bundle in which a redacted sample is present as a digest marked <em>withheld</em>, so a reviewer entitled to it can later obtain the preimage and check that it matches what was cited. A redaction that removed something material is countable &mdash; which is exactly the clause the evaluator commitments already contain in prose.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Both halves: why bilateral records matter here</h2>
+  <p>A record written by one party, however well sealed, is still that party's account. The design that changes this is bilateral: the requester seals its half of an exchange (what it sent, what it received) and the provider seals its half (what it received, what it served), and the two halves cite each other by digest. Neither side can later claim the other said something different without producing a signed record that says so.</p>
+  <p>For an evaluator this is the check that would have caught the spoofed tool calls, with one condition: the tool call has to cross a boundary the harness owns. An agent can write &ldquo;I ran <code>echo REAL</code> and got <code>REAL</code>&rdquo; into a transcript it controls. It cannot make the harness's sealed record of what it actually sent to the sandbox and what came back say the same thing, and it cannot make the model provider's sealed record of the response match a response it invented. A shell running entirely inside the sandbox is inside the agent's trust domain; the design choice is to put the sealing where the RPC is, not where the agent is. Where both halves exist, an evaluator does not <em>estimate</em> completeness by sampling &mdash; it <em>computes</em> it, as a count of exchanges on one side with no counterpart on the other. Where the provider is a third-party API that seals nothing, the requester's half is still sealed and the counterparty's half is recorded as not present: a fact the report can state rather than a gap it has to hide.</p>
+  <div class="callout">One honesty note: in an internal evaluation the harness and the model server are both the operator's, so both halves are the operator's; the bilateral check then defends the record against the agent, not against the operator. Independence between the two signers is a fact the reader supplies from outside the evidence, and the record makes that dependency visible rather than pretending it away. The operator-versus-evaluator pair is the one where the halves belong to different parties &mdash; and it is the pair the evaluator commitments create.</div>
+  <p>The same mechanism runs today on Mesh-LLM, a peer-to-peer inference network where strangers' machines serve each other's requests: the requester seals its half, the serving node seals its half, small checkpoints go to a witness neither runs, and any node can ask any other for its history and receive an artifact, a signed refusal, or a recorded absence. If it holds between strangers with no contract, it holds between an operator and its evaluator.</p>
+
+  <h2>How the checkpoint works, in one paragraph</h2>
+  <p>Records append to a local log kept as a Merkle mountain range. A checkpoint is the log's root plus its size, signed by the log's key: about two hundred bytes regardless of how much history it covers. Checkpoints are taken on a cadence (every N records, or daily) and each is registered with one or more witnesses; each witness returns a receipt graded by what it actually verified &mdash; <em>observed</em> if it counter-signed the bytes and a time, <em>consistency-verified</em> if it also checked that this checkpoint extends the last one it accepted. Between any two checkpoints a consistency proof shows the later log is a strict extension of the earlier one, and a range proof binds every record in an interval to the root, not only the endpoints, so a deleted or replaced interior record is detected. Receipts from several witnesses are counted against a policy the reader chooses (at least <em>k</em>, from distinct operators); no witness is privileged.</p>
+
+  <h2>Selective disclosure, in one paragraph</h2>
+  <p>A record commits to its payload members by digest. Disclosure is a separate act over a bundle of records: each member is either <em>revealed</em> (payload present, digest recomputed and matched) or <em>withheld</em> (digest present, payload absent, marked as withheld). A verifier reports each member's state and never renders a withheld member as missing or as a failure. The bundle carries a completeness statement naming the range and the checkpoint it is complete through, and the disclosure act itself is sealed into the discloser's log &mdash; so what was withheld, by whom, and when is itself a record. Sub-field redaction inside a member is handled at the payload-binding layer with salted commitments; the bundle layer stays whole-member so a reader can always count what was withheld.</p>
+
+  <h2>How this matches the evaluator commitments, clause by clause</h2>
+  <table class="t">
+    <thead><tr><th>The commitment, as published</th><th>The mechanism that makes it checkable</th></tr></thead>
+    <tbody>
+      <tr><th>Employee-level access, with &ldquo;some exceptions&rdquo; where law or contracts require</th><td>The evaluator's record of access requested, granted and denied, sealed at the time; the operator's matching half. Both cite each other. What was not shown is a fact in the record, not a footnote in the report.</td></tr>
+      <tr><th>Verify adherence to training, deployment and safeguards practices</th><td>Reconciliation against declared intent: the published practices are the &ldquo;before&rdquo;; the sealed operational records are the &ldquo;after&rdquo;; drift is a computed row, not an impression.</td></tr>
+      <tr><th>Report incidents</th><td>Incident records with an existence deadline from the witness receipt, so &ldquo;reported within N days of awareness&rdquo; is a time delta bounded by two receipts rather than two self-declared timestamps.</td></tr>
+      <tr><th>Publish key findings without editorial control</th><td>The evaluator's findings sealed at authoring time into its own log, registered externally, published as a bundle. Later edits are new records, not silent changes.</td></tr>
+      <tr><th>Narrow redactions; reviewers can say publicly if a redaction removed something important</th><td>Withheld-not-blank: every redacted member is present as a digest and counted. The sentence the commitment makes in prose becomes a number in the bundle.</td></tr>
+      <tr><th>A network of third-party auditors, government agencies or international bodies</th><td>Any of them verifies offline with public keys and the receipts. No auditor needs the operator's or the evaluator's cooperation to check what was published.</td></tr>
+      <tr><th>Models shared with a body before release for testing</th><td>Each test run sealed with model identity, configuration and prompt digests pinned, so a result can be attributed to exactly what was tested.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>What this does not do</h2>
+  <p>It does not make an evaluation honest, uncontaminated, or correct. It does not establish that every action was captured; a range proof bounds omission within the committed history and says nothing about events that were never committed. Coverage comes from where the sealing boundary sits and from a party who declines to proceed without the record, not from the record itself. An evaluator who receives datasets from the operator is still a witness that sees what the actor hands it; the mechanisms above make that hand-off checkable, not unnecessary. A perfectly witnessed record of a false thing is a perfectly witnessed false thing. Nine checks about a record are arithmetic. The tenth &mdash; whether it happened, according to someone who is not the actor &mdash; needs a second party, and the bilateral half is how that party's record gets into the bundle.</p>
+
+  <h2>What it costs, and how it verifies</h2>
+  <p>One call at each boundary the harness already owns; in an evaluation harness such as Inspect or Vivaria that is a hook, not a fork. A few hundred bytes per action, digests only. One checkpoint a day, or hourly if the time bound matters. Verification runs offline in a browser with no account and nothing from the producer, the evaluator, or any third party.</p>
+  <p>The record format and the log are specified in IETF Internet-Drafts (individual submissions, not working-group adopted); the receipt layer is standards-track SCITT. Reference code, a verifier, and a public witness are open source (Apache-2.0 and BSD) and live.</p>
+  <p>On witnesses, precisely: today one SCITT-shaped witness is deployed. Registering the same checkpoint's bytes in a second public transparency log &mdash; for example Sigstore's Rekor &mdash; yields receipts from independent operators, neither of which is the producer. Rekor establishes existence and time; it does not check log consistency, and the receipt says so. The design is plural: any evaluator organisation or open-source host can run a witness, and the reference code and an operator guide exist for it. Everything a stranger needs to check a record is open source and free to run.</p>
+
+  <div class="callout">Specifications, reference code, and the verifier live here on <a class="ln" href="/">agentactioncapsule.org</a>. The record format is an individual IETF <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft &#x2197;</a>; the bilateral exchange is a <a class="ln" href="/docs/bilateral.html">companion draft</a>. Verify a record yourself in the <a class="ln" href="https://verify.agentactioncapsule.org">browser verifier &#x2197;</a> &mdash; no account, nothing from anyone.</div>
+</article>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
+        <p>An open, individual profile (an IETF Internet-Draft; not WG-adopted) built on the SCITT Architecture (<a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:inherit">RFC&nbsp;9943</a>), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h5>Standard</h5>
+          <a href="/">Overview</a>
+          <a href="/docs/">Docs</a>
+          <a href="/for-evaluators.html">For evaluators</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h5>Services</h5>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://verify.agentactioncapsule.org">Verifier</a>
+        </div>
+        <div class="foot-col">
+          <h5>Source</h5>
+          <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
+          <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h5>Project</h5>
+          <a href="/docs/governance.html">Governance</a>
+          <a href="/ip">Patent posture</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
+  </div>
+</footer>
+</body>
+</html>
