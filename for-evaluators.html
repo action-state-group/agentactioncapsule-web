@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>For evaluators &mdash; Agent Action Capsule</title>
+<title>For frontier-lab evaluators &mdash; Agent Action Capsule</title>
 <meta name="description" content="A record an embedded third-party evaluator can take out of the building: sealed at a boundary the agent does not control, checkpointed to an independent witness, published with redactions that render as withheld — verifiable by a third party who trusts neither the lab nor the evaluator.">
 <link rel="canonical" href="https://agentactioncapsule.org/for-evaluators.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="For evaluators">
+<meta property="og:title" content="For frontier-lab evaluators">
 <meta property="og:description" content="A record an embedded third-party evaluator can take out of the building — verifiable by a third party who trusts neither the lab nor the evaluator.">
 <meta property="og:url" content="https://agentactioncapsule.org/for-evaluators.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="For evaluators">
+<meta name="twitter:title" content="For frontier-lab evaluators">
 <meta name="twitter:description" content="A record an embedded third-party evaluator can take out of the building — verifiable by a third party who trusts neither the lab nor the evaluator.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
@@ -108,15 +108,15 @@
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
-      <a class="active" href="/for-evaluators.html">For evaluators</a>
+      <a class="active" href="/for-evaluators.html">For frontier-lab evaluators</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
     </div>
   </div>
 </nav>
 <main class="wrap" id="main">
 <article>
-  <div class="crumb">For evaluators</div>
-  <h1>A record an evaluator can take out of the building</h1>
+  <div class="crumb">For frontier-lab evaluators</div>
+  <h1>A record a frontier-lab evaluator can take out of the building</h1>
   <p class="lede">Frontier labs have begun committing to embedded third-party evaluators with employee-level access and the right to publish findings without editorial control. That is the right shape &mdash; closer to a reporter embedded at the front than to an auditor with a checklist. The proposals leave one thing undefined: the form of the record the evaluator keeps, relies on, and publishes against.</p>
 
   <h2>The problem, as the evaluators described it</h2>
@@ -150,6 +150,46 @@
     </div>
   </div>
 
+  <figure style="margin:28px 0 8px">
+    <svg viewBox="0 0 800 300" role="img" aria-labelledby="fig2t fig2d" style="width:100%;height:auto">
+      <title id="fig2t">The boundary: what crosses it</title>
+      <desc id="fig2d">Everything happens inside your systems — the agent, sealing, the log. Only hashes, signatures and receipts cross to the world: a public witness that sees a hash and returns a receipt, and anyone's verifier that runs offline.</desc>
+      <!-- YOUR SYSTEMS zone -->
+      <rect x="16" y="40" width="452" height="236" rx="12" fill="#F4F4F0" stroke="#0B0E14" stroke-width="1.4"/>
+      <text x="36" y="66" font-family="'IBM Plex Mono',monospace" font-size="11" letter-spacing="1.2" fill="#0B0E14">YOUR SYSTEMS &#183; content never leaves</text>
+      <g font-family="Inter,sans-serif" font-size="13" fill="#0B0E14">
+        <rect x="36" y="82" width="180" height="34" rx="7" fill="#fff" stroke="#0B0E14" stroke-width="1"/><text x="48" y="104">agent &#8594; capsule emit</text>
+        <text x="230" y="104" font-family="'IBM Plex Mono',monospace" font-size="15" fill="#5C6573">&#8594;</text>
+        <rect x="252" y="82" width="180" height="34" rx="7" fill="#fff" stroke="#0B0E14" stroke-width="1"/><text x="264" y="104">checkpointed log</text>
+        <rect x="36" y="132" width="396" height="30" rx="7" fill="#fff" stroke="#0B0E14" stroke-width="1" stroke-dasharray="0"/><text x="48" y="152" font-size="12.5" fill="#5C6573">artifacts &amp; transcripts &#8212; stay here</text>
+        <rect x="36" y="176" width="396" height="30" rx="7" fill="#fff" stroke="#0B0E14" stroke-width="1"/><text x="48" y="196" font-size="12.5" fill="#5C6573">daily judgment &#8212; runs here</text>
+        <rect x="36" y="220" width="396" height="30" rx="7" fill="#fff" stroke="#0B0E14" stroke-width="1"/><text x="48" y="240" font-size="12.5" fill="#5C6573">report &#8212; sealed here</text>
+      </g>
+      <!-- THE WORLD zone -->
+      <rect x="560" y="40" width="224" height="236" rx="12" fill="#FCFCFA" stroke="#5C6573" stroke-width="1.2"/>
+      <text x="580" y="66" font-family="'IBM Plex Mono',monospace" font-size="11" letter-spacing="1.2" fill="#5C6573">THE WORLD</text>
+      <rect x="580" y="82" width="184" height="80" rx="8" fill="#fff" stroke="#5C6573" stroke-width="1"/>
+      <text x="592" y="106" font-family="Inter,sans-serif" font-size="13.5" font-weight="600" fill="#0B0E14">public witness</text>
+      <text x="592" y="126" font-family="'IBM Plex Mono',monospace" font-size="9.5" fill="#5C6573">receives: a hash</text>
+      <text x="592" y="140" font-family="'IBM Plex Mono',monospace" font-size="9.5" fill="#5C6573">returns: a receipt</text>
+      <text x="592" y="154" font-family="'IBM Plex Mono',monospace" font-size="9.5" fill="#5C6573">(plural &#183; anyone can run one)</text>
+      <rect x="580" y="176" width="184" height="74" rx="8" fill="#fff" stroke="#5C6573" stroke-width="1"/>
+      <text x="592" y="200" font-family="Inter,sans-serif" font-size="13.5" font-weight="600" fill="#0B0E14">anyone's verifier</text>
+      <text x="592" y="220" font-family="'IBM Plex Mono',monospace" font-size="9.5" fill="#5C6573">runs offline &#183; public keys</text>
+      <text x="592" y="234" font-family="'IBM Plex Mono',monospace" font-size="9.5" fill="#5C6573">no account, nothing from anyone</text>
+      <!-- crossing arrows (the proof = accent) -->
+      <g stroke="#3A5BD9" stroke-width="1.6" fill="#3A5BD9">
+        <line x1="468" y1="112" x2="560" y2="112" marker-end="url(#ah)"/>
+        <line x1="468" y1="210" x2="560" y2="210" marker-end="url(#ah)"/>
+      </g>
+      <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="#3A5BD9"/></marker></defs>
+      <text x="514" y="104" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.5" fill="#3A5BD9">hash</text>
+      <text x="514" y="202" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="8.5" fill="#3A5BD9">verify</text>
+      <text x="514" y="290" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9" fill="#3A5BD9">only hashes &amp; signatures cross &#8212; never content</text>
+    </svg>
+    <figcaption style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6B7280;margin-top:8px">Nothing leaves your side but hashes and signatures. Verification needs no network, no account, and nothing from anyone &mdash; if the maintainer disappeared, every record still verifies.</figcaption>
+  </figure>
+
   <h2>Both halves: why bilateral records matter here</h2>
   <p>A record written by one party, however well sealed, is still that party's account. The design that changes this is bilateral: the requester seals its half of an exchange (what it sent, what it received) and the provider seals its half (what it received, what it served), and the two halves cite each other by digest. Neither side can later claim the other said something different without producing a signed record that says so.</p>
   <p>For an evaluator this is the check that would have caught the spoofed tool calls, with one condition: the tool call has to cross a boundary the harness owns. An agent can write &ldquo;I ran <code>echo REAL</code> and got <code>REAL</code>&rdquo; into a transcript it controls. It cannot make the harness's sealed record of what it actually sent to the sandbox and what came back say the same thing, and it cannot make the model provider's sealed record of the response match a response it invented. A shell running entirely inside the sandbox is inside the agent's trust domain; the design choice is to put the sealing where the RPC is, not where the agent is. Where both halves exist, an evaluator does not <em>estimate</em> completeness by sampling &mdash; it <em>computes</em> it, as a count of exchanges on one side with no counterpart on the other. Where the provider is a third-party API that seals nothing, the requester's half is still sealed and the counterparty's half is recorded as not present: a fact the report can state rather than a gap it has to hide.</p>
@@ -161,6 +201,18 @@
 
   <h2>Selective disclosure, in one paragraph</h2>
   <p>A record commits to its payload members by digest. Disclosure is a separate act over a bundle of records: each member is either <em>revealed</em> (payload present, digest recomputed and matched) or <em>withheld</em> (digest present, payload absent, marked as withheld). A verifier reports each member's state and never renders a withheld member as missing or as a failure. The bundle carries a completeness statement naming the range and the checkpoint it is complete through, and the disclosure act itself is sealed into the discloser's log &mdash; so what was withheld, by whom, and when is itself a record. Sub-field redaction inside a member is handled at the payload-binding layer with salted commitments; the bundle layer stays whole-member so a reader can always count what was withheld.</p>
+
+  <table class="t">
+    <thead><tr><th>Example item</th><th>Shown or withheld</th><th>Who decides</th><th>When</th><th>Who can obtain it later</th></tr></thead>
+    <tbody>
+      <tr><th>A cited transcript excerpt</th><td><strong>Revealed</strong> &mdash; payload present, digest matches</td><td>the discloser</td><td>at publication</td><td>anyone (it's in the bundle)</td></tr>
+      <tr><th>A sensitive payload (personal data, a customer record)</th><td><strong>Withheld</strong> &mdash; digest present, marked withheld</td><td>the discloser</td><td>at publication</td><td>a reviewer entitled to it, later &mdash; and the digest lets them confirm it matches what was cited</td></tr>
+      <tr><th>One field inside a member (e.g. a name)</th><td><strong>Withheld at the payload layer</strong> &mdash; salted commitment; the rest of the member stays revealed</td><td>the discloser</td><td>at sealing</td><td>a reviewer entitled to it</td></tr>
+      <tr><th>The disclosure act itself &mdash; what was withheld, by whom, when</th><td><strong>Always sealed as a record</strong></td><td>&mdash; automatic</td><td>at disclosure</td><td>anyone (it's a record in the log)</td></tr>
+      <tr><th>The completeness statement &mdash; range + checkpoint it's complete through</th><td><strong>Always present</strong></td><td>&mdash; automatic</td><td>at disclosure</td><td>anyone</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13.5px;color:#5C6573">A withheld member is never a blank. It is a counted digest &mdash; so &ldquo;how much did you not show me?&rdquo; has a number, and every redaction is itself on the record.</p>
 
   <h2>How this matches the evaluator commitments, clause by clause</h2>
   <table class="t">
@@ -199,7 +251,7 @@
           <h5>Standard</h5>
           <a href="/">Overview</a>
           <a href="/docs/">Docs</a>
-          <a href="/for-evaluators.html">For evaluators</a>
+          <a href="/for-evaluators.html">For frontier-lab evaluators</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft &#x2197;</a>
         </div>
         <div class="foot-col">
