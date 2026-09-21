@@ -178,15 +178,21 @@
       <div class="crumb">Guides</div>
       
 <h1>Verify a capsule</h1>
-<p class="lede">Anyone holding a capsule or receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path runs the same open-source verifier and checks the same two things: the signature and the inclusion proof.</p>
+<p class="lede">Anyone holding a capsule or receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path runs the same open-source verifier. The command line checks a ledger &mdash; digests, chain links, and producer signatures; the browser and the library check a receipt &mdash; the signature and the inclusion proof.</p>
 
 <h2>In the browser</h2>
 <p>The fastest way to check a single receipt or signed statement is the hosted verifier. Paste a receipt or statement (and a key, if you want the signature checked) and read the verdict and reasons. It is stateless &mdash; nothing you submit is stored.</p>
 <div class="callout">Open <a class="ln" href="https://verify.agentactioncapsule.org">verify.agentactioncapsule.org</a>. The page runs the identical library you can install locally; for maximal privacy, verify locally instead.</div>
 
 <h2>On the command line</h2>
-<pre class="code"><code>pip install agent-action-capsule
-agent-action-capsule verify --store ledger.jsonl</code></pre>
+<pre class="code"><code>pip install capsule-emit
+capsule-emit verify --store ledger.jsonl
+
+  <span class="ok">VALID</span>
+  <span class="ok">VALID</span>
+
+2/2 <span class="ok">VALID</span></code></pre>
+<p><code>capsule-emit verify</code> recomputes every capsule's digest and chain link with the reference verifier from <code>agent-action-capsule</code> (which ships as a dependency, and whose own <code>agent-action-capsule verify</code> runs that structural check alone) <em>and</em> checks each producer signature it finds. A tampered record prints <code>INVALID</code> and the command exits 1. Neither check needs the network.</p>
 
 <h2>As a library</h2>
 <pre class="code"><code><span class="k">from</span> scitt_cose <span class="k">import</span> verify_receipt

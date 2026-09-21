@@ -283,6 +283,13 @@
         <button class="sw-tab" data-fw="crewai">CrewAI</button>
         <button class="sw-tab" data-fw="hermes">Hermes</button>
         <button class="sw-tab" data-fw="agentgateway">agentgateway</button>
+        <button class="sw-tab" data-fw="adk">ADK</button>
+        <button class="sw-tab" data-fw="agno">Agno</button>
+        <button class="sw-tab" data-fw="dapr-agents">Dapr Agents</button>
+        <button class="sw-tab" data-fw="litellm">LiteLLM</button>
+        <button class="sw-tab" data-fw="llamaindex">LlamaIndex</button>
+        <button class="sw-tab" data-fw="msft-agent-framework">MSFT Agent Framework</button>
+        <button class="sw-tab" data-fw="openai-agents">OpenAI Agents</button>
       </div>
 
       <div class="sw-panel" data-fw="goose">
@@ -361,6 +368,93 @@ mcpGuardrails:
       methods: { "tools/call": full }   # reads pass through
       failureMode: failOpen             # capsule outage degrades gracefully</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/tree/main/examples/agentgateway-capsule/evidence" style="color:var(--muted);text-decoration:underline">verified at ExtMcp gRPC protocol boundary ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="adk">
+        <div class="sw-fw"><b>Google ADK</b> — pip install "capsule-emit[adk]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from google.adk.agents import LlmAgent
+from capsule_emit.adapters.adk import ADKCapsuleEmitter
+
+emitter = ADKCapsuleEmitter(operator="acme-co", developer="po-agent@v1")
+
+agent = LlmAgent(
+    name="writer", tools=[write_order],
+    after_tool_callback=emitter.after_tool_callback,   # emits one capsule per tool call
+)</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md">ADK adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md#version" style="color:var(--muted);text-decoration:underline">verified against google-adk 2.3.x–2.9.1 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="agno">
+        <div class="sw-fw"><b>Agno</b> — pip install "capsule-emit[agno]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from agno.agent import Agent
+from capsule_emit.adapters.agno_listener import AgnoCapsuleListener
+
+listener = AgnoCapsuleListener(operator="acme-co", developer="my-agent@v1")
+agent = Agent(model=None, tools=[], tool_hooks=[listener.hook])  # your model and tools here</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agno.md">Agno adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agno.md#version" style="color:var(--muted);text-decoration:underline">verified against agno 3.0.0–3.0.10 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="dapr-agents">
+        <div class="sw-fw"><b>Dapr Agents</b> — pip install "capsule-emit[dapr-agents]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.dapr_agents import DaprAgentsCapsuleEmitter
+
+emitter = DaprAgentsCapsuleEmitter(
+    operator="acme-co", developer="invoice-agent@v1",
+    agent_name="invoice-checker", app_id="invoice-app",
+    workflow_instance_id="wf-abc123",   # set per workflow run
+)
+
+@emitter.tool("check_invoice")            # one capsule per tool call
+def check_invoice(invoice_id: str, amount: str) -> dict:
+    return {"invoice_id": invoice_id, "ok": True}</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/dapr_agents.md">Dapr Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/dapr_agents.md#drift-note-2026-07-30-rerun" style="color:var(--muted);text-decoration:underline">re-verified against dapr-agents 1.0.5–1.0.6 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="litellm">
+        <div class="sw-fw"><b>LiteLLM proxy</b> — pip install "capsule-emit[litellm]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code># config.yaml — one line is the whole integration
+litellm_settings:
+  callbacks: ["capsule_emit.adapters.litellm_listener.proxy_handler_instance"]
+
+# then, at the shell:
+export CAPSULE_EMIT_OPERATOR=acme-co
+export CAPSULE_EMIT_DEVELOPER=support-gateway@v1
+litellm --config config.yaml</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/litellm.md">LiteLLM adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/litellm.md#version" style="color:var(--muted);text-decoration:underline">verified against litellm 1.99.0–1.101.0 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="llamaindex">
+        <div class="sw-fw"><b>LlamaIndex</b> — pip install "capsule-emit[llamaindex]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from llama_index.core.agent.workflow import FunctionAgent
+from capsule_emit.adapters.llamaindex_listener import LlamaIndexCapsuleListener
+
+listener = LlamaIndexCapsuleListener(operator="acme-co", developer="my-agent@v1")
+listener.install()   # registers on LlamaIndex's process-wide dispatcher — no agent/tool changes needed</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/llamaindex.md">LlamaIndex adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/issues/182" style="color:var(--muted);text-decoration:underline">pin llama-index-workflows&lt;2.24 — 2.24.0 breaks FunctionAgent.run(), tracked in #182 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="msft-agent-framework">
+        <div class="sw-fw"><b>Microsoft Agent Framework</b> — pip install "capsule-emit[msft-agent-framework]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from agent_framework import Agent
+from capsule_emit.adapters.msft_agent_framework import capsule_middleware
+
+agent = Agent(
+    chat_client, "you are a procurement assistant",
+    tools=[get_price, submit_order],
+    middleware=capsule_middleware(operator="acme-co", developer="my-agent@v1"),
+)</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/msft-agent-framework.md">Microsoft Agent Framework adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/msft-agent-framework.md#install" style="color:var(--muted);text-decoration:underline">verified against agent-framework-core 1.16.0–1.18.0 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="openai-agents">
+        <div class="sw-fw"><b>OpenAI Agents SDK</b> — pip install "capsule-emit[openai-agents]"   # openai-agents 0.22+, Python 3.10+</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from agents import Agent, Runner
+from agents.tracing import add_trace_processor
+from capsule_emit.adapters.openai_agents_listener import OpenAIAgentsCapsuleProcessor
+
+processor = OpenAIAgentsCapsuleProcessor(operator="acme-co", developer="my-agent@v1")
+add_trace_processor(processor)   # keeps the SDK's own exporter; one capsule per tool-call span</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/openai-agents.md">OpenAI Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/openai-agents.md#version" style="color:var(--muted);text-decoration:underline">verified against openai-agents 0.22.0–0.22.2 ↗</a></span>
       </div>
 
       <p class="sw-note">Don't see your framework? The base is ~30 lines — <a href="https://github.com/action-state-group/capsule-emit" style="color:var(--accent);text-decoration:none">add an adapter or open a request ↗</a>. Full guides live in <a href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters" style="color:var(--accent);text-decoration:none">capsule-emit/docs/adapters</a>.</p>
@@ -493,17 +587,19 @@ mcpGuardrails:
     <div class="sec-head">
       <span class="eyebrow">Verify</span>
       <h2>From the bytes. Offline. Trust the log's key — not the operator.</h2>
-      <p>This is what an auditor runs against a ledger of capsules. Tamper any field and <code class="mono">ok</code> turns false.</p>
+      <p>This is what an auditor runs against a ledger of capsules. Tamper any field, or the signature, and the record turns <code class="mono">INVALID</code>.</p>
     </div>
     <div class="verify-grid">
-<pre class="code"><span class="c"># install the reference verifier</span>
-pip install agent-action-capsule
+<pre class="code"><span class="c"># install capsule-emit (the reference verifier ships with it)</span>
+pip install capsule-emit
 
 <span class="c"># verify a ledger of sealed actions, offline</span>
-agent-action-capsule verify --store ledger.jsonl
+capsule-emit verify --store ledger.jsonl
 
-  <span class="s">capsule_id</span>  9f2a…c14  <span class="ok">ok</span>
-  <span class="s">capsule_id</span>  4b07…8de  <span class="ok">ok</span>
+  <span class="ok">VALID</span>
+  <span class="ok">VALID</span>
+
+2/2 VALID
   <span class="c"># inclusion on the public log:</span>
   substrate.receipt_verified: <span class="ok">True</span></pre>
       <div class="verify-points">
@@ -542,7 +638,7 @@ agent-action-capsule verify --store ledger.jsonl
       <div class="card">
         <div class="k" style="color:var(--verify)">Rung 1 · Stub</div>
         <h3>Structured records, offline verify</h3>
-        <p>Set <code>CAPSULE_ANCHOR=false</code>. Structured records, local ledger file, offline verification. Zero services. The ten-minute first touch — no network, no account.</p>
+        <p>Set <code>CAPSULE_WITNESS=off</code>. Signed structured records, local ledger file, offline verification. Zero services. The ten-minute first touch — no network, no account.</p>
         <p style="margin-top:10px;font-size:13px;color:var(--muted)">Page renders: <em>self-attested / not witnessed</em></p>
       </div>
       <div class="card">
