@@ -97,6 +97,7 @@
 
   /* WHAT / 3-up */
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
   .card{border:1px solid var(--line);border-radius:14px;padding:26px 24px;background:#fff}
   .card .k{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
   .card h3{font-size:17px;font-weight:600;letter-spacing:-0.3px;margin-bottom:8px}
@@ -181,7 +182,7 @@
     .nav-in{gap:12px}
     .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-links::-webkit-scrollbar{display:none}
-    .grid3,.interop-grid{grid-template-columns:1fr}
+    .grid3,.grid2,.interop-grid{grid-template-columns:1fr}
     .verify-grid,.onramp{grid-template-columns:1fr;gap:24px}
     .srow{grid-template-columns:1fr;gap:8px}
     .repos{grid-template-columns:1fr}
@@ -327,6 +328,30 @@
         <p>An auditor, reviewer, or regulator verifies the signature and the inclusion proof from the bytes alone — no access to the operator's systems. You trust the log's key, not the operator.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="band" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How it works</span>
+      <h2>A log is enough, until someone else has to believe it.</h2>
+      <p>An ordinary log is the operator's diary: editable, deletable, and written by the system it describes. That is fine for debugging. It stops being enough when money moves, when a duty applies, or when someone else was harmed, because each of those has a party who was not in the room and does not take your word for it.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="k">1 of 2 &middot; Creating capsules</div>
+        <h3>Sealed at the boundary, dated by a witness</h3>
+        <p>Each action is sealed where it leaves the agent, by a key the model never holds. The record carries digests, and the content stays with the organisation. A signed checkpoint of the whole log goes to a witness that sees no content. Nothing else has left, and the date is already fixed.</p>
+      </div>
+      <div class="card">
+        <div class="k">2 of 2 &middot; Using capsules</div>
+        <h3>Asked for later, recomputed by the asker</h3>
+        <p>Months later, a party entitled to ask requests a slice. The answer is the records with their inclusion proofs, or a signed refusal with a reason. The asker checks the signatures, the inclusion and the witness receipt offline. The date was fixed before anyone asked.</p>
+      </div>
+    </div>
+    <p style="margin-top:22px"><a href="/docs/how-it-works.html" style="color:var(--accent);text-decoration:none">See both sides, step by step &rarr;</a></p>
   </div>
 </section>
 

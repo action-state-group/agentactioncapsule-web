@@ -27,6 +27,7 @@ capsule-emit verify --store ledger.jsonl   # offline: digests, chain links, prod
 - [Translation](https://agentactioncapsule.org/docs/translation.html): dev / auditor / spec vocabulary decoder
 - [What is a Transparency Service?](https://agentactioncapsule.org/docs/what-is-a-transparency-service.html): register, receipt, witness
 - [What is a Capsule?](https://agentactioncapsule.org/docs/what-is-a-capsule.html): the three properties and the limits
+- [How it works](https://agentactioncapsule.org/docs/how-it-works.html): creating capsules, then using them: an evidence request, the records or a signed refusal, offline recompute
 - [Docs index](https://agentactioncapsule.org/docs/): full concept + guide list
 
 ## Source (Apache-2.0)

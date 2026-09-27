@@ -179,6 +179,8 @@ TOC = [
          "Followed a link from a checkpoint or a receipt? Start here &mdash; what it shows, what it never does, and how to check it yourself."),
         ("what-is-a-capsule", "/docs/what-is-a-capsule.html", "What is a Capsule?", "What is an Agent Action Capsule?",
          "A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable."),
+        ("how-it-works", "/docs/how-it-works.html", "How it works", "How it works",
+         "Both sides: the organisation seals each action and a witness fixes the date; later, a party entitled to ask requests a slice and recomputes the answer offline."),
         ("statement-vs-transparency-layer", "/docs/statement-vs-transparency-layer.html", "Statement vs transparency layer", "Statement vs transparency layer",
          "What happened vs where it is recorded &mdash; and why the statement is structure-independent."),
         ("what-is-a-transparency-service", "/docs/what-is-a-transparency-service.html", "What is a Transparency Service?", "What is a Transparency Service?",
@@ -525,11 +527,11 @@ def wrap_tables(body: str) -> str:
     return re.sub(r'(<table class="t".*?</table>)', r'<div class="tw">\1</div>', body, flags=re.S)
 
 
-def render(slug, title, desc, crumb, body, *, is_index=False):
+def render(slug, title, desc, crumb, body, *, is_index=False, css=""):
     body = wrap_tables(body)
     url = "https://agentactioncapsule.org/docs/" if is_index else f"https://agentactioncapsule.org/docs/{slug}.html"
     return PAGE.format(
-        title=title, desc=desc, css=CSS, url=url,
+        title=title, desc=desc, css=CSS + css, url=url,
         chrome_head=_mark("head", CHROME_HEAD), nav=_mark("nav", nav_html("docs")),
         footer=_mark("footer", FOOTER), chrome_js=_mark("js", CHROME_JS),
         sidebar=_mark("side", sidebar_html("index" if is_index else slug)),
@@ -752,6 +754,243 @@ r = verify_receipt(receipt, leaf_entry_hex=leaf,
   <li>You do not need network access to the operator &mdash; you need the public key and the proof.</li>
 </ul>
 <div class="callout">Try it without installing anything at the <a class="ln" href="https://verify.agentactioncapsule.org">hosted verifier</a>, or run the same library yourself &mdash; see <a class="ln" href="/docs/verify-a-capsule.html">Verify a capsule</a>.</div>
+""",
+)
+
+# How it works: the producer side (creating capsules) and the counterparty side (using them).
+# Diagrams are HTML/CSS in the site's palette, not slide images; below 760px each diagram stacks
+# into one column so nothing is wider than a 375px phone. Obligation and judgment are shown as
+# ordinary sealed records with a generic example duty, never a named law.
+HOW_IT_WORKS_CSS = """
+  .hw-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0 22px}
+  .hw-col{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:#fff}
+  .hw-col.seal{border-color:var(--verify);background:var(--verify-soft)}
+  .hw-col h3{margin:0 0 4px;font-family:var(--mono);font-size:15px}
+  .hw-col .sub{font-size:13.5px;color:var(--muted);margin-bottom:10px}
+  .hw-col ul{margin:0 0 0 18px;font-size:14.5px}
+  .hw-col li{margin-bottom:5px}
+  .hw-col .bottom{font-size:13.5px;color:var(--muted);margin-top:10px;margin-bottom:0}
+  .hw-dia{display:grid;grid-template-columns:1.55fr 1fr 1fr;gap:12px;margin:10px 0 8px;font-size:13px;line-height:1.45}
+  .hw-p{border-radius:12px;padding:14px;min-width:0}
+  .hw-p .hd{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
+  .hw-p .who{font-size:12.5px;margin-bottom:10px}
+  .hw-org{background:var(--ink);color:#E8ECF4;border:1px solid var(--line-2)}
+  .hw-org .who{color:#9AA3B2}
+  .hw-wit{background:var(--paper-2);border:1px solid var(--line)}
+  .hw-wit .who,.hw-rp .who{color:var(--muted)}
+  .hw-rp{background:var(--accent-soft);border:1px solid #C9D3F5}
+  .hw-org-in{display:grid;grid-template-columns:auto 1fr;gap:10px}
+  .hw-agents{display:flex;flex-direction:column;gap:6px;padding-right:10px;border-right:1.5px dashed #5C6573}
+  .hw-agents .lb{font-family:var(--mono);font-size:10px;color:#9AA3B2;text-transform:uppercase;letter-spacing:1px}
+  .hw-chip{font-family:var(--mono);font-size:11.5px;border-radius:999px;padding:2px 10px;background:#54D08A;color:var(--ink);font-weight:600;text-align:center}
+  .hw-cll .lb{font-family:var(--mono);font-size:11px;color:#9DE2B8;margin-bottom:6px}
+  .hw-row{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line-2);background:var(--ink-2);border-radius:7px;padding:5px 9px;margin-bottom:5px;overflow-wrap:anywhere}
+  .hw-row.ck,.hw-row.rc{border-color:#54D08A;color:#9DE2B8}
+  .hw-row.rv{border-style:dashed}
+  .hw-row .d{color:#7E8AA0}
+  .hw-store{margin-top:10px;font-size:12px;color:#9AA3B2;border-top:1px solid var(--line-2);padding-top:8px}
+  .hw-store strong{color:#E8ECF4}
+  .hw-box{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:8px;overflow-wrap:anywhere}
+  .hw-box.ok{border-color:var(--verify)}
+  .hw-box.ghost{border-style:dashed;color:var(--muted-2);background:transparent}
+  .hw-box .t{font-family:var(--mono);font-size:11.5px;font-weight:600;margin-bottom:2px}
+  .hw-box.ok .t{color:var(--verify)}
+  .hw-note{font-style:italic;color:var(--muted);font-size:12.5px}
+  .hw-bundle{border:1.5px solid #C9A227;border-radius:9px;padding:9px 11px;margin-bottom:10px;font-family:var(--mono);font-size:11.5px}
+  .hw-bundle .t{color:#E8C766;font-weight:600;margin-bottom:3px}
+  .hw-out{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .hw-out span{font-family:var(--mono);font-size:11px;background:var(--paper);color:var(--ink);border-radius:999px;padding:2px 10px}
+  .hw-flow{font-family:var(--mono);font-size:12px;color:var(--verify);margin:4px 0 4px;overflow-wrap:anywhere}
+  .hw-cap{font-weight:600;font-size:15.5px;margin:6px 0 10px}
+  .hw-key{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:0 0 22px}
+  .hw-arrow{display:none}
+  .hw-q{display:grid;grid-template-columns:3fr 1.25fr;gap:14px;margin:10px 0 22px}
+  .hw-qg{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:8px;align-items:stretch}
+  .hw-qg .rl{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);align-self:center;padding-right:4px}
+  .hw-qc{border:1px solid var(--ink);border-radius:9px;padding:9px 10px;background:#fff;min-width:0}
+  .hw-qc .q{font-weight:600;font-size:13.5px;line-height:1.3;margin-bottom:4px}
+  .hw-qc .a{font-size:12px;color:var(--muted);line-height:1.4}
+  .hw-qc.ten{border:2px dashed var(--ink);background:var(--paper-2);padding:14px}
+  .hw-qc.ten .q{font-size:15px}
+  @media(max-width:760px){
+    .hw-cols,.hw-dia,.hw-q{grid-template-columns:1fr}
+    .hw-arrow{display:block;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);margin:-4px 0}
+    .hw-qg{grid-template-columns:1fr 1fr}
+    .hw-qg .rl{grid-column:1/-1;padding-top:6px}
+  }
+"""
+
+PAGES["how-it-works"] = dict(
+    title="How it works: creating capsules, and using them",
+    desc="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and a witness fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.",
+    crumb="Concepts",
+    css=HOW_IT_WORKS_CSS,
+    body="""
+<h1>How it works</h1>
+<p class="lede">A capsule has two sides. The organisation whose agent acts creates the record at the moment of the action. Later, someone who was not in the room asks for part of it and checks the answer for themselves. This page walks through both sides, in that order.</p>
+
+<h2 id="diary">A diary is not a signed record</h2>
+<p>Most agents already write logs. A log and a signed record answer different questions.</p>
+<div class="hw-cols">
+  <div class="hw-col">
+    <h3>An ordinary log</h3>
+    <div class="sub">The operator's diary</div>
+    <ul>
+      <li>Editable</li>
+      <li>Deletable</li>
+      <li>Reorderable</li>
+      <li>Often collected late, after something went wrong</li>
+      <li>Written by the system it describes</li>
+    </ul>
+  </div>
+  <div class="hw-col seal">
+    <h3>seal()</h3>
+    <div class="sub">A signed record</div>
+    <ul>
+      <li>Content-addressed: the record carries digests, and the content stays with you</li>
+      <li>Signed at the boundary, by a key the model never holds</li>
+      <li>Chained locally and append-only; checkpoints are registered with a witness</li>
+      <li>Checkable by anyone, offline, with published public keys</li>
+    </ul>
+  </div>
+</div>
+<div class="callout">A note on names: the reference producer, <a class="ln" href="https://github.com/action-state-group/capsule-emit">capsule-emit</a>, also has a <code>log()</code> call, and it is not the diary on the left. A <code>log()</code> entry is chained, checkpointed and witnessed like a sealed capsule. It only leaves out the producer's signature, so a verifier reports its authorship as <em>not claimed</em>. Use <code>seal()</code> when it matters who made the record.</div>
+
+<h2 id="line">The line</h2>
+<p><strong>A log is enough, until someone else has to believe it.</strong></p>
+<table class="t">
+  <thead><tr><th>A log is good for</th><th>A log is not enough when</th></tr></thead>
+  <tbody>
+    <tr><td>debugging</td><td><strong>money moves</strong> &mdash; a payment, a trade, a refund</td></tr>
+    <tr><td>ops dashboards</td><td><strong>a duty applies</strong> &mdash; a regulator, a contract, a customer's right</td></tr>
+    <tr><td>&ldquo;what happened last night&rdquo;</td><td><strong>someone else was harmed</strong> &mdash; a counterparty, an evaluator, a court</td></tr>
+    <tr><td>the author's own memory</td><td></td></tr>
+  </tbody>
+</table>
+<p>Each case on the right has a party who was not in the room and does not take your word for it. For the operator, a diary is fine. Once a second party is entitled to the truth, the diary is a claim, not evidence. The rest of this page is what it takes for that party to believe a record without trusting whoever wrote it.</p>
+
+<h2 id="create">1 of 2 &middot; Creating capsules</h2>
+<p>Everything in this half happens inside the organisation, before anyone asks a question.</p>
+<div class="hw-dia" role="img" aria-label="Diagram: an organisation's agents seal actions at a boundary into an append-only local log whose content stays in a payload store; a signed checkpoint goes to a witness that sees no content and returns a receipt; the relying party has nothing to verify yet.">
+  <div class="hw-p hw-org">
+    <div class="hd">Organisation &middot; create</div>
+    <div class="who">the party whose agents act</div>
+    <div class="hw-org-in">
+      <div class="hw-agents">
+        <span class="lb">boundary</span>
+        <span class="hw-chip">agent</span>
+        <span class="hw-chip">agent</span>
+        <span class="hw-chip">agent</span>
+      </div>
+      <div class="hw-cll">
+        <div class="lb">CLL &middot; append-only</div>
+        <div class="hw-row ck">&#9650; checkpoint &middot; size 1,240 &middot; peaks &middot; signed</div>
+        <div class="hw-row rc">&#10003; receipt &middot; 09:41Z</div>
+        <div class="hw-row">&#9679; action &times;4 <span class="d">ad212d&hellip; 9f0e1c&hellip; 4b7a90&hellip;</span></div>
+        <div class="hw-row rv">&#9675; received <span class="d">71c2e5&hellip; theirs</span></div>
+        <div class="hw-row">&#9679; obligation <span class="d">a disclosure duty</span></div>
+        <div class="hw-row">&#9679; judgment</div>
+      </div>
+    </div>
+    <div class="hw-store"><strong>payload store</strong> &middot; the content stays here and never leaves</div>
+  </div>
+  <div class="hw-arrow">&darr; only the checkpoint goes out</div>
+  <div class="hw-p hw-wit">
+    <div class="hd">Witness</div>
+    <div class="who">sees no content &middot; not operated by the organisation</div>
+    <div class="hw-box"><div class="t">&#9650; checkpoint</div>received 09:41Z</div>
+    <div class="hw-box ok"><div class="t">&#10003; receipt</div>registered no later than 09:41Z &middot; consistent with the previous checkpoint</div>
+    <div class="hw-box ghost">&#10003; another witness</div>
+  </div>
+  <div class="hw-arrow">&darr; nobody has asked yet</div>
+  <div class="hw-p hw-rp">
+    <div class="hd">Relying party</div>
+    <div class="who">a regulator, counterparty, auditor or evaluator</div>
+    <div class="hw-box"><div class="t">verifier</div>verify.agentactioncapsule.org, or the CLI &middot; offline &middot; published keys</div>
+    <p class="hw-note">Nothing to verify yet. Nobody has asked.</p>
+  </div>
+</div>
+<p class="hw-cap">Nothing has left the organisation but a checkpoint, and the date is already fixed.</p>
+<p class="hw-key">&#9679; sealed by the organisation &middot; &#9675; received, signed by someone else &middot; &#9650; checkpoint &middot; &#10003; witness receipt</p>
+<ol>
+  <li><strong>Seal at the boundary.</strong> Each consequential action is sealed where it leaves the agent, by a key the model never holds. The capsule carries digests of the inputs and outputs. The content itself stays in your payload store.</li>
+  <li><strong>Carry in the other side's half.</strong> When a counterparty sends its own signed record, <code>received()</code> commits those exact bytes as they arrived. It never re-signs them, so the record stays theirs.</li>
+  <li><strong>Seal what applied, and what was decided.</strong> The same log can hold the obligation an action was under (here, a disclosure duty) and any judgment made against it. They are ordinary sealed records; the format has no special case for them.</li>
+  <li><strong>Checkpoint.</strong> The <a class="ln" href="https://github.com/action-state-group/checkpointed-local-log">checkpointed local log</a> (CLL) chains every entry, append-only. At intervals it signs a checkpoint: one small value that commits to its whole history so far, with its size and the tree's peaks.</li>
+  <li><strong>Witness.</strong> Only the checkpoint goes to a witness. The witness returns a receipt saying the checkpoint was registered no later than a given time and is consistent with the previous one. The organisation does not operate the witness, and you can register with more than one. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a>.</li>
+</ol>
+
+<h2 id="use">2 of 2 &middot; Using capsules</h2>
+<p>Months later, someone entitled to the truth asks. The organisation discloses the record, and only the part that was asked for.</p>
+<div class="hw-dia" role="img" aria-label="Diagram: the relying party sends an evidence request for a slice; the organisation answers with a bundle of the requested records, checkpoint, receipt and inclusion proofs, or a signed refusal; the relying party's verifier checks signatures, inclusion and the witness receipt offline.">
+  <div class="hw-p hw-org">
+    <div class="hd">Organisation &middot; asked about</div>
+    <div class="who">answers from the same log</div>
+    <div class="hw-bundle">
+      <div class="t">bundle</div>
+      &#9679; the requested records<br>
+      withheld: digest only<br>
+      &#9650; checkpoint &middot; &#10003; receipt<br>
+      inclusion proofs<br>
+      judgments
+    </div>
+    <div class="hw-cll">
+      <div class="lb">CLL &middot; append-only</div>
+      <div class="hw-row ck">&#9650; checkpoint &middot; size 1,240</div>
+      <div class="hw-row rc">&#10003; receipt &middot; 09:41Z</div>
+      <div class="hw-row">&#9679; action &times;4</div>
+      <div class="hw-row rv">&#9675; received</div>
+      <div class="hw-row">&#9679; obligation &middot; &#9679; judgment</div>
+    </div>
+    <div class="hw-out"><span>records</span><span>signed refusal</span></div>
+  </div>
+  <div class="hw-p hw-wit">
+    <div class="hd">Witness</div>
+    <div class="who">sees no content &middot; not operated by the organisation</div>
+    <div class="hw-box ok"><div class="t">&#10003; receipt &middot; 09:41Z</div>grade: consistency-verified</div>
+    <p class="hw-note">The date was fixed before anyone asked.</p>
+  </div>
+  <div class="hw-p hw-rp">
+    <div class="hd">Relying party</div>
+    <div class="who">a regulator, counterparty, auditor or evaluator</div>
+    <div class="hw-box"><div class="t">evidence request</div>show me: actions under a disclosure duty, September 2026<br>by: a party entitled to ask</div>
+    <div class="hw-box ok"><div class="t">verifier &middot; offline</div>signatures &#10003;<br>inclusion in checkpoint 09:41Z &#10003;<br>receipt &#10003; consistency-verified<br>counts recomputed &#10003;</div>
+    <div class="hw-box ghost"><div class="t">absence</div>if no answer comes in time, the asker records its own request and the empty window</div>
+  </div>
+</div>
+<p class="hw-flow">sealed &rarr; chained &rarr; checkpointed &rarr; registered &rarr; asked &rarr; disclosed &rarr; recomputed</p>
+<p class="hw-cap">The relying party recomputes everything offline. They trust the arithmetic and the published keys, not the organisation.</p>
+<p>The exchange follows <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request</a>, an individual Internet-Draft. A request names a <em>slice</em> (what evidence is wanted) and the checkpoint the answer has to verify against. Every request ends in exactly one of three outcomes:</p>
+<table class="t">
+  <thead><tr><th>Outcome</th><th>What it is</th><th>Who signs it</th></tr></thead>
+  <tbody>
+    <tr><th>The records</th><td>A bundle with the requested capsules, the checkpoint and its witness receipt, and an inclusion proof for each record. Anything outside the slice appears only as a digest.</td><td>The organisation, plus the witness's receipt</td></tr>
+    <tr><th>A signed refusal</th><td>A refusal with a machine-readable reason, such as <code>not_authorized</code> or <code>no_such_subject</code> (&ldquo;we hold no such record&rdquo;). It is an answer, and the asker can keep it and show it to others.</td><td>The organisation</td></tr>
+    <tr><th>Absence</th><td>No answer arrived before the asker's deadline. Nobody sends an absence; the asker records its own request and the window in which nothing came.</td><td>The asker, about its own attempt</td></tr>
+  </tbody>
+</table>
+<p>The three are never converted into one another. An asker cannot turn a timeout into a refusal, and an organisation that stays silent has not refused. Silence is recorded as silence. And because the records were checkpointed and witnessed when they were sealed, an answer given months later cannot be backdated: the date was fixed before anyone asked.</p>
+
+<h2 id="ten">Nine on your copy, one on theirs</h2>
+<p>These are ten questions an investigator asks about an agent's record. Nine can be answered from your own copy, by recomputation. The tenth needs the other party's copy.</p>
+<div class="hw-q">
+  <div class="hw-qg">
+    <div class="rl">Receipt</div>
+    <div class="hw-qc"><div class="q">Rewrote the record?</div><div class="a">The <code>capsule_id</code> is recomputed from the bytes; any change breaks it.</div></div>
+    <div class="hw-qc"><div class="q">Faked who signed?</div><div class="a">The signature is checked against the producer's published key.</div></div>
+    <div class="hw-qc"><div class="q">Swapped the task?</div><div class="a">The capsule commits its inputs by digest; a different task gives a different digest.</div></div>
+    <div class="rl">Log</div>
+    <div class="hw-qc"><div class="q">Left it out of the log?</div><div class="a">An inclusion proof ties the record to a checkpoint.</div></div>
+    <div class="hw-qc"><div class="q">Faked the log's seal?</div><div class="a">The checkpoint's signature is checked, and the witness receipt names the same checkpoint.</div></div>
+    <div class="hw-qc"><div class="q">Made it up later?</div><div class="a">The receipt bounds when the checkpoint existed; a later record is not in it.</div></div>
+    <div class="rl">Fine print</div>
+    <div class="hw-qc"><div class="q">Reordered history?</div><div class="a">A consistency proof between checkpoints shows the log only appended.</div></div>
+    <div class="hw-qc"><div class="q">Used a key it shouldn't?</div><div class="a">A key that is not in the producer's published set fails the signature check.</div></div>
+    <div class="hw-qc"><div class="q">Recorded only part?</div><div class="a">In a two-party exchange each half is signed, so a half with no match is counted, not estimated.</div></div>
+  </div>
+  <div class="hw-qc ten"><div class="q">10 &middot; Faked the outcome?</div><div class="a">Your copy shows what your side sealed. Whether it happened on the other side takes the other party's signed record: their half, carried in with <code>received()</code>, or their own copy. See <a class="ln" href="/docs/bilateral.html">bilateral attestation</a>.</div></div>
+</div>
+<div class="callout">A witnessed record is not a true record. Every check above is about integrity: who signed, what was included, and when. None of them says whether the agent did the right thing. See <a class="ln" href="/docs/how-verification-works.html">how verification works</a> for the checks themselves, and <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> to run them.</div>
 """,
 )
 
@@ -1102,7 +1341,7 @@ def main():
         p = PAGES[slug]
         body = p["body"] + go_deeper_html(slug)
         (OUT / f"{slug}.html").write_text(
-            render(slug, p["title"], p["desc"], p["crumb"], body), encoding="utf-8")
+            render(slug, p["title"], p["desc"], p["crumb"], body, css=p.get("css", "")), encoding="utf-8")
         n += 1
     # hand-written pages: splice in the same header, sidebar, prev/next and footer
     for rel, (active, key) in HAND_PAGES.items():
