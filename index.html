@@ -351,7 +351,7 @@
         <button class="sw-tab" data-fw="dapr-agents">Dapr Agents</button>
         <button class="sw-tab" data-fw="litellm">LiteLLM</button>
         <button class="sw-tab" data-fw="llamaindex">LlamaIndex</button>
-        <button class="sw-tab" data-fw="msft-agent-framework">MSFT Agent Framework</button>
+        <button class="sw-tab" data-fw="msft-agent-framework">Microsoft Agent Framework</button>
         <button class="sw-tab" data-fw="openai-agents">OpenAI Agents</button>
       </div>
 
@@ -429,7 +429,8 @@ mcpGuardrails:
     - kind: remote
       host: "localhost:50051"
       methods: { "tools/call": full }   # reads pass through
-      failureMode: failOpen             # capsule outage degrades gracefully</code></pre></div>
+      failureMode: failOpen             # an outage lets calls through UNSEALED;
+                                        # use failClosed where a record is required</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/tree/main/examples/agentgateway-capsule/evidence" style="color:var(--muted);text-decoration:underline">verified at ExtMcp gRPC protocol boundary ↗</a></span>
       </div>
 
@@ -773,7 +774,7 @@ capsule-emit verify --store ledger.jsonl
         <tr><th>Needs</th><td>nothing extra</td><td>your own local log (<code>checkpointed-local-log</code>)</td></tr>
       </tbody>
     </table>
-    <p class="fit-note">Honest framing: a checkpoint lets anyone check that your log's history hasn't been rewritten since it was signed — it does <strong>not</strong>, on its own, hand a third party a per-record proof. To disclose a specific action later, you show the record plus a proof it falls inside a covered checkpoint. Checkpointing doesn't replace registration; it answers a different question.</p>
+    <p class="fit-note">A checkpoint lets anyone check that your log's history hasn't been rewritten since it was signed — it does <strong>not</strong>, on its own, hand a third party a per-record proof. To disclose a specific action later, you show the record plus a proof it falls inside a covered checkpoint. Checkpointing doesn't replace registration; it answers a different question.</p>
   </div>
 </section>
 

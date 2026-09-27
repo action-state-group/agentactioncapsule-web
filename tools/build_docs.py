@@ -733,7 +733,7 @@ PAGES["how-verification-works"] = dict(
 <div class="callout">{SIGNING_NOTE}</div>
 
 <h2>Check 3 &mdash; the inclusion proof</h2>
-<p>The transparency service returns a receipt: a signed proof that the statement's leaf digest sits in the log's Merkle tree at a given size. Given the log's public key and the leaf digest, the verifier recomputes the path to the signed tree head. This establishes that the record was <em>recorded</em> and is discoverable &mdash; not held privately by the operator.</p>
+<p>The transparency service returns a receipt: a signed proof that the statement's leaf digest sits in the log's verifiable data structure (for an RFC&nbsp;9162 log, a Merkle tree) at a given size. Given the log's public key and the leaf digest, the verifier recomputes the path to the signed tree head. This establishes that the record was <em>recorded</em> and is discoverable &mdash; not held privately by the operator.</p>
 
 <pre class="code"><code><span class="c"># verify a receipt's inclusion proof, offline</span>
 <span class="k">from</span> scitt_cose <span class="k">import</span> verify_receipt
