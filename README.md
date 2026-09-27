@@ -18,7 +18,7 @@ LICENSE, NOTICE         Apache-2.0
 
 Neutral substrate: documents the open specification and the open-source implementations only;
 no product or business content. The three neutral surfaces (this site,
-`anchor.agentactioncapsule.org`, `verify.agentactioncapsule.org`) share one visual system and a common
+`witness.agentactioncapsule.org`, `verify.agentactioncapsule.org`) share one visual system and a common
 cross-site nav + footer.
 
 **CPB moved out (2026-09-02):** Canonical Payload Binding is a separate spec with its own

@@ -156,7 +156,11 @@
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
 <a href="/docs/">Overview</a>
+<h5>Use cases</h5>
+<a href="/docs/use-cases.html">Use cases</a>
+<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
 <h5>Concepts</h5>
+<a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
@@ -187,7 +191,7 @@
 <p class="lede">When two organizations act together across a trust boundary, one record — owned by one side, deniable by the other — isn't evidence. Bilateral attestation gives each organization proof of the other's commitment, verifiable by a third party who trusts neither.</p>
 
 <h2>The problem it solves</h2>
-<p>Each side keeps its own log. A dispute reduces to <em>my log versus your log</em>. Neither log carries the other party's agreement; either side can later claim the terms were different. The record exists, but it proves nothing a relying party can check independently.</p>
+<p>Each side keeps its own log. A dispute reduces to <em>my log versus your log</em>. Neither log carries the other party's agreement; either side can later claim the terms were different. The record exists, but it gives a relying party nothing to check independently.</p>
 <p>Bilateral attestation replaces that with a four-move exchange that produces a record both parties have signed, each party holds proof of the other's signature, and the combined record can be witnessed so a third party who trusts neither organization can verify it end-to-end.</p>
 
 <h2>The four moves</h2>
@@ -226,10 +230,22 @@
 
 <h2>Refusals are first-class</h2>
 <p>A declined request is a completed exchange, not a failed one. The action attestation records <em>that</em> the request was declined and <em>on what constraint basis</em>. The requester's acknowledgment is verifiable evidence contradicting any later claim that the request was never answered.</p>
-<p>For the performing party, a bilaterally-acknowledged refusal is stronger evidence than a unilateral one — the counterparty that was refused has signed the record. For the requesting party, a pattern of acknowledged refusals is now provable by its counterparties.</p>
+<p>For the performing party, a bilaterally-acknowledged refusal is stronger evidence than a unilateral one — the counterparty that was refused has signed the record. For the requesting party, a pattern of acknowledged refusals is now checkable by its counterparties.</p>
 
 <h2>Graceful degradation</h2>
 <p>Counterparties will be of mixed capability. A performing party whose counterpart cannot produce request attestations may proceed under policy, producing its own action attestation unilaterally and recording a <strong>reduced-assurance indicator</strong> in place of the missing attestations. The record format is the same; the assurance marking differs. A fully-bilateral record and a degraded record are never confusable.</p>
+
+<h2>A refusal to act vs. a failure to co-sign</h2>
+<p>The draft distinguishes two things this page's "refusals are first-class" section could otherwise blur. A <strong>declined action</strong> (the section above) is the performing party evaluating the request and choosing not to act &mdash; a completed exchange, and strong evidence because the refused counterparty signed it. A <strong>failure to co-sign</strong> is different: the exchange itself didn't complete symmetrically. Three narrower <em>asymmetry dispositions</em>, kept distinct from the action-disposition vocabulary above, cover that case:</p>
+<table class="t">
+  <thead><tr><th>Disposition</th><th>Means</th></tr></thead>
+  <tbody>
+    <tr><th><code>delivery_unconfirmed</code></th><td>The requesting party emitted its attestation, but delivery to the performing party couldn't be confirmed &mdash; the weakest outcome; the counterparty may never have received the request.</td></tr>
+    <tr><th><code>counterparty_timeout</code></th><td>Delivery was confirmed, but the performing party didn't co-sign within the request's validity window.</td></tr>
+    <tr><th><code>countersign_refused</code></th><td>The performing party was reached and explicitly refused to co-sign.</td></tr>
+  </tbody>
+</table>
+<p>These MUST NOT be conflated with a declined action: a decline is a performed boundary decision the requester acknowledges, while a failure to co-sign is a failure of the exchange, not a decision about the action &mdash; only the latter distinction matters when weighing an anchored-but-unacknowledged record. A half that can't be matched to its counterpart is an <strong>orphan</strong> &mdash; a defined state, not an error, and still admissible evidence that the attempt was made.</p>
 
 <h2>What it composes with</h2>
 <table class="t">
@@ -244,7 +260,7 @@
 
 <h2>The Internet-Draft</h2>
 <p>The bilateral attestation exchange is specified as a companion Internet-Draft to the Agent Action Capsule profile:</p>
-<p><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-01 &#x2197;</a></p>
+<p><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation &#x2197;</a> &mdash; always resolves to the current revision on the Datatracker; as of this writing, -02.</p>
 <p>The draft fixes the exchange, the binding obligations, and the disposition semantics. Wire encodings are TBD for a future revision; the current draft specifies that JCS (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a>) will be used for deterministic canonicalization when wire formats are defined.</p>
 
 <h2>Open-source implementation</h2>

@@ -101,6 +101,7 @@
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
   .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
+  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
   .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
   .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
   .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
@@ -150,7 +151,11 @@
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
 <a href="/docs/">Overview</a>
+<h5>Use cases</h5>
+<a href="/docs/use-cases.html">Use cases</a>
+<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
 <h5>Concepts</h5>
+<a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
@@ -176,7 +181,7 @@
 </nav>
     <article>
       <div class="crumb">Concepts</div>
-
+      
 <h1>Witness anywhere — what leaves your walls</h1>
 <p class="lede">Witnessing proves a capsule was included in a public, append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
 
@@ -187,7 +192,7 @@
 <table class="t">
   <thead><tr><th>Where you witness</th><th>What it gives you</th><th>What leaves your environment</th></tr></thead>
   <tbody>
-    <tr><th>The public log</th><td>zero-setup existence proofs on a shared, open log (<code>anchor.agentactioncapsule.org</code>)</td><td>a digest + a timestamp</td></tr>
+    <tr><th>The public log</th><td>zero-setup existence proofs on a shared, open log (<code>witness.agentactioncapsule.org</code>)</td><td>a digest + a timestamp</td></tr>
     <tr><th>Your own witness, in the region you choose</th><td>residency / jurisdiction control (e.g. EU, Singapore) by running the open witness log where you need it</td><td>a digest + a timestamp, kept in your jurisdiction</td></tr>
     <tr><th>Your own witness, inside your VPC</th><td>full control — self-host the container with your own storage</td><td>nothing — the hash never leaves your environment</td></tr>
   </tbody>

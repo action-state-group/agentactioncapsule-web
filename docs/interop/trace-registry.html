@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quickstart: seal your first capsule &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="Seal an agent action as a verifiable capsule with one seal() call, witness it via a transparency log, and verify the result. Copy-paste-runnable.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/quickstart.html">
+<title>Interop: the TRACE Registry &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="The TRACE Registry is a public, append-only registry of anchors for signed TRACE Trust Records. Its checkpoint layer uses the Checkpointed Local Log (CLL). What it records, which CLL parts it uses, and how to check an entry with the published tools.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/interop/trace-registry">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Quickstart: seal your first capsule">
-<meta property="og:description" content="Seal an agent action as a verifiable capsule with one seal() call, witness it via a transparency log, and verify the result. Copy-paste-runnable.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/quickstart.html">
+<meta property="og:title" content="Interop: the TRACE Registry">
+<meta property="og:description" content="The TRACE Registry is a public, append-only registry of anchors for signed TRACE Trust Records. Its checkpoint layer uses the Checkpointed Local Log (CLL). What it records, which CLL parts it uses, and how to check an entry with the published tools.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/interop/trace-registry">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Quickstart: seal your first capsule">
-<meta name="twitter:description" content="Seal an agent action as a verifiable capsule with one seal() call, witness it via a transparency log, and verify the result. Copy-paste-runnable.">
+<meta name="twitter:title" content="Interop: the TRACE Registry">
+<meta name="twitter:description" content="The TRACE Registry is a public, append-only registry of anchors for signed TRACE Trust Records. Its checkpoint layer uses the Checkpointed Local Log (CLL). What it records, which CLL parts it uses, and how to check an entry with the published tools.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -140,7 +140,7 @@
       <a href="/">Standard</a>
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
-      <a class="active" href="/docs/">Docs</a>
+      <a href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
       <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) &#x2197;</a>
     </div>
@@ -165,7 +165,7 @@
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
-<a href="/docs/quickstart.html" class="active">Quickstart</a>
+<a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
 <h5>Live</h5>
 <a href="/docs/explore.html">Explore a capsule</a>
@@ -180,52 +180,72 @@
 <a href="/ip">Patent posture</a>
 </nav>
     <article>
-      <div class="crumb">Guides</div>
-      
-<h1>Quickstart: seal your first capsule</h1>
-<p class="lede">From install to a witnessed, verified record in a few minutes &mdash; using <code>seal()</code>, the canonical one-call API.</p>
+      <div class="crumb">Interop</div>
 
-<h2>1. Install</h2>
-<pre class="code"><code>pip install capsule-emit</code></pre>
+<h1>Interop: the TRACE Registry</h1>
+<p class="lede">The <a class="ln" href="https://github.com/agentrust-io/trace-registry">TRACE Registry</a> is a public, append-only registry of anchors for signed TRACE Trust Records, maintained in the open by its own project. Its checkpoint layer uses the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">Checkpointed Local Log (CLL)</a>. This page lists what the registry records, which parts of CLL it uses, and how anyone can check one of its entries with the published tools.</p>
 
-<div class="callout"><strong>Where you start matters.</strong> <code>seal()</code> is signed and witnessed by default, async and non-blocking &mdash; no signup, no key. If you want to try locally first with zero network egress, set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>): you get a signed, structured record and a local ledger file you can verify offline. One config change turns witnessing back on when you&rsquo;re ready. See <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">the adoption ladder</a>.</div>
+<h2>What the registry records</h2>
+<p>Each entry is one line of newline-delimited JSON in <code>registry/YYYY/MM/DD.ndjson</code>, recording the Merkle root of a batch of signed Trust Records: a timestamp, the batch root, the leaf count, the producer and a batch id. Entries are validated against the registry's schema and are append-only. A claim's membership in its batch is shown by an RFC&nbsp;6962 inclusion proof into that batch root &mdash; the registry's own construction, specified in its <a class="ln" href="https://github.com/agentrust-io/trace-registry/blob/4ae8c491ee1a2063b01780021dd31abe3f5560f9/docs/anchor-format.md">anchor format</a>, not a CLL part.</p>
+<p>At the time of writing the registry holds two entries, and its README states that neither is a production Trust Record.</p>
 
-<h2>2. Seal an action</h2>
-<p>Call <code>seal()</code> once at each consequential action &mdash; the payload is the first positional argument, never a keyword. <code>action</code>, <code>operator</code>, <code>developer</code>, and <code>agent_output</code> are what you'll always pass; <code>model</code>, <code>verdict</code>, and <code>effect</code> are optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
-<pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> seal
+<h2>Which parts of CLL it uses</h2>
+<div style="overflow-x:auto">
+<table class="t">
+  <thead><tr><th>CLL part</th><th>Used</th><th>How the registry uses it</th></tr></thead>
+  <tbody>
+    <tr><th>Append-only MMR over the log</th><td>yes</td><td>Entries anchored through the registry&rsquo;s aggregator fold as one leaf each into a single registry-wide Merkle Mountain Range (log id <code>trace-registry/v1</code>). Today that is one entry: the 2026-06-12 example predates this layer and is deliberately never folded in.</td></tr>
+    <tr><th>Signed checkpoint</th><td>yes</td><td>An entry anchored this way carries an <code>mmr_checkpoint</code>: size, root, the previous size and root, an Ed25519 key id and signature. One exists so far, on the 2026-09-01 entry (MMR size 1). The registry reuses the field set and MMR construction of the CLL reference implementations, pinned against the same 39-node test vector.</td></tr>
+    <tr><th>Consistency proof between checkpoints</th><td>implemented, not yet exercised</td><td>Each later checkpoint is to carry a proof that it extends the previous one; with a single checkpoint there is no earlier one to extend yet. The verifier also rebuilds the MMR from the entries themselves and compares it with each checkpoint.</td></tr>
+    <tr><th>Witness receipt over a checkpoint</th><td>yes, once</td><td>Checkpoint&nbsp;1 was registered with the public witness at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a>, and the returned receipt is published in the registry as an <a class="ln" href="https://github.com/agentrust-io/trace-registry/blob/4ae8c491ee1a2063b01780021dd31abe3f5560f9/docs/evidence/witness-2026-09-07/README.md">evidence packet</a>. Later checkpoints are not yet submitted automatically.</td></tr>
+    <tr><th>MMR inclusion proof per record</th><td>no</td><td>Per-claim inclusion uses the per-batch RFC&nbsp;6962 proof described above.</td></tr>
+  </tbody>
+</table>
+</div>
+<p>The registry documents its CLL layer in <a class="ln" href="https://github.com/agentrust-io/trace-registry/blob/4ae8c491ee1a2063b01780021dd31abe3f5560f9/docs/mmr-checkpoint.md">docs/mmr-checkpoint.md</a>.</p>
 
-result = place(<span class="s">"Frobozz Supply"</span>, <span class="s">"4210.00"</span>, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
+<h2>Check an entry yourself</h2>
+<p>Three questions, one command each, using the registry's published verifier. Nothing here needs an account or a key of your own; the two public keys in the last command are pinned as arguments and never fetched.</p>
+<pre class="code"><code>pip install "trace-verify[witness]"
+git clone https://github.com/agentrust-io/trace-registry &amp;&amp; cd trace-registry
 
-cap = seal(
-    {<span class="s">"vendor"</span>: <span class="s">"Frobozz Supply"</span>, <span class="s">"total"</span>: <span class="s">"4210.00"</span>},  <span class="c"># payload &mdash; first arg; monetary values are strings, not floats</span>
-    action=<span class="s">"submit_order"</span>,
-    operator=<span class="s">"acme-co"</span>,                <span class="c"># accountable tenant</span>
-    developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version</span>
-    agent_output=result,
-    model={<span class="s">"provider"</span>: <span class="s">"example-provider"</span>, <span class="s">"model_id"</span>: <span class="s">"example-model"</span>},
-    verdict=<span class="s">"executed"</span>,               <span class="c"># executed | confirmed | denied | blocked</span>
-    effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
-)
-print(cap.capsule_id, cap.signature)   <span class="c"># sealed, signed, and witnessed by default</span></code></pre>
-<div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter seals on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
+<span class="c"># 1. Is this claim in its batch, under a valid producer signature?</span>
+trace-verify --claim samples/example-trust-record.json \
+  --proof samples/inclusion-proof.json --entry registry/2026/06/12.ndjson
+<span class="ok">OK</span>: claim is included in batch '2026-06-12-001' (root sha256:9279111218532d83&hellip;, ts 2026-06-12T18:09:41Z, &hellip;), signature valid
 
-<h2>3. Where it's witnessed</h2>
-<p>By default, every <code>seal()</code> folds the capsule into your ledger's checkpoint/witness stream: roughly every 100 entries (or 15 minutes), a signed checkpoint of the whole ledger &mdash; never capsule content &mdash; is registered with the public witness at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a>, no signup, no key. Set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>) to seal fully offline; set <code>CAPSULE_WITNESS_URL</code> or pass <code>witness_url=&hellip;</code> to point at your own Transparency Service. The older per-capsule <em>anchor</em> channel (<code>cap.anchored</code>, <code>anchor=True</code> / <code>CAPSULE_ANCHOR=legacy-on</code>) is a legacy, explicit opt-in kept only as a rollback path &mdash; it has not been the default egress path since 0.5.0. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
+<span class="c"># 2. Is the checkpoint chain consistent, and does it match the entries?</span>
+trace-verify chain registry/2026/06/12.ndjson registry/2026/09/01.ndjson
+<span class="ok">OK</span>: 1 checkpoint(s) verified, chain-consistent and matching the raw entries (mmr_size 1, &hellip;)
 
-<h2>4. Verify</h2>
-<p>Each <code>seal()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
-<pre class="code"><code><span class="c"># verify a ledger of sealed capsules, offline &mdash; no keys or network needed</span>
-capsule-emit verify --store ledger.jsonl
+<span class="c"># 3. Does the witness receipt cover checkpoint 1?</span>
+trace-verify receipt \
+  --checkpoint docs/evidence/witness-2026-09-07/checkpoint-1.json \
+  --response docs/evidence/witness-2026-09-07/witness-post.json \
+  --expected-log-id trace-registry/v1 \
+  --registry-key bc133259c094f63694b4ec48a295d7501a9a0cd536df5631fb4663c155f7bc90 \
+  --witness-key 39bb654c9dc0afe1c0edef0deffaa69099b8518836c9ba26e0491535840f96b5
+{ "verified": <span class="ok">true</span>, &hellip;, "limits": { "witness_time_established": false, "registry_continuity_established": false, &hellip; } }</code></pre>
+<p>Each command exits 0 on success and non-zero otherwise (1 when a check fails). Output above is from <code>trace-verify</code> 0.4.2 against registry commit <code>4ae8c491ee1a2063b01780021dd31abe3f5560f9</code>, abbreviated with &hellip;. A claim with one changed field fails the first check, and a receipt checked against a different witness key fails the third.</p>
 
-  <span class="ok">VALID</span>
+<h2>What a pass does not establish</h2>
+<ul>
+  <li><strong>Not the claim's contents.</strong> An anchor shows a signed Trust Record existed in a particular form and was committed at a particular time &mdash; not that the agent behaved correctly or that the record's description of its runtime is accurate.</li>
+  <li><strong>Not a witness time, and not continuity.</strong> The receipt check reports these as limits, and both read false for this capture.</li>
+  <li><strong>Not many witnesses.</strong> Parallel independent witnesses are supported; one witness operator is demonstrated so far.</li>
+</ul>
+<p>The registry's own <a class="ln" href="https://github.com/agentrust-io/trace-registry/blob/4ae8c491ee1a2063b01780021dd31abe3f5560f9/LIMITATIONS.md">LIMITATIONS.md</a> states these boundaries in full.</p>
 
-1/1 <span class="ok">VALID</span></code></pre>
-<div class="callout warn"><strong>Two verify surfaces, not one:</strong> <code>agent-action-capsule verify</code> (the spec package's own CLI, bundled as a <code>capsule-emit</code> dependency) checks structural/digest conformance only. <code>capsule-emit verify</code> runs that same check <em>plus</em> the producer-envelope check: a capsule with an altered <code>signature</code> but an otherwise-untouched digest still reads <code>ok</code> under <code>agent-action-capsule verify</code> and fails <code>INVALID</code> under <code>capsule-emit verify</code>. Use <code>capsule-emit verify --store</code> for the full check.</div>
-<h2>Adapters: seal from your framework</h2>
-<p>You don&rsquo;t have to call <code>seal()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). A gateway integration (<strong>agentgateway</strong>) seals at the chokepoint every consequential action flows through &mdash; one policy point instead of N integrations (via the gateway's <code>mcpGuardrails</code> ExtMcp hook). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a> and the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter</a>.</p>
-<div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check covers.</div>
-<div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/01-your-first-capsule.md">Tutorial: your first capsule &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/tutorials/02-confirming-and-chaining.md">Confirming &amp; chaining &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/witness-anywhere.html"><div class="dir">&#8592; Previous</div><div class="ttl">Witness anywhere</div></a><a class="n" href="/docs/verify-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">Verify a capsule</div></a></div>
+<h2>Read more</h2>
+<ul>
+  <li>Joint post: <a class="ln" href="https://field-notes-on-the-agent-economy.ghost.io/deep-dive-how-the-public-trace-registry-is-built-to-be-distrusted/">&ldquo;Deep-dive: how the public TRACE Registry is built to be distrusted&rdquo; &#x2197;</a> by Steven Mih and Imran Siddique (published 2026-09-14).</li>
+  <li>The registry: <a class="ln" href="https://github.com/agentrust-io/trace-registry">agentrust-io/trace-registry &#x2197;</a></li>
+  <li>The CLL Internet-Draft: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log &#x2197;</a> &middot; reference implementation: <a class="ln" href="https://github.com/action-state-group/checkpointed-local-log">checkpointed-local-log &#x2197;</a></li>
+</ul>
+
+<div class="callout deeper">This is a technology interop note, not an endorsement or a commercial relationship. It describes how one independent project uses CLL, as that project documents it in its own public repository.</div>
+
+      <div class="next"><a class="p" href="/docs/case-study-mesh-llm.html"><div class="dir">&#8592; Previous</div><div class="ttl">Case study: Mesh-LLM</div></a><a class="n" href="/docs/verify-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">Verify a capsule</div></a></div>
     </article>
   </div>
 </main>

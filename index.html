@@ -147,6 +147,9 @@
   .ic-card p{font-size:14px;color:var(--muted)}
   .ic-card a{color:var(--accent);text-decoration:none;font-size:13.5px;font-family:var(--mono);display:inline-block;margin-top:12px}
   .ic-card a:hover{text-decoration:underline}
+  .ic-card ul{list-style:none;margin-top:6px}
+  .ic-card li{font-size:14px;color:var(--muted);margin-top:8px}
+  .ic-card li a{margin-top:0}
 
   /* ONRAMP */
   .onramp{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
@@ -196,7 +199,6 @@
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
-      <a href="/for-evaluators.html">For frontier-lab evaluators</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source ↗</a>
       <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) ↗</a>
     </div>
@@ -209,12 +211,12 @@
 <header class="hero">
   <div class="wrap">
     <span class="eyebrow">Open SCITT profile · early-stage draft (IETF Internet-Draft) · open source</span>
-    <h1>Prove what your agent did &mdash;<br><span class="hl">to someone who doesn&rsquo;t trust you.</span></h1>
-    <p class="lede">AI agents are just starting to take consequential actions — placing orders, moving money, changing records. When one does, the only proof it happened as intended is the operator's own word. An Agent Action Capsule fixes that: a tamper-evident, content-private record of the action that <em>anyone can verify from the record itself — without trusting the operator</em>.</p>
+    <h1>Show what your agent did &mdash;<br><span class="hl">to someone who doesn&rsquo;t trust you.</span></h1>
+    <p class="lede">AI agents are just starting to take consequential actions — placing orders, moving money, changing records. When one does, the only evidence it happened as intended is the operator's own word. An Agent Action Capsule fixes that: a tamper-evident, content-private record of the action that <em>anyone can verify from the record itself — without trusting the operator</em>.</p>
     <p class="lede" style="font-size:15px;margin-top:10px;color:var(--muted)">It's early — for the technology and for this profile. The aim is to get the <em>record</em> of what agents do right while it's still being figured out: in the open, verifiable by anyone, and built to be donated so it ends up owned by no one. (Roughly the role TLS plays for a connection, applied to an agent's actions.)</p>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="/docs/quickstart.html">Add receipts to my agent <span class="arrow">→</span></a>
-      <a class="btn btn-ghost" href="#verify">Prove what happened <span class="arrow">→</span></a>
+      <a class="btn btn-primary" href="/docs/quickstart.html">Add capsules to my agent <span class="arrow">→</span></a>
+      <a class="btn btn-ghost" href="#verify">Check what happened <span class="arrow">→</span></a>
       <a class="btn btn-ghost" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Read the draft <span class="arrow">↗</span></a>
     </div>
     <p style="margin-top:18px;font-size:15px;color:var(--muted)"><code class="mono" style="background:var(--ink-2);color:#E8ECF4;padding:2px 8px;border-radius:6px">pip install capsule-emit</code> &rarr; <code class="mono" style="background:var(--ink-2);color:#E8ECF4;padding:2px 8px;border-radius:6px">receipt = seal(payload)</code> — a signed, witnessed record a stranger can verify. No config, keys, or account required. <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none">See it as real, runnable code &rarr;</a></p>
@@ -283,6 +285,13 @@
         <button class="sw-tab" data-fw="crewai">CrewAI</button>
         <button class="sw-tab" data-fw="hermes">Hermes</button>
         <button class="sw-tab" data-fw="agentgateway">agentgateway</button>
+        <button class="sw-tab" data-fw="adk">ADK</button>
+        <button class="sw-tab" data-fw="agno">Agno</button>
+        <button class="sw-tab" data-fw="dapr-agents">Dapr Agents</button>
+        <button class="sw-tab" data-fw="litellm">LiteLLM</button>
+        <button class="sw-tab" data-fw="llamaindex">LlamaIndex</button>
+        <button class="sw-tab" data-fw="msft-agent-framework">MSFT Agent Framework</button>
+        <button class="sw-tab" data-fw="openai-agents">OpenAI Agents</button>
       </div>
 
       <div class="sw-panel" data-fw="goose">
@@ -363,6 +372,93 @@ mcpGuardrails:
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/tree/main/examples/agentgateway-capsule/evidence" style="color:var(--muted);text-decoration:underline">verified at ExtMcp gRPC protocol boundary ↗</a></span>
       </div>
 
+      <div class="sw-panel" data-fw="adk">
+        <div class="sw-fw"><b>Google ADK</b> — pip install "capsule-emit[adk]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from google.adk.agents import LlmAgent
+from capsule_emit.adapters.adk import ADKCapsuleEmitter
+
+emitter = ADKCapsuleEmitter(operator="acme-co", developer="po-agent@v1")
+
+agent = LlmAgent(
+    name="writer", tools=[write_order],
+    after_tool_callback=emitter.after_tool_callback,   # emits one capsule per tool call
+)</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md">ADK adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md#version" style="color:var(--muted);text-decoration:underline">verified against google-adk 2.3.x–2.9.1 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="agno">
+        <div class="sw-fw"><b>Agno</b> — pip install "capsule-emit[agno]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from agno.agent import Agent
+from capsule_emit.adapters.agno_listener import AgnoCapsuleListener
+
+listener = AgnoCapsuleListener(operator="acme-co", developer="my-agent@v1")
+agent = Agent(model=None, tools=[], tool_hooks=[listener.hook])  # your model and tools here</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agno.md">Agno adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agno.md#version" style="color:var(--muted);text-decoration:underline">verified against agno 3.0.0–3.0.10 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="dapr-agents">
+        <div class="sw-fw"><b>Dapr Agents</b> — pip install "capsule-emit[dapr-agents]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.dapr_agents import DaprAgentsCapsuleEmitter
+
+emitter = DaprAgentsCapsuleEmitter(
+    operator="acme-co", developer="invoice-agent@v1",
+    agent_name="invoice-checker", app_id="invoice-app",
+    workflow_instance_id="wf-abc123",   # set per workflow run
+)
+
+@emitter.tool("check_invoice")            # one capsule per tool call
+def check_invoice(invoice_id: str, amount: str) -> dict:
+    return {"invoice_id": invoice_id, "ok": True}</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/dapr_agents.md">Dapr Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/dapr_agents.md#drift-note-2026-07-30-rerun" style="color:var(--muted);text-decoration:underline">re-verified against dapr-agents 1.0.5–1.0.6 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="litellm">
+        <div class="sw-fw"><b>LiteLLM proxy</b> — pip install "capsule-emit[litellm]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code># config.yaml — one line is the whole integration
+litellm_settings:
+  callbacks: ["capsule_emit.adapters.litellm_listener.proxy_handler_instance"]
+
+# then, at the shell:
+export CAPSULE_EMIT_OPERATOR=acme-co
+export CAPSULE_EMIT_DEVELOPER=support-gateway@v1
+litellm --config config.yaml</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/litellm.md">LiteLLM adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/litellm.md#version" style="color:var(--muted);text-decoration:underline">verified against litellm 1.99.0–1.101.0 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="llamaindex">
+        <div class="sw-fw"><b>LlamaIndex</b> — pip install "capsule-emit[llamaindex]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from llama_index.core.agent.workflow import FunctionAgent
+from capsule_emit.adapters.llamaindex_listener import LlamaIndexCapsuleListener
+
+listener = LlamaIndexCapsuleListener(operator="acme-co", developer="my-agent@v1")
+listener.install()   # registers on LlamaIndex's process-wide dispatcher — no agent/tool changes needed</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/llamaindex.md">LlamaIndex adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/issues/182" style="color:var(--muted);text-decoration:underline">pin llama-index-workflows&lt;2.24 — 2.24.0 breaks FunctionAgent.run(), tracked in #182 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="msft-agent-framework">
+        <div class="sw-fw"><b>Microsoft Agent Framework</b> — pip install "capsule-emit[msft-agent-framework]"</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from agent_framework import Agent
+from capsule_emit.adapters.msft_agent_framework import capsule_middleware
+
+agent = Agent(
+    chat_client, "you are a procurement assistant",
+    tools=[get_price, submit_order],
+    middleware=capsule_middleware(operator="acme-co", developer="my-agent@v1"),
+)</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/msft-agent-framework.md">Microsoft Agent Framework adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/msft-agent-framework.md#install" style="color:var(--muted);text-decoration:underline">verified against agent-framework-core 1.16.0–1.18.0 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="openai-agents">
+        <div class="sw-fw"><b>OpenAI Agents SDK</b> — pip install "capsule-emit[openai-agents]"   # openai-agents 0.22+, Python 3.10+</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from agents import Agent, Runner
+from agents.tracing import add_trace_processor
+from capsule_emit.adapters.openai_agents_listener import OpenAIAgentsCapsuleProcessor
+
+processor = OpenAIAgentsCapsuleProcessor(operator="acme-co", developer="my-agent@v1")
+add_trace_processor(processor)   # keeps the SDK's own exporter; one capsule per tool-call span</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/openai-agents.md">OpenAI Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/openai-agents.md#version" style="color:var(--muted);text-decoration:underline">verified against openai-agents 0.22.0–0.22.2 ↗</a></span>
+      </div>
+
       <p class="sw-note">Don't see your framework? The base is ~30 lines — <a href="https://github.com/action-state-group/capsule-emit" style="color:var(--accent);text-decoration:none">add an adapter or open a request ↗</a>. Full guides live in <a href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters" style="color:var(--accent);text-decoration:none">capsule-emit/docs/adapters</a>.</p>
     </div>
   </div>
@@ -430,7 +526,12 @@ mcpGuardrails:
       <div class="flowtag">↓ witnessed by</div>
       <div class="srow">
         <div class="lbl">layer 4<b>The log</b></div>
-        <div class="desc"><code>capsule-anchor</code> — a neutral, product-free SCITT Transparency Service. Live at <code>anchor.agentactioncapsule.org</code>.</div>
+        <div class="desc"><code>capsule-anchor</code> — a neutral, product-free SCITT Transparency Service. Live at <code>witness.agentactioncapsule.org</code>.</div>
+      </div>
+      <div class="flowtag">↓ optionally checkpointed by</div>
+      <div class="srow">
+        <div class="lbl">layer 5<b>Your local log</b></div>
+        <div class="desc"><code>checkpointed-local-log</code> (CLL) — the append-only local log a client keeps between witnessings. Its signed checkpoints are what <code>POST /checkpoints</code> registers, covering any number of records in one flat-cost round trip.</div>
       </div>
     </div>
   </div>
@@ -442,7 +543,7 @@ mcpGuardrails:
     <div class="sec-head">
       <span class="eyebrow">How it fits your stack</span>
       <h2>Composes with what you already run — it doesn't replace it.</h2>
-      <p>Identity, authorization, payments, runtime gates — each proves its own slice, and each is self-attested about it. The capsule composes with all of them by digest-reference, and adds the one thing none can self-provide: a record checkable by someone who trusts neither the operator nor any single layer.</p>
+      <p>Identity, authorization, payments, runtime gates — each covers its own slice, and each is self-attested about it. The capsule composes with all of them by digest-reference, and adds the one thing none can self-provide: a record checkable by someone who trusts neither the operator nor any single layer.</p>
     </div>
     <table class="fit">
       <thead><tr><th>Leg</th><th>Answers</th><th>Doesn't answer</th></tr></thead>
@@ -451,7 +552,7 @@ mcpGuardrails:
         <tr><th>CAN — Authorization <span class="ex">e.g. OAuth/AAuth, GNAP, policy</span></th><td>what it <em>may</em> do</td><td>what it actually did, and the outcome</td></tr>
         <tr><th>Payments / settlement <span class="ex">e.g. AP2</span></th><td>whether a human authorized the spend</td><td>what was actually done, end-to-end</td></tr>
         <tr><th>AUDIT — Runtime gate / observability <span class="ex">e.g. a policy gateway, your logs</span></th><td>what <em>you say</em> happened</td><td>nothing to a party who doesn't trust you — it's self-attested</td></tr>
-        <tr class="cap"><th>WHAT — Agent Action Capsule</th><td>what it provably <em>did</em></td><td>composes with all of the above</td></tr>
+        <tr class="cap"><th>WHAT — Agent Action Capsule</th><td>what it verifiably <em>did</em></td><td>composes with all of the above</td></tr>
       </tbody>
     </table>
     <p class="fit-note">Each layer is self-attested about its own slice; the capsule is the independent record of what was actually done that they all commit into. Adopting it doesn't fork your stack — it references the others' evidence by digest. <a href="/docs/how-it-composes.html" style="color:var(--accent);text-decoration:none">How it composes →</a> · <a href="/docs/whats-consequential.html" style="color:var(--accent);text-decoration:none">what's worth sealing →</a></p>
@@ -493,23 +594,25 @@ mcpGuardrails:
     <div class="sec-head">
       <span class="eyebrow">Verify</span>
       <h2>From the bytes. Offline. Trust the log's key — not the operator.</h2>
-      <p>This is what an auditor runs against a ledger of capsules. Tamper any field and <code class="mono">ok</code> turns false.</p>
+      <p>This is what an auditor runs against a ledger of capsules. Tamper any field, or the signature, and the record turns <code class="mono">INVALID</code>.</p>
     </div>
     <div class="verify-grid">
-<pre class="code"><span class="c"># install the reference verifier</span>
-pip install agent-action-capsule
+<pre class="code"><span class="c"># install capsule-emit (the reference verifier ships with it)</span>
+pip install capsule-emit
 
 <span class="c"># verify a ledger of sealed actions, offline</span>
-agent-action-capsule verify --store ledger.jsonl
+capsule-emit verify --store ledger.jsonl
 
-  <span class="s">capsule_id</span>  9f2a…c14  <span class="ok">ok</span>
-  <span class="s">capsule_id</span>  4b07…8de  <span class="ok">ok</span>
+  <span class="ok">VALID</span>
+  <span class="ok">VALID</span>
+
+2/2 VALID
   <span class="c"># inclusion on the public log:</span>
   substrate.receipt_verified: <span class="ok">True</span></pre>
       <div class="verify-points">
         <div class="vp"><div class="ic">1</div><div><h4>Inputs &amp; outputs committed by digest</h4><p>The capsule seals SHA-256 digests of what went in and came out. Raw values stay local; the proof travels.</p></div></div>
         <div class="vp"><div class="ic">2</div><div><h4>Signature + inclusion, independently</h4><p>The signature proves who sealed it; the receipt proves the log included it. Both check from the bytes.</p></div></div>
-        <div class="vp"><div class="ic">3</div><div><h4>VDS-agnostic</h4><p>The same statement verifies whether the log uses RFC 9162 Merkle proofs or Microsoft CCF. The action layer never changes.</p></div></div>
+        <div class="vp"><div class="ic">3</div><div><h4>VDS-agnostic</h4><p>The same statement verifies whether the log uses RFC 9162 Merkle proofs or CCF (Confidential Consortium Framework). The action layer never changes.</p></div></div>
       </div>
     </div>
   </div>
@@ -542,7 +645,7 @@ agent-action-capsule verify --store ledger.jsonl
       <div class="card">
         <div class="k" style="color:var(--verify)">Rung 1 · Stub</div>
         <h3>Structured records, offline verify</h3>
-        <p>Set <code>CAPSULE_ANCHOR=false</code>. Structured records, local ledger file, offline verification. Zero services. The ten-minute first touch — no network, no account.</p>
+        <p>Set <code>CAPSULE_WITNESS=off</code>. Signed structured records, local ledger file, offline verification. Zero services. The ten-minute first touch — no network, no account.</p>
         <p style="margin-top:10px;font-size:13px;color:var(--muted)">Page renders: <em>self-attested / not witnessed</em></p>
       </div>
       <div class="card">
@@ -574,7 +677,7 @@ agent-action-capsule verify --store ledger.jsonl
       <div class="card">
         <div class="k">Public log</div>
         <h3>Zero-setup proofs</h3>
-        <p>Witness at the shared, open log at <code>anchor.agentactioncapsule.org</code>. A digest + timestamp leaves; your data never does.</p>
+        <p>Witness at the shared, open log at <code>witness.agentactioncapsule.org</code>. A digest + timestamp leaves; your data never does.</p>
       </div>
       <div class="card">
         <div class="k">Your region</div>
@@ -591,13 +694,35 @@ agent-action-capsule verify --store ledger.jsonl
   </div>
 </section>
 
+<!-- TWO ROUTES: REGISTER VS CHECKPOINT -->
+<section class="band" id="checkpoints" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Checkpointed local log</span>
+      <h2>Register one action, or checkpoint your whole log — <code>~300 bytes</code>, any volume.</h2>
+      <p>The witness answers two different requests. <code>POST /register</code> commits one record and hands back a receipt for it. <code>POST /checkpoints</code> — the default route every <code>capsule-emit</code> client uses — commits a signed snapshot of your entire local log (kept by <a href="https://github.com/action-state-group/checkpointed-local-log" style="color:var(--accent);text-decoration:none"><code>checkpointed-local-log</code></a>, CLL) at once. A checkpoint's cost doesn't grow with your log: measured against the reference implementation, a signed checkpoint runs <strong>roughly 300–500 content-free bytes</strong> whether your log holds one record or a million.</p>
+    </div>
+    <table class="fit">
+      <thead><tr><th></th><th><code>POST /register</code></th><th><code>POST /checkpoints</code></th></tr></thead>
+      <tbody>
+        <tr><th>Granularity</th><td>one record</td><td>the whole log</td></tr>
+        <tr><th>What leaves</th><td>a digest per action, and its timing</td><td><strong>~300–500 content-free bytes</strong>, covering any number of records</td></tr>
+        <tr><th>You get back</th><td>a receipt with an inclusion proof, usable immediately</td><td>a co-signature pinning your history outside you</td></tr>
+        <tr><th>Cost shape</th><td>one round-trip per action</td><td>flat, regardless of volume</td></tr>
+        <tr><th>Needs</th><td>nothing extra</td><td>your own local log (<code>checkpointed-local-log</code>)</td></tr>
+      </tbody>
+    </table>
+    <p class="fit-note">Honest framing: a checkpoint lets anyone check that your log's history hasn't been rewritten since it was signed — it does <strong>not</strong>, on its own, hand a third party a per-record proof. To disclose a specific action later, you show the record plus a proof it falls inside a covered checkpoint. Checkpointing doesn't replace registration; it answers a different question.</p>
+  </div>
+</section>
+
 <!-- INTEROP -->
 <section class="band" id="interop">
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Interop</span>
       <h2>Tested against other implementations — not just our own.</h2>
-      <p>The statement layer is fixed; the verifiable-data-structure is the log's choice. We've proven that holds across vendors.</p>
+      <p>The statement layer is fixed; the verifiable-data-structure is the log's choice. We've tested that it holds across independent implementations.</p>
     </div>
     <div class="interop-grid">
       <div class="ic-card">
@@ -607,16 +732,36 @@ agent-action-capsule verify --store ledger.jsonl
         <a href="https://github.com/ietf-wg-scitt/examples">ietf-wg-scitt/examples ↗</a>
       </div>
       <div class="ic-card">
-        <span class="badge">TESTED AGAINST · MICROSOFT CCF</span>
+        <span class="badge">TESTED AGAINST · CCF</span>
         <h3>Two-party, two logs</h3>
-        <p>One capsule, registered to our RFC9162 log <em>and</em> a real Microsoft CCF node — both receipts verify under our verifier stack. (CCF uses vds=2; RFC 9162 uses vds=1.) Tested against CCF; not a Microsoft endorsement.</p>
+        <p>One capsule, registered to our RFC9162 log <em>and</em> a real CCF (Confidential Consortium Framework) node — both receipts verify under our verifier stack. (CCF uses vds=2; RFC 9162 uses vds=1.) Tested against CCF; not an endorsement by the CCF project.</p>
         <a href="https://github.com/action-state-group/scitt-cose">scitt-cose ↗</a>
       </div>
       <div class="ic-card">
-        <span class="badge">PREPARING · IETF 126</span>
-        <h3>Implementation report</h3>
-        <p>We intend to bring an implementation report and the shared test vectors to the SCITT working group at IETF 126 (Vienna) — connecting the verifier, the vectors, and the plug-fest.</p>
-        AAC: <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-04 ↗</a>&ensp;&middot;&ensp;CPB: <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-02 ↗</a>
+        <span class="badge">DELIVERED · IETF 126</span>
+        <h3>Hackathon / interop report</h3>
+        <p>Presented to the SCITT working group at IETF 126 (Vienna, 24 July 2026): byte and digest agreement across independent implementations, and one signed statement registered with two different Transparency Services &mdash; a CCF service and an RFC&nbsp;9162 log &mdash; with both receipts verified independently.</p>
+        <a href="https://datatracker.ietf.org/meeting/126/materials/slides-126-scitt-ietf-126-vienna-scitt-04">SCITT session slides ↗</a>&ensp;&middot;&ensp;<a href="https://datatracker.ietf.org/meeting/126/materials/minutes-126-scitt-00.md">minutes ↗</a>
+      </div>
+      <div class="ic-card" style="grid-column:1/-1">
+        <span class="badge">INDEPENDENT PROJECT · USES CLL</span>
+        <h3>The TRACE Registry</h3>
+        <p>A public, append-only registry of anchors for signed TRACE Trust Records. Its checkpoint layer uses the Checkpointed Local Log: an append-only MMR with signed checkpoints, and a witness receipt over a checkpoint &mdash; each checkable with the registry's own published verifier.</p>
+        <a href="/docs/interop/trace-registry">How it uses CLL, and how to check an entry →</a>&ensp;&middot;&ensp;<a href="https://field-notes-on-the-agent-economy.ghost.io/deep-dive-how-the-public-trace-registry-is-built-to-be-distrusted/">joint post ↗</a>&ensp;&middot;&ensp;<a href="https://github.com/agentrust-io/trace-registry">agentrust-io/trace-registry ↗</a>
+      </div>
+      <div class="ic-card" id="drafts" style="grid-column:1/-1">
+        <span class="badge">INTERNET-DRAFTS · INDIVIDUAL · NOT WG-ADOPTED</span>
+        <h3>The drafts, on the IETF Datatracker</h3>
+        <p>Each link opens the latest revision. These are individual Internet-Drafts submitted for discussion &mdash; not adopted by a working group, and not standards.</p>
+        <ul>
+          <li><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule ↗</a> &mdash; An Agent Action Capsule Profile for SCITT</li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding ↗</a> (CPB) &mdash; Canonicalization Declaration for SCITT Signed Statements</li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log ↗</a> &mdash; The Checkpointed Local Log (CLL)</li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">draft-mih-sato-agent-accountability-composition ↗</a> &mdash; Agent Accountability: Composition and Conformance</li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-mih-agent-accountability-conformance/">draft-mih-agent-accountability-conformance ↗</a> &mdash; Agent Accountability: A Conformance and Verification Method</li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation ↗</a> &mdash; Bilateral Attestation of Cross-Organization Agent Actions</li>
+          <li><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">draft-mih-scitt-agent-action-capsule-sel-disc ↗</a> &mdash; Selective Disclosure Profile for Agent Action Capsules</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -638,10 +783,13 @@ agent-action-capsule verify --store ledger.jsonl
         <div><div class="rn">capsule-emit</div><div class="rd">The producer library and adapters — the one-decorator on-ramp for agents and MCP servers.</div><span class="tag">Apache-2.0</span></div>
       </a>
       <a class="repo" href="https://github.com/action-state-group/scitt-cose">
-        <div><div class="rn">scitt-cose</div><div class="rd">The SCITT receipt verifier — RFC9162_SHA256 (vds=1), cross-checked against Microsoft CCF (vds=2).</div><span class="tag">Apache-2.0</span></div>
+        <div><div class="rn">scitt-cose</div><div class="rd">The SCITT receipt verifier — RFC9162_SHA256 (vds=1), cross-checked against CCF (vds=2).</div><span class="tag">Apache-2.0</span></div>
       </a>
       <a class="repo" href="https://github.com/action-state-group/capsule-anchor">
-        <div><div class="rn">capsule-anchor</div><div class="rd">An open, product-free SCITT Transparency Service. Reference instance live at anchor.agentactioncapsule.org.</div><span class="tag">Apache-2.0</span></div>
+        <div><div class="rn">capsule-anchor</div><div class="rd">An open, product-free SCITT Transparency Service. Reference instance live at witness.agentactioncapsule.org.</div><span class="tag">Apache-2.0</span></div>
+      </a>
+      <a class="repo" href="https://github.com/action-state-group/checkpointed-local-log">
+        <div><div class="rn">checkpointed-local-log</div><div class="rd">CLL — the append-only local log behind <code>POST /checkpoints</code>: hash chains, a Merkle Mountain Range, and signed COSE checkpoints.</div><span class="tag">Apache-2.0</span></div>
       </a>
     </div>
     <p style="margin-top:22px;color:var(--muted);font-size:15px;max-width:760px"><strong>Scope.</strong> The open project is the <strong>record layer</strong> — the profile, the producer (with example constraint manifests), the verifier, and the witness log. Acting on those constraints at runtime (enforcement) is a separate concern you compose with a policy gateway: the capsule records what happened, it doesn't gate. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">How the project is governed →</a></p>
@@ -656,7 +804,7 @@ agent-action-capsule verify --store ledger.jsonl
       <h2>Built by an agent developer who wanted proof, not promises.</h2>
       <p>The Agent Action Capsule was created by <strong>Steven Mih</strong> — a startup founder and agent developer with a long background in open source, including helping steward openly and neutrally governed software (the Presto Foundation, under the Linux Foundation). He built it after hitting the wall everyone building agents hits: once an agent takes a real action, the only "proof" it happened as intended is the operator's own word. The capsule is the answer — a verifiable record anyone can check, built to be owned by no one.</p>
       <p style="margin-top:14px"><strong>Why build it this way?</strong> Verifiable records of what agents do are infrastructure the whole ecosystem depends on — and we think AI safety and open standards matter far too much for that layer to be controlled by any single company. So the design goal from day one is to give it away.</p>
-      <p style="margin-top:14px"><strong>Where it stands today.</strong> The project is stewarded by Action State Group, which also operates the reference services (the public log and the verifier) for now — with the explicit intent to donate the profile, the trademark, and the services to a neutral foundation as the ecosystem matures. The governance model is public and modeled on Linux Foundation practice, and co-maintainers are welcome to join. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read the governance model →</a> · comments on the draft are welcome at <a href="mailto:spec@actionstate.ai" style="color:var(--accent);text-decoration:none">spec@actionstate.ai</a> and in the IETF SCITT working group.</p>
+      <p style="margin-top:14px"><strong>Where it stands today.</strong> The repositories are stewarded by Action State Group, with the stated intent to donate the profile, the trademark, and the reference services to a neutral foundation. Witnessing is plural by design: a capsule verifies against whichever Transparency Service registered it, and any party can run one (<a href="/docs/witness-anywhere.html" style="color:var(--accent);text-decoration:none">witness anywhere</a>). The governance model is public and modeled on Linux Foundation practice, and co-maintainers are welcome to join. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read the governance model →</a> · comments on the draft are welcome at <a href="mailto:spec@actionstate.ai" style="color:var(--accent);text-decoration:none">spec@actionstate.ai</a> and in the IETF SCITT working group.</p>
     </div>
   </div>
 </section>
@@ -732,9 +880,9 @@ agent-action-capsule verify --store ledger.jsonl
           <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
           <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk: SCITT · AAC · CLL · CPB slides (LF AAIF WG, Sep 2026) ↗</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (‑04) ↗</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (‑02) ↗</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (‑00) ↗</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (latest) ↗</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (latest) ↗</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (latest) ↗</a>
           <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide ↗</a>
           <a href="/playground.html">Playground</a>
           <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding ↗</a>

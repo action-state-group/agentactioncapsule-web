@@ -138,7 +138,7 @@
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
     <div class="nav-links">
       <a href="/">Standard</a>
-      <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
@@ -151,7 +151,11 @@
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
 <a href="/docs/">Overview</a>
+<h5>Use cases</h5>
+<a href="/docs/use-cases.html">Use cases</a>
+<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
 <h5>Concepts</h5>
+<a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html" class="active">What is a Capsule?</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
@@ -159,7 +163,7 @@
 <a href="/docs/how-verification-works.html">How verification works</a>
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
-<a href="/docs/anchor-anywhere.html">Anchor anywhere</a>
+<a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
@@ -168,6 +172,7 @@
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
 <a href="/docs/glossary.html">Glossary</a>
+<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
 <h5>Project</h5>
@@ -199,7 +204,7 @@
   <li><strong>input and output digests</strong> &mdash; SHA-256 of what went in and what came out, so raw values stay local while the proof travels;</li>
   <li>the <strong>producing context</strong> &mdash; the model and runtime that generated the action.</li>
 </ul>
-<p>Because inputs and outputs are committed <em>by digest</em>, a capsule proves integrity without disclosing sensitive payloads.</p>
+<p>Because inputs and outputs are committed <em>by digest</em>, anyone can check a capsule's integrity without seeing the sensitive payloads.</p>
 
 <h2>What gets sealed &mdash; the fields</h2>
 <p>The seal is the <code>capsule_id</code>: the SHA-256 of the canonical capsule. Recompute it and it must match byte-for-byte &mdash; that hash <em>is</em> the seal. Around it, a capsule commits the parts an agent action needs to be accountable:</p>
@@ -220,17 +225,17 @@
 <p>Each evidence layer is <strong>hashed, and only the digest is committed</strong> &mdash; the raw prompt, vendor, or amount is never inside the capsule. You can hand someone a capsule and they learn <em>what happened</em> and can verify the seal, without seeing your inputs or outputs. Reveal a raw value later only when you choose, and anyone can re-hash it against the committed digest.</p>
 
 <h2>Chains: approved &rarr; executed &rarr; confirmed</h2>
-<p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that proves authorization without exposing the underlying data).</p>
+<p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that records authorization without exposing the underlying data).</p>
 <p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
 
 <h2>Levels of assurance</h2>
 <p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from anchoring &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs.</p>
 
-<h2>What a capsule does not prove</h2>
+<h2>What a capsule does not establish</h2>
 <p>Honest claims matter. Know the limits before relying on this for audit or compliance:</p>
 <ul>
-  <li><strong>Attested, not verified.</strong> A capsule proves what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
-  <li><strong>No anti-omission property.</strong> A capsule proves <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
+  <li><strong>Attested, not verified.</strong> A capsule records what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
+  <li><strong>No anti-omission property.</strong> A capsule shows <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
   <li><strong>Signer = key-holder.</strong> The signature proves who held the signing key at the moment of sealing &mdash; not that the named agent actually ran the action. Key-management discipline is outside the capsule.</li>
   <li><strong>Default may be signature-less.</strong> The base assurance level is a content hash (tamper-evident, content-private). A producer signature binding to a key requires the SCITT Signed-Statement level explicitly.</li>
   <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. A witness or a second independently-operated log removes this.</li>
@@ -241,9 +246,9 @@
 <p>The capsule is a <em>statement-layer</em> profile. It says nothing about which verifiable data structure a log uses &mdash; that separation is what lets the same capsule verify against different transparency services. See <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer vs the transparency layer</a>.</p>
 <p>It is one <strong>SCITT profile</strong> among others &mdash; specialized for agent actions, built on the general SCITT/COSE substrate, and interoperable with any SCITT transparency service. Adopting it means building on a shared profile, not forking your own.</p>
 
-<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-04</a>) is an individual IETF Internet-Draft — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. A companion draft, the <strong>Canonical Payload Binding</strong> (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-02</a>; <a class="ln" href="https://canonicalpayloadbinding.org/">site</a>), defines the shared canonicalization and digest-binding layer. Both build on the IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).</div>
+<div class="callout"><strong>Status.</strong> The Agent Action Capsule profile (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>, latest revision on the Datatracker) is an individual IETF Internet-Draft — submitted for discussion, <em>not</em> adopted by a working group, and not a standard. A companion draft, the <strong>Canonical Payload Binding</strong> (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding</a>, latest revision on the Datatracker; <a class="ln" href="https://canonicalpayloadbinding.org/">site</a>), defines the shared canonicalization and digest-binding layer. Both build on the IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).</div>
 <div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/concepts.md">Concepts, in plain words &#x2197;</a> &middot; <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/anatomy.md">Anatomy of a capsule &#x2197;</a></div>
-      <div class="next"><a class="p" href="/docs/"><div class="dir">&#8592; Previous</div><div class="ttl">Overview</div></a><a class="n" href="/docs/statement-vs-transparency-layer.html"><div class="dir">Next &#8594;</div><div class="ttl">Statement vs transparency layer</div></a></div>
+      <div class="next"><a class="p" href="/docs/witness-landing.html"><div class="dir">&#8592; Previous</div><div class="ttl">You've reached a witness</div></a><a class="n" href="/docs/statement-vs-transparency-layer.html"><div class="dir">Next &#8594;</div><div class="ttl">Statement vs transparency layer</div></a></div>
     </article>
   </div>
 </main>
@@ -264,7 +269,7 @@
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="https://anchor.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">

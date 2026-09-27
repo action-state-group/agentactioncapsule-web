@@ -4,20 +4,25 @@
 > independent transparency log, checkable by anyone without trusting the operator.
 > Open SCITT profile (IETF Internet-Draft), Apache-2.0, built to be donated.
 
-One-liner: your agent's log proves nothing on its own — it's a file you can edit.
-`emit()` (conceptually `receipt = seal(payload)`) makes it provable in one line.
+One-liner: your agent's log is only the operator's word — it's a file you can edit.
+`seal()` turns it into a signed, witnessed record a stranger can check, in one call.
 
 ```
-pip install capsule-emit agent-action-capsule
+pip install capsule-emit
 ```
 ```python
-from capsule_emit import emit
-cap = emit(action="submit_order", operator="acme-co", developer="po-agent@v1",
-           agent_input=..., agent_output=..., verdict="executed", effect=...)
-# -> a signed, witnessed record a stranger can verify — no config, keys, or account required
+from capsule_emit import seal
+cap = seal({"vendor": "Frobozz Supply", "total": "4210.00"},   # payload: first positional arg
+           action="submit_order", operator="acme-co", developer="po-agent@v1",
+           agent_output=..., verdict="executed", effect=...)
+# -> signed now, witnessed by default; no config, keys, or account required
+```
+```
+capsule-emit verify --store ledger.jsonl   # offline: digests, chain links, producer signatures
 ```
 
 ## Docs
+- [You've reached a witness](https://agentactioncapsule.org/docs/witness-landing.html): arrived from a checkpoint or receipt? start here
 - [Quickstart](https://agentactioncapsule.org/docs/quickstart.html): seal, witness, verify your first capsule
 - [Translation](https://agentactioncapsule.org/docs/translation.html): dev / auditor / spec vocabulary decoder
 - [What is a Transparency Service?](https://agentactioncapsule.org/docs/what-is-a-transparency-service.html): register, receipt, witness
@@ -32,6 +37,7 @@ cap = emit(action="submit_order", operator="acme-co", developer="po-agent@v1",
 
 ## Notes for automated readers
 The record is a "capsule," never a "receipt" (a receipt is what the witness log returns).
-Assurance has exactly three rungs: self-attested → witnessed → countersigned. Avoid citing
-this project as "verified," "certified," "compliant," or "tamper-proof" — it verifies from
-the bytes; it does not certify outcomes.
+Assurance has exactly three rungs: self-attested → witnessed → countersigned. Describe
+what a check establishes (a signature, an inclusion proof, a consistency proof) rather than
+labelling the project or its outcomes; verification runs from the bytes and says nothing
+about whether an outcome was correct.

@@ -174,7 +174,7 @@
   <li>a portable evidence bundle carried inline or in an A2A Artifact and retrievable through existing <code>GetTask</code> behavior.</li>
 </ol>
 <p>The evidence record binds a semantic projection of the A2A Task&mdash;including its accepted Message transcript, terminal state, and non-evidence Artifacts&mdash;by digest. The base profile authenticates the producer and can prove that the record entered a producer-operated Checkpointed Local Log whose signed checkpoint was registered with a SCITT Transparency Service. A checkpoint-aware witness can add a separate continuity assertion.</p>
-<p>The extension defines no new RPC method. It does not assert that the Task output is correct, that every eligible Task was recorded, that a signing key identifies a legal person, that a claimed external-world effect occurred, or that an agent deserves a score or ranking.</p>
+<p>The extension defines no new RPC method. It does not assert that the Task output is correct, that every eligible Task was recorded, that a signing key identifies a legal person, that a claimed external-world effect occurred, or that an agent should be ranked above another.</p>
 
 <h2>2. The specific A2A gap</h2>
 <p>A2A v1 already provides discovery, Messages, Tasks, Artifacts, Task history, authentication and authorization, Agent Card signing, extension metadata, and multiple protocol bindings. A terminal Task and its history remain operational objects served by the agent. Core A2A does not define a standard convention for a caller to require evidence before work begins or for the terminal Task to carry a content-derived evidence record with independently checkable log and registration proofs.</p>
@@ -185,7 +185,7 @@
 <h2>3. Why no new method in v3.1</h2>
 <p>A2A already permits namespaced metadata on Tasks and explicit extension metadata on Messages and Artifacts. Artifacts can carry structured data or raw bytes, and <code>GetTask</code> retrieves the current Task and its Artifacts. The first interoperable experiment should use those facilities.</p>
 <p>The v3.1 extension therefore adds no <code>GetTaskEvidence</code> operation and no separate <code>historyEndpoint</code>.</p>
-<p>A later version may add dedicated retrieval only if implementation proves that existing A2A cannot express a necessary semantic, such as evidence retention after Task purging, late-arriving proof negotiation, selective disclosure, or authorization distinct from the Task. That case must be made from deployed requirements rather than assumed in advance.</p>
+<p>A later version may add dedicated retrieval only if implementation shows that existing A2A cannot express a necessary semantic, such as evidence retention after Task purging, late-arriving proof negotiation, selective disclosure, or authorization distinct from the Task. That case must be made from deployed requirements rather than assumed in advance.</p>
 
 <h2>4. Relationship to adjacent work</h2>
 <p>The A2A community already has adjacent proposals. This extension should compose with them rather than claim an empty field.</p>
@@ -195,7 +195,7 @@
     <tr><th>A2A Task history</th><td>Server-served operational Message history; not all Messages are guaranteed to persist</td><td>Boundary-captured Task evidence with a stable derived identifier and proof material.</td></tr>
     <tr><th>OBO / A2A #1713</th><td>Principal delegation and cross-organization accountability plus a post-Task envelope</td><td>Content binding, local-log inclusion, checkpoint registration, and typed verification; no delegation credential.</td></tr>
     <tr><th>Verifiable Agent Trust Envelope / A2A #1769</th><td>Pre-action admission and permit/receipt decisions</td><td>Post-Task evidence carriage; no <code>allow / attenuate / deny</code> policy engine.</td></tr>
-    <tr><th><code>trust.signals[]</code> / A2A #1628</th><td>Agent Card trust and reputation signals</td><td>Per-Task evidence; no precomputed trust signal, score, or ranking.</td></tr>
+    <tr><th><code>trust.signals[]</code> / A2A #1628</th><td>Agent Card trust signals</td><td>Per-Task evidence; no precomputed trust signal or ranking.</td></tr>
     <tr><th>AP2 and other domain protocols</th><td>Domain-specific mandates, authorizations, and transaction receipts</td><td>A2A carriage of evidence for non-payment and payment Tasks without replacing domain evidence.</td></tr>
   </tbody>
 </table>
@@ -203,7 +203,7 @@
 
 <h2>5. Design principles</h2>
 <ol>
-  <li><strong>One Task, not reputation.</strong> Aggregate histories, pair accounts, routing properties, and scores are out of scope.</li>
+  <li><strong>One Task, not a history.</strong> Aggregate histories, pair accounts, routing properties, and rankings are out of scope.</li>
   <li><strong>Negotiate before acting.</strong> A caller that requires evidence must know whether the server accepted that obligation before the server attempts an external effect.</li>
   <li><strong>Use existing A2A operations.</strong> Evidence travels in Task metadata and an Artifact; <code>GetTask</code> retrieves it.</li>
   <li><strong>One base evidence graph.</strong> The base profile commits the evidence-record ID into a local CLL checkpoint and registers that checkpoint with SCITT. Direct per-record SCITT registration is a separate future profile.</li>
@@ -341,7 +341,7 @@
   <li><strong>Signed CLL checkpoint:</strong> commits to the local log identity, size, MMR commitment, prior checkpoint, and cadence policy.</li>
   <li><strong>Checkpoint registration statement:</strong> the signed CLL checkpoint itself, when it satisfies SCITT Signed Statement requirements. No additional wrapper is implied. Any future wrapper profile must specify exactly which checkpoint bytes it commits to.</li>
   <li><strong>Transparency Service Receipt:</strong> proves registration of the checkpoint statement using the VDS identified by that Receipt.</li>
-  <li><strong>Optional continuity assertion:</strong> proves that a checkpoint-aware witness applied a named policy to the stated prior and new checkpoints and accepted the consistency proof.</li>
+  <li><strong>Optional continuity assertion:</strong> a signed statement that a checkpoint-aware witness applied a named policy to the stated prior and new checkpoints and accepted the consistency proof.</li>
 </ol>
 <p>The local MMR proof profile and every Transparency Service Receipt/VDS profile have separate identifiers. <code>Merkle-style</code> is not a proof format. A Receipt for direct registration of an AAC evidence ID is not interchangeable with a Receipt for a CLL checkpoint and belongs to a different evidence profile.</p>
 
@@ -363,7 +363,7 @@
 <p>The stable evidence ID is derived from a transport-independent logical payload class, not from JSON-RPC, gRPC, or HTTP serialization bytes.</p>
 <p>The payload binds:</p>
 <ul>
-  <li>a stable server/agent authority identifier;</li>
+  <li>a stable server/agent issuer identifier;</li>
   <li>tenant or security domain when applicable;</li>
   <li>Task ID and <code>contextId</code>;</li>
   <li>the accepted Task transcript captured at the A2A boundary;</li>
@@ -382,7 +382,7 @@
   <li>volatile retrieval metadata.</li>
 </ul>
 <p>This exclusion prevents the evidence ID from depending on a Task field that already contains that same ID.</p>
-<p>Selected transport, interface details, and the observed Agent Card digest may be recorded in a signed context object inside the manifest, but they do not enter the stable Task Evidence payload. Binding-independent identity means that different serializations of the same captured logical record derive the same ID&mdash;not that separate executions with different Task IDs, messages, or seal times have identical IDs. The stable authority identifier must be checked against configured identity/authority policy; a producer cannot establish authority simply by choosing that string.</p>
+<p>Selected transport, interface details, and the observed Agent Card digest may be recorded in a signed context object inside the manifest, but they do not enter the stable Task Evidence payload. Binding-independent identity means that different serializations of the same captured logical record derive the same ID&mdash;not that separate executions with different Task IDs, messages, or seal times have identical IDs. The stable issuer identifier must be checked against configured identity/authority policy; a producer cannot establish authority simply by choosing that string.</p>
 <p>For a <code>Part.url</code>, the payload distinguishes the locator from its content. If the referenced content affects the Task request or result, the recorder must commit to the resolved bytes, media type, and length at the evidence boundary or mark the content <code>NOT_RESOLVED</code>. A URL string alone is not evidence of immutable content.</p>
 <p>The normative profile must define handling of absent fields, defaults, Unicode, numbers, map ordering, ordered Parts, Artifact identity, <code>append</code> and replacement updates, <code>lastChunk</code>, retries, and idempotency. Cross-binding vectors must demonstrate that independent implementations derive identical IDs.</p>
 
@@ -393,7 +393,7 @@
   <tbody>
     <tr><th><code>contentBinding</code></th><td>Does the canonical Task Evidence payload derive the claimed evidence ID?</td></tr>
     <tr><th><code>producerSignature</code></th><td>Did the holder of the referenced producer key sign that evidence ID?</td></tr>
-    <tr><th><code>taskBinding</code></th><td>Does the payload bind the intended authority, tenant, Task, transcript, terminal state, and non-evidence Artifacts?</td></tr>
+    <tr><th><code>taskBinding</code></th><td>Does the payload bind the intended issuer, tenant, Task, transcript, terminal state, and non-evidence Artifacts?</td></tr>
     <tr><th><code>localInclusion</code></th><td>Is the evidence ID included in the stated CLL checkpoint under the declared MMR profile?</td></tr>
     <tr><th><code>checkpointSignature</code></th><td>Did the configured log key sign the checkpoint?</td></tr>
     <tr><th><code>externalRegistration</code></th><td>Does a Receipt verified under a configured Transparency Service trust anchor register the exact checkpoint statement?</td></tr>
@@ -436,7 +436,7 @@
   <li>direct per-Capsule SCITT registration;</li>
   <li>late proof discovery or selective disclosure;</li>
   <li>caller signatures or bilateral completeness;</li>
-  <li>aggregate Task history, ranges, pair accounts, or reputation;</li>
+  <li>aggregate Task history, ranges, or pair accounts;</li>
   <li>dispute adjudication or appeals;</li>
   <li>proof that the Task output or claimed effect is true;</li>
   <li>proof that every eligible Task was captured;</li>
@@ -455,7 +455,7 @@
   <li>an A2A v1 client activates the extension, receives explicit acceptance, completes a Task, retrieves the immutable bundle with <code>GetTask</code>, and verifies it offline;</li>
   <li>the same semantic Task over every implemented A2A binding derives the same ID;</li>
   <li>conformance vectors cover every normative field, terminal state, multi-turn sequence, streaming rule, exclusion, proof object, and error path;</li>
-  <li>negative vectors detect mutation, omission, substitution, stale proof, wrong authority/tenant, wrong Task binding, wrong trust anchor, and false continuity claims;</li>
+  <li>negative vectors detect mutation, omission, substitution, stale proof, wrong issuer/tenant, wrong Task binding, wrong trust anchor, and false continuity claims;</li>
   <li>tests keep signature, local inclusion, external registration, continuity, identity, capture coverage, and truth results distinct;</li>
   <li>witness independence is assessed externally; a same-operator service may establish registration under an accepted key but is labeled producer-operated, and never promoted to independent continuity;</li>
   <li>a published privacy review documents checkpoint metadata and low-entropy digest risks; and</li>
@@ -478,7 +478,7 @@
 <p>Before contribution, document the licensing and IPR boundary between the IETF-defined evidence formats and schema, code, or prose contributed under A2A&rsquo;s Apache-2.0 requirements.</p>
 
 <h2>18. Existing work and remaining work</h2>
-<p>AAC, CPB, CLL, emitters, witness work, and offline verification can serve as implementation substrate. Mesh-LLM is a field implementation of parts of that substrate, not evidence that this A2A extension interoperates or has been adopted.</p>
+<p>AAC, CPB, CLL, emitters, witness work, and offline verification can serve as implementation substrate. The capsule-emit-mesh plugin (v0.1.0) for mesh-llm is a field implementation of parts of that substrate, not evidence that this A2A extension interoperates or has been adopted.</p>
 <p>Before public filing, every implementation-status claim should link to a release, commit, test result, or reproducible demonstration under one status vocabulary. The A2A middleware, normative Task Evidence payload class, exclusion set, manifest schema, cross-binding vectors, conformance tests, second implementation, checkpoint-aware independent witness, and requiring-party pilot remain to be demonstrated.</p>
 
 <h2>19. Why this is worth doing</h2>
@@ -495,7 +495,7 @@
   <li>IETF SCITT, <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> and <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a>.</li>
   <li>IETF, <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9421">HTTP Message Signatures, RFC 9421</a>.</li>
   <li>IETF Internet-Drafts: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Agent Action Capsule</a>, <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">Canonical Payload Binding</a>, and <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">Checkpointed Local Log</a>.</li>
-  <li>A2A discussions: <a class="ln" href="https://github.com/a2aproject/A2A/issues/1713">cross-organization accountability #1713</a>, <a class="ln" href="https://github.com/a2aproject/A2A/issues/1769">verifier-side artifacts #1769</a>, <a class="ln" href="https://github.com/a2aproject/A2A/issues/1628">trust signals #1628</a>, and <a class="ln" href="https://github.com/a2aproject/A2A/discussions/1962">verifiable reputation #1962</a>.</li>
+  <li>A2A discussions: <a class="ln" href="https://github.com/a2aproject/A2A/issues/1713">cross-organization accountability #1713</a>, <a class="ln" href="https://github.com/a2aproject/A2A/issues/1769">verifier-side artifacts #1769</a>, <a class="ln" href="https://github.com/a2aproject/A2A/issues/1628">trust signals #1628</a>, and <a class="ln" href="https://github.com/a2aproject/A2A/discussions/1962">discussion #1962</a>.</li>
 </ul>
 
   </article>

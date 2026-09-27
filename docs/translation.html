@@ -143,7 +143,11 @@
     <nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
 <a href="/docs/">Overview</a>
+<h5>Use cases</h5>
+<a href="/docs/use-cases.html">Use cases</a>
+<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
 <h5>Concepts</h5>
+<a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
@@ -184,7 +188,7 @@
     <tr><th>the witnessing party</th><td>witness (&ldquo;the notary&rdquo;)</td><td>the party that makes the log checkable by a stranger</td><td>witness / Transparency Service (SCITT)</td></tr>
     <tr><th>an action's account</th><td>proof (of an action)</td><td>the signed membership claim: which records constitute one action</td><td>composition capsule</td></tr>
     <tr><th>foreign bytes brought in</th><td>carry / received</td><td>someone else's already-signed record, committed as-transmitted</td><td>as-transmitted CPB binding</td></tr>
-    <tr><th>the hand-over file</th><td>bundle</td><td>digests + proofs + stamps; proves integrity/order/completeness, carries no content</td><td>bundle</td></tr>
+    <tr><th>the hand-over file</th><td>bundle</td><td>digests + proofs + stamps; lets anyone check integrity/order/completeness, carries no content</td><td>bundle</td></tr>
     <tr><th>content release</th><td>disclose</td><td>a deliberate, recorded release of content to a named audience; itself logged</td><td>disclosure record</td></tr>
   </tbody>
 </table>
@@ -193,7 +197,7 @@
 <table class="t">
   <thead><tr><th>You type</th><th>Dev</th><th>Auditor</th><th>Spec</th></tr></thead>
   <tbody>
-    <tr><th><code>seal(payload)</code></th><td>&ldquo;make a provable record&rdquo;</td><td>mints a signed, logged, cadence-witnessed record</td><td>canonicalize (CPB) &rarr; sign &rarr; append (CLL) &rarr; checkpoint</td></tr>
+    <tr><th><code>seal(payload)</code></th><td>&ldquo;make a checkable record&rdquo;</td><td>mints a signed, logged, cadence-witnessed record</td><td>canonicalize (CPB) &rarr; sign &rarr; append (CLL) &rarr; checkpoint</td></tr>
     <tr><th><code>received(bytes, type=)</code></th><td>&ldquo;bring in someone else's signed record&rdquo;</td><td>localizes a foreign signed artifact as-transmitted</td><td>as-transmitted carry</td></tr>
     <tr><th><code>compose([...])</code></th><td>&ldquo;bind these into one account&rdquo;</td><td>membership claim over cited records; asserts nothing new</td><td>composition capsule</td></tr>
     <tr><th><code>bundle</code></th><td>&ldquo;the file I hand a stranger&rdquo;</td><td>assembles the offline-verifiable proof package</td><td>bundle assembly</td></tr>
