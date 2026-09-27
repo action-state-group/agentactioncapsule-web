@@ -448,11 +448,11 @@ PAGES["what-is-a-capsule"] = dict(
   <tbody>
     <tr><th>capsule_id</th><td>SHA-256 of the canonical capsule &mdash; the seal / content address.</td></tr>
     <tr><th>action / operator / developer / timestamp</th><td>what was done, the accountable tenant, the agent identity@version, and when.</td></tr>
-    <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; <code>executed</code>, <code>confirmed</code>, <code>denied</code>, or <code>blocked</code>.</td></tr>
+    <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; a registered <code>verdict_class</code> such as <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code> or <code>errored</code> (the <a class="ln" href="/docs/glossary.html#disposition">full list</a>), plus who disposed it and an honest human-in-the-loop flag.</td></tr>
     <tr><th>effect</th><td>what was committed, plus the <strong>confirmed-effect binding</strong> so the claim and the outcome can't drift apart.</td></tr>
     <tr><th>model_attestation</th><td>which model decided, with the <strong>full input</strong> it saw (system prompt, context, tool definitions, and the action's arguments) and the <strong>output</strong> each <strong>committed as a digest</strong> (fixed-size; raw values, however large or sensitive, are never stored) plus best-effort compute.</td></tr>
     <tr><th>assurance</th><td>how far to trust it: attestation / effect / ledger modes.</td></tr>
-    <tr><th>chain</th><td>links to other capsules (<code>confirms</code> / <code>supersedes</code> / <code>escalates</code>) &mdash; present only when this capsule relates to another.</td></tr>
+    <tr><th>chain</th><td>the link to this producer's own previous capsule: a <code>parent_capsule_id</code> plus a registered relation (<code>follows</code>, <code>confirms</code>, <code>supersedes</code>, <code>epoch_opens</code>, <code>duplicates</code>). Same stream only; a citation of anything else &mdash; another producer's record, a grant, a receipt &mdash; goes in <code>references</code>.</td></tr>
   </tbody>
 </table>
 
@@ -463,7 +463,7 @@ PAGES["what-is-a-capsule"] = dict(
 <p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that records authorization without exposing the underlying data).</p>
 <p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
 
-<h2>Levels of assurance</h2>
+<h2 id="assurance">Levels of assurance</h2>
 <p>Tamper-evidence is always present (the <code>capsule_id</code> hash). A producer <em>signature</em> binds that hash to a key. An <em>existence proof</em> comes from registering the <code>capsule_id</code> with a transparency service &mdash; the receipt held beside the capsule. You adopt as much as your use case needs.</p>
 <div class="callout"><strong>What is signed by default.</strong> {SIGNING_NOTE}</div>
 
@@ -504,7 +504,7 @@ PAGES["statement-vs-transparency-layer"] = dict(
 </table>
 
 <h2>Why the separation matters</h2>
-<p>Keeping the statement independent of the log means a single capsule can be anchored to more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
+<p>Keeping the statement independent of the log means a single capsule can be registered with more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
 
 <h2>The stack</h2>
 <p>Each layer is a separate, open-source library so the boundaries stay honest:</p>
@@ -523,7 +523,7 @@ PAGES["statement-vs-transparency-layer"] = dict(
 
 PAGES["what-is-a-transparency-service"] = dict(
     title="What is a Transparency Service?",
-    desc="A SCITT Transparency Service registers signed statements, issues receipts, and anchors them to an append-only log. It is high-trust infrastructure — and it is not a verifier.",
+    desc="A SCITT Transparency Service registers signed statements, issues receipts, and records them in an append-only log. It is high-trust infrastructure — and it is not a verifier.",
     crumb="Concepts",
     body="""
 <h1>What is a Transparency Service?</h1>
@@ -542,14 +542,14 @@ PAGES["what-is-a-transparency-service"] = dict(
 <table class="t">
   <thead><tr><th></th><th>Verifier</th><th>Transparency Service</th></tr></thead>
   <tbody>
-    <tr><th>Operation</th><td>verify only</td><td>register statements, issue receipts, anchor</td></tr>
+    <tr><th>Operation</th><td>verify only</td><td>register statements, issue receipts, keep the log</td></tr>
     <tr><th>State</th><td>none (stateless)</td><td>a durable, append-only log</td></tr>
     <tr><th>Trust commitment</th><td>none &mdash; verify it yourself</td><td>uptime, integrity, non-equivocation</td></tr>
     <tr><th>Risk class</th><td>low (read-only utility)</td><td>high (operational trust infrastructure)</td></tr>
     <tr><th>Who must trust whom</th><td>nobody trusts the operator</td><td>the ecosystem trusts the log operator</td></tr>
   </tbody>
 </table>
-<p>A verifier that begins storing submissions, issuing receipts, or anchoring has silently become a transparency service with all of its obligations.</p>
+<p>A verifier that begins storing submissions, issuing receipts, or keeping a log has silently become a transparency service with all of its obligations.</p>
 
 <h2>The trust model</h2>
 <p>What you verify yourself: each signature, each inclusion proof, and consistency between any two tree heads &mdash; all from the bytes, offline. What the log commits to operationally: durable append-only storage, non-equivocation (one consistent view for everyone), and a stable, published signing key.</p>
@@ -650,7 +650,7 @@ cap = seal(
     developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version</span>
     agent_output=result,
     model={<span class="s">"provider"</span>: <span class="s">"example-provider"</span>, <span class="s">"model_id"</span>: <span class="s">"example-model"</span>},
-    verdict=<span class="s">"executed"</span>,               <span class="c"># executed | confirmed | denied | blocked</span>
+    verdict=<span class="s">"executed"</span>,               <span class="c"># a verdict_class: executed | blocked | denied | …</span>
     effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
 )
 print(cap.capsule_id, cap.signature)   <span class="c"># sealed, signed, and witnessed by default</span></code></pre>
@@ -739,7 +739,7 @@ PAGES["whats-consequential"] = dict(
   <thead><tr><th>Signal</th><th>Seal it when…</th></tr></thead>
   <tbody>
     <tr><th>1 · Command vs. query</th><td>the action <strong>changes state or has a side effect</strong> — places an order, moves money, sends a message, writes a record. Pure reads (list / get / search) are queries — not sealed by default.</td></tr>
-    <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>engine-side</em>, where data is classified — not at the gateway.</td></tr>
+    <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>by the producer</em>, where data is classified — not at the gateway.</td></tr>
   </tbody>
 </table>
 
@@ -776,16 +776,22 @@ PAGES["how-it-composes"] = dict(
 <p>Most agent-trust layers answer a different question than the capsule does. Identity says <em>who</em> is acting; authorization says <em>whether</em> an action is allowed; an anchoring log says the record was <em>included</em>. The capsule answers <strong>what the agent did</strong>, in a record anyone can check — and it leans on those other layers for the rest rather than reabsorbing them. There's no need to fork your stack to adopt it.</p>
 
 <h2>How composition works: reference by digest</h2>
-<p>A capsule binds external evidence into its verifiable trail through <code>chain.relation</code>: it commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it. The verifier checks the binding; the referenced data stays where it lives. (The same mechanism links a confirmation back to the action it confirms — see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>.)</p>
+<p>A capsule binds external evidence into its verifiable trail through its <code>references</code> array: each entry commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it, and says why it is cited. The verifier checks the binding; the referenced data stays where it lives. <code>chain</code> is a different field: it links a capsule only to the same producer's previous capsule, such as a confirmation to the action it confirms (see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>).</p>
 <pre class="code"><code>{
-  "action": "submit_order",
+  "action_id": "po-0047-submit",
   "operator": "acme-co",
-  "chain": {
-    "relation": "authorized-by",      // this action was permitted by …
-    "ref": "sha-256:9f2a…c14"         // digest of the grant / credential
-  }
+  "chain": {                            // same producer, same stream only
+    "parent_capsule_id": "3c1e…a07b",
+    "relation": "follows"
+  },
+  "references": [{                      // anything outside the stream
+    "type": "…",                        // a registered artifact type
+    "digest_alg": "sha-256",
+    "digest": "9f2a…c14",               // digest of the grant
+    "citation_purpose": "ran_under"     // the authority it ran under
+  }]
 }</code></pre>
-<p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. The precise relation vocabulary is defined in the spec registry; to register a relation for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
+<p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. Both vocabularies &mdash; <code>chain.relation</code> and <code>citation_purpose</code> &mdash; are registries defined in the spec; to register a value for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
 <table class="t">
   <thead><tr><th>Layer</th><th>It answers</th><th>How the capsule composes</th></tr></thead>
   <tbody>
@@ -801,8 +807,8 @@ PAGES["how-it-composes"] = dict(
 <div class="callout">A capsule records the bytes it is given. Authenticating <em>upstream</em> inputs — that a tool response or grounding source is genuine — is a separate, composable layer; bind its evidence by digest and the verifier checks that too. Composition, not dependency.</div>
 
 <h2>The four-leg accountability picture</h2>
-<p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
-<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
+<p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable human authorized this exact action? — named-human authorization), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
+<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the named human's authorization receipt (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
 <div class="callout deeper">The <strong>CAN/WHO/WHAT/AUDIT composition model</strong> — how independently-verifiable records join on a shared action digest — is laid out on the <a class="ln" href="/#compose">Standard's Composition section</a>. Underneath it, the <strong>Canonical Payload Binding (CPB)</strong> is the small companion spec that lets every record compute the same digest: it defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form, so any conforming profile composes with a capsule without a custom adapter. CPB has its own site and registry: <a class="ln" href="https://canonicalpayloadbinding.org/">canonicalpayloadbinding.org &#x2197;</a>.</div>
 """,
 )
@@ -830,11 +836,11 @@ PAGES["witness-anywhere"] = dict(
 <p>The capsule is <strong>witness-agnostic</strong> (it makes no claim about the log's <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure</a>): the same statement verifies whichever log you choose, so you can move or mix witnesses without changing the record. This is also true of vendor lock-in more broadly: no vendor, including us, controls where your capsules get witnessed.</p>
 
 <h2>What a digest hides — and what it doesn't</h2>
-<p>A digest hides a value only when that value is hard to guess. A high-entropy input (a full prompt, a document, a key) is safe. But a <em>low-entropy</em> value — a short dollar amount, a yes/no disposition, an ID from a known list — can be recovered by hashing candidate values until one matches. For those fields, <strong>salt before hashing</strong> (commit a per-tenant salt alongside the value) so the digest can't be brute-forced. And note the capsule commits some metadata in the clear — the action type and disposition — so &ldquo;content-private&rdquo; means your <em>payloads</em> stay private, not that the capsule reveals nothing about what kind of action occurred.</p>
+<p>A digest hides a value only when that value is hard to guess. A high-entropy input (a full prompt, a document, a key) is safe. But a <em>low-entropy</em> value — a short dollar amount, a yes/no disposition, an ID from a known list — can be recovered by hashing candidate values until one matches. For those fields, <strong>salt before hashing</strong> with a random salt that stays secret, and disclose it only together with the value when you choose to reveal it. A published salt does not help: anyone can hash the candidates with it. And note the capsule commits some metadata in the clear — the action type and disposition — so &ldquo;content-private&rdquo; means your <em>payloads</em> stay private, not that the capsule reveals nothing about what kind of action occurred.</p>
 
 <div class="callout">The privacy promise, in one line: <strong>we verify; we store nothing of yours but a commitment you can check</strong> — and, for guessable values, salt before you commit them.</div>
 
-<div class="callout deeper">Vocabulary check: <a class="ln" href="/docs/translation.html">see the word-for-word translation</a> across dev / auditor / spec registers — including why we say &ldquo;witness&rdquo;, not &ldquo;anchor&rdquo;.</div>
+<div class="callout deeper">Vocabulary check: <a class="ln" href="/docs/translation.html">see the word-for-word translation</a> across dev / auditor / spec registers — including why the service is a &ldquo;witness&rdquo; while the spec's assurance tier is still called <code>anchored</code> (see the <a class="ln" href="/docs/glossary.html">glossary</a>).</div>
 """,
 )
 
@@ -853,7 +859,7 @@ PAGES["governance"] = dict(
 <table class="t">
   <tbody>
     <tr><th>Open</th><td>Apache-2.0 tooling; the specification under the IETF Trust's terms (BCP 78/79, code components under the Revised BSD License). Developed in public.</td></tr>
-    <tr><th>Vendor-neutral</th><td>No required product; the specification favors no vendor. Any party can implement, run, and anchor — including in their own environment.</td></tr>
+    <tr><th>Vendor-neutral</th><td>No required product; the specification favors no vendor. Any party can implement, run, and witness — including in their own environment.</td></tr>
     <tr><th>Verifiable</th><td>Decisions, like capsules, happen in the open: public issues, public PRs, public discussion.</td></tr>
     <tr><th>Donate by design</th><td>The profile, the trademark, and the reference services are intended to transfer to a neutral foundation as the ecosystem matures.</td></tr>
   </tbody>
@@ -890,7 +896,7 @@ PAGES["governance"] = dict(
 <p>Candidate homes are neutral, foundation-style bodies in the open-source / standards world; the specific home will be chosen with the community rather than announced unilaterally.</p>
 
 <h2>Scope &amp; boundaries</h2>
-<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the boundary between the open record layer and runtime enforcement is explicit, not implied.</p>
+<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the witness. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the boundary between the open record layer and runtime enforcement is explicit, not implied.</p>
 
 <div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. Join the conversation on <a class="ln" href="https://github.com/action-state-group">GitHub</a>.</div>
 """,
@@ -914,7 +920,7 @@ PAGES["glossary"] = dict(
     <tr><th>Agent Action Capsule</th><td>The profile in this project: a Signed Statement over <code>application/agent-action-capsule+json</code> committing to an action and its input/output digests.</td></tr>
     <tr><th>Transparency Service</th><td>A service that registers Signed Statements into an append-only log, issues receipts, and publishes tree heads and proofs.</td></tr>
     <tr><th>Transparency log</th><td>The public, append-only log a Transparency Service maintains. It is publicly readable &mdash; anyone can fetch its entries and verify any one of them; nothing is taken on trust.</td></tr>
-    <tr><th>Ledger</th><td>Your <em>local</em> append-only trail of capsules (e.g. <code>ledger.jsonl</code>) &mdash; distinct from the public transparency log. The ledger is yours; the transparency log is the shared, anchored record.</td></tr>
+    <tr><th>Ledger</th><td>Your <em>local</em> append-only trail of capsules (e.g. <code>ledger.jsonl</code>) &mdash; distinct from the public transparency log. The ledger is yours; the transparency log is the shared, witnessed record.</td></tr>
     <tr><th>Receipt</th><td>A signed proof, returned by a transparency service, that a statement was included in its log. Verifiable offline against the log key.</td></tr>
     <tr><th>VDS</th><td>Verifiable Data Structure &mdash; how a log proves inclusion and consistency. <code>vds=1</code> is RFC9162_SHA256; <code>vds=2</code> is CCF (ccf.v1).</td></tr>
     <tr><th>Inclusion proof</th><td>Evidence that a specific leaf is part of the log at a given size &mdash; answers &ldquo;is my record in the log?&rdquo;</td></tr>
@@ -923,6 +929,8 @@ PAGES["glossary"] = dict(
     <tr><th>Merkle tree</th><td>A hash tree whose root commits to every leaf; the structure behind RFC&nbsp;9162 inclusion and consistency proofs.</td></tr>
     <tr><th>RFC 9162</th><td>Certificate Transparency 2.0 &mdash; the published RFC whose SHA-256 Merkle proofs back <code>vds=1</code>.</td></tr>
     <tr><th>CCF</th><td>Confidential Consortium Framework &mdash; an open-source confidential ledger framework whose receipts back <code>vds=2</code>.</td></tr>
+    <tr id="disposition"><th>Disposition</th><td>How an action was disposed, recorded in every capsule &mdash; refusals included. Its <code>verdict_class</code> is one of the spec's registered values: <code>executed</code>, <code>blocked</code>, <code>hitl_dispatched</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>engine_failure</code>, <code>deferred</code>, <code>needs_decision</code>, <code>expired</code>, <code>escalated</code>, <code>resolved</code>, <code>epoch_boundary</code>. Its <code>decision</code> is <code>accept</code>, <code>reject</code>, <code>needs_input</code> or <code>deferred</code>, and its <code>approver</code> is <code>human</code>, <code>policy</code> or <code>counterparty</code>. <em>Confirmed</em> is not a verdict: it is an effect status (the result was observed), and <code>confirms</code> is a chain relation. This is the one list the site uses.</td></tr>
+    <tr><th>Witness vs <code>anchored</code></th><td>A <strong>witness</strong> is an independent party that co-signs a log's checkpoint, and this site uses the word for both the service and the act. <code>anchored</code> is the specification's name for an assurance tier: a record whose chain has been registered with a transparency log, backed by a receipt a verifier has checked. Same event, two vocabularies. The site avoids &ldquo;anchor&rdquo; as a verb because it collides with &ldquo;trust anchor&rdquo;. The service's source is still named <code>capsule-anchor</code>.</td></tr>
   </tbody>
 </table>
 """,
@@ -964,7 +972,7 @@ INDEX_BODY = f"""
     <a class="dcard" href="/docs/witness-landing.html"><div class="n">You've reached a witness</div><div class="d">Followed a link from a checkpoint or a receipt? Start here &mdash; what it shows, what it never does, and how to check it yourself.</div></a>
     <a class="dcard" href="/docs/what-is-a-capsule.html"><div class="n">What is an Agent Action Capsule?</div><div class="d">A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable.</div></a>
     <a class="dcard" href="/docs/statement-vs-transparency-layer.html"><div class="n">Statement vs transparency layer</div><div class="d">What happened vs where it is recorded &mdash; and why the statement is structure-independent.</div></a>
-    <a class="dcard" href="/docs/what-is-a-transparency-service.html"><div class="n">What is a Transparency Service?</div><div class="d">Register, receipt, anchor &mdash; and the boundary between a transparency service and a verifier.</div></a>
+    <a class="dcard" href="/docs/what-is-a-transparency-service.html"><div class="n">What is a Transparency Service?</div><div class="d">Register, receipt, log &mdash; and the boundary between a transparency service and a verifier.</div></a>
     <a class="dcard" href="/docs/verifiable-data-structures.html"><div class="n">Verifiable Data Structures</div><div class="d">RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them.</div></a>
     <a class="dcard" href="/docs/how-verification-works.html"><div class="n">How verification works</div><div class="d">Two independent checks: signature, then inclusion proof &mdash; both from the bytes, offline.</div></a>
   </div>

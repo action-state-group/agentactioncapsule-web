@@ -191,7 +191,7 @@
   <thead><tr><th>Signal</th><th>Seal it when…</th></tr></thead>
   <tbody>
     <tr><th>1 · Command vs. query</th><td>the action <strong>changes state or has a side effect</strong> — places an order, moves money, sends a message, writes a record. Pure reads (list / get / search) are queries — not sealed by default.</td></tr>
-    <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>engine-side</em>, where data is classified — not at the gateway.</td></tr>
+    <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>by the producer</em>, where data is classified — not at the gateway.</td></tr>
   </tbody>
 </table></div>
 

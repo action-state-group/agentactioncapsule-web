@@ -214,11 +214,11 @@
   <tbody>
     <tr><th>capsule_id</th><td>SHA-256 of the canonical capsule &mdash; the seal / content address.</td></tr>
     <tr><th>action / operator / developer / timestamp</th><td>what was done, the accountable tenant, the agent identity@version, and when.</td></tr>
-    <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; <code>executed</code>, <code>confirmed</code>, <code>denied</code>, or <code>blocked</code>.</td></tr>
+    <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; a registered <code>verdict_class</code> such as <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code> or <code>errored</code> (the <a class="ln" href="/docs/glossary.html#disposition">full list</a>), plus who disposed it and an honest human-in-the-loop flag.</td></tr>
     <tr><th>effect</th><td>what was committed, plus the <strong>confirmed-effect binding</strong> so the claim and the outcome can't drift apart.</td></tr>
     <tr><th>model_attestation</th><td>which model decided, with the <strong>full input</strong> it saw (system prompt, context, tool definitions, and the action's arguments) and the <strong>output</strong> each <strong>committed as a digest</strong> (fixed-size; raw values, however large or sensitive, are never stored) plus best-effort compute.</td></tr>
     <tr><th>assurance</th><td>how far to trust it: attestation / effect / ledger modes.</td></tr>
-    <tr><th>chain</th><td>links to other capsules (<code>confirms</code> / <code>supersedes</code> / <code>escalates</code>) &mdash; present only when this capsule relates to another.</td></tr>
+    <tr><th>chain</th><td>the link to this producer's own previous capsule: a <code>parent_capsule_id</code> plus a registered relation (<code>follows</code>, <code>confirms</code>, <code>supersedes</code>, <code>epoch_opens</code>, <code>duplicates</code>). Same stream only; a citation of anything else &mdash; another producer's record, a grant, a receipt &mdash; goes in <code>references</code>.</td></tr>
   </tbody>
 </table></div>
 
@@ -229,7 +229,7 @@
 <p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that records authorization without exposing the underlying data).</p>
 <p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
 
-<h2>Levels of assurance</h2>
+<h2 id="assurance">Levels of assurance</h2>
 <p>Tamper-evidence is always present (the <code>capsule_id</code> hash). A producer <em>signature</em> binds that hash to a key. An <em>existence proof</em> comes from registering the <code>capsule_id</code> with a transparency service &mdash; the receipt held beside the capsule. You adopt as much as your use case needs.</p>
 <div class="callout"><strong>What is signed by default.</strong> A capsule's identity is its <code>capsule_id</code>, a SHA-256 over the canonical capsule, and it does not depend on any signature. The specification makes signing optional: a producer MAY add one or more <code>COSE_Sign1</code> Producer Envelopes over the <code>capsule_id</code>. The reference producer, <a class="ln" href="https://github.com/action-state-group/capsule-emit">capsule-emit</a>, signs every capsule it seals, by default, with a per-ledger Ed25519 key; its only unsigned path is the separately named <code>log()</code> call.</div>
 

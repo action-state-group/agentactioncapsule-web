@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>What is a Transparency Service? &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="A SCITT Transparency Service registers signed statements, issues receipts, and anchors them to an append-only log. It is high-trust infrastructure — and it is not a verifier.">
+<meta name="description" content="A SCITT Transparency Service registers signed statements, issues receipts, and records them in an append-only log. It is high-trust infrastructure — and it is not a verifier.">
 <link rel="canonical" href="https://agentactioncapsule.org/docs/what-is-a-transparency-service.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
 <meta property="og:title" content="What is a Transparency Service?">
-<meta property="og:description" content="A SCITT Transparency Service registers signed statements, issues receipts, and anchors them to an append-only log. It is high-trust infrastructure — and it is not a verifier.">
+<meta property="og:description" content="A SCITT Transparency Service registers signed statements, issues receipts, and records them in an append-only log. It is high-trust infrastructure — and it is not a verifier.">
 <meta property="og:url" content="https://agentactioncapsule.org/docs/what-is-a-transparency-service.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="What is a Transparency Service?">
-<meta name="twitter:description" content="A SCITT Transparency Service registers signed statements, issues receipts, and anchors them to an append-only log. It is high-trust infrastructure — and it is not a verifier.">
+<meta name="twitter:description" content="A SCITT Transparency Service registers signed statements, issues receipts, and records them in an append-only log. It is high-trust infrastructure — and it is not a verifier.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -199,14 +199,14 @@
 <div class="tw"><table class="t">
   <thead><tr><th></th><th>Verifier</th><th>Transparency Service</th></tr></thead>
   <tbody>
-    <tr><th>Operation</th><td>verify only</td><td>register statements, issue receipts, anchor</td></tr>
+    <tr><th>Operation</th><td>verify only</td><td>register statements, issue receipts, keep the log</td></tr>
     <tr><th>State</th><td>none (stateless)</td><td>a durable, append-only log</td></tr>
     <tr><th>Trust commitment</th><td>none &mdash; verify it yourself</td><td>uptime, integrity, non-equivocation</td></tr>
     <tr><th>Risk class</th><td>low (read-only utility)</td><td>high (operational trust infrastructure)</td></tr>
     <tr><th>Who must trust whom</th><td>nobody trusts the operator</td><td>the ecosystem trusts the log operator</td></tr>
   </tbody>
 </table></div>
-<p>A verifier that begins storing submissions, issuing receipts, or anchoring has silently become a transparency service with all of its obligations.</p>
+<p>A verifier that begins storing submissions, issuing receipts, or keeping a log has silently become a transparency service with all of its obligations.</p>
 
 <h2>The trust model</h2>
 <p>What you verify yourself: each signature, each inclusion proof, and consistency between any two tree heads &mdash; all from the bytes, offline. What the log commits to operationally: durable append-only storage, non-equivocation (one consistent view for everyone), and a stable, published signing key.</p>

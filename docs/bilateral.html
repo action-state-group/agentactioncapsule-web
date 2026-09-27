@@ -215,7 +215,7 @@
     <div class="step-num">3</div>
     <div class="step-body">
       <h3>Action attestation</h3>
-      <p>The performing party signs a statement referencing the request by digest, recording the constraint results and the disposition — executed, blocked, denied, escalated, timed out. Every outcome is a first-class record; refusals carry the same fidelity as performance.</p>
+      <p>The performing party signs a statement referencing the request by digest, recording the constraint results and the disposition — a <code>verdict_class</code> such as <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>escalated</code> or <code>timeout</code> (the <a class="ln" href="/docs/glossary.html#disposition">full list</a>). Every outcome is a first-class record; refusals carry the same fidelity as performance.</p>
     </div>
   </div>
   <div class="step">
@@ -252,7 +252,7 @@
 <div class="tw"><table class="t">
   <thead><tr><th>Layer</th><th>Relationship</th></tr></thead>
   <tbody>
-    <tr><th>Agent Action Capsule</th><td>Carries the attestations. The disposition vocabulary — <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>deferred</code>, <code>expired</code>, <code>escalated</code> — is reused verbatim.</td></tr>
+    <tr><th>Agent Action Capsule</th><td>Carries the attestations. The action disposition is the capsule's own <code>verdict_class</code> registry, reused as is &mdash; the same <a class="ln" href="/docs/glossary.html#disposition">disposition list</a> the rest of this site uses.</td></tr>
     <tr><th>Delegation receipts</th><td>A request attestation may reference a delegation receipt authorizing the requesting agent.</td></tr>
     <tr><th>SCITT transparency log</th><td>Witnessing both capsules makes the record verifiable by parties who trust neither organization.</td></tr>
     <tr><th>Remote attestation (RATS)</th><td>RATS attests platform state; bilateral attestation attests actions. Orthogonal layers that compose.</td></tr>
@@ -262,7 +262,7 @@
 <h2>The Internet-Draft</h2>
 <p>The bilateral attestation exchange is specified as a companion Internet-Draft to the Agent Action Capsule profile:</p>
 <p><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation &#x2197;</a> &mdash; always resolves to the current revision on the Datatracker; as of this writing, -02.</p>
-<p>The draft fixes the exchange, the binding obligations, and the disposition semantics. Wire encodings are TBD for a future revision; the current draft specifies that JCS (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a>) will be used for deterministic canonicalization when wire formats are defined.</p>
+<p>The draft fixes the exchange, the binding obligations, and the disposition semantics. Wire encodings are left to a future revision. What the draft already fixes is how canonicalization works: each attested object must <em>declare</em> its canonicalization by identifier, inside the bytes its signature covers, and a verifier must apply the declared construction rather than infer one. The expected construction is JCS (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a>). This is the same rule the <a class="ln" href="https://canonicalpayloadbinding.org/">Canonical Payload Binding</a> defines, and the same JCS a capsule already declares (<code>canonicalization_id: "jcs"</code>). JCS is the construction; CPB is how a record names it.</p>
 
 <h2>Open-source implementation</h2>
 <p>A reference implementation is available in two packages:</p>
@@ -273,6 +273,7 @@
 <pre class="code"><code><span class="c"># Run the four-move demo (HMAC-SHA256 demo signer)</span>
 pip install capsule-emit agent-action-capsule
 git clone https://github.com/action-state-group/capsule-emit
+cd capsule-emit
 python examples/bilateral/demo.py --no-anchor
 
 <span class="c"># Verify the capsule pair</span>

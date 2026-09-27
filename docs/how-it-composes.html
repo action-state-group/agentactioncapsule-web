@@ -190,16 +190,22 @@
 <p>Most agent-trust layers answer a different question than the capsule does. Identity says <em>who</em> is acting; authorization says <em>whether</em> an action is allowed; an anchoring log says the record was <em>included</em>. The capsule answers <strong>what the agent did</strong>, in a record anyone can check — and it leans on those other layers for the rest rather than reabsorbing them. There's no need to fork your stack to adopt it.</p>
 
 <h2>How composition works: reference by digest</h2>
-<p>A capsule binds external evidence into its verifiable trail through <code>chain.relation</code>: it commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it. The verifier checks the binding; the referenced data stays where it lives. (The same mechanism links a confirmation back to the action it confirms — see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>.)</p>
+<p>A capsule binds external evidence into its verifiable trail through its <code>references</code> array: each entry commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it, and says why it is cited. The verifier checks the binding; the referenced data stays where it lives. <code>chain</code> is a different field: it links a capsule only to the same producer's previous capsule, such as a confirmation to the action it confirms (see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>).</p>
 <pre class="code"><code>{
-  "action": "submit_order",
+  "action_id": "po-0047-submit",
   "operator": "acme-co",
-  "chain": {
-    "relation": "authorized-by",      // this action was permitted by …
-    "ref": "sha-256:9f2a…c14"         // digest of the grant / credential
-  }
+  "chain": {                            // same producer, same stream only
+    "parent_capsule_id": "3c1e…a07b",
+    "relation": "follows"
+  },
+  "references": [{                      // anything outside the stream
+    "type": "…",                        // a registered artifact type
+    "digest_alg": "sha-256",
+    "digest": "9f2a…c14",               // digest of the grant
+    "citation_purpose": "ran_under"     // the authority it ran under
+  }]
 }</code></pre>
-<p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. The precise relation vocabulary is defined in the spec registry; to register a relation for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
+<p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. Both vocabularies &mdash; <code>chain.relation</code> and <code>citation_purpose</code> &mdash; are registries defined in the spec; to register a value for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
 <div class="tw"><table class="t">
   <thead><tr><th>Layer</th><th>It answers</th><th>How the capsule composes</th></tr></thead>
   <tbody>
@@ -215,8 +221,8 @@
 <div class="callout">A capsule records the bytes it is given. Authenticating <em>upstream</em> inputs — that a tool response or grounding source is genuine — is a separate, composable layer; bind its evidence by digest and the verifier checks that too. Composition, not dependency.</div>
 
 <h2>The four-leg accountability picture</h2>
-<p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
-<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
+<p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable human authorized this exact action? — named-human authorization), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
+<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the named human's authorization receipt (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
 <div class="callout deeper">The <strong>CAN/WHO/WHAT/AUDIT composition model</strong> — how independently-verifiable records join on a shared action digest — is laid out on the <a class="ln" href="/#compose">Standard's Composition section</a>. Underneath it, the <strong>Canonical Payload Binding (CPB)</strong> is the small companion spec that lets every record compute the same digest: it defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form, so any conforming profile composes with a capsule without a custom adapter. CPB has its own site and registry: <a class="ln" href="https://canonicalpayloadbinding.org/">canonicalpayloadbinding.org &#x2197;</a>.</div>
 
       <div class="next"><a class="p" href="/docs/whats-consequential.html"><div class="dir">&#8592; Previous</div><div class="ttl">What's consequential</div></a><a class="n" href="/docs/witness-anywhere.html"><div class="dir">Next &#8594;</div><div class="ttl">Witness anywhere</div></a></div>

@@ -303,7 +303,7 @@ server  = FastMCP("po-agent")
 emitter = MCPCapsuleEmitter(operator="acme-co", developer="goose-agent@v1")
 
 @server.tool()                            # Goose connects over MCP
-@emitter.tool(effect_type="write_order")  # capsule-emit seals every call
+@emitter.tool(effect_type="write_order")  # capsule-emit seals each consequential call
 def submit_order(vendor, amount, po_number):
     return place(vendor, amount, po_number)
 
@@ -317,7 +317,7 @@ server.run()   # stdio — add to Goose as an extension</code></pre></div>
 
 emitter = MCPCapsuleEmitter(operator="acme-co", developer="po-agent@v1")
 
-@emitter.tool("submit_order")     # one line — every call sealed + witnessed
+@emitter.tool("submit_order")     # one line — each consequential call sealed + witnessed
 def submit_order(vendor, amount, po_number):
     return place(vendor, amount, po_number)</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/mcp.md">MCP adapter docs ↗</a>
@@ -329,7 +329,7 @@ def submit_order(vendor, amount, po_number):
 
 listener = LangChainCapsuleListener(operator="acme-co", developer="research-agent@v1")
 
-# attach as a callback — planned then confirmed, one chained pair per tool call
+# attach as a callback — planned then confirmed, one chained pair per consequential tool call
 agent.invoke(payload, config={"callbacks": [listener]})</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/langchain.md">LangChain adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/langchain-ai/docs/blob/20543fdf51304bdc8b4808711b4f9d9aca131c0c/scripts/data/integration_external_docs.yaml#L1863-L1865" style="color:var(--muted);text-decoration:underline">listed in LangChain’s integrations docs ↗</a></span>
       </div>
@@ -340,7 +340,7 @@ agent.invoke(payload, config={"callbacks": [listener]})</code></pre></div>
 
 emitter = CrewAICapsuleEmitter(operator="acme-co", developer="ops-agent@v1")
 
-safe_tool = emitter.wrap(my_tool)        # one capsule per tool call
+safe_tool = emitter.wrap(my_tool)        # one capsule per consequential call
 agent = Agent(role="AP clerk", tools=[safe_tool])</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/crewai.md">CrewAI adapter docs ↗</a>
       </div>
@@ -381,7 +381,7 @@ emitter = ADKCapsuleEmitter(operator="acme-co", developer="po-agent@v1")
 
 agent = LlmAgent(
     name="writer", tools=[write_order],
-    after_tool_callback=emitter.after_tool_callback,   # emits one capsule per tool call
+    after_tool_callback=emitter.after_tool_callback,   # one capsule per consequential call
 )</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md">ADK adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md#version" style="color:var(--muted);text-decoration:underline">verified against google-adk 2.3.x–2.9.1 ↗</a></span>
       </div>
@@ -406,7 +406,7 @@ emitter = DaprAgentsCapsuleEmitter(
     workflow_instance_id="wf-abc123",   # set per workflow run
 )
 
-@emitter.tool("check_invoice")            # one capsule per tool call
+@emitter.tool("check_invoice")            # one capsule per consequential call
 def check_invoice(invoice_id: str, amount: str) -> dict:
     return {"invoice_id": invoice_id, "ok": True}</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/dapr_agents.md">Dapr Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/dapr_agents.md#drift-note-2026-07-30-rerun" style="color:var(--muted);text-decoration:underline">re-verified against dapr-agents 1.0.5–1.0.6 ↗</a></span>
@@ -548,7 +548,7 @@ add_trace_processor(processor)   # keeps the SDK's own exporter; one capsule per
     <table class="fit">
       <thead><tr><th>Leg</th><th>Answers</th><th>Doesn't answer</th></tr></thead>
       <tbody>
-        <tr><th>WHO — Identity <span class="ex">e.g. SPIFFE/WIMSE, agent IDs</span></th><td>which accountable principal — <em>who</em> the agent is</td><td>what it did</td></tr>
+        <tr><th>Identity <span class="ex">e.g. SPIFFE/WIMSE, agent IDs</span></th><td><em>which agent</em> is acting</td><td>which human authorized the action (WHO), or what it did</td></tr>
         <tr><th>CAN — Authorization <span class="ex">e.g. OAuth/AAuth, GNAP, policy</span></th><td>what it <em>may</em> do</td><td>what it actually did, and the outcome</td></tr>
         <tr><th>Payments / settlement <span class="ex">e.g. AP2</span></th><td>whether a human authorized the spend</td><td>what was actually done, end-to-end</td></tr>
         <tr><th>AUDIT — Runtime gate / observability <span class="ex">e.g. a policy gateway, your logs</span></th><td>what <em>you say</em> happened</td><td>nothing to a party who doesn't trust you — it's self-attested</td></tr>
@@ -578,7 +578,7 @@ add_trace_processor(processor)   # keeps the SDK's own exporter; one capsule per
       </tbody>
     </table>
     <p class="fit-note">Any conforming record may fill a slot; the set is open by design. Each slot may root in a different trust anchor, and the join holds even if one party is compromised or under review — no slot is a required root of trust for another. Digest equality is a join key, not proof of truth, authorization, or sufficiency: each record's native verification, digest recomputation, and receipt verification stay separate results that a verifier must never collapse into one boolean. <a href="/docs/how-it-composes.html" style="color:var(--accent);text-decoration:none">How it composes with your stack →</a></p>
-    <div style="margin-top:20px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;color:var(--muted)">A record can be produced at different assurance levels. <strong style="color:var(--ink)">Self-attested</strong> (signed by the agent or operator) is a valid baseline. <strong style="color:var(--ink)">Anchored / third-party-verifiable</strong> means the record, or a digest of it, is registered to a SCITT transparency service, so a party who trusts neither the agent nor the operator can verify its existence and non-equivocation. Composition doesn't mandate the anchored tier — it specifies how any conforming record can reach it.</div>
+    <div style="margin-top:20px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;color:var(--muted)">A record can be produced at different assurance levels. <strong style="color:var(--ink)">Self-attested</strong> (signed by the agent or operator) is a valid baseline. <strong style="color:var(--ink)">Anchored / third-party-verifiable</strong> (the spec's <code>anchored</code> tier) means the record, or a digest of it, is registered to a SCITT transparency service, so a party who trusts neither the agent nor the operator can verify its existence and non-equivocation. Composition doesn't mandate the anchored tier — it specifies how any conforming record can reach it.</div>
 
     <h3 style="font-size:19px;font-weight:700;letter-spacing:-0.3px;margin:36px 0 10px">The binding underneath</h3>
     <p style="color:var(--muted);font-size:16px;max-width:64ch">For records to join on the same digest they need one shared way to compute it. The Agent Action Capsule declares its canonical form through the <strong>Canonical Payload Binding</strong> (CPB), a separate IETF draft with its own open, cross-organization registry; AAC is one registered artifact type there among peers.</p>
@@ -822,7 +822,7 @@ capsule-emit verify --store ledger.jsonl
       <div class="card">
         <div class="k">Adopt</div>
         <h3>Seal your agent's actions</h3>
-        <p>Wrap a tool with one decorator, witness each call, and verify from the bytes.</p>
+        <p>Wrap a tool with one decorator, witness each consequential call, and verify from the bytes.</p>
         <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">Quickstart →</a>
         <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:8px">Adopters — start here ↗</a>
       </div>

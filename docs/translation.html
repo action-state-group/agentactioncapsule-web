@@ -185,7 +185,7 @@
     <tr><th>your record</th><td>receipt (yours) / capsule</td><td>the signed record the producer authored; a self-attested claim until witnessed</td><td>capsule (AAC record)</td></tr>
     <tr><th>the witness artifact</th><td>stamp</td><td>an independent party's confirmation the record's history existed at a time &mdash; never a statement about content</td><td>witness countersignature / RFC&nbsp;9942 Receipt over the checkpoint</td></tr>
     <tr><th>the log</th><td>your log / ledger</td><td>the producer's append-only history; tamper-evident by construction</td><td>CLL (Checkpointed Local Log, MMR)</td></tr>
-    <tr><th>the commitment</th><td>checkpoint (&ldquo;the 32 bytes&rdquo;)</td><td>one signed value committing the entire history to date</td><td>CLL checkpoint (COSE_Sign1)</td></tr>
+    <tr><th>the commitment</th><td>checkpoint (&ldquo;the 32-byte root&rdquo;)</td><td>one signed value committing the entire history to date</td><td>CLL checkpoint (COSE_Sign1)</td></tr>
     <tr><th>the witnessing party</th><td>witness (&ldquo;the notary&rdquo;)</td><td>the party that makes the log checkable by a stranger</td><td>witness / Transparency Service (SCITT)</td></tr>
     <tr><th>an action's account</th><td>proof (of an action)</td><td>the signed membership claim: which records constitute one action</td><td>composition capsule</td></tr>
     <tr><th>foreign bytes brought in</th><td>carry / received</td><td>someone else's already-signed record, committed as-transmitted</td><td>as-transmitted CPB binding</td></tr>

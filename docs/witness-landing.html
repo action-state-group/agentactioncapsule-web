@@ -188,7 +188,7 @@
 <p class="lede">You probably followed a link from a checkpoint, a receipt, or a post about one. Here's the whole idea in about five minutes: what a checkpoint is, what a witness does and does not show, and how to check any of it yourself &mdash; without asking you to trust us.</p>
 
 <h2>What is a checkpoint?</h2>
-<p>A checkpoint is one signed value &mdash; 32 bytes &mdash; that commits an entire log's history to date. Whoever holds the log can recompute that value from every entry they've recorded; if even one byte of one past entry changed, the checkpoint would no longer match. It's <strong>witnessed</strong> when an independent party co-signs it, which is what turns "trust me, my log is complete" into something a stranger &mdash; you &mdash; can check without trusting anyone.</p>
+<p>A checkpoint is one signed value &mdash; a 32-byte root, signed: about 300&ndash;500 bytes on the wire &mdash; that commits an entire log's history to date. Whoever holds the log can recompute that value from every entry they've recorded; if even one byte of one past entry changed, the checkpoint would no longer match. It's <strong>witnessed</strong> when an independent party co-signs it, which is what turns "trust me, my log is complete" into something a stranger &mdash; you &mdash; can check without trusting anyone.</p>
 
 <h2>What this witness shows &mdash; and what it never does</h2>
 <p>A witness is infrastructure, not a verdict. It commits to three things, checkable from the bytes alone:</p>
@@ -218,8 +218,8 @@
 <p>These two are never presented as one guarantee. A <code>countersigned-observed</code> checkpoint is not proof this witness recomputed anything; it's proof the checkpoint you're looking at is the one everyone else sees too.</p>
 
 <h2>Run your own</h2>
-<p>This witness runs on <a class="ln" href="https://github.com/action-state-group">open-source infrastructure</a> &mdash; auditable in full, Apache-2.0. You don't have to take our copy's word for anything you can check yourself, and you don't have to use our copy at all: run your own witness in the region you choose, or self-host it inside your own network where nothing but a digest ever leaves. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a> for the options.</p>
-<p>We built this to have no single point of trust, including us. We'd like our competitors running this same log, side by side with ours &mdash; more independent witnesses is strictly better for everyone checking a record, including the operators of any one of them.</p>
+<p>This witness runs on <a class="ln" href="https://github.com/action-state-group">open-source infrastructure</a> &mdash; auditable in full, Apache-2.0. You don't have to take this instance's word for anything you can check yourself, and you don't have to use this instance at all: run your own witness in the region you choose, or self-host it inside your own network where nothing but a digest ever leaves. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a> for the options.</p>
+<p>It is built to have no single point of trust, including whoever runs this instance. Other operators running the same log side by side is the design goal: more independent witnesses is strictly better for everyone checking a record, including the operators of any one of them.</p>
 
 <h2>Try it yourself, in order</h2>
 <div class="steps">

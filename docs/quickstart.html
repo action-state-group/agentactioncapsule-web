@@ -204,7 +204,7 @@ cap = seal(
     developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version</span>
     agent_output=result,
     model={<span class="s">"provider"</span>: <span class="s">"example-provider"</span>, <span class="s">"model_id"</span>: <span class="s">"example-model"</span>},
-    verdict=<span class="s">"executed"</span>,               <span class="c"># executed | confirmed | denied | blocked</span>
+    verdict=<span class="s">"executed"</span>,               <span class="c"># a verdict_class: executed | blocked | denied | …</span>
     effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
 )
 print(cap.capsule_id, cap.signature)   <span class="c"># sealed, signed, and witnessed by default</span></code></pre>

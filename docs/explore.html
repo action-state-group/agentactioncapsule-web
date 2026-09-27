@@ -162,7 +162,7 @@
   "system": "You are a procurement agent for acme-co. Never exceed budget. Require an approved PO for any order over $1,000. Refuse unknown vendors.",
   "context": ["vendor catalog: Frobozz Supply (approved)", "budget remaining: $8,300", "policy v4"],
   "tools": ["submit_order(vendor, total, po_lines)", "get_price(sku)"],
-  "action_input": {"vendor": "Frobozz Supply", "total": 1240.19, "po_lines": 3, "po": "PO-0047"}
+  "action_input": {"vendor": "Frobozz Supply", "total": "1240.19", "po_lines": 3, "po": "PO-0047"}
 }</textarea>
         <div class="digline"><span id="byIn" style="color:var(--muted-2)">… bytes</span> <span style="color:var(--muted-2)">→</span> agent_input_digest <span class="digbox" id="digIn">…</span></div>
       </div>
@@ -170,7 +170,7 @@
         <div style="font-size:13px;color:var(--muted);margin-bottom:7px">agent_output — full response + tool calls + results (stays local)</div>
         <textarea id="rawOut" style="min-height:150px">{
   "reasoning": "Budget check passed ($1,240.19 ≤ $8,300). PO-0047 present and approved. Frobozz Supply is on the approved vendor list. Proceeding.",
-  "tool_call": {"name": "submit_order", "args": {"vendor": "Frobozz Supply", "total": 1240.19, "po_lines": 3}},
+  "tool_call": {"name": "submit_order", "args": {"vendor": "Frobozz Supply", "total": "1240.19", "po_lines": 3}},
   "tool_result": {"status": "dispatched", "po": "PO-0047", "confirmation": "FRB-99213", "eta": "2026-07-01"}
 }</textarea>
         <div class="digline"><span id="byOut" style="color:var(--muted-2)">… bytes</span> <span style="color:var(--muted-2)">→</span> agent_output_digest <span class="digbox" id="digOut">…</span></div>
@@ -232,23 +232,26 @@
   function sid(h){return h.slice(0,6)+"…"+h.slice(-4);}
 
   /* ---- section 1: the capsule ---- */
-  var raw={inp:'{"vendor":"Frobozz Supply","total":1240.19}',out:'{"status":"dispatched","po":"PO-0047"}'};
+  // The capsule in section 1 commits exactly the input/output shown in section 2 (their default text),
+  // so the two sections describe one capsule. Money is an exact decimal string, as the spec requires.
+  var raw={inp:document.getElementById("rawIn").defaultValue,out:document.getElementById("rawOut").defaultValue};
   var F=[
     {k:"operator",v:"4515…10de",ic:"who",ex:"Who is accountable — the tenant whose agent acted, committed as a digest so it points at a responsible party without exposing identity in the clear."},
     {k:"developer",v:"po-agent@v1",ic:"who",ex:"Which agent, at which version. Two agents — or two versions of one — are distinguishable in the record."},
     {k:"action_type",v:"decide",ic:"what",ex:"The class of capsule. <code>decide</code> = a decision that produced an effect (vs. an informational note)."},
     {k:"action / effect",v:"write_order → dispatched",ic:"what",ex:"What was done and its real outcome, with a confirmed-effect binding so claim and result can't drift apart.",tamper:["write_order → cancelled","the effect was flipped to a different outcome"]},
-    {k:"disposition",v:"executed",ic:"did",ex:"The may/did verdict — the heart of what the agent DID: executed, confirmed, denied, or blocked, with who approved and whether a human was in the loop.",tamper:["denied","the verdict was flipped from executed to denied"]},
+    {k:"disposition",v:"executed",ic:"did",ex:"The may/did verdict — the heart of what the agent DID. Its <code>verdict_class</code> is one registered value: executed, blocked, denied, timeout, errored and the rest of the <a href=\"/docs/glossary.html#disposition\" style=\"color:var(--accent)\">disposition list</a>. It also records who disposed it (human, policy or counterparty) and whether a human was really in the loop.",tamper:["denied","the verdict was flipped from executed to denied"]},
     {k:"model",v:"claude-sonnet-4-6",ic:"how",ex:"Which model produced the action — part of the evidence of how the decision was reached.",tamper:["gpt-4o","the model was misattributed"]},
     {k:"agent_input_digest",v:"…",ic:"in",ex:"The <em>whole</em> input the model saw for this action — system prompt, context, tool definitions, and the action's arguments — committed as one SHA-256 digest. A long or sensitive prompt is pinned exactly, without being stored. (See section 2 to edit what goes in.)",rv:"inp"},
     {k:"agent_output_digest",v:"…",ic:"out",ex:"The full output the model produced — its response, tool calls, and results — committed by digest too, however large. Content-private by construction: the proof travels, the data doesn't.",rv:"out"},
-    {k:"assurance",v:"self_attested",ic:"trust",ex:"How far to trust it — the attestation, effect, and ledger modes. Honest about its own assurance rather than overclaiming."},
+    {k:"assurance",v:"self_attested",ic:"trust",ex:"How far to trust it — the attestation, effect, and ledger modes. <code>self_attested</code> means only the producer vouches for it: nothing independent has checked it yet. It becomes <code>anchored</code> once a transparency log's receipt for it verifies. A verifier re-derives these modes from the bytes and flags any overclaim. See <a href=\"/docs/what-is-a-capsule.html#assurance\" style=\"color:var(--accent)\">levels of assurance</a>."},
     {k:"timestamp",v:"2026-06-27T14:02:08Z",ic:"when",ex:"When it happened — sealed at the moment of the action. Also orders the chain.",tamper:["2026-06-27T11:30:00Z","the timestamp was backdated"]},
-    {k:"chain",v:"confirms 02a3…9f1c",ic:"link",ex:"How this links to other capsules — a parent_capsule_id (by digest) plus the relation. This is what chains approved → executed → confirmed."}
+    {k:"chain",v:"…",ic:"link",ex:"How this links to the producer's previous capsule — a <code>parent_capsule_id</code> (by digest) plus a registered relation. This one <code>follows</code> the approval; the later confirmation <code>confirms</code> it (section 3). The chain is part of what the seal covers."}
   ];
   var st={}; F.forEach(function(f){st[f.k]=f.v;});
   var sealed=null, hitKey=null;
-  function canon(){return F.filter(function(f){return f.k!=="chain"}).map(function(f){return f.k+"="+st[f.k]}).join("|");}
+  function canonOf(v){return F.map(function(f){return f.k+"="+v[f.k]}).join("|");}
+  function canon(){return canonOf(st);}
   async function recompute(){
     var h=await sha(canon()); if(sealed===null) sealed=h; var ok=(h===sealed);
     var cap=document.getElementById("capId"); cap.textContent=sid(h); cap.style.color=ok?"var(--ink)":"var(--fail)";
@@ -302,14 +305,20 @@
   document.getElementById("rawIn").addEventListener("input",liveDig);
   document.getElementById("rawOut").addEventListener("input",liveDig);
 
-  /* ---- sections 3 & 4: the chain + audit ---- */
+  /* ---- sections 3 & 4: the chain + audit ----
+     The middle capsule IS the capsule in section 1: same fields, same seal. */
   var CH=[
-    {tag:"app",rel:"approved",t:"2026-06-27T14:01:55Z",who:"po-agent@v1",act:"write_order",verdict:"approved",tf:"verdict"},
-    {tag:"exe",rel:"executed",t:"2026-06-27T14:02:08Z",who:"po-agent@v1",act:"write_order",verdict:"executed",tf:"verdict"},
-    {tag:"con",rel:"confirmed",t:"2026-06-27T14:05:31Z",who:"human:ops-lead",act:"write_order",verdict:"confirmed",tf:"who"}
+    {tag:"app",rel:"approval",t:"2026-06-27T14:01:55Z",who:"human:ops-lead",vk:"decision",verdict:"accept",relation:"",flip:"reject"},
+    {tag:"exe",rel:"execution",t:"2026-06-27T14:02:08Z",who:"po-agent@v1",vk:"verdict",verdict:"executed",relation:"follows",flip:"denied",main:true},
+    {tag:"con",rel:"confirmation",t:"2026-06-27T14:05:31Z",who:"po-agent@v1",vk:"effect",verdict:"confirmed",relation:"confirms",flip:"dispatched"}
   ];
-  CH.forEach(function(c){c.verdict0=c.verdict; c.who0=c.who;});  // originals, so Reset can restore the tampered field
-  function chCanon(c){return ["act="+c.act,"verdict="+c.verdict,"who="+c.who,"t="+c.t,"parent="+(c.parent||"")].join("|");}
+  CH.forEach(function(c){c.verdict0=c.verdict;});  // originals, so Reset can restore the tampered field
+  var base=null;  // section 1's untampered field values, snapshotted at init
+  function chainVal(c){return c.parent? c.relation+" "+sid(c.parent) : "";}
+  function chCanon(c){
+    if(c.main){ var v=Object.assign({},base); v.disposition=c.verdict; v.chain=chainVal(c); return canonOf(v); }
+    return ["act=write_order",c.vk+"="+c.verdict,"who="+c.who,"t="+c.t,"chain="+chainVal(c)].join("|");
+  }
   var bundleTampered=false;
   async function sealChain(){
     var prev="";
@@ -319,17 +328,15 @@
     var el=document.getElementById(targetId); el.innerHTML="";
     CH.forEach(function(c){
       var d=document.createElement("div"); d.className="ccard";
-      var vr = withVerdicts && c.vr!==undefined ? '<div class="vr '+(c.vr?"ok":"no")+'">'+(c.vr?"✓ verifies — sealed, chain intact":"✕ does not verify — seal broken")+'</div>' : '';
+      var vr = withVerdicts && c.vr!==undefined ? '<div class="vr '+(c.vr?"ok":"no")+'">'+(c.vr?"✓ verifies — seal and link intact":"✕ "+c.why)+'</div>' : '';
       d.innerHTML='<div class="ct"><span class="tag '+c.tag+'">'+c.rel+'</span><span style="font-family:var(--mono);font-size:11px;color:var(--muted-2)">'+sid(c.carried)+'</span></div>'
-        +'<div class="meta">when: '+c.t.replace("2026-06-27T","").replace("Z"," UTC")+'<br>who: '+c.who+'<br>verdict: '+c.verdict+'<br>parent: '+(c.parent?sid(c.parent):"— (root)")+'</div>'+vr;
+        +'<div class="meta">when: '+c.t.replace("2026-06-27T","").replace("Z"," UTC")+'<br>who: '+c.who+'<br>'+c.vk+': '+c.verdict+'<br>chain: '+(c.parent?c.relation+" "+sid(c.parent):"— (first in stream)")+(c.main?'<br><span style="color:var(--accent)">= the capsule in section 1</span>':'')+'</div>'+vr;
       el.appendChild(d);
     });
   }
   document.getElementById("btnTamperBundle").onclick=function(){
     if(!bundleTampered){
-      var i=Math.floor(Math.random()*CH.length); var c=CH[i];
-      if(c.tf==="verdict"){ c.verdict = c.verdict==="executed"?"denied":(c.verdict==="approved"?"auto-approved":"self-confirmed"); }
-      else { c.who="po-agent@v1"; }
+      var c=CH[Math.floor(Math.random()*CH.length)]; c.verdict=c.flip;
       bundleTampered=true; this.textContent="(one is tampered)";
     }
     CH.forEach(function(c){c.vr=undefined;}); renderChain("auditCards",true); renderChain("chainCards",false);
@@ -337,29 +344,35 @@
   };
   document.getElementById("btnResetBundle").onclick=async function(){
     bundleTampered=false; document.getElementById("btnTamperBundle").textContent="Tamper one in the bundle";
-    CH.forEach(function(c){c.verdict=c.verdict0; c.who=c.who0;});  // restore the tampered field, not just re-seal it
+    CH.forEach(function(c){c.verdict=c.verdict0;});  // restore the tampered field, not just re-seal it
     await sealChain(); CH.forEach(function(c){c.vr=undefined;}); renderChain("auditCards",true); renderChain("chainCards",false);
-    document.getElementById("auditSummary").textContent="Not yet verified. Press “Verify as the auditor”.";
+    var s=document.getElementById("auditSummary"); s.style.color=""; s.textContent="Not yet verified. Press “Verify as the auditor”.";
   };
   document.getElementById("btnAudit").onclick=async function(){
-    var prev="", okCount=0, chainOk=true;
+    var prev="", okCount=0, sealBad=0, linkBad=0;
     for(var i=0;i<CH.length;i++){
       var c=CH[i];
-      var rh=await sha(chCanon(c));
-      var sealOk=(rh===c.carried);
+      var sealOk=(await sha(chCanon(c))===c.carried);
       var linkOk=(c.parent===prev);
-      c.vr = sealOk && linkOk; if(c.vr) okCount++; if(!c.vr) chainOk=false;
+      c.vr = sealOk && linkOk; if(c.vr) okCount++;
+      if(!sealOk) sealBad++; if(!linkOk) linkBad++;
+      c.why = !sealOk ? "seal broken — contents changed after sealing" : (!linkOk ? "chain link broken — parent does not match" : "");
       prev=c.carried;
     }
     renderChain("auditCards",true);
     var s=document.getElementById("auditSummary");
-    if(okCount===CH.length){ s.style.color="var(--verify)"; s.innerHTML="✓ "+okCount+"/"+CH.length+" verified · chain intact · no trust in the operator required — checked from the bytes alone."; }
-    else { s.style.color="var(--fail)"; s.innerHTML="✕ "+okCount+"/"+CH.length+" verified · chain broken — an independent auditor catches the tampering without trusting you."; }
+    if(okCount===CH.length){ s.style.color="var(--verify)"; s.innerHTML="✓ "+okCount+"/"+CH.length+" verified · seals and chain links intact · no trust in the operator required — checked from the bytes alone."; }
+    else { s.style.color="var(--fail)"; s.innerHTML="✕ "+okCount+"/"+CH.length+" verified · "+sealBad+" seal"+(sealBad===1?"":"s")+" broken · chain links "+(linkBad?"broken":"intact")+" — an independent auditor catches the change without trusting you."; }
   };
 
   (async function(){
     st["agent_input_digest"]=sid(await sha(raw.inp));
     st["agent_output_digest"]=sid(await sha(raw.out));
+    // seal the approval first: the capsule in section 1 follows it
+    CH[0].parent=""; CH[0].id=await sha(chCanon(CH[0]));
+    st["chain"]="follows "+sid(CH[0].id);
+    F.forEach(function(f){ if(f.k==="chain") f.v=st["chain"]; });
+    base=Object.assign({},st);
     render(); await recompute(); await liveDig();
     await sealChain(); renderChain("chainCards",false); renderChain("auditCards",true);
   })();
