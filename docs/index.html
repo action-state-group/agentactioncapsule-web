@@ -42,28 +42,8 @@
   .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
   .mono{font-family:var(--mono)}
 
-  /* NAV — canonical cross-site chrome */
-  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink)}
-  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
-  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
-  .brand .svc{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-left:1px solid var(--line);padding-left:10px;margin-left:2px}
-  .nav-links{display:flex;gap:22px;align-items:center}
-  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
-  .nav-links a:hover{color:var(--ink)}
-  .nav-links a.active{color:var(--ink);font-weight:600}
-  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
-  .nav-ghost:hover{border-color:var(--ink)}
-
   /* DOCS SHELL */
   .docs{display:grid;grid-template-columns:236px 1fr;gap:52px;padding:40px 0 64px}
-  .side{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
-  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
-  .side h5:first-child{margin-top:0}
-  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
-  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
-  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
 
   /* ARTICLE */
   article{min-width:0;max-width:760px}
@@ -92,12 +72,6 @@
   .callout{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;margin:6px 0 20px}
   .callout.warn{border-left-color:var(--verify)}
   .callout.deeper{border-left-color:var(--verify);background:var(--verify-soft)}
-  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
-  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
-  .next a:hover{border-color:var(--ink)}
-  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
-  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
-  .next a.n{text-align:right}
 
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
@@ -109,7 +83,40 @@
   .dcard .n{font-size:16px;font-weight:600;letter-spacing:-0.2px;margin-bottom:6px}
   .dcard .d{font-size:13.5px;color:var(--muted)}
 
-  /* FOOTER — canonical */
+
+  @media(max-width:900px){ .cards{grid-template-columns:1fr} }
+</style>
+<!--chrome:head--><script>document.documentElement.className+=' js';</script>
+<style>
+  /* shared chrome (tools/build_docs.py) */
+  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink);white-space:nowrap}
+  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
+  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
+  .nav-links{display:flex;gap:22px;align-items:center}
+  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink);font-weight:600}
+  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
+  .nav-ghost:hover{border-color:var(--ink)}
+  .nav-toggle{display:none;align-items:center;gap:8px;font:inherit;font-size:13.5px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:7px;padding:6px 12px;cursor:pointer}
+  .nav-toggle .bars{width:14px;height:10px;border-top:1.5px solid currentColor;border-bottom:1.5px solid currentColor;position:relative}
+  .nav-toggle .bars::after{content:'';position:absolute;left:0;right:0;top:3.5px;border-top:1.5px solid currentColor}
+  .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
+  .side-d>summary{display:none}
+  .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
+  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h5:first-child{margin-top:0}
+  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
+  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
+  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
+  .next a:hover{border-color:var(--ink)}
+  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
+  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
+  .next a.n{text-align:right}
   footer{padding:48px 0 56px;border-top:1px solid var(--line)}
   .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
   .foot-brand{max-width:38ch}
@@ -119,25 +126,34 @@
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
   .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
-
   @media(max-width:900px){
-    .docs{grid-template-columns:1fr;gap:24px}
-    .side{position:static;max-height:none;border-bottom:1px solid var(--line);padding-bottom:16px;display:flex;flex-wrap:wrap;gap:6px 16px}
-    .side h5{width:100%;margin:8px 0 2px}
-    .side a{border-left:none;padding:3px 0}
-    .cards{grid-template-columns:1fr}
-    .nav-in{gap:12px}
-    .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .nav-links::-webkit-scrollbar{display:none}
+    .docs{grid-template-columns:1fr;gap:20px}
+    .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
+    .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+    .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
+    .side-d .side h5{width:100%;margin:8px 0 2px}
+    .side-d .side a{border-left:none;padding:3px 0}
   }
-</style>
+  @media(max-width:860px){
+    .nav-in{padding:12px 16px;flex-wrap:wrap;gap:10px}
+    .nav-links{flex-wrap:wrap;gap:6px 16px;overflow:visible}
+    html.js .nav-toggle{display:inline-flex}
+    html.js .nav-links{display:none;width:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 0 8px}
+    html.js .nav-links.open{display:flex}
+    html.js .nav-links a{display:block;padding:10px 0;font-size:15px}
+    html.js .nav-links a:not(.nav-ghost){display:block}
+    html.js .nav-ghost{border:none;padding:10px 0;font-family:inherit;font-size:15px}
+  }
+  @media(max-width:560px){ .wrap{padding-left:16px;padding-right:16px} footer{padding:36px 0 44px} .foot-cols{gap:28px} }
+</style><!--/chrome:head-->
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<nav>
+<!--chrome:nav--><nav aria-label="Site">
   <div class="nav-in">
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-    <div class="nav-links">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span class="bars" aria-hidden="true"></span>Menu</button>
+    <div class="nav-links" id="nav-links">
       <a href="/">Standard</a>
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
@@ -146,15 +162,18 @@
       <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) &#x2197;</a>
     </div>
   </div>
-</nav>
+</nav><!--/chrome:nav-->
 <main class="wrap" id="main">
   <div class="docs">
-    <nav class="side" aria-label="Docs">
+    <!--chrome:side--><details class="side-d" open><summary>Docs menu</summary>
+<nav class="side" aria-label="Docs">
 <h5>Documentation</h5>
 <a href="/docs/" class="active">Overview</a>
 <h5>Use cases</h5>
 <a href="/docs/use-cases.html">Use cases</a>
 <a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
+<h5>Interop</h5>
+<a href="/docs/interop/trace-registry.html">The TRACE Registry</a>
 <h5>Concepts</h5>
 <a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
@@ -168,6 +187,7 @@
 <h5>Guides</h5>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
+<a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
 <h5>Live</h5>
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
@@ -180,6 +200,7 @@
 <a href="/docs/governance.html">Governance</a>
 <a href="/ip">Patent posture</a>
 </nav>
+</details><!--/chrome:side-->
     <article>
       <div class="crumb">Docs</div>
       
@@ -199,7 +220,7 @@
 <div class="idx-group">
   <h2>Use cases</h2>
   <div class="cards">
-    <a class="dcard" href="/docs/use-cases.html"><div class="n">Use cases</div><div class="d">Where the record layer applies today &mdash; decentralized inference, a benchmark corpus, composing with other logs.</div></a>
+    <a class="dcard" href="/docs/use-cases.html"><div class="n">Use cases</div><div class="d">Where the record layer applies today &mdash; decentralized inference, and composing with other logs.</div></a>
     <a class="dcard" href="/docs/case-study-mesh-llm.html"><div class="n">Case study: Mesh-LLM</div><div class="d">Accountability for strangers' machines, with no central operator and no ranking of nodes.</div></a>
   </div>
 </div>
@@ -207,7 +228,7 @@
 <div class="idx-group">
   <h2>Interop</h2>
   <div class="cards">
-    <a class="dcard" href="/docs/interop/trace-registry"><div class="n">The TRACE Registry</div><div class="d">An independent public registry whose checkpoint layer uses CLL &mdash; what it records, which parts it uses, and how to check an entry yourself.</div></a>
+    <a class="dcard" href="/docs/interop/trace-registry.html"><div class="n">The TRACE Registry</div><div class="d">An independent public registry whose checkpoint layer uses CLL &mdash; what it records, which parts it uses, and how to check an entry yourself.</div></a>
   </div>
 </div>
 
@@ -219,7 +240,10 @@
     <a class="dcard" href="/docs/statement-vs-transparency-layer.html"><div class="n">Statement vs transparency layer</div><div class="d">What happened vs where it is recorded &mdash; and why the statement is structure-independent.</div></a>
     <a class="dcard" href="/docs/what-is-a-transparency-service.html"><div class="n">What is a Transparency Service?</div><div class="d">Register, receipt, log &mdash; and the boundary between a transparency service and a verifier.</div></a>
     <a class="dcard" href="/docs/verifiable-data-structures.html"><div class="n">Verifiable Data Structures</div><div class="d">RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them.</div></a>
-    <a class="dcard" href="/docs/how-verification-works.html"><div class="n">How verification works</div><div class="d">Two independent checks: signature, then inclusion proof &mdash; both from the bytes, offline.</div></a>
+    <a class="dcard" href="/docs/how-verification-works.html"><div class="n">How verification works</div><div class="d">Three independent checks: the capsule_id, the signature, then the inclusion proof &mdash; all from the bytes, offline.</div></a>
+    <a class="dcard" href="/docs/whats-consequential.html"><div class="n">What's consequential</div><div class="d">Seal what changes the world, plus reads of sensitive data; everything else is observability.</div></a>
+    <a class="dcard" href="/docs/how-it-composes.html"><div class="n">How it composes with your stack</div><div class="d">Identity, authorization and transparency logs stay where they are; the capsule references their evidence by digest.</div></a>
+    <a class="dcard" href="/docs/witness-anywhere.html"><div class="n">Witness anywhere</div><div class="d">Only a digest and a timestamp leave: witness at the public log, run your own, or self-host where the hash never leaves.</div></a>
   </div>
 </div>
 
@@ -228,6 +252,7 @@
   <div class="cards">
     <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one <code>seal()</code> call, witness it, and verify. Copy-paste-runnable.</div></a>
     <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">Verify a capsule</div><div class="d">Verify in the browser, on the command line, or as a library &mdash; same checks everywhere.</div></a>
+    <a class="dcard" href="/docs/a2a-ap2-example.html"><div class="n">A2A + AP2 example</div><div class="d">An A2A callee seals a capsule on every AP2 payment action: the mandate is the &lsquo;may&rsquo;, the capsule is the &lsquo;did&rsquo;.</div></a>
   </div>
 </div>
 
@@ -235,14 +260,30 @@
   <h2>Live &amp; interactive</h2>
   <div class="cards">
     <a class="dcard" href="/docs/explore.html"><div class="n">Explore a capsule</div><div class="d">Interactive: click each field, edit what goes into a digest, tamper one and watch the seal break, then verify a bundle as a skeptical auditor.</div></a>
-    <a class="dcard" href="/docs/log.html"><div class="n">The public log, live</div><div class="d">Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records. Public, verifiable, nothing fabricated.</div></a>
+    <a class="dcard" href="/docs/log.html"><div class="n">The public log, live</div><div class="d">Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records.</div></a>
   </div>
 </div>
 
 <div class="idx-group">
   <h2>Reference</h2>
   <div class="cards">
-    <a class="dcard" href="/docs/glossary.html"><div class="n">Glossary</div><div class="d">SCITT, COSE_Sign1, Signed Statement, Receipt, VDS, STH, inclusion &amp; consistency proofs.</div></a>
+    <a class="dcard" href="/docs/glossary.html"><div class="n">Glossary</div><div class="d">SCITT, COSE_Sign1, Receipt, VDS, inclusion &amp; consistency proofs, the disposition list, witness vs anchored.</div></a>
+    <a class="dcard" href="/docs/translation.html"><div class="n">Translation: dev / auditor / spec</div><div class="d">The same concepts and verbs in three registers &mdash; the word a developer, an auditor, or the spec text would use.</div></a>
+  </div>
+</div>
+
+<div class="idx-group">
+  <h2>Extensions</h2>
+  <div class="cards">
+    <a class="dcard" href="/docs/bilateral.html"><div class="n">Bilateral attestation</div><div class="d">When two organizations act together: each party holds proof of the other's commitment, checkable by a third party who trusts neither.</div></a>
+  </div>
+</div>
+
+<div class="idx-group">
+  <h2>Project</h2>
+  <div class="cards">
+    <a class="dcard" href="/docs/governance.html"><div class="n">Governance</div><div class="d">Open and built to be donated to a neutral foundation; governance modeled on Linux Foundation practice.</div></a>
+    <a class="dcard" href="/ip"><div class="n">Patent posture</div><div class="d">The specifications are unencumbered: the provisional applications were expressly abandoned, and no license is required.</div></a>
   </div>
 </div>
 
@@ -254,7 +295,7 @@
     </article>
   </div>
 </main>
-<footer>
+<!--chrome:footer--><footer>
   <div class="wrap">
     <div class="foot-in">
       <div class="foot-brand">
@@ -265,9 +306,13 @@
         <div class="foot-col">
           <h5>Standard</h5>
           <a href="/">Overview</a>
+          <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft &#x2197;</a>
-          <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding ↗</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (latest) &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (latest) &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (latest) &#x2197;</a>
+          <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding &#x2197;</a>
+          <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
@@ -277,7 +322,9 @@
         <div class="foot-col">
           <h5>Source</h5>
           <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
-          <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
+          <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
+          <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
+          <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Project</h5>
@@ -288,6 +335,15 @@
     </div>
     <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
-</footer>
+</footer><!--/chrome:footer-->
+<!--chrome:js--><script>
+(function(){
+  var t=document.querySelector('.nav-toggle'), l=document.getElementById('nav-links');
+  if(t&&l){ t.addEventListener('click',function(){ var o=l.classList.toggle('open'); t.setAttribute('aria-expanded',o?'true':'false'); }); }
+  if(window.matchMedia&&window.matchMedia('(max-width:900px)').matches){
+    document.querySelectorAll('details.side-d').forEach(function(d){ d.open=false; });
+  }
+})();
+</script><!--/chrome:js-->
 </body>
 </html>

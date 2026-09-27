@@ -112,28 +112,8 @@ CSS = """
   .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
   .mono{font-family:var(--mono)}
 
-  /* NAV — canonical cross-site chrome */
-  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink)}
-  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
-  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
-  .brand .svc{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-left:1px solid var(--line);padding-left:10px;margin-left:2px}
-  .nav-links{display:flex;gap:22px;align-items:center}
-  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
-  .nav-links a:hover{color:var(--ink)}
-  .nav-links a.active{color:var(--ink);font-weight:600}
-  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
-  .nav-ghost:hover{border-color:var(--ink)}
-
   /* DOCS SHELL */
   .docs{display:grid;grid-template-columns:236px 1fr;gap:52px;padding:40px 0 64px}
-  .side{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
-  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
-  .side h5:first-child{margin-top:0}
-  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
-  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
-  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
 
   /* ARTICLE */
   article{min-width:0;max-width:760px}
@@ -162,12 +142,6 @@ CSS = """
   .callout{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;margin:6px 0 20px}
   .callout.warn{border-left-color:var(--verify)}
   .callout.deeper{border-left-color:var(--verify);background:var(--verify-soft)}
-  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
-  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
-  .next a:hover{border-color:var(--ink)}
-  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
-  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
-  .next a.n{text-align:right}
 
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
@@ -179,7 +153,135 @@ CSS = """
   .dcard .n{font-size:16px;font-weight:600;letter-spacing:-0.2px;margin-bottom:6px}
   .dcard .d{font-size:13.5px;color:var(--muted)}
 
-  /* FOOTER — canonical */
+
+  @media(max-width:900px){ .cards{grid-template-columns:1fr} }
+"""
+
+# ---------------------------------------------------------------------------
+# One table of contents. The docs sidebar, prev/next and the docs index are all built from it, so
+# a page cannot be in one and missing from another (2026-09-26 review: the index was missing five
+# pages, and hand-written pages carried their own, drifting copies of the sidebar and footer).
+# (group, index heading, [(key, href, sidebar title, card title, card description)])
+# ---------------------------------------------------------------------------
+TOC = [
+    ("Use cases", "Use cases", [
+        ("use-cases", "/docs/use-cases.html", "Use cases", "Use cases",
+         "Where the record layer applies today &mdash; decentralized inference, and composing with other logs."),
+        ("case-study-mesh-llm", "/docs/case-study-mesh-llm.html", "Case study: Mesh-LLM", "Case study: Mesh-LLM",
+         "Accountability for strangers' machines, with no central operator and no ranking of nodes."),
+    ]),
+    ("Interop", "Interop", [
+        ("interop/trace-registry", "/docs/interop/trace-registry.html", "The TRACE Registry", "The TRACE Registry",
+         "An independent public registry whose checkpoint layer uses CLL &mdash; what it records, which parts it uses, and how to check an entry yourself."),
+    ]),
+    ("Concepts", "Concepts", [
+        ("witness-landing", "/docs/witness-landing.html", "You've reached a witness", "You've reached a witness",
+         "Followed a link from a checkpoint or a receipt? Start here &mdash; what it shows, what it never does, and how to check it yourself."),
+        ("what-is-a-capsule", "/docs/what-is-a-capsule.html", "What is a Capsule?", "What is an Agent Action Capsule?",
+         "A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable."),
+        ("statement-vs-transparency-layer", "/docs/statement-vs-transparency-layer.html", "Statement vs transparency layer", "Statement vs transparency layer",
+         "What happened vs where it is recorded &mdash; and why the statement is structure-independent."),
+        ("what-is-a-transparency-service", "/docs/what-is-a-transparency-service.html", "What is a Transparency Service?", "What is a Transparency Service?",
+         "Register, receipt, log &mdash; and the boundary between a transparency service and a verifier."),
+        ("verifiable-data-structures", "/docs/verifiable-data-structures.html", "Verifiable Data Structures", "Verifiable Data Structures",
+         "RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them."),
+        ("how-verification-works", "/docs/how-verification-works.html", "How verification works", "How verification works",
+         "Three independent checks: the capsule_id, the signature, then the inclusion proof &mdash; all from the bytes, offline."),
+        ("whats-consequential", "/docs/whats-consequential.html", "What's consequential", "What's consequential",
+         "Seal what changes the world, plus reads of sensitive data; everything else is observability."),
+        ("how-it-composes", "/docs/how-it-composes.html", "How it composes", "How it composes with your stack",
+         "Identity, authorization and transparency logs stay where they are; the capsule references their evidence by digest."),
+        ("witness-anywhere", "/docs/witness-anywhere.html", "Witness anywhere", "Witness anywhere",
+         "Only a digest and a timestamp leave: witness at the public log, run your own, or self-host where the hash never leaves."),
+    ]),
+    ("Guides", "Guides", [
+        ("quickstart", "/docs/quickstart.html", "Quickstart", "Quickstart",
+         "Seal your first capsule with one <code>seal()</code> call, witness it, and verify. Copy-paste-runnable."),
+        ("verify-a-capsule", "/docs/verify-a-capsule.html", "Verify a capsule", "Verify a capsule",
+         "Verify in the browser, on the command line, or as a library &mdash; same checks everywhere."),
+        ("a2a-ap2-example", "/docs/a2a-ap2-example.html", "A2A + AP2 example", "A2A + AP2 example",
+         "An A2A callee seals a capsule on every AP2 payment action: the mandate is the &lsquo;may&rsquo;, the capsule is the &lsquo;did&rsquo;."),
+    ]),
+    ("Live", "Live &amp; interactive", [
+        ("explore", "/docs/explore.html", "Explore a capsule", "Explore a capsule",
+         "Interactive: click each field, edit what goes into a digest, tamper one and watch the seal break, then verify a bundle as a skeptical auditor."),
+        ("log", "/docs/log.html", "The public log, live", "The public log, live",
+         "Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records."),
+    ]),
+    ("Reference", "Reference", [
+        ("glossary", "/docs/glossary.html", "Glossary", "Glossary",
+         "SCITT, COSE_Sign1, Receipt, VDS, inclusion &amp; consistency proofs, the disposition list, witness vs anchored."),
+        ("translation", "/docs/translation.html", "Translation (dev/auditor/spec)", "Translation: dev / auditor / spec",
+         "The same concepts and verbs in three registers &mdash; the word a developer, an auditor, or the spec text would use."),
+    ]),
+    ("Extensions", "Extensions", [
+        ("bilateral", "/docs/bilateral.html", "Bilateral attestation", "Bilateral attestation",
+         "When two organizations act together: each party holds proof of the other's commitment, checkable by a third party who trusts neither."),
+    ]),
+    ("Project", "Project", [
+        ("governance", "/docs/governance.html", "Governance", "Governance",
+         "Open and built to be donated to a neutral foundation; governance modeled on Linux Foundation practice."),
+        ("ip", IP_URL, "Patent posture", "Patent posture",
+         "The specifications are unencumbered: the provisional applications were expressly abandoned, and no license is required."),
+    ]),
+]
+TOC_ENTRIES = [e for _, _, items in TOC for e in items]
+ORDER = [e[0] for e in TOC_ENTRIES]
+HREF = {e[0]: e[1] for e in TOC_ENTRIES}
+SHORT = {e[0]: e[2] for e in TOC_ENTRIES}
+
+# Hand-written pages that take the shared chrome at build time: path -> (active nav item, TOC key).
+# The build rewrites only what sits between <!--chrome:NAME--> markers (added on first run), so the
+# page bodies stay hand-written while the header, sidebar, prev/next and footer come from here.
+HAND_PAGES = {
+    "index.html": ("standard", None),
+    "ip.html": ("docs", "ip"),
+    "docs/explore.html": ("docs", "explore"),
+    "docs/log.html": ("docs", "log"),
+    "docs/use-cases.html": ("docs", "use-cases"),
+    "docs/case-study-mesh-llm.html": ("docs", "case-study-mesh-llm"),
+    "docs/witness-landing.html": ("docs", "witness-landing"),
+    "docs/translation.html": ("docs", "translation"),
+    "docs/bilateral.html": ("docs", "bilateral"),
+    "docs/a2a-ap2-example.html": ("docs", "a2a-ap2-example"),
+    "docs/interop/trace-registry.html": ("docs", "interop/trace-registry"),
+    "extensions/a2a-task-evidence/v1/index.html": ("docs", None),
+    "profiles/a2a-task-evidence/aac-cll-scitt/v1/index.html": ("docs", None),
+}
+
+# ---------------------------------------------------------------------------
+# Shared chrome: header (with a mobile menu), sidebar, prev/next, footer
+# ---------------------------------------------------------------------------
+CHROME_CSS = """
+  /* shared chrome (tools/build_docs.py) */
+  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink);white-space:nowrap}
+  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
+  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
+  .nav-links{display:flex;gap:22px;align-items:center}
+  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink);font-weight:600}
+  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
+  .nav-ghost:hover{border-color:var(--ink)}
+  .nav-toggle{display:none;align-items:center;gap:8px;font:inherit;font-size:13.5px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:7px;padding:6px 12px;cursor:pointer}
+  .nav-toggle .bars{width:14px;height:10px;border-top:1.5px solid currentColor;border-bottom:1.5px solid currentColor;position:relative}
+  .nav-toggle .bars::after{content:'';position:absolute;left:0;right:0;top:3.5px;border-top:1.5px solid currentColor}
+  .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
+  .side-d>summary{display:none}
+  .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
+  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h5:first-child{margin-top:0}
+  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
+  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
+  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
+  .next a:hover{border-color:var(--ink)}
+  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
+  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
+  .next a.n{text-align:right}
   footer{padding:48px 0 56px;border-top:1px solid var(--line)}
   .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
   .foot-brand{max-width:38ch}
@@ -189,49 +291,67 @@ CSS = """
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
   .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
-
   @media(max-width:900px){
-    .docs{grid-template-columns:1fr;gap:24px}
-    .side{position:static;max-height:none;border-bottom:1px solid var(--line);padding-bottom:16px;display:flex;flex-wrap:wrap;gap:6px 16px}
-    .side h5{width:100%;margin:8px 0 2px}
-    .side a{border-left:none;padding:3px 0}
-    .cards{grid-template-columns:1fr}
-    .nav-in{gap:12px}
-    .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .nav-links::-webkit-scrollbar{display:none}
+    .docs{grid-template-columns:1fr;gap:20px}
+    .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
+    .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+    .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
+    .side-d .side h5{width:100%;margin:8px 0 2px}
+    .side-d .side a{border-left:none;padding:3px 0}
   }
+  @media(max-width:860px){
+    .nav-in{padding:12px 16px;flex-wrap:wrap;gap:10px}
+    .nav-links{flex-wrap:wrap;gap:6px 16px;overflow:visible}
+    html.js .nav-toggle{display:inline-flex}
+    html.js .nav-links{display:none;width:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 0 8px}
+    html.js .nav-links.open{display:flex}
+    html.js .nav-links a{display:block;padding:10px 0;font-size:15px}
+    html.js .nav-links a:not(.nav-ghost){display:block}
+    html.js .nav-ghost{border:none;padding:10px 0;font-family:inherit;font-size:15px}
+  }
+  @media(max-width:560px){ .wrap{padding-left:16px;padding-right:16px} footer{padding:36px 0 44px} .foot-cols{gap:28px} }
 """
 
-NAV = """<nav>
-  <div class="nav-in">
-    <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-    <div class="nav-links">
-      <a href="/">Standard</a>
-      <a href="{anchor}">Transparency Log</a>
-      <a href="{verify}">Verifier</a>
-      <a class="active" href="/docs/">Docs</a>
-      <a class="nav-ghost" href="{org}">Source &#x2197;</a>
-      <a href="{draft}">Draft (IETF) &#x2197;</a>
-    </div>
-  </div>
-</nav>""".format(anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL)
+CHROME_HEAD = (
+    "<script>document.documentElement.className+=' js';</script>\n"
+    f"<style>{CHROME_CSS}</style>"
+)
 
-# NOTE: the "Project" foot-col (Governance + Patent posture) is live today only on
-# docs/index.html and docs/governance.html, not the other 11 generated pages — an
-# inconsistency in the committed site, not a deliberate per-page design. Reconciling
-# to match live content byte-for-byte (docs-site-generator-output-drift) means
-# reproducing that inconsistency here rather than silently "fixing" it by expanding
-# scope to editing 11 pages of committed content; flagged for a follow-up decision.
-_FOOTER_PROJECT_COL = """
-        <div class="foot-col">
-          <h5>Project</h5>
-          <a href="/docs/governance.html">Governance</a>
-          <a href="{ip}">Patent posture</a>
-        </div>""".format(ip=IP_URL)
+CHROME_JS = """<script>
+(function(){
+  var t=document.querySelector('.nav-toggle'), l=document.getElementById('nav-links');
+  if(t&&l){ t.addEventListener('click',function(){ var o=l.classList.toggle('open'); t.setAttribute('aria-expanded',o?'true':'false'); }); }
+  if(window.matchMedia&&window.matchMedia('(max-width:900px)').matches){
+    document.querySelectorAll('details.side-d').forEach(function(d){ d.open=false; });
+  }
+})();
+</script>"""
 
 
-def footer_html(include_project: bool) -> str:
-    return """<footer>
+def nav_html(active: str) -> str:
+    def a(key, href, label, extra=""):
+        cls = ' class="active"' if key == active else ""
+        return f'      <a{cls}{extra} href="{href}">{label}</a>'
+    return "\n".join([
+        '<nav aria-label="Site">',
+        '  <div class="nav-in">',
+        '    <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>',
+        '    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span class="bars" aria-hidden="true"></span>Menu</button>',
+        '    <div class="nav-links" id="nav-links">',
+        a("standard", "/", "Standard"),
+        a("log", ANCHOR_URL, "Transparency Log"),
+        a("verify", VERIFY_URL, "Verifier"),
+        a("docs", "/docs/", "Docs"),
+        f'      <a class="nav-ghost" href="{ORG_URL}">Source &#x2197;</a>',
+        f'      <a href="{DRAFT_URL}">Draft (IETF) &#x2197;</a>',
+        "    </div>",
+        "  </div>",
+        "</nav>",
+    ])
+
+
+# One footer for every page (2026-09-26 review: there were four variants).
+FOOTER = f"""<footer>
   <div class="wrap">
     <div class="foot-in">
       <div class="foot-brand">
@@ -242,105 +362,113 @@ def footer_html(include_project: bool) -> str:
         <div class="foot-col">
           <h5>Standard</h5>
           <a href="/">Overview</a>
+          <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
-          <a href="{draft}">Internet-Draft &#x2197;</a>
-          <a href="{cpb_site}">Canonical Payload Binding ↗</a>
+          <a href="{DRAFT_URL}">AAC draft (latest) &#x2197;</a>
+          <a href="{CPB_DRAFT_URL}">CPB draft (latest) &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (latest) &#x2197;</a>
+          <a href="{CPB_SITE_URL}">Canonical Payload Binding &#x2197;</a>
+          <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="{anchor}">Transparency Log</a>
-          <a href="{verify}">Verifier</a>
+          <a href="{ANCHOR_URL}">Transparency Log</a>
+          <a href="{VERIFY_URL}">Verifier</a>
         </div>
         <div class="foot-col">
           <h5>Source</h5>
-          <a href="{org}">GitHub &#x2197;</a>
-          <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
-        </div>{project_col}
+          <a href="{ORG_URL}">GitHub &#x2197;</a>
+          <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
+          <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
+          <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h5>Project</h5>
+          <a href="/docs/governance.html">Governance</a>
+          <a href="{IP_URL}">Patent posture</a>
+        </div>
       </div>
     </div>
     <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
-</footer>""".format(
-        anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL,
-        cpb_site=CPB_SITE_URL,
-        project_col=_FOOTER_PROJECT_COL if include_project else "",
-    )
-
-# Sidebar groups: (group label, [(slug, short-title)])
-SIDEBAR = [
-    ("Use cases", [
-        ("use-cases", "Use cases"),
-        ("case-study-mesh-llm", "Case study: Mesh-LLM"),
-    ]),
-    ("Concepts", [
-        ("witness-landing", "You've reached a witness"),
-        ("what-is-a-capsule", "What is a Capsule?"),
-        ("statement-vs-transparency-layer", "Statement vs transparency layer"),
-        ("what-is-a-transparency-service", "What is a Transparency Service?"),
-        ("verifiable-data-structures", "Verifiable Data Structures"),
-        ("how-verification-works", "How verification works"),
-        ("whats-consequential", "What's consequential"),
-        ("how-it-composes", "How it composes"),
-        ("witness-anywhere", "Witness anywhere"),
-    ]),
-    ("Guides", [
-        ("quickstart", "Quickstart"),
-        ("verify-a-capsule", "Verify a capsule"),
-    ]),
-    ("Live", [
-        ("explore", "Explore a capsule"),
-        ("log", "The public log, live"),
-    ]),
-    ("Reference", [
-        ("glossary", "Glossary"),
-        ("translation", "Translation (dev/auditor/spec)"),
-    ]),
-    ("Project", [
-        ("governance", "Governance"),
-    ]),
-]
-
-# Linear order for prev/next.
-ORDER = [s for _, items in SIDEBAR for s, _ in items]
+</footer>"""
 
 
-def sidebar_html(active_slug: str) -> str:
-    out = ['<nav class="side" aria-label="Docs">']
-    out.append('<h5>Documentation</h5>')
-    ov_cls = ' class="active"' if active_slug == "index" else ""
-    out.append(f'<a href="/docs/"{ov_cls}>Overview</a>')
-    for label, items in SIDEBAR:
+def sidebar_html(active: str) -> str:
+    ov_cls = ' class="active"' if active == "index" else ""
+    out = ['<details class="side-d" open><summary>Docs menu</summary>', '<nav class="side" aria-label="Docs">',
+           '<h5>Documentation</h5>', f'<a href="/docs/"{ov_cls}>Overview</a>']
+    for label, _, items in TOC:
         out.append(f"<h5>{label}</h5>")
-        for slug, title in items:
-            cls = ' class="active"' if slug == active_slug else ""
-            out.append(f'<a href="/docs/{slug}.html"{cls}>{title}</a>')
-        if label == "Reference":
-            out.append('<h5>Extensions</h5>')
-            out.append('<a href="/docs/bilateral.html">Bilateral attestation</a>')
-        if label == "Project":
-            out.append(f'<a href="{IP_URL}">Patent posture</a>')
-    out.append("</nav>")
+        for key, href, short, _, _ in items:
+            cls = ' class="active"' if key == active else ""
+            out.append(f'<a href="{href}"{cls}>{short}</a>')
+    out += ["</nav>", "</details>"]
     return "\n".join(out)
 
 
-def next_block(slug: str) -> str:
-    if slug not in ORDER:
+def next_block(key: str) -> str:
+    if key not in ORDER:
         return ""
-    i = ORDER.index(slug)
-    titles = {s: t for _, items in SIDEBAR for s, t in items}
-    prev_a = nxt_a = ""
+    i = ORDER.index(key)
     if i > 0:
-        ps = ORDER[i - 1]
-        prev_a = (f'<a class="p" href="/docs/{ps}.html"><div class="dir">&#8592; Previous</div>'
-                  f'<div class="ttl">{titles[ps]}</div></a>')
+        p = ORDER[i - 1]
+        prev_a = (f'<a class="p" href="{HREF[p]}"><div class="dir">&#8592; Previous</div>'
+                  f'<div class="ttl">{SHORT[p]}</div></a>')
     else:
         prev_a = ('<a class="p" href="/docs/"><div class="dir">&#8592; Previous</div>'
                   '<div class="ttl">Overview</div></a>')
+    nxt_a = ""
     if i < len(ORDER) - 1:
-        ns = ORDER[i + 1]
-        nxt_a = (f'<a class="n" href="/docs/{ns}.html"><div class="dir">Next &#8594;</div>'
-                 f'<div class="ttl">{titles[ns]}</div></a>')
+        n = ORDER[i + 1]
+        nxt_a = (f'<a class="n" href="{HREF[n]}"><div class="dir">Next &#8594;</div>'
+                 f'<div class="ttl">{SHORT[n]}</div></a>')
     return f'<div class="next">{prev_a}{nxt_a}</div>'
+
+
+def index_groups_html() -> str:
+    out = []
+    for _, heading, items in TOC:
+        out.append(f'<div class="idx-group">\n  <h2>{heading}</h2>\n  <div class="cards">')
+        for _, href, _, title, desc in items:
+            out.append(f'    <a class="dcard" href="{href}"><div class="n">{title}</div><div class="d">{desc}</div></a>')
+        out.append("  </div>\n</div>\n")
+    return "\n".join(out)
+
+
+def _mark(name: str, content: str) -> str:
+    return f"<!--chrome:{name}-->{content}<!--/chrome:{name}-->"
+
+
+def _splice(html: str, name: str, content: str, legacy: str | None, insert_before: str | None = None) -> str:
+    """Replace the marked region NAME; on first run, replace the legacy element or insert."""
+    block = _mark(name, content)
+    marked = re.compile(rf"<!--chrome:{name}-->.*?<!--/chrome:{name}-->", re.S)
+    if marked.search(html):
+        return marked.sub(lambda m: block, html, count=1)
+    if legacy:
+        m = re.search(legacy, html, re.S)
+        if m:
+            return html[:m.start()] + block + html[m.end():]
+    if insert_before and insert_before in html:
+        i = html.index(insert_before)
+        return html[:i] + block + "\n" + html[i:]
+    raise SystemExit(f"chrome: cannot place {name!r}")
+
+
+def rechrome(rel: str, active: str, key: str | None) -> None:
+    path = OUT.parent / rel
+    html = path.read_text(encoding="utf-8")
+    html = _splice(html, "head", CHROME_HEAD, None, insert_before="</head>")
+    html = _splice(html, "nav", nav_html(active), r'<nav>\s*<div class="nav-in">.*?</nav>')
+    has_side = 'class="side"' in html or "<!--chrome:side-->" in html
+    if has_side:
+        html = _splice(html, "side", sidebar_html(key or ""), r'<nav class="side"[^>]*>.*?</nav>')
+        html = _splice(html, "next", next_block(key or ""), r'<div class="next">.*?</a></div>',
+                       insert_before="</article>")
+    html = _splice(html, "footer", FOOTER, r"<footer>.*?</footer>")
+    html = _splice(html, "js", CHROME_JS, None, insert_before="</body>")
+    path.write_text(html, encoding="utf-8")
 
 
 PAGE = """<!DOCTYPE html>
@@ -369,6 +497,7 @@ PAGE = """<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>{css}</style>
+{chrome_head}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -384,6 +513,7 @@ PAGE = """<!DOCTYPE html>
   </div>
 </main>
 {footer}
+{chrome_js}
 </body>
 </html>
 """
@@ -399,11 +529,12 @@ def render(slug, title, desc, crumb, body, *, is_index=False):
     body = wrap_tables(body)
     url = "https://agentactioncapsule.org/docs/" if is_index else f"https://agentactioncapsule.org/docs/{slug}.html"
     return PAGE.format(
-        title=title, desc=desc, css=CSS, nav=NAV, url=url,
-        footer=footer_html(is_index or slug == "governance"),
-        sidebar=sidebar_html("index" if is_index else slug),
+        title=title, desc=desc, css=CSS, url=url,
+        chrome_head=_mark("head", CHROME_HEAD), nav=_mark("nav", nav_html("docs")),
+        footer=_mark("footer", FOOTER), chrome_js=_mark("js", CHROME_JS),
+        sidebar=_mark("side", sidebar_html("index" if is_index else slug)),
         crumb=crumb, body=body,
-        nxt="" if is_index else next_block(slug),
+        nxt="" if is_index else _mark("next", next_block(slug)),
     )
 
 
@@ -951,56 +1082,7 @@ INDEX_BODY = f"""
   </div>
 </div>
 
-<div class="idx-group">
-  <h2>Use cases</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/use-cases.html"><div class="n">Use cases</div><div class="d">Where the record layer applies today &mdash; decentralized inference, a benchmark corpus, composing with other logs.</div></a>
-    <a class="dcard" href="/docs/case-study-mesh-llm.html"><div class="n">Case study: Mesh-LLM</div><div class="d">Accountability for strangers' machines, with no central operator and no ranking of nodes.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Interop</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/interop/trace-registry"><div class="n">The TRACE Registry</div><div class="d">An independent public registry whose checkpoint layer uses CLL &mdash; what it records, which parts it uses, and how to check an entry yourself.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Concepts</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/witness-landing.html"><div class="n">You've reached a witness</div><div class="d">Followed a link from a checkpoint or a receipt? Start here &mdash; what it shows, what it never does, and how to check it yourself.</div></a>
-    <a class="dcard" href="/docs/what-is-a-capsule.html"><div class="n">What is an Agent Action Capsule?</div><div class="d">A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable.</div></a>
-    <a class="dcard" href="/docs/statement-vs-transparency-layer.html"><div class="n">Statement vs transparency layer</div><div class="d">What happened vs where it is recorded &mdash; and why the statement is structure-independent.</div></a>
-    <a class="dcard" href="/docs/what-is-a-transparency-service.html"><div class="n">What is a Transparency Service?</div><div class="d">Register, receipt, log &mdash; and the boundary between a transparency service and a verifier.</div></a>
-    <a class="dcard" href="/docs/verifiable-data-structures.html"><div class="n">Verifiable Data Structures</div><div class="d">RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them.</div></a>
-    <a class="dcard" href="/docs/how-verification-works.html"><div class="n">How verification works</div><div class="d">Two independent checks: signature, then inclusion proof &mdash; both from the bytes, offline.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Guides</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one <code>seal()</code> call, witness it, and verify. Copy-paste-runnable.</div></a>
-    <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">Verify a capsule</div><div class="d">Verify in the browser, on the command line, or as a library &mdash; same checks everywhere.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Live &amp; interactive</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/explore.html"><div class="n">Explore a capsule</div><div class="d">Interactive: click each field, edit what goes into a digest, tamper one and watch the seal break, then verify a bundle as a skeptical auditor.</div></a>
-    <a class="dcard" href="/docs/log.html"><div class="n">The public log, live</div><div class="d">Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records. Public, verifiable, nothing fabricated.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Reference</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/glossary.html"><div class="n">Glossary</div><div class="d">SCITT, COSE_Sign1, Signed Statement, Receipt, VDS, STH, inclusion &amp; consistency proofs.</div></a>
-  </div>
-</div>
-
+{index_groups_html()}
 <div class="callout deeper"><strong>Building on it?</strong> Implementation, tutorials, and adapter guides live in the canonical <code>capsule-emit</code> docs: <a class="ln" href="{CE_DOCS}">capsule-emit/docs &#x2197;</a>. These pages cover the standard-level concepts; the repo docs cover hands-on usage.</div>
 
 <div class="callout">{STATUS_NOTE}</div>
@@ -1022,7 +1104,10 @@ def main():
         (OUT / f"{slug}.html").write_text(
             render(slug, p["title"], p["desc"], p["crumb"], body), encoding="utf-8")
         n += 1
-    print(f"wrote {n} files to {OUT}")
+    # hand-written pages: splice in the same header, sidebar, prev/next and footer
+    for rel, (active, key) in HAND_PAGES.items():
+        rechrome(rel, active, key)
+    print(f"wrote {n} files to {OUT}; re-chromed {len(HAND_PAGES)} hand-written pages")
 
 
 if __name__ == "__main__":
