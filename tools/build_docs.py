@@ -13,18 +13,19 @@ Out:  docs/*.html  (one page per entry in PAGES, plus docs/index.html)
 NEUTRALITY: these pages are neutral substrate only. No product or business content.
 Standards status is stated honestly
 (individual Internet-Draft; SCITT Architecture = RFC 9943; COSE Receipts = RFC 9942,
-in AUTH48 final review, pre-publication).
+published; the CCF receipt profile is still an Internet-Draft).
 """
 from __future__ import annotations
 
 import pathlib
+import re
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs"
 
 DRAFT_URL = "https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/"
 CPB_DRAFT_URL = "https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/"
 ORG_URL = "https://github.com/action-state-group"
-ANCHOR_URL = "https://anchor.agentactioncapsule.org"
+ANCHOR_URL = "https://witness.agentactioncapsule.org"
 VERIFY_URL = "https://verify.agentactioncapsule.org"
 CPB_SITE_URL = "https://canonicalpayloadbinding.org/"
 IP_URL = "/ip"
@@ -58,17 +59,35 @@ def go_deeper_html(slug: str) -> str:
             f'implementation &amp; usage docs in <code>capsule-emit</code>: {links}</div>')
 
 # Honest standards-status line, reused wherever status is relevant.
+# NOTE: link text intentionally omits a hard-coded CPB revision number — CPB revises far more
+# often than AAC (was -02, is -05 as of 2026-09), and a number here has gone stale twice. The
+# href already points at the un-versioned Datatracker page, which always resolves to latest;
+# keep the link text un-versioned too rather than re-adding a number that will rot again.
 STATUS_NOTE = (
     "<strong>Status.</strong> The Agent Action Capsule profile "
-    f'(<a class="ln" href="{DRAFT_URL}">draft-mih-scitt-agent-action-capsule-04</a>) '
+    f'(<a class="ln" href="{DRAFT_URL}">draft-mih-scitt-agent-action-capsule</a>, latest revision on the Datatracker) '
     "is an individual IETF Internet-Draft — submitted for discussion, <em>not</em> "
     "adopted by a working group, and not a standard. A companion draft, the "
     "<strong>Canonical Payload Binding</strong> "
-    f'(<a class="ln" href="{CPB_DRAFT_URL}">draft-mih-sokolov-scitt-payload-binding-02</a>; '
+    f'(<a class="ln" href="{CPB_DRAFT_URL}">draft-mih-sokolov-scitt-payload-binding</a>, '
+    "latest revision on the Datatracker; "
     f'<a class="ln" href="{CPB_SITE_URL}">site</a>), '
     "defines the shared canonicalization and digest-binding layer. Both build on the "
     'IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) '
     'and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).'
+)
+
+# What is signed by default, stated once (2026-09-26 review: three pages disagreed). Settled from
+# the spec (-05: capsule identity is independent of signing; Producer Envelopes are a MAY) and from
+# capsule-emit's code (seal() always signs with a persisted per-ledger Ed25519 key; the only
+# unsigned append is the separately named log() verb).
+SIGNING_NOTE = (
+    "A capsule's identity is its <code>capsule_id</code>, a SHA-256 over the canonical capsule, and it "
+    "does not depend on any signature. The specification makes signing optional: a producer MAY add one "
+    "or more <code>COSE_Sign1</code> Producer Envelopes over the <code>capsule_id</code>. The reference "
+    'producer, <a class="ln" href="https://github.com/action-state-group/capsule-emit">capsule-emit</a>, '
+    "signs every capsule it seals, by default, with a per-ledger Ed25519 key; its only unsigned path is "
+    "the separately named <code>log()</code> call."
 )
 
 # ---------------------------------------------------------------------------
@@ -93,28 +112,8 @@ CSS = """
   .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
   .mono{font-family:var(--mono)}
 
-  /* NAV — canonical cross-site chrome */
-  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink)}
-  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
-  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
-  .brand .svc{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-left:1px solid var(--line);padding-left:10px;margin-left:2px}
-  .nav-links{display:flex;gap:22px;align-items:center}
-  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
-  .nav-links a:hover{color:var(--ink)}
-  .nav-links a.active{color:var(--ink);font-weight:600}
-  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
-  .nav-ghost:hover{border-color:var(--ink)}
-
   /* DOCS SHELL */
   .docs{display:grid;grid-template-columns:236px 1fr;gap:52px;padding:40px 0 64px}
-  .side{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
-  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
-  .side h5:first-child{margin-top:0}
-  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
-  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
-  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
 
   /* ARTICLE */
   article{min-width:0;max-width:760px}
@@ -128,12 +127,13 @@ CSS = """
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
   pre.code .fn{color:#7FB4FF} pre.code .ok{color:#54D08A;font-weight:600}
-  table.t{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 20px}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px;border:1px solid var(--line);border-radius:10px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px}
   table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
   table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
   table.t tbody th{font-weight:600;white-space:nowrap}
@@ -142,12 +142,6 @@ CSS = """
   .callout{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;margin:6px 0 20px}
   .callout.warn{border-left-color:var(--verify)}
   .callout.deeper{border-left-color:var(--verify);background:var(--verify-soft)}
-  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
-  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
-  .next a:hover{border-color:var(--ink)}
-  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
-  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
-  .next a.n{text-align:right}
 
   /* DOCS INDEX CARDS */
   .idx-group{margin-bottom:34px}
@@ -159,7 +153,135 @@ CSS = """
   .dcard .n{font-size:16px;font-weight:600;letter-spacing:-0.2px;margin-bottom:6px}
   .dcard .d{font-size:13.5px;color:var(--muted)}
 
-  /* FOOTER — canonical */
+
+  @media(max-width:900px){ .cards{grid-template-columns:1fr} }
+"""
+
+# ---------------------------------------------------------------------------
+# One table of contents. The docs sidebar, prev/next and the docs index are all built from it, so
+# a page cannot be in one and missing from another (2026-09-26 review: the index was missing five
+# pages, and hand-written pages carried their own, drifting copies of the sidebar and footer).
+# (group, index heading, [(key, href, sidebar title, card title, card description)])
+# ---------------------------------------------------------------------------
+TOC = [
+    ("Use cases", "Use cases", [
+        ("use-cases", "/docs/use-cases.html", "Use cases", "Use cases",
+         "Where the record layer applies today &mdash; decentralized inference, and composing with other logs."),
+        ("case-study-mesh-llm", "/docs/case-study-mesh-llm.html", "Case study: Mesh-LLM", "Case study: Mesh-LLM",
+         "Accountability for strangers' machines, with no central operator and no ranking of nodes."),
+    ]),
+    ("Interop", "Interop", [
+        ("interop/trace-registry", "/docs/interop/trace-registry.html", "The TRACE Registry", "The TRACE Registry",
+         "An independent public registry whose checkpoint layer uses CLL &mdash; what it records, which parts it uses, and how to check an entry yourself."),
+    ]),
+    ("Concepts", "Concepts", [
+        ("witness-landing", "/docs/witness-landing.html", "You've reached a witness", "You've reached a witness",
+         "Followed a link from a checkpoint or a receipt? Start here &mdash; what it shows, what it never does, and how to check it yourself."),
+        ("what-is-a-capsule", "/docs/what-is-a-capsule.html", "What is a Capsule?", "What is an Agent Action Capsule?",
+         "A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable."),
+        ("statement-vs-transparency-layer", "/docs/statement-vs-transparency-layer.html", "Statement vs transparency layer", "Statement vs transparency layer",
+         "What happened vs where it is recorded &mdash; and why the statement is structure-independent."),
+        ("what-is-a-transparency-service", "/docs/what-is-a-transparency-service.html", "What is a Transparency Service?", "What is a Transparency Service?",
+         "Register, receipt, log &mdash; and the boundary between a transparency service and a verifier."),
+        ("verifiable-data-structures", "/docs/verifiable-data-structures.html", "Verifiable Data Structures", "Verifiable Data Structures",
+         "RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them."),
+        ("how-verification-works", "/docs/how-verification-works.html", "How verification works", "How verification works",
+         "Three independent checks: the capsule_id, the signature, then the inclusion proof &mdash; all from the bytes, offline."),
+        ("whats-consequential", "/docs/whats-consequential.html", "What's consequential", "What's consequential",
+         "Seal what changes the world, plus reads of sensitive data; everything else is observability."),
+        ("how-it-composes", "/docs/how-it-composes.html", "How it composes", "How it composes with your stack",
+         "Identity, authorization and transparency logs stay where they are; the capsule references their evidence by digest."),
+        ("witness-anywhere", "/docs/witness-anywhere.html", "Witness anywhere", "Witness anywhere",
+         "Only a digest and a timestamp leave: witness at the public log, run your own, or self-host where the hash never leaves."),
+    ]),
+    ("Guides", "Guides", [
+        ("quickstart", "/docs/quickstart.html", "Quickstart", "Quickstart",
+         "Seal your first capsule with one <code>seal()</code> call, witness it, and verify. Copy-paste-runnable."),
+        ("verify-a-capsule", "/docs/verify-a-capsule.html", "Verify a capsule", "Verify a capsule",
+         "Verify in the browser, on the command line, or as a library &mdash; same checks everywhere."),
+        ("a2a-ap2-example", "/docs/a2a-ap2-example.html", "A2A + AP2 example", "A2A + AP2 example",
+         "An A2A callee seals a capsule on every AP2 payment action: the mandate is the &lsquo;may&rsquo;, the capsule is the &lsquo;did&rsquo;."),
+    ]),
+    ("Live", "Live &amp; interactive", [
+        ("explore", "/docs/explore.html", "Explore a capsule", "Explore a capsule",
+         "Interactive: click each field, edit what goes into a digest, tamper one and watch the seal break, then verify a bundle as a skeptical auditor."),
+        ("log", "/docs/log.html", "The public log, live", "The public log, live",
+         "Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records."),
+    ]),
+    ("Reference", "Reference", [
+        ("glossary", "/docs/glossary.html", "Glossary", "Glossary",
+         "SCITT, COSE_Sign1, Receipt, VDS, inclusion &amp; consistency proofs, the disposition list, witness vs anchored."),
+        ("translation", "/docs/translation.html", "Translation (dev/auditor/spec)", "Translation: dev / auditor / spec",
+         "The same concepts and verbs in three registers &mdash; the word a developer, an auditor, or the spec text would use."),
+    ]),
+    ("Extensions", "Extensions", [
+        ("bilateral", "/docs/bilateral.html", "Bilateral attestation", "Bilateral attestation",
+         "When two organizations act together: each party holds proof of the other's commitment, checkable by a third party who trusts neither."),
+    ]),
+    ("Project", "Project", [
+        ("governance", "/docs/governance.html", "Governance", "Governance",
+         "Open and built to be donated to a neutral foundation; governance modeled on Linux Foundation practice."),
+        ("ip", IP_URL, "Patent posture", "Patent posture",
+         "The specifications are unencumbered: the provisional applications were expressly abandoned, and no license is required."),
+    ]),
+]
+TOC_ENTRIES = [e for _, _, items in TOC for e in items]
+ORDER = [e[0] for e in TOC_ENTRIES]
+HREF = {e[0]: e[1] for e in TOC_ENTRIES}
+SHORT = {e[0]: e[2] for e in TOC_ENTRIES}
+
+# Hand-written pages that take the shared chrome at build time: path -> (active nav item, TOC key).
+# The build rewrites only what sits between <!--chrome:NAME--> markers (added on first run), so the
+# page bodies stay hand-written while the header, sidebar, prev/next and footer come from here.
+HAND_PAGES = {
+    "index.html": ("standard", None),
+    "ip.html": ("docs", "ip"),
+    "docs/explore.html": ("docs", "explore"),
+    "docs/log.html": ("docs", "log"),
+    "docs/use-cases.html": ("docs", "use-cases"),
+    "docs/case-study-mesh-llm.html": ("docs", "case-study-mesh-llm"),
+    "docs/witness-landing.html": ("docs", "witness-landing"),
+    "docs/translation.html": ("docs", "translation"),
+    "docs/bilateral.html": ("docs", "bilateral"),
+    "docs/a2a-ap2-example.html": ("docs", "a2a-ap2-example"),
+    "docs/interop/trace-registry.html": ("docs", "interop/trace-registry"),
+    "extensions/a2a-task-evidence/v1/index.html": ("docs", None),
+    "profiles/a2a-task-evidence/aac-cll-scitt/v1/index.html": ("docs", None),
+}
+
+# ---------------------------------------------------------------------------
+# Shared chrome: header (with a mobile menu), sidebar, prev/next, footer
+# ---------------------------------------------------------------------------
+CHROME_CSS = """
+  /* shared chrome (tools/build_docs.py) */
+  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink);white-space:nowrap}
+  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
+  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
+  .nav-links{display:flex;gap:22px;align-items:center}
+  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink);font-weight:600}
+  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
+  .nav-ghost:hover{border-color:var(--ink)}
+  .nav-toggle{display:none;align-items:center;gap:8px;font:inherit;font-size:13.5px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:7px;padding:6px 12px;cursor:pointer}
+  .nav-toggle .bars{width:14px;height:10px;border-top:1.5px solid currentColor;border-bottom:1.5px solid currentColor;position:relative}
+  .nav-toggle .bars::after{content:'';position:absolute;left:0;right:0;top:3.5px;border-top:1.5px solid currentColor}
+  .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
+  .side-d>summary{display:none}
+  .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
+  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h5:first-child{margin-top:0}
+  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
+  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
+  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
+  .next a:hover{border-color:var(--ink)}
+  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
+  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
+  .next a.n{text-align:right}
   footer{padding:48px 0 56px;border-top:1px solid var(--line)}
   .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
   .foot-brand{max-width:38ch}
@@ -169,49 +291,67 @@ CSS = """
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
   .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
-
   @media(max-width:900px){
-    .docs{grid-template-columns:1fr;gap:24px}
-    .side{position:static;max-height:none;border-bottom:1px solid var(--line);padding-bottom:16px;display:flex;flex-wrap:wrap;gap:6px 16px}
-    .side h5{width:100%;margin:8px 0 2px}
-    .side a{border-left:none;padding:3px 0}
-    .cards{grid-template-columns:1fr}
-    .nav-in{gap:12px}
-    .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .nav-links::-webkit-scrollbar{display:none}
+    .docs{grid-template-columns:1fr;gap:20px}
+    .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
+    .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+    .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
+    .side-d .side h5{width:100%;margin:8px 0 2px}
+    .side-d .side a{border-left:none;padding:3px 0}
   }
+  @media(max-width:860px){
+    .nav-in{padding:12px 16px;flex-wrap:wrap;gap:10px}
+    .nav-links{flex-wrap:wrap;gap:6px 16px;overflow:visible}
+    html.js .nav-toggle{display:inline-flex}
+    html.js .nav-links{display:none;width:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 0 8px}
+    html.js .nav-links.open{display:flex}
+    html.js .nav-links a{display:block;padding:10px 0;font-size:15px}
+    html.js .nav-links a:not(.nav-ghost){display:block}
+    html.js .nav-ghost{border:none;padding:10px 0;font-family:inherit;font-size:15px}
+  }
+  @media(max-width:560px){ .wrap{padding-left:16px;padding-right:16px} footer{padding:36px 0 44px} .foot-cols{gap:28px} }
 """
 
-NAV = """<nav>
-  <div class="nav-in">
-    <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-    <div class="nav-links">
-      <a href="/">Standard</a>
-      <a href="{anchor}">Transparency Log</a>
-      <a href="{verify}">Verifier</a>
-      <a class="active" href="/docs/">Docs</a>
-      <a class="nav-ghost" href="{org}">Source &#x2197;</a>
-      <a href="{draft}">Draft (IETF) &#x2197;</a>
-    </div>
-  </div>
-</nav>""".format(anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL)
+CHROME_HEAD = (
+    "<script>document.documentElement.className+=' js';</script>\n"
+    f"<style>{CHROME_CSS}</style>"
+)
 
-# NOTE: the "Project" foot-col (Governance + Patent posture) is live today only on
-# docs/index.html and docs/governance.html, not the other 11 generated pages — an
-# inconsistency in the committed site, not a deliberate per-page design. Reconciling
-# to match live content byte-for-byte (docs-site-generator-output-drift) means
-# reproducing that inconsistency here rather than silently "fixing" it by expanding
-# scope to editing 11 pages of committed content; flagged for a follow-up decision.
-_FOOTER_PROJECT_COL = """
-        <div class="foot-col">
-          <h5>Project</h5>
-          <a href="/docs/governance.html">Governance</a>
-          <a href="{ip}">Patent posture</a>
-        </div>""".format(ip=IP_URL)
+CHROME_JS = """<script>
+(function(){
+  var t=document.querySelector('.nav-toggle'), l=document.getElementById('nav-links');
+  if(t&&l){ t.addEventListener('click',function(){ var o=l.classList.toggle('open'); t.setAttribute('aria-expanded',o?'true':'false'); }); }
+  if(window.matchMedia&&window.matchMedia('(max-width:900px)').matches){
+    document.querySelectorAll('details.side-d').forEach(function(d){ d.open=false; });
+  }
+})();
+</script>"""
 
 
-def footer_html(include_project: bool) -> str:
-    return """<footer>
+def nav_html(active: str) -> str:
+    def a(key, href, label, extra=""):
+        cls = ' class="active"' if key == active else ""
+        return f'      <a{cls}{extra} href="{href}">{label}</a>'
+    return "\n".join([
+        '<nav aria-label="Site">',
+        '  <div class="nav-in">',
+        '    <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>',
+        '    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span class="bars" aria-hidden="true"></span>Menu</button>',
+        '    <div class="nav-links" id="nav-links">',
+        a("standard", "/", "Standard"),
+        a("log", ANCHOR_URL, "Transparency Log"),
+        a("verify", VERIFY_URL, "Verifier"),
+        a("docs", "/docs/", "Docs"),
+        f'      <a class="nav-ghost" href="{ORG_URL}">Source &#x2197;</a>',
+        f'      <a href="{DRAFT_URL}">Draft (IETF) &#x2197;</a>',
+        "    </div>",
+        "  </div>",
+        "</nav>",
+    ])
+
+
+# One footer for every page (2026-09-26 review: there were four variants).
+FOOTER = f"""<footer>
   <div class="wrap">
     <div class="foot-in">
       <div class="foot-brand">
@@ -222,99 +362,113 @@ def footer_html(include_project: bool) -> str:
         <div class="foot-col">
           <h5>Standard</h5>
           <a href="/">Overview</a>
+          <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
-          <a href="{draft}">Internet-Draft &#x2197;</a>
-          <a href="{cpb_site}">Canonical Payload Binding ↗</a>
+          <a href="{DRAFT_URL}">AAC draft (latest) &#x2197;</a>
+          <a href="{CPB_DRAFT_URL}">CPB draft (latest) &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (latest) &#x2197;</a>
+          <a href="{CPB_SITE_URL}">Canonical Payload Binding &#x2197;</a>
+          <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
-          <a href="{anchor}">Transparency Log</a>
-          <a href="{verify}">Verifier</a>
+          <a href="{ANCHOR_URL}">Transparency Log</a>
+          <a href="{VERIFY_URL}">Verifier</a>
         </div>
         <div class="foot-col">
           <h5>Source</h5>
-          <a href="{org}">GitHub &#x2197;</a>
-          <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
-        </div>{project_col}
+          <a href="{ORG_URL}">GitHub &#x2197;</a>
+          <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
+          <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
+          <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h5>Project</h5>
+          <a href="/docs/governance.html">Governance</a>
+          <a href="{IP_URL}">Patent posture</a>
+        </div>
       </div>
     </div>
     <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
-</footer>""".format(
-        anchor=ANCHOR_URL, verify=VERIFY_URL, org=ORG_URL, draft=DRAFT_URL,
-        cpb_site=CPB_SITE_URL,
-        project_col=_FOOTER_PROJECT_COL if include_project else "",
-    )
-
-# Sidebar groups: (group label, [(slug, short-title)])
-SIDEBAR = [
-    ("Concepts", [
-        ("what-is-a-capsule", "What is a Capsule?"),
-        ("statement-vs-transparency-layer", "Statement vs transparency layer"),
-        ("what-is-a-transparency-service", "What is a Transparency Service?"),
-        ("verifiable-data-structures", "Verifiable Data Structures"),
-        ("how-verification-works", "How verification works"),
-        ("whats-consequential", "What's consequential"),
-        ("how-it-composes", "How it composes"),
-        ("anchor-anywhere", "Anchor anywhere"),
-    ]),
-    ("Guides", [
-        ("quickstart", "Quickstart"),
-        ("verify-a-capsule", "Verify a capsule"),
-    ]),
-    ("Live", [
-        ("explore", "Explore a capsule"),
-        ("log", "The public log, live"),
-    ]),
-    ("Reference", [
-        ("glossary", "Glossary"),
-    ]),
-    ("Project", [
-        ("governance", "Governance"),
-    ]),
-]
-
-# Linear order for prev/next.
-ORDER = [s for _, items in SIDEBAR for s, _ in items]
+</footer>"""
 
 
-def sidebar_html(active_slug: str) -> str:
-    out = ['<nav class="side" aria-label="Docs">']
-    out.append('<h5>Documentation</h5>')
-    ov_cls = ' class="active"' if active_slug == "index" else ""
-    out.append(f'<a href="/docs/"{ov_cls}>Overview</a>')
-    for label, items in SIDEBAR:
+def sidebar_html(active: str) -> str:
+    ov_cls = ' class="active"' if active == "index" else ""
+    out = ['<details class="side-d" open><summary>Docs menu</summary>', '<nav class="side" aria-label="Docs">',
+           '<h5>Documentation</h5>', f'<a href="/docs/"{ov_cls}>Overview</a>']
+    for label, _, items in TOC:
         out.append(f"<h5>{label}</h5>")
-        for slug, title in items:
-            cls = ' class="active"' if slug == active_slug else ""
-            out.append(f'<a href="/docs/{slug}.html"{cls}>{title}</a>')
-        if label == "Reference":
-            out.append('<h5>Extensions</h5>')
-            out.append('<a href="/docs/bilateral.html">Bilateral attestation</a>')
-        if label == "Project":
-            out.append(f'<a href="{IP_URL}">Patent posture</a>')
-    out.append("</nav>")
+        for key, href, short, _, _ in items:
+            cls = ' class="active"' if key == active else ""
+            out.append(f'<a href="{href}"{cls}>{short}</a>')
+    out += ["</nav>", "</details>"]
     return "\n".join(out)
 
 
-def next_block(slug: str) -> str:
-    if slug not in ORDER:
+def next_block(key: str) -> str:
+    if key not in ORDER:
         return ""
-    i = ORDER.index(slug)
-    titles = {s: t for _, items in SIDEBAR for s, t in items}
-    prev_a = nxt_a = ""
+    i = ORDER.index(key)
     if i > 0:
-        ps = ORDER[i - 1]
-        prev_a = (f'<a class="p" href="/docs/{ps}.html"><div class="dir">&#8592; Previous</div>'
-                  f'<div class="ttl">{titles[ps]}</div></a>')
+        p = ORDER[i - 1]
+        prev_a = (f'<a class="p" href="{HREF[p]}"><div class="dir">&#8592; Previous</div>'
+                  f'<div class="ttl">{SHORT[p]}</div></a>')
     else:
         prev_a = ('<a class="p" href="/docs/"><div class="dir">&#8592; Previous</div>'
                   '<div class="ttl">Overview</div></a>')
+    nxt_a = ""
     if i < len(ORDER) - 1:
-        ns = ORDER[i + 1]
-        nxt_a = (f'<a class="n" href="/docs/{ns}.html"><div class="dir">Next &#8594;</div>'
-                 f'<div class="ttl">{titles[ns]}</div></a>')
+        n = ORDER[i + 1]
+        nxt_a = (f'<a class="n" href="{HREF[n]}"><div class="dir">Next &#8594;</div>'
+                 f'<div class="ttl">{SHORT[n]}</div></a>')
     return f'<div class="next">{prev_a}{nxt_a}</div>'
+
+
+def index_groups_html() -> str:
+    out = []
+    for _, heading, items in TOC:
+        out.append(f'<div class="idx-group">\n  <h2>{heading}</h2>\n  <div class="cards">')
+        for _, href, _, title, desc in items:
+            out.append(f'    <a class="dcard" href="{href}"><div class="n">{title}</div><div class="d">{desc}</div></a>')
+        out.append("  </div>\n</div>\n")
+    return "\n".join(out)
+
+
+def _mark(name: str, content: str) -> str:
+    return f"<!--chrome:{name}-->{content}<!--/chrome:{name}-->"
+
+
+def _splice(html: str, name: str, content: str, legacy: str | None, insert_before: str | None = None) -> str:
+    """Replace the marked region NAME; on first run, replace the legacy element or insert."""
+    block = _mark(name, content)
+    marked = re.compile(rf"<!--chrome:{name}-->.*?<!--/chrome:{name}-->", re.S)
+    if marked.search(html):
+        return marked.sub(lambda m: block, html, count=1)
+    if legacy:
+        m = re.search(legacy, html, re.S)
+        if m:
+            return html[:m.start()] + block + html[m.end():]
+    if insert_before and insert_before in html:
+        i = html.index(insert_before)
+        return html[:i] + block + "\n" + html[i:]
+    raise SystemExit(f"chrome: cannot place {name!r}")
+
+
+def rechrome(rel: str, active: str, key: str | None) -> None:
+    path = OUT.parent / rel
+    html = path.read_text(encoding="utf-8")
+    html = _splice(html, "head", CHROME_HEAD, None, insert_before="</head>")
+    html = _splice(html, "nav", nav_html(active), r'<nav>\s*<div class="nav-in">.*?</nav>')
+    has_side = 'class="side"' in html or "<!--chrome:side-->" in html
+    if has_side:
+        html = _splice(html, "side", sidebar_html(key or ""), r'<nav class="side"[^>]*>.*?</nav>')
+        html = _splice(html, "next", next_block(key or ""), r'<div class="next">.*?</a></div>',
+                       insert_before="</article>")
+    html = _splice(html, "footer", FOOTER, r"<footer>.*?</footer>")
+    html = _splice(html, "js", CHROME_JS, None, insert_before="</body>")
+    path.write_text(html, encoding="utf-8")
 
 
 PAGE = """<!DOCTYPE html>
@@ -343,6 +497,7 @@ PAGE = """<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>{css}</style>
+{chrome_head}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -358,19 +513,28 @@ PAGE = """<!DOCTYPE html>
   </div>
 </main>
 {footer}
+{chrome_js}
 </body>
 </html>
 """
 
 
+def wrap_tables(body: str) -> str:
+    # Every table.t sits in a horizontal scroller so a wide table scrolls inside itself instead of
+    # widening the page on a phone (2026-09-26 review: 12 pages overflowed at 375px).
+    return re.sub(r'(<table class="t".*?</table>)', r'<div class="tw">\1</div>', body, flags=re.S)
+
+
 def render(slug, title, desc, crumb, body, *, is_index=False):
+    body = wrap_tables(body)
     url = "https://agentactioncapsule.org/docs/" if is_index else f"https://agentactioncapsule.org/docs/{slug}.html"
     return PAGE.format(
-        title=title, desc=desc, css=CSS, nav=NAV, url=url,
-        footer=footer_html(is_index or slug == "governance"),
-        sidebar=sidebar_html("index" if is_index else slug),
+        title=title, desc=desc, css=CSS, url=url,
+        chrome_head=_mark("head", CHROME_HEAD), nav=_mark("nav", nav_html("docs")),
+        footer=_mark("footer", FOOTER), chrome_js=_mark("js", CHROME_JS),
+        sidebar=_mark("side", sidebar_html("index" if is_index else slug)),
         crumb=crumb, body=body,
-        nxt="" if is_index else next_block(slug),
+        nxt="" if is_index else _mark("next", next_block(slug)),
     )
 
 
@@ -393,20 +557,20 @@ PAGES["what-is-a-capsule"] = dict(
 <table class="t">
   <thead><tr><th>Property</th><th>What it means</th></tr></thead>
   <tbody>
-    <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it &mdash; content-addressed by default, and COSE-signed at the Signed-Statement tier. Change any byte and verification fails.</td></tr>
+    <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it. It is always content-addressed, and a producer signs that address with COSE; the reference producer signs every capsule by default. Change any byte and verification fails.</td></tr>
     <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was included in an append-only log that cannot quietly drop or rewrite history.</td></tr>
     <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems. You trust the log's key, not the operator.</td></tr>
   </tbody>
 </table>
 
 <h2>What a capsule commits to</h2>
-<p>A capsule is a <code>COSE_Sign1</code> envelope over the media type <code>application/agent-action-capsule+json</code>. The payload commits to:</p>
+<p>A capsule is a JSON record of media type <code>application/agent-action-capsule+json</code>. A producer signs it with a <code>COSE_Sign1</code> Producer Envelope whose payload is the capsule's 32-byte <code>capsule_id</code>. The record commits to:</p>
 <ul>
   <li>the <strong>action</strong> performed (an effect type and its identifying fields);</li>
   <li><strong>input and output digests</strong> &mdash; SHA-256 of what went in and what came out, so raw values stay local while the proof travels;</li>
   <li>the <strong>producing context</strong> &mdash; the model and runtime that generated the action.</li>
 </ul>
-<p>Because inputs and outputs are committed <em>by digest</em>, a capsule proves integrity without disclosing sensitive payloads.</p>
+<p>Because inputs and outputs are committed <em>by digest</em>, anyone can check a capsule's integrity without seeing the sensitive payloads.</p>
 
 <h2>What gets sealed &mdash; the fields</h2>
 <p>The seal is the <code>capsule_id</code>: the SHA-256 of the canonical capsule. Recompute it and it must match byte-for-byte &mdash; that hash <em>is</em> the seal. Around it, a capsule commits the parts an agent action needs to be accountable:</p>
@@ -415,11 +579,11 @@ PAGES["what-is-a-capsule"] = dict(
   <tbody>
     <tr><th>capsule_id</th><td>SHA-256 of the canonical capsule &mdash; the seal / content address.</td></tr>
     <tr><th>action / operator / developer / timestamp</th><td>what was done, the accountable tenant, the agent identity@version, and when.</td></tr>
-    <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; <code>executed</code>, <code>confirmed</code>, <code>denied</code>, or <code>blocked</code>.</td></tr>
+    <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; a registered <code>verdict_class</code> such as <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code> or <code>errored</code> (the <a class="ln" href="/docs/glossary.html#disposition">full list</a>), plus who disposed it and an honest human-in-the-loop flag.</td></tr>
     <tr><th>effect</th><td>what was committed, plus the <strong>confirmed-effect binding</strong> so the claim and the outcome can't drift apart.</td></tr>
     <tr><th>model_attestation</th><td>which model decided, with the <strong>full input</strong> it saw (system prompt, context, tool definitions, and the action's arguments) and the <strong>output</strong> each <strong>committed as a digest</strong> (fixed-size; raw values, however large or sensitive, are never stored) plus best-effort compute.</td></tr>
     <tr><th>assurance</th><td>how far to trust it: attestation / effect / ledger modes.</td></tr>
-    <tr><th>chain</th><td>links to other capsules (<code>confirms</code> / <code>supersedes</code> / <code>escalates</code>) &mdash; present only when this capsule relates to another.</td></tr>
+    <tr><th>chain</th><td>the link to this producer's own previous capsule: a <code>parent_capsule_id</code> plus a registered relation (<code>follows</code>, <code>confirms</code>, <code>supersedes</code>, <code>epoch_opens</code>, <code>duplicates</code>). Same stream only; a citation of anything else &mdash; another producer's record, a grant, a receipt &mdash; goes in <code>references</code>.</td></tr>
   </tbody>
 </table>
 
@@ -427,19 +591,20 @@ PAGES["what-is-a-capsule"] = dict(
 <p>Each evidence layer is <strong>hashed, and only the digest is committed</strong> &mdash; the raw prompt, vendor, or amount is never inside the capsule. You can hand someone a capsule and they learn <em>what happened</em> and can verify the seal, without seeing your inputs or outputs. Reveal a raw value later only when you choose, and anyone can re-hash it against the committed digest.</p>
 
 <h2>Chains: approved &rarr; executed &rarr; confirmed</h2>
-<p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that proves authorization without exposing the underlying data).</p>
+<p>A confirmation is itself a capsule that points at its parent by digest. That turns a decision and its follow-through into one verifiable trail &mdash; the basis for human-in-the-loop confirmation and for selective disclosure (show a chain that records authorization without exposing the underlying data).</p>
 <p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
 
-<h2>Levels of assurance</h2>
-<p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from anchoring &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs.</p>
+<h2 id="assurance">Levels of assurance</h2>
+<p>Tamper-evidence is always present (the <code>capsule_id</code> hash). A producer <em>signature</em> binds that hash to a key. An <em>existence proof</em> comes from registering the <code>capsule_id</code> with a transparency service &mdash; the receipt held beside the capsule. You adopt as much as your use case needs.</p>
+<div class="callout"><strong>What is signed by default.</strong> {SIGNING_NOTE}</div>
 
-<h2>What a capsule does not prove</h2>
+<h2>What a capsule does not establish</h2>
 <p>Honest claims matter. Know the limits before relying on this for audit or compliance:</p>
 <ul>
-  <li><strong>Attested, not verified.</strong> A capsule proves what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
-  <li><strong>No anti-omission property.</strong> A capsule proves <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
+  <li><strong>Attested, not verified.</strong> A capsule records what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
+  <li><strong>No anti-omission property.</strong> A capsule shows <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
   <li><strong>Signer = key-holder.</strong> The signature proves who held the signing key at the moment of sealing &mdash; not that the named agent actually ran the action. Key-management discipline is outside the capsule.</li>
-  <li><strong>Default may be signature-less.</strong> The base assurance level is a content hash (tamper-evident, content-private). A producer signature binding to a key requires the SCITT Signed-Statement level explicitly.</li>
+  <li><strong>A hash alone names no one.</strong> Without a Producer Envelope, a capsule is tamper-evident but says nothing about who sealed it. The specification allows that; the reference producer does not do it by default (see <em>What is signed by default</em>, above).</li>
   <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. A witness or a second independently-operated log removes this.</li>
 </ul>
 <p>These limits are features of being honest, not gaps to hide. Stating them is what makes the record trustworthy to an outside auditor.</p>
@@ -470,7 +635,7 @@ PAGES["statement-vs-transparency-layer"] = dict(
 </table>
 
 <h2>Why the separation matters</h2>
-<p>Keeping the statement independent of the log means a single capsule can be anchored to more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
+<p>Keeping the statement independent of the log means a single capsule can be registered with more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
 
 <h2>The stack</h2>
 <p>Each layer is a separate, open-source library so the boundaries stay honest:</p>
@@ -489,11 +654,12 @@ PAGES["statement-vs-transparency-layer"] = dict(
 
 PAGES["what-is-a-transparency-service"] = dict(
     title="What is a Transparency Service?",
-    desc="A SCITT Transparency Service registers signed statements, issues receipts, and anchors them to an append-only log. It is high-trust infrastructure — and it is not a verifier.",
+    desc="A SCITT Transparency Service registers signed statements, issues receipts, and records them in an append-only log. It is high-trust infrastructure — and it is not a verifier.",
     crumb="Concepts",
     body="""
 <h1>What is a Transparency Service?</h1>
-<p class="lede">A Transparency Service (TS) registers signed statements, issues a receipt proving inclusion, and anchors them to an append-only log &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
+<p class="lede">A Transparency Service (TS) registers signed statements, issues a receipt proving inclusion, and witnesses them into an append-only log &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
+<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
 
 <h2>What it does</h2>
 <ol>
@@ -507,18 +673,18 @@ PAGES["what-is-a-transparency-service"] = dict(
 <table class="t">
   <thead><tr><th></th><th>Verifier</th><th>Transparency Service</th></tr></thead>
   <tbody>
-    <tr><th>Operation</th><td>verify only</td><td>register statements, issue receipts, anchor</td></tr>
+    <tr><th>Operation</th><td>verify only</td><td>register statements, issue receipts, keep the log</td></tr>
     <tr><th>State</th><td>none (stateless)</td><td>a durable, append-only log</td></tr>
     <tr><th>Trust commitment</th><td>none &mdash; verify it yourself</td><td>uptime, integrity, non-equivocation</td></tr>
     <tr><th>Risk class</th><td>low (read-only utility)</td><td>high (operational trust infrastructure)</td></tr>
     <tr><th>Who must trust whom</th><td>nobody trusts the operator</td><td>the ecosystem trusts the log operator</td></tr>
   </tbody>
 </table>
-<p>A verifier that begins storing submissions, issuing receipts, or anchoring has silently become a transparency service with all of its obligations.</p>
+<p>A verifier that begins storing submissions, issuing receipts, or keeping a log has silently become a transparency service with all of its obligations.</p>
 
 <h2>The trust model</h2>
 <p>What you verify yourself: each signature, each inclusion proof, and consistency between any two tree heads &mdash; all from the bytes, offline. What the log commits to operationally: durable append-only storage, non-equivocation (one consistent view for everyone), and a stable, published signing key.</p>
-<div class="callout">A live, neutral implementation runs at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a>. To check a receipt without running anything, use the <a class="ln" href="https://verify.agentactioncapsule.org">hosted verifier</a>.</div>
+<div class="callout">A live, neutral implementation runs at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a>. To check a receipt without running anything, use the <a class="ln" href="https://verify.agentactioncapsule.org">hosted verifier</a>.</div>
 """,
 )
 
@@ -535,7 +701,7 @@ PAGES["verifiable-data-structures"] = dict(
 <table class="t">
   <thead><tr><th></th><th>vds=1 &mdash; RFC9162_SHA256</th><th>vds=2 &mdash; CCF (ccf.v1)</th></tr></thead>
   <tbody>
-    <tr><th>Basis</th><td>RFC&nbsp;9162 (Certificate Transparency 2.0) Merkle trees, SHA-256</td><td>Microsoft CCF (Confidential Consortium Framework) ledger receipts</td></tr>
+    <tr><th>Basis</th><td>RFC&nbsp;9162 (Certificate Transparency 2.0) Merkle trees, SHA-256</td><td>CCF (Confidential Consortium Framework) ledger receipts</td></tr>
     <tr><th>Proof shape</th><td>Merkle inclusion path + signed tree head</td><td>CCF ledger inclusion proof signed by the service identity</td></tr>
     <tr><th>Verify with</th><td>the log's public key + the leaf digest</td><td>the CCF service certificate / identity</td></tr>
     <tr><th>Published status</th><td>RFC&nbsp;9162 is a published RFC; the SCITT Architecture is <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a></td><td>CCF is an open-source framework; the SCITT mapping is a draft</td></tr>
@@ -543,7 +709,7 @@ PAGES["verifiable-data-structures"] = dict(
 </table>
 
 <h2>Why two?</h2>
-<p>Different operators run different ledger technologies. The same Agent Action Capsule was registered to both an RFC&nbsp;9162 log (<code>vds=1</code>) <em>and</em> a real CCF node (<code>vds=2</code>), and both receipts check out &mdash; proving the statement layer really is structure-independent. (The reference verifier <a class="ln" href="https://github.com/action-state-group/scitt-cose">scitt-cose</a> implements <code>vds=1</code>; the CCF receipt was cross-checked against a CCF node.)</p>
+<p>Different operators run different ledger technologies. The same Agent Action Capsule was registered to both an RFC&nbsp;9162 log (<code>vds=1</code>) <em>and</em> a real CCF node (<code>vds=2</code>), and both receipts check out &mdash; evidence that the statement layer is structure-independent. (The reference verifier <a class="ln" href="https://github.com/action-state-group/scitt-cose">scitt-cose</a> verifies both: its Python <code>verify_receipt</code> and its Go verifier accept <code>vds=1</code> and <code>vds=2</code>; its Rust crate accepts <code>vds=1</code> only and rejects anything else. The CCF receipt came from a CCF development node, not a production service.)</p>
 
 <h2>What stays constant</h2>
 <p>The signed statement &mdash; the capsule itself &mdash; does not change between <code>vds=1</code> and <code>vds=2</code>. Only the receipt differs. That is the whole point of separating <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer from the transparency layer</a>.</p>
@@ -553,17 +719,21 @@ PAGES["verifiable-data-structures"] = dict(
 
 PAGES["how-verification-works"] = dict(
     title="How verification works: signature + inclusion proof",
-    desc="Verifying a capsule is two independent checks: the COSE signature proves who sealed it, and the receipt's inclusion proof shows the log recorded it. Both check from the bytes, offline.",
+    desc="Verifying a capsule is three independent checks: recompute its capsule_id, check each producer signature over that id, and check the receipt's inclusion proof. All run from the bytes, offline.",
     crumb="Concepts",
-    body="""
+    body=f"""
 <h1>How verification works</h1>
-<p class="lede">Verifying a capsule is two independent checks. The signature proves <strong>who sealed it</strong>. The receipt proves <strong>the log included it</strong>. Neither check requires trusting the operator &mdash; both run from the bytes, offline.</p>
+<p class="lede">Verifying a capsule is three independent checks, in order. The <code>capsule_id</code> shows <strong>the record is intact</strong>. The signature proves <strong>who sealed it</strong>. The receipt proves <strong>the log included it</strong>. None requires trusting the operator &mdash; all run from the bytes, offline.</p>
 
-<h2>Check 1 &mdash; the signature</h2>
-<p>The capsule is a <code>COSE_Sign1</code> structure. Given the issuer's public key, the verifier confirms the signature covers the protected header and payload. If any field changed after signing, the check fails. This establishes <em>who</em> made the statement and that it is intact.</p>
+<h2>Check 1 &mdash; the capsule_id</h2>
+<p>The verifier recomputes the <code>capsule_id</code>: the SHA-256 of the canonical capsule. A carried value is never trusted. If any field changed after sealing, the recomputed value differs and the check fails.</p>
 
-<h2>Check 2 &mdash; the inclusion proof</h2>
-<p>The transparency service returns a receipt: a signed proof that the statement's leaf digest sits in the log's Merkle tree at a given size. Given the log's public key and the leaf digest, the verifier recomputes the path to the signed tree head. This establishes that the record was <em>recorded</em> and is discoverable &mdash; not held privately by the operator.</p>
+<h2>Check 2 &mdash; the signature</h2>
+<p>A Producer Envelope is a <code>COSE_Sign1</code> whose payload is the 32-byte <code>capsule_id</code>. Given the producer's public key, the verifier confirms the signature covers that id. This establishes <em>who</em> sealed the record. A capsule can carry more than one envelope, and each is checked on its own; one with none is intact but unattributed.</p>
+<div class="callout">{SIGNING_NOTE}</div>
+
+<h2>Check 3 &mdash; the inclusion proof</h2>
+<p>The transparency service returns a receipt: a signed proof that the statement's leaf digest sits in the log's verifiable data structure (for an RFC&nbsp;9162 log, a Merkle tree) at a given size. Given the log's public key and the leaf digest, the verifier recomputes the path to the signed tree head. This establishes that the record was <em>recorded</em> and is discoverable &mdash; not held privately by the operator.</p>
 
 <pre class="code"><code><span class="c"># verify a receipt's inclusion proof, offline</span>
 <span class="k">from</span> scitt_cose <span class="k">import</span> verify_receipt
@@ -587,51 +757,51 @@ r = verify_receipt(receipt, leaf_entry_hex=leaf,
 
 PAGES["quickstart"] = dict(
     title="Quickstart: seal your first capsule",
-    desc="Seal an agent action as a verifiable capsule with one emit() call, anchor it to a transparency log, and verify the result. Copy-paste-runnable.",
+    desc="Seal an agent action as a verifiable capsule with one seal() call, witness it via a transparency log, and verify the result. Copy-paste-runnable.",
     crumb="Guides",
     body="""
 <h1>Quickstart: seal your first capsule</h1>
-<p class="lede">From install to a verified, anchored record in a few minutes &mdash; using <code>emit()</code>, the canonical one-call API.</p>
+<p class="lede">From install to a witnessed, verified record in a few minutes &mdash; using <code>seal()</code>, the canonical one-call API.</p>
 
 <h2>1. Install</h2>
-<pre class="code"><code>pip install capsule-emit agent-action-capsule  # 0.3.2 or later</code></pre>
+<pre class="code"><code>pip install capsule-emit</code></pre>
 
-<div class="callout"><strong>Where you start matters.</strong> By default, <code>emit()</code> anchors to the public log. If you want to try locally first with no network or services, set <code>CAPSULE_ANCHOR=false</code> (or pass <code>anchor=False</code>): you get structured records and a local ledger file you can verify offline, with the page showing <em>self-attested / not anchored</em>. One config change moves you to anchoring when you&rsquo;re ready. See the <a class="ln" href="#where-it-anchors">adoption ladder</a>.</div>
+<div class="callout"><strong>Where you start matters.</strong> <code>seal()</code> is signed and witnessed by default, async and non-blocking &mdash; no signup, no key. If you want to try locally first with zero network egress, set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>): you get a signed, structured record and a local ledger file you can verify offline. One config change turns witnessing back on when you&rsquo;re ready. See <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">the adoption ladder</a>.</div>
 
 <h2>2. Seal an action</h2>
-<p>Call <code>emit()</code> once at each consequential action. <code>operator</code>, <code>developer</code>, <code>action</code>, <code>agent_input</code>, <code>agent_output</code>, <code>verdict</code>, and <code>effect</code> are required; <code>model</code> is optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
-<pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> emit
+<p>Call <code>seal()</code> once at each consequential action &mdash; the payload is the first positional argument, never a keyword. <code>action</code>, <code>operator</code>, <code>developer</code>, and <code>agent_output</code> are what you'll always pass; <code>model</code>, <code>verdict</code>, and <code>effect</code> are optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
+<pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> seal
 
-result = place(<span class="s">"Frobozz Supply"</span>, 4210.00, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
+result = place(<span class="s">"Frobozz Supply"</span>, <span class="s">"4210.00"</span>, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
 
-cap = emit(
+cap = seal(
+    {<span class="s">"vendor"</span>: <span class="s">"Frobozz Supply"</span>, <span class="s">"total"</span>: <span class="s">"4210.00"</span>},  <span class="c"># payload &mdash; first arg; monetary values are strings, not floats</span>
     action=<span class="s">"submit_order"</span>,
-    operator=<span class="s">"acme-co"</span>,                <span class="c"># accountable tenant (required)</span>
-    developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version (required)</span>
-    agent_input={<span class="s">"vendor"</span>: <span class="s">"Frobozz Supply"</span>, <span class="s">"total"</span>: 4210.00},
+    operator=<span class="s">"acme-co"</span>,                <span class="c"># accountable tenant</span>
+    developer=<span class="s">"po-agent@v1"</span>,           <span class="c"># agent identity + version</span>
     agent_output=result,
-    model={<span class="s">"provider"</span>: <span class="s">"anthropic"</span>, <span class="s">"model_id"</span>: <span class="s">"claude-sonnet-4-6"</span>},
-    verdict=<span class="s">"executed"</span>,               <span class="c"># executed | confirmed | denied | blocked</span>
+    model={<span class="s">"provider"</span>: <span class="s">"example-provider"</span>, <span class="s">"model_id"</span>: <span class="s">"example-model"</span>},
+    verdict=<span class="s">"executed"</span>,               <span class="c"># a verdict_class: executed | blocked | denied | …</span>
     effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
 )
-print(cap.capsule_id, cap.anchored)   <span class="c"># sealed; digest submitted to the log</span></code></pre>
-<div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter emits on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
+print(cap.capsule_id, cap.signature)   <span class="c"># sealed, signed, and witnessed by default</span></code></pre>
+<div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter seals on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
 
-<h2>3. Where it anchors</h2>
-<p>By default, the capsule's digest is submitted asynchronously to the neutral public log at <a class="ln" href="https://anchor.agentactioncapsule.org">anchor.agentactioncapsule.org</a> &mdash; no signup, no key. Set <code>CAPSULE_ANCHOR=false</code> (or <code>anchor=False</code>) to seal locally; set <code>AAC_ANCHOR_URL</code> or pass <code>anchor_url=&hellip;</code> to point at your own SCITT service. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
+<h2>3. Where it's witnessed</h2>
+<p>By default, every <code>seal()</code> folds the capsule into your ledger's checkpoint/witness stream: roughly every 100 entries (or 15 minutes), a signed checkpoint of the whole ledger &mdash; never capsule content &mdash; is registered with the public witness at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a>, no signup, no key. Set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>) to seal fully offline; set <code>CAPSULE_WITNESS_URL</code> or pass <code>witness_url=&hellip;</code> to point at your own Transparency Service. The older per-capsule <em>anchor</em> channel (<code>cap.anchored</code>, <code>anchor=True</code> / <code>CAPSULE_ANCHOR=legacy-on</code>) is a legacy, explicit opt-in kept only as a rollback path &mdash; it has not been the default egress path since 0.5.0. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
 
 <h2>4. Verify</h2>
-<p>Each <code>emit()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
+<p>Each <code>seal()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
 <pre class="code"><code><span class="c"># verify a ledger of sealed capsules, offline &mdash; no keys or network needed</span>
-agent-action-capsule verify --store ledger.jsonl
+capsule-emit verify --store ledger.jsonl
 
-  <span class="s">capsule_id</span>  9f2a...c14  <span class="ok">ok</span>
-  substrate.anchored: <span class="ok">True</span>          <span class="c"># digest on the public log</span>
-  substrate.receipt_verified: <span class="ok">True</span>  <span class="c"># receipt present and validated</span></code></pre>
-<div class="callout warn"><strong>Today vs roadmap:</strong> <code>emit()</code> submits the capsule&rsquo;s digest to the public log (<code>cap.anchored=True</code>). The log&rsquo;s inclusion <em>receipt</em> is verifiable against the log today; surfacing it back onto the <code>emit()</code> return value is on the near-term roadmap.</div>
+  <span class="ok">VALID</span>
+
+1/1 <span class="ok">VALID</span></code></pre>
+<div class="callout warn"><strong>Two verify surfaces, not one:</strong> <code>agent-action-capsule verify</code> (the spec package's own CLI, bundled as a <code>capsule-emit</code> dependency) checks structural/digest conformance only. <code>capsule-emit verify</code> runs that same check <em>plus</em> the producer-envelope check: a capsule with an altered <code>signature</code> but an otherwise-untouched digest still reads <code>ok</code> under <code>agent-action-capsule verify</code> and fails <code>INVALID</code> under <code>capsule-emit verify</code>. Use <code>capsule-emit verify --store</code> for the full check.</div>
 <h2>Adapters: seal from your framework</h2>
-<p>You don&rsquo;t have to call <code>emit()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). A gateway integration (<strong>agentgateway</strong>) seals at the chokepoint every consequential action flows through &mdash; one policy point instead of N integrations (via the gateway's <code>mcpGuardrails</code> ExtMcp hook). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a> and the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter</a>.</p>
-<div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check proves.</div>
+<p>You don&rsquo;t have to call <code>seal()</code> by hand. Thin adapters seal one capsule per tool call across the framework you already use &mdash; MCP / any callable (a decorator), LangChain / LangGraph (a callback), CrewAI (a tool wrap), and <strong>Goose</strong> (companion MCP server or <code>@emitter.tool()</code> decorator, verified against Goose v1.39.0). A gateway integration (<strong>agentgateway</strong>) seals at the chokepoint every consequential action flows through &mdash; one policy point instead of N integrations (via the gateway's <code>mcpGuardrails</code> ExtMcp hook). Any custom loop works via one call at the tool boundary. Per-framework guides: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">docs/adapters/</a> &mdash; including the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/goose.md">Goose extension</a> and the <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/agentgateway.md">agentgateway adapter</a>.</p>
+<div class="callout">Next: <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> in detail &mdash; the hosted verifier, command line, and what each check covers.</div>
 """,
 )
 
@@ -641,15 +811,34 @@ PAGES["verify-a-capsule"] = dict(
     crumb="Guides",
     body="""
 <h1>Verify a capsule</h1>
-<p class="lede">Anyone holding a capsule or receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path runs the same open-source verifier and checks the same two things: the signature and the inclusion proof.</p>
+<p class="lede">Anyone holding a capsule or receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path runs the same open-source verifier. The command line checks a ledger &mdash; digests, chain links, and producer signatures; the browser and the library check a receipt &mdash; the signature and the inclusion proof.</p>
 
 <h2>In the browser</h2>
 <p>The fastest way to check a single receipt or signed statement is the hosted verifier. Paste a receipt or statement (and a key, if you want the signature checked) and read the verdict and reasons. It is stateless &mdash; nothing you submit is stored.</p>
 <div class="callout">Open <a class="ln" href="https://verify.agentactioncapsule.org">verify.agentactioncapsule.org</a>. The page runs the identical library you can install locally; for maximal privacy, verify locally instead.</div>
 
 <h2>On the command line</h2>
-<pre class="code"><code>pip install agent-action-capsule
-agent-action-capsule verify --store ledger.jsonl</code></pre>
+<pre class="code"><code>pip install capsule-emit
+capsule-emit verify --store ledger.jsonl
+
+  <span class="ok">VALID</span>
+  <span class="ok">VALID</span>
+
+2/2 <span class="ok">VALID</span></code></pre>
+<p><code>capsule-emit verify</code> recomputes every capsule's digest and chain link with the reference verifier from <code>agent-action-capsule</code> (which ships as a dependency, and whose own <code>agent-action-capsule verify</code> runs that structural check alone) <em>and</em> checks each producer signature it finds. A tampered record prints <code>INVALID</code> and the command exits 1. Neither check needs the network.</p>
+
+<h2>With the Go CLI: <code>capsulectl</code></h2>
+<p>If you would rather not run Python, <code>capsulectl</code> is a standalone Go binary (built on <code>capsule-emit-go</code>) that seals and verifies its own artifact records &mdash; it does not read the Python <code>ledger.jsonl</code> above, so use it end to end. Install it with Go 1.27 or later, create a profile that pins the producer's public key, seal a request (format in the <a class="ln" href="https://github.com/action-state-group/capsule-cli#seal-request-and-stored-artifact">capsule-cli README</a>), and verify:</p>
+<pre class="code"><code>go install github.com/action-state-group/capsule-cli/cmd/capsulectl@latest
+capsulectl key generate --output producer.seed        <span class="c"># prints the public key</span>
+capsulectl profile create --name local --type jsonl --jsonl-path ./capsules \\
+  --signing-key-file producer.seed --trusted-key PRODUCER_PUBLIC_KEY_HEX
+capsulectl seal --profile local --request request.json --output artifact.json
+capsulectl verify --profile local --capsule artifact.json
+
+{"capsule_identity":"<span class="ok">passed</span>","producer_signature_and_trust":"<span class="ok">passed</span>",
+ "artifacts":{"payload":{"Verified":true},"agent_output":{"Verified":true}}, &hellip;}</code></pre>
+<p><code>capsulectl verify</code> recomputes the capsule's identity, checks the producer signature against the key your profile pins, and checks each bound original. A changed byte, or a producer key the profile does not trust, fails the check and the command exits non-zero. No network is needed.</p>
 
 <h2>As a library</h2>
 <pre class="code"><code><span class="k">from</span> scitt_cose <span class="k">import</span> verify_receipt
@@ -681,7 +870,7 @@ PAGES["whats-consequential"] = dict(
   <thead><tr><th>Signal</th><th>Seal it when…</th></tr></thead>
   <tbody>
     <tr><th>1 · Command vs. query</th><td>the action <strong>changes state or has a side effect</strong> — places an order, moves money, sends a message, writes a record. Pure reads (list / get / search) are queries — not sealed by default.</td></tr>
-    <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>engine-side</em>, where data is classified — not at the gateway.</td></tr>
+    <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>by the producer</em>, where data is classified — not at the gateway.</td></tr>
   </tbody>
 </table>
 
@@ -718,16 +907,22 @@ PAGES["how-it-composes"] = dict(
 <p>Most agent-trust layers answer a different question than the capsule does. Identity says <em>who</em> is acting; authorization says <em>whether</em> an action is allowed; an anchoring log says the record was <em>included</em>. The capsule answers <strong>what the agent did</strong>, in a record anyone can check — and it leans on those other layers for the rest rather than reabsorbing them. There's no need to fork your stack to adopt it.</p>
 
 <h2>How composition works: reference by digest</h2>
-<p>A capsule binds external evidence into its verifiable trail through <code>chain.relation</code>: it commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it. The verifier checks the binding; the referenced data stays where it lives. (The same mechanism links a confirmation back to the action it confirms — see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>.)</p>
+<p>A capsule binds external evidence into its verifiable trail through its <code>references</code> array: each entry commits the <strong>digest</strong> of another artifact — an authorization grant, a policy decision, an upstream receipt — without copying or exposing it, and says why it is cited. The verifier checks the binding; the referenced data stays where it lives. <code>chain</code> is a different field: it links a capsule only to the same producer's previous capsule, such as a confirmation to the action it confirms (see <a class="ln" href="/docs/what-is-a-capsule.html">what is a capsule</a>).</p>
 <pre class="code"><code>{
-  "action": "submit_order",
+  "action_id": "po-0047-submit",
   "operator": "acme-co",
-  "chain": {
-    "relation": "authorized-by",      // this action was permitted by …
-    "ref": "sha-256:9f2a…c14"         // digest of the grant / credential
-  }
+  "chain": {                            // same producer, same stream only
+    "parent_capsule_id": "3c1e…a07b",
+    "relation": "follows"
+  },
+  "references": [{                      // anything outside the stream
+    "type": "…",                        // a registered artifact type
+    "digest_alg": "sha-256",
+    "digest": "9f2a…c14",               // digest of the grant
+    "citation_purpose": "ran_under"     // the authority it ran under
+  }]
 }</code></pre>
-<p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. The precise relation vocabulary is defined in the spec registry; to register a relation for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
+<p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. Both vocabularies &mdash; <code>chain.relation</code> and <code>citation_purpose</code> &mdash; are registries defined in the spec; to register a value for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
 <table class="t">
   <thead><tr><th>Layer</th><th>It answers</th><th>How the capsule composes</th></tr></thead>
   <tbody>
@@ -743,38 +938,40 @@ PAGES["how-it-composes"] = dict(
 <div class="callout">A capsule records the bytes it is given. Authenticating <em>upstream</em> inputs — that a tool response or grounding source is genuine — is a separate, composable layer; bind its evidence by digest and the verifier checks that too. Composition, not dependency.</div>
 
 <h2>The four-leg accountability picture</h2>
-<p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable principal? — identity), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
-<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the identity credential (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
+<p>A fuller framing of agent accountability splits into four questions: <strong>CAN</strong> (was the action permitted? — authorization), <strong>WHO</strong> (which accountable human authorized this exact action? — named-human authorization), <strong>WHAT</strong> (what did the agent do? — the Agent Action Capsule), and <strong>AUDIT</strong> (did the runtime enforce correctly? — observability and gating). Each leg answers its own slice; together they span the accountability gap.</p>
+<p><strong>The capsule is the WHAT leg.</strong> The four legs compose by a shared action digest: <code>subject_digest&nbsp;=&nbsp;SHA-256(JCS(action))</code> — any layer that commits to the same action digest binds itself to the same event, so the capsule's anchored record ties to the authorization grant (CAN), the named human's authorization receipt (WHO), and the runtime gate's decision (AUDIT) without any layer absorbing the others.</p>
 <div class="callout deeper">The <strong>CAN/WHO/WHAT/AUDIT composition model</strong> — how independently-verifiable records join on a shared action digest — is laid out on the <a class="ln" href="/#compose">Standard's Composition section</a>. Underneath it, the <strong>Canonical Payload Binding (CPB)</strong> is the small companion spec that lets every record compute the same digest: it defines how a payload binds to a SCITT receipt and how a payload class declares and resolves its canonical form, so any conforming profile composes with a capsule without a custom adapter. CPB has its own site and registry: <a class="ln" href="https://canonicalpayloadbinding.org/">canonicalpayloadbinding.org &#x2197;</a>.</div>
 """,
 )
 
-PAGES["anchor-anywhere"] = dict(
-    title="Anchor anywhere — what leaves your walls",
-    desc="When you anchor a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Anchor to the public log, run your own anchor in the region you choose, or self-host inside your VPC where the hash never leaves.",
+PAGES["witness-anywhere"] = dict(
+    title="Witness anywhere — what leaves your walls",
+    desc="When you witness a capsule, only a digest and a timestamp leave — never prompts, payloads, or PII. Witness at the public log, run your own witness in the region you choose, or self-host inside your VPC where the hash never leaves.",
     crumb="Concepts",
     body="""
-<h1>Anchor anywhere — what leaves your walls</h1>
-<p class="lede">Anchoring proves a capsule was included in a public, append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
+<h1>Witness anywhere — what leaves your walls</h1>
+<p class="lede">Witnessing proves a capsule was included in a public, append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
 
 <h2>What leaves your walls</h2>
-<p>A capsule is <a class="ln" href="/docs/what-is-a-capsule.html">content-private by construction</a>: it carries digests of inputs and outputs, not the raw values. When it's anchored, the log receives the statement's commitment — a hash — plus a timestamp. The raw content stays where you keep it, under your control. The public log stores <em>a commitment you can check</em>, not your data.</p>
+<p>A capsule is <a class="ln" href="/docs/what-is-a-capsule.html">content-private by construction</a>: it carries digests of inputs and outputs, not the raw values. When it's witnessed, the log receives the statement's commitment — a hash — plus a timestamp. The raw content stays where you keep it, under your control. The public log stores <em>a commitment you can check</em>, not your data.</p>
 
-<h2>Anchor anywhere — three options</h2>
+<h2>Witness anywhere — three options</h2>
 <table class="t">
-  <thead><tr><th>Where you anchor</th><th>What it gives you</th><th>What leaves your environment</th></tr></thead>
+  <thead><tr><th>Where you witness</th><th>What it gives you</th><th>What leaves your environment</th></tr></thead>
   <tbody>
-    <tr><th>The public log</th><td>zero-setup existence proofs on a shared, open log (<code>anchor.agentactioncapsule.org</code>)</td><td>a digest + a timestamp</td></tr>
-    <tr><th>Your own anchor, in the region you choose</th><td>residency / jurisdiction control (e.g. EU, Singapore) by running the open anchor where you need it</td><td>a digest + a timestamp, kept in your jurisdiction</td></tr>
-    <tr><th>Your own anchor, inside your VPC</th><td>full control — self-host the container with your own storage</td><td>nothing — the hash never leaves your environment</td></tr>
+    <tr><th>The public log</th><td>zero-setup existence proofs on a shared, open log (<code>witness.agentactioncapsule.org</code>)</td><td>a digest + a timestamp</td></tr>
+    <tr><th>Your own witness, in the region you choose</th><td>residency / jurisdiction control (e.g. EU, Singapore) by running the open witness log where you need it</td><td>a digest + a timestamp, kept in your jurisdiction</td></tr>
+    <tr><th>Your own witness, inside your VPC</th><td>full control — self-host the container with your own storage</td><td>nothing — the hash never leaves your environment</td></tr>
   </tbody>
 </table>
-<p>The capsule is <strong>anchor-agnostic</strong> (it makes no claim about the log's <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure</a>): the same statement verifies whichever log you choose, so you can move or mix anchors without changing the record.</p>
+<p>The capsule is <strong>witness-agnostic</strong> (it makes no claim about the log's <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure</a>): the same statement verifies whichever log you choose, so you can move or mix witnesses without changing the record. This is also true of vendor lock-in more broadly: no vendor, including us, controls where your capsules get witnessed.</p>
 
 <h2>What a digest hides — and what it doesn't</h2>
-<p>A digest hides a value only when that value is hard to guess. A high-entropy input (a full prompt, a document, a key) is safe. But a <em>low-entropy</em> value — a short dollar amount, a yes/no disposition, an ID from a known list — can be recovered by hashing candidate values until one matches. For those fields, <strong>salt before hashing</strong> (commit a per-tenant salt alongside the value) so the digest can't be brute-forced. And note the capsule commits some metadata in the clear — the action type and disposition — so &ldquo;content-private&rdquo; means your <em>payloads</em> stay private, not that the capsule reveals nothing about what kind of action occurred.</p>
+<p>A digest hides a value only when that value is hard to guess. A high-entropy input (a full prompt, a document, a key) is safe. But a <em>low-entropy</em> value — a short dollar amount, a yes/no disposition, an ID from a known list — can be recovered by hashing candidate values until one matches. For those fields, <strong>salt before hashing</strong> with a random salt that stays secret, and disclose it only together with the value when you choose to reveal it. A published salt does not help: anyone can hash the candidates with it. And note the capsule commits some metadata in the clear — the action type and disposition — so &ldquo;content-private&rdquo; means your <em>payloads</em> stay private, not that the capsule reveals nothing about what kind of action occurred.</p>
 
 <div class="callout">The privacy promise, in one line: <strong>we verify; we store nothing of yours but a commitment you can check</strong> — and, for guessable values, salt before you commit them.</div>
+
+<div class="callout deeper">Vocabulary check: <a class="ln" href="/docs/translation.html">see the word-for-word translation</a> across dev / auditor / spec registers — including why the service is a &ldquo;witness&rdquo; while the spec's assurance tier is still called <code>anchored</code> (see the <a class="ln" href="/docs/glossary.html">glossary</a>).</div>
 """,
 )
 
@@ -793,7 +990,7 @@ PAGES["governance"] = dict(
 <table class="t">
   <tbody>
     <tr><th>Open</th><td>Apache-2.0 tooling; the specification under the IETF Trust's terms (BCP 78/79, code components under the Revised BSD License). Developed in public.</td></tr>
-    <tr><th>Vendor-neutral</th><td>No required product; the specification favors no vendor. Any party can implement, run, and anchor — including in their own environment.</td></tr>
+    <tr><th>Vendor-neutral</th><td>No required product; the specification favors no vendor. Any party can implement, run, and witness — including in their own environment.</td></tr>
     <tr><th>Verifiable</th><td>Decisions, like capsules, happen in the open: public issues, public PRs, public discussion.</td></tr>
     <tr><th>Donate by design</th><td>The profile, the trademark, and the reference services are intended to transfer to a neutral foundation as the ecosystem matures.</td></tr>
   </tbody>
@@ -815,7 +1012,7 @@ PAGES["governance"] = dict(
 <p>Changes happen by pull request and public discussion, with lazy consensus among maintainers; significant changes get an issue first. The <em>specification</em> evolves through the IETF process — it's an individual Internet-Draft (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>), and the goal is to bring it to the SCITT working group, where the WG — not this project — decides its standing.</p>
 
 <h2>Conformance to the final standard</h2>
-<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; COSE receipt specifications are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
+<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a> and COSE Receipts as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>; related specifications, such as the CCF receipt profile and SCRAPI, are still Internet-Drafts. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
 
 <h2>The path to a neutral foundation</h2>
 <p>Donation is a commitment, not just a hope. The intended sequence:</p>
@@ -830,7 +1027,7 @@ PAGES["governance"] = dict(
 <p>Candidate homes are neutral, foundation-style bodies in the open-source / standards world; the specific home will be chosen with the community rather than announced unilaterally.</p>
 
 <h2>Scope &amp; boundaries</h2>
-<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the anchor. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the boundary between the open record layer and runtime enforcement is explicit, not implied.</p>
+<p>The open project is the <strong>record layer</strong>: the profile, the producer (with example constraint manifests), the verifier, and the witness. Acting on declared constraints at runtime — <em>enforcement</em> — is a separate concern that composes with a policy gateway. The capsule records what happened; it does not gate. We call that boundary out so the boundary between the open record layer and runtime enforcement is explicit, not implied.</p>
 
 <div class="callout">Want to help shape it? Open an issue or PR on <a class="ln" href="https://github.com/action-state-group">GitHub</a>, comment on the <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft</a>, or write <a class="ln" href="mailto:spec@actionstate.ai">spec@actionstate.ai</a>. Join the conversation on <a class="ln" href="https://github.com/action-state-group">GitHub</a>.</div>
 """,
@@ -846,7 +1043,7 @@ PAGES["glossary"] = dict(
 <table class="t">
   <thead><tr><th>Term</th><th>Definition</th></tr></thead>
   <tbody>
-    <tr><th>SCITT</th><td>Supply Chain Integrity, Transparency, and Trust &mdash; the IETF working group and architecture for registering signed statements in transparency services. Its Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; some COSE receipt specifications are still drafts.</td></tr>
+    <tr><th>SCITT</th><td>Supply Chain Integrity, Transparency, and Trust &mdash; the IETF working group and architecture for registering signed statements in transparency services. Its Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a> and COSE Receipts as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>; some related specifications, such as the CCF receipt profile, are still Internet-Drafts.</td></tr>
     <tr><th>SCITT profile</th><td>A specialization of the general SCITT signed-statement format for a domain. The Agent Action Capsule is the profile for <em>agent actions</em> &mdash; it builds on SCITT/COSE and interoperates with any SCITT transparency service, rather than being a separate standard.</td></tr>
     <tr><th>COSE</th><td>CBOR Object Signing and Encryption &mdash; the signature format used for statements and receipts.</td></tr>
     <tr><th>COSE_Sign1</th><td>A single-signer COSE structure: one signature over a protected header and payload. The envelope an Agent Action Capsule uses.</td></tr>
@@ -854,7 +1051,7 @@ PAGES["glossary"] = dict(
     <tr><th>Agent Action Capsule</th><td>The profile in this project: a Signed Statement over <code>application/agent-action-capsule+json</code> committing to an action and its input/output digests.</td></tr>
     <tr><th>Transparency Service</th><td>A service that registers Signed Statements into an append-only log, issues receipts, and publishes tree heads and proofs.</td></tr>
     <tr><th>Transparency log</th><td>The public, append-only log a Transparency Service maintains. It is publicly readable &mdash; anyone can fetch its entries and verify any one of them; nothing is taken on trust.</td></tr>
-    <tr><th>Ledger</th><td>Your <em>local</em> append-only trail of capsules (e.g. <code>ledger.jsonl</code>) &mdash; distinct from the public transparency log. The ledger is yours; the transparency log is the shared, anchored record.</td></tr>
+    <tr><th>Ledger</th><td>Your <em>local</em> append-only trail of capsules (e.g. <code>ledger.jsonl</code>) &mdash; distinct from the public transparency log. The ledger is yours; the transparency log is the shared, witnessed record.</td></tr>
     <tr><th>Receipt</th><td>A signed proof, returned by a transparency service, that a statement was included in its log. Verifiable offline against the log key.</td></tr>
     <tr><th>VDS</th><td>Verifiable Data Structure &mdash; how a log proves inclusion and consistency. <code>vds=1</code> is RFC9162_SHA256; <code>vds=2</code> is CCF (ccf.v1).</td></tr>
     <tr><th>Inclusion proof</th><td>Evidence that a specific leaf is part of the log at a given size &mdash; answers &ldquo;is my record in the log?&rdquo;</td></tr>
@@ -862,7 +1059,9 @@ PAGES["glossary"] = dict(
     <tr><th>STH</th><td>Signed Tree Head &mdash; the log's current Merkle root and size, signed, so verifiers and witnesses can pin its state.</td></tr>
     <tr><th>Merkle tree</th><td>A hash tree whose root commits to every leaf; the structure behind RFC&nbsp;9162 inclusion and consistency proofs.</td></tr>
     <tr><th>RFC 9162</th><td>Certificate Transparency 2.0 &mdash; the published RFC whose SHA-256 Merkle proofs back <code>vds=1</code>.</td></tr>
-    <tr><th>CCF</th><td>Confidential Consortium Framework &mdash; Microsoft's open-source ledger framework whose receipts back <code>vds=2</code>.</td></tr>
+    <tr><th>CCF</th><td>Confidential Consortium Framework &mdash; an open-source confidential ledger framework whose receipts back <code>vds=2</code>.</td></tr>
+    <tr id="disposition"><th>Disposition</th><td>How an action was disposed, recorded in every capsule &mdash; refusals included. Its <code>verdict_class</code> is one of the spec's registered values: <code>executed</code>, <code>blocked</code>, <code>hitl_dispatched</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>engine_failure</code>, <code>deferred</code>, <code>needs_decision</code>, <code>expired</code>, <code>escalated</code>, <code>resolved</code>, <code>epoch_boundary</code>. Its <code>decision</code> is <code>accept</code>, <code>reject</code>, <code>needs_input</code> or <code>deferred</code>, and its <code>approver</code> is <code>human</code>, <code>policy</code> or <code>counterparty</code>. <em>Confirmed</em> is not a verdict: it is an effect status (the result was observed), and <code>confirms</code> is a chain relation. This is the one list the site uses.</td></tr>
+    <tr><th>Witness vs <code>anchored</code></th><td>A <strong>witness</strong> is an independent party that co-signs a log's checkpoint, and this site uses the word for both the service and the act. <code>anchored</code> is the specification's name for an assurance tier: a record whose chain has been registered with a transparency log, backed by a receipt a verifier has checked. Same event, two vocabularies. The site avoids &ldquo;anchor&rdquo; as a verb because it collides with &ldquo;trust anchor&rdquo;. The service's source is still named <code>capsule-anchor</code>.</td></tr>
   </tbody>
 </table>
 """,
@@ -879,44 +1078,11 @@ INDEX_BODY = f"""
   <div class="cards">
     <a class="dcard" href="{CE_DOCS}/tutorials/see-a-ledger.md"><div class="n">1 &middot; See a ledger &#x2197;</div><div class="d">Two real agent runs shown beside the capsules that record them &mdash; the run you hold vs. the ledger anyone can check. Nothing to install.</div></a>
     <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">2 &middot; Verify one yourself</div><div class="d">Signature, then inclusion proof &mdash; from the bytes alone, in the browser, on the command line, or as a library.</div></a>
-    <a class="dcard" href="/docs/quickstart.html"><div class="n">3 &middot; Produce your own</div><div class="d">Now seal a capsule with one <code>emit()</code> call, anchor it, and verify it. Copy-paste-runnable.</div></a>
+    <a class="dcard" href="/docs/quickstart.html"><div class="n">3 &middot; Produce your own</div><div class="d">Now seal a capsule with one <code>seal()</code> call, witness it, and verify it. Copy-paste-runnable.</div></a>
   </div>
 </div>
 
-<div class="idx-group">
-  <h2>Concepts</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/what-is-a-capsule.html"><div class="n">What is an Agent Action Capsule?</div><div class="d">A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable.</div></a>
-    <a class="dcard" href="/docs/statement-vs-transparency-layer.html"><div class="n">Statement vs transparency layer</div><div class="d">What happened vs where it is recorded &mdash; and why the statement is structure-independent.</div></a>
-    <a class="dcard" href="/docs/what-is-a-transparency-service.html"><div class="n">What is a Transparency Service?</div><div class="d">Register, receipt, anchor &mdash; and the boundary between a transparency service and a verifier.</div></a>
-    <a class="dcard" href="/docs/verifiable-data-structures.html"><div class="n">Verifiable Data Structures</div><div class="d">RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them.</div></a>
-    <a class="dcard" href="/docs/how-verification-works.html"><div class="n">How verification works</div><div class="d">Two independent checks: signature, then inclusion proof &mdash; both from the bytes, offline.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Guides</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/quickstart.html"><div class="n">Quickstart</div><div class="d">Seal your first capsule with one <code>emit()</code> call, anchor it, and verify. Copy-paste-runnable.</div></a>
-    <a class="dcard" href="/docs/verify-a-capsule.html"><div class="n">Verify a capsule</div><div class="d">Verify in the browser, on the command line, or as a library &mdash; same checks everywhere.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Live &amp; interactive</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/explore.html"><div class="n">Explore a capsule</div><div class="d">Interactive: click each field, edit what goes into a digest, tamper one and watch the seal break, then verify a bundle as a skeptical auditor.</div></a>
-    <a class="dcard" href="/docs/log.html"><div class="n">The public log, live</div><div class="d">Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records. Public, verifiable, nothing fabricated.</div></a>
-  </div>
-</div>
-
-<div class="idx-group">
-  <h2>Reference</h2>
-  <div class="cards">
-    <a class="dcard" href="/docs/glossary.html"><div class="n">Glossary</div><div class="d">SCITT, COSE_Sign1, Signed Statement, Receipt, VDS, STH, inclusion &amp; consistency proofs.</div></a>
-  </div>
-</div>
-
+{index_groups_html()}
 <div class="callout deeper"><strong>Building on it?</strong> Implementation, tutorials, and adapter guides live in the canonical <code>capsule-emit</code> docs: <a class="ln" href="{CE_DOCS}">capsule-emit/docs &#x2197;</a>. These pages cover the standard-level concepts; the repo docs cover hands-on usage.</div>
 
 <div class="callout">{STATUS_NOTE}</div>
@@ -938,7 +1104,10 @@ def main():
         (OUT / f"{slug}.html").write_text(
             render(slug, p["title"], p["desc"], p["crumb"], body), encoding="utf-8")
         n += 1
-    print(f"wrote {n} files to {OUT}")
+    # hand-written pages: splice in the same header, sidebar, prev/next and footer
+    for rel, (active, key) in HAND_PAGES.items():
+        rechrome(rel, active, key)
+    print(f"wrote {n} files to {OUT}; re-chromed {len(HAND_PAGES)} hand-written pages")
 
 
 if __name__ == "__main__":

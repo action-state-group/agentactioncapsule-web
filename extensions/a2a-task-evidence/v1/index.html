@@ -77,7 +77,7 @@
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
@@ -134,14 +134,76 @@
   .step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
   .step-body h3{font-size:16px;font-weight:600;margin-bottom:5px}
   .step-body p{font-size:14px;color:var(--muted);margin:0}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px}
 </style>
+<!--chrome:head--><script>document.documentElement.className+=' js';</script>
+<style>
+  /* shared chrome (tools/build_docs.py) */
+  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink);white-space:nowrap}
+  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
+  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
+  .nav-links{display:flex;gap:22px;align-items:center}
+  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink);font-weight:600}
+  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
+  .nav-ghost:hover{border-color:var(--ink)}
+  .nav-toggle{display:none;align-items:center;gap:8px;font:inherit;font-size:13.5px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:7px;padding:6px 12px;cursor:pointer}
+  .nav-toggle .bars{width:14px;height:10px;border-top:1.5px solid currentColor;border-bottom:1.5px solid currentColor;position:relative}
+  .nav-toggle .bars::after{content:'';position:absolute;left:0;right:0;top:3.5px;border-top:1.5px solid currentColor}
+  .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
+  .side-d>summary{display:none}
+  .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
+  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h5:first-child{margin-top:0}
+  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
+  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
+  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
+  .next a:hover{border-color:var(--ink)}
+  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
+  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
+  .next a.n{text-align:right}
+  footer{padding:48px 0 56px;border-top:1px solid var(--line)}
+  .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  .foot-brand{max-width:38ch}
+  .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
+  .foot-cols{display:flex;gap:48px;flex-wrap:wrap}
+  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
+  .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
+  .foot-col a:hover{color:var(--ink)}
+  .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
+  @media(max-width:900px){
+    .docs{grid-template-columns:1fr;gap:20px}
+    .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
+    .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+    .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
+    .side-d .side h5{width:100%;margin:8px 0 2px}
+    .side-d .side a{border-left:none;padding:3px 0}
+  }
+  @media(max-width:860px){
+    .nav-in{padding:12px 16px;flex-wrap:wrap;gap:10px}
+    .nav-links{flex-wrap:wrap;gap:6px 16px;overflow:visible}
+    html.js .nav-toggle{display:inline-flex}
+    html.js .nav-links{display:none;width:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 0 8px}
+    html.js .nav-links.open{display:flex}
+    html.js .nav-links a{display:block;padding:10px 0;font-size:15px}
+    html.js .nav-links a:not(.nav-ghost){display:block}
+    html.js .nav-ghost{border:none;padding:10px 0;font-family:inherit;font-size:15px}
+  }
+  @media(max-width:560px){ .wrap{padding-left:16px;padding-right:16px} footer{padding:36px 0 44px} .foot-cols{gap:28px} }
+</style><!--/chrome:head-->
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<nav>
+<!--chrome:nav--><nav aria-label="Site">
   <div class="nav-in">
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-    <div class="nav-links">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span class="bars" aria-hidden="true"></span>Menu</button>
+    <div class="nav-links" id="nav-links">
       <a href="/">Standard</a>
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
@@ -150,7 +212,7 @@
       <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) &#x2197;</a>
     </div>
   </div>
-</nav>
+</nav><!--/chrome:nav-->
 <main class="wrap" id="main">
   <article style="max-width:760px;padding:40px 0 64px">
     <div class="crumb">Proposals</div>
@@ -174,7 +236,7 @@
   <li>a portable evidence bundle carried inline or in an A2A Artifact and retrievable through existing <code>GetTask</code> behavior.</li>
 </ol>
 <p>The evidence record binds a semantic projection of the A2A Task&mdash;including its accepted Message transcript, terminal state, and non-evidence Artifacts&mdash;by digest. The base profile authenticates the producer and can prove that the record entered a producer-operated Checkpointed Local Log whose signed checkpoint was registered with a SCITT Transparency Service. A checkpoint-aware witness can add a separate continuity assertion.</p>
-<p>The extension defines no new RPC method. It does not assert that the Task output is correct, that every eligible Task was recorded, that a signing key identifies a legal person, that a claimed external-world effect occurred, or that an agent deserves a score or ranking.</p>
+<p>The extension defines no new RPC method. It does not assert that the Task output is correct, that every eligible Task was recorded, that a signing key identifies a legal person, that a claimed external-world effect occurred, or that an agent should be ranked above another.</p>
 
 <h2>2. The specific A2A gap</h2>
 <p>A2A v1 already provides discovery, Messages, Tasks, Artifacts, Task history, authentication and authorization, Agent Card signing, extension metadata, and multiple protocol bindings. A terminal Task and its history remain operational objects served by the agent. Core A2A does not define a standard convention for a caller to require evidence before work begins or for the terminal Task to carry a content-derived evidence record with independently checkable log and registration proofs.</p>
@@ -185,25 +247,25 @@
 <h2>3. Why no new method in v3.1</h2>
 <p>A2A already permits namespaced metadata on Tasks and explicit extension metadata on Messages and Artifacts. Artifacts can carry structured data or raw bytes, and <code>GetTask</code> retrieves the current Task and its Artifacts. The first interoperable experiment should use those facilities.</p>
 <p>The v3.1 extension therefore adds no <code>GetTaskEvidence</code> operation and no separate <code>historyEndpoint</code>.</p>
-<p>A later version may add dedicated retrieval only if implementation proves that existing A2A cannot express a necessary semantic, such as evidence retention after Task purging, late-arriving proof negotiation, selective disclosure, or authorization distinct from the Task. That case must be made from deployed requirements rather than assumed in advance.</p>
+<p>A later version may add dedicated retrieval only if implementation shows that existing A2A cannot express a necessary semantic, such as evidence retention after Task purging, late-arriving proof negotiation, selective disclosure, or authorization distinct from the Task. That case must be made from deployed requirements rather than assumed in advance.</p>
 
 <h2>4. Relationship to adjacent work</h2>
 <p>The A2A community already has adjacent proposals. This extension should compose with them rather than claim an empty field.</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Work</th><th>Primary concern</th><th>Intended difference here</th></tr></thead>
   <tbody>
     <tr><th>A2A Task history</th><td>Server-served operational Message history; not all Messages are guaranteed to persist</td><td>Boundary-captured Task evidence with a stable derived identifier and proof material.</td></tr>
     <tr><th>OBO / A2A #1713</th><td>Principal delegation and cross-organization accountability plus a post-Task envelope</td><td>Content binding, local-log inclusion, checkpoint registration, and typed verification; no delegation credential.</td></tr>
     <tr><th>Verifiable Agent Trust Envelope / A2A #1769</th><td>Pre-action admission and permit/receipt decisions</td><td>Post-Task evidence carriage; no <code>allow / attenuate / deny</code> policy engine.</td></tr>
-    <tr><th><code>trust.signals[]</code> / A2A #1628</th><td>Agent Card trust and reputation signals</td><td>Per-Task evidence; no precomputed trust signal, score, or ranking.</td></tr>
+    <tr><th><code>trust.signals[]</code> / A2A #1628</th><td>Agent Card trust signals</td><td>Per-Task evidence; no precomputed trust signal or ranking.</td></tr>
     <tr><th>AP2 and other domain protocols</th><td>Domain-specific mandates, authorizations, and transaction receipts</td><td>A2A carriage of evidence for non-payment and payment Tasks without replacing domain evidence.</td></tr>
   </tbody>
-</table>
+</table></div>
 <p>Before opening a new A2A Issue, the project should comment on the existing accountability and verifier-artifact threads and ask whether this work should share a composition point.</p>
 
 <h2>5. Design principles</h2>
 <ol>
-  <li><strong>One Task, not reputation.</strong> Aggregate histories, pair accounts, routing properties, and scores are out of scope.</li>
+  <li><strong>One Task, not a history.</strong> Aggregate histories, pair accounts, routing properties, and rankings are out of scope.</li>
   <li><strong>Negotiate before acting.</strong> A caller that requires evidence must know whether the server accepted that obligation before the server attempts an external effect.</li>
   <li><strong>Use existing A2A operations.</strong> Evidence travels in Task metadata and an Artifact; <code>GetTask</code> retrieves it.</li>
   <li><strong>One base evidence graph.</strong> The base profile commits the evidence-record ID into a local CLL checkpoint and registers that checkpoint with SCITT. Direct per-record SCITT registration is a separate future profile.</li>
@@ -341,7 +403,7 @@
   <li><strong>Signed CLL checkpoint:</strong> commits to the local log identity, size, MMR commitment, prior checkpoint, and cadence policy.</li>
   <li><strong>Checkpoint registration statement:</strong> the signed CLL checkpoint itself, when it satisfies SCITT Signed Statement requirements. No additional wrapper is implied. Any future wrapper profile must specify exactly which checkpoint bytes it commits to.</li>
   <li><strong>Transparency Service Receipt:</strong> proves registration of the checkpoint statement using the VDS identified by that Receipt.</li>
-  <li><strong>Optional continuity assertion:</strong> proves that a checkpoint-aware witness applied a named policy to the stated prior and new checkpoints and accepted the consistency proof.</li>
+  <li><strong>Optional continuity assertion:</strong> a signed statement that a checkpoint-aware witness applied a named policy to the stated prior and new checkpoints and accepted the consistency proof.</li>
 </ol>
 <p>The local MMR proof profile and every Transparency Service Receipt/VDS profile have separate identifiers. <code>Merkle-style</code> is not a proof format. A Receipt for direct registration of an AAC evidence ID is not interchangeable with a Receipt for a CLL checkpoint and belongs to a different evidence profile.</p>
 
@@ -363,7 +425,7 @@
 <p>The stable evidence ID is derived from a transport-independent logical payload class, not from JSON-RPC, gRPC, or HTTP serialization bytes.</p>
 <p>The payload binds:</p>
 <ul>
-  <li>a stable server/agent authority identifier;</li>
+  <li>a stable server/agent issuer identifier;</li>
   <li>tenant or security domain when applicable;</li>
   <li>Task ID and <code>contextId</code>;</li>
   <li>the accepted Task transcript captured at the A2A boundary;</li>
@@ -382,18 +444,18 @@
   <li>volatile retrieval metadata.</li>
 </ul>
 <p>This exclusion prevents the evidence ID from depending on a Task field that already contains that same ID.</p>
-<p>Selected transport, interface details, and the observed Agent Card digest may be recorded in a signed context object inside the manifest, but they do not enter the stable Task Evidence payload. Binding-independent identity means that different serializations of the same captured logical record derive the same ID&mdash;not that separate executions with different Task IDs, messages, or seal times have identical IDs. The stable authority identifier must be checked against configured identity/authority policy; a producer cannot establish authority simply by choosing that string.</p>
+<p>Selected transport, interface details, and the observed Agent Card digest may be recorded in a signed context object inside the manifest, but they do not enter the stable Task Evidence payload. Binding-independent identity means that different serializations of the same captured logical record derive the same ID&mdash;not that separate executions with different Task IDs, messages, or seal times have identical IDs. The stable issuer identifier must be checked against configured identity/authority policy; a producer cannot establish authority simply by choosing that string.</p>
 <p>For a <code>Part.url</code>, the payload distinguishes the locator from its content. If the referenced content affects the Task request or result, the recorder must commit to the resolved bytes, media type, and length at the evidence boundary or mark the content <code>NOT_RESOLVED</code>. A URL string alone is not evidence of immutable content.</p>
 <p>The normative profile must define handling of absent fields, defaults, Unicode, numbers, map ordering, ordered Parts, Artifact identity, <code>append</code> and replacement updates, <code>lastChunk</code>, retries, and idempotency. Cross-binding vectors must demonstrate that independent implementations derive identical IDs.</p>
 
 <h2>13. Verification result</h2>
 <p>A verifier returns a structured result. Each property is <code>PASS</code>, <code>FAIL</code>, <code>NOT_PRESENT</code>, <code>NOT_CHECKED</code>, or <code>INCONCLUSIVE</code>, with diagnostic evidence.</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Property</th><th>Question answered</th></tr></thead>
   <tbody>
     <tr><th><code>contentBinding</code></th><td>Does the canonical Task Evidence payload derive the claimed evidence ID?</td></tr>
     <tr><th><code>producerSignature</code></th><td>Did the holder of the referenced producer key sign that evidence ID?</td></tr>
-    <tr><th><code>taskBinding</code></th><td>Does the payload bind the intended authority, tenant, Task, transcript, terminal state, and non-evidence Artifacts?</td></tr>
+    <tr><th><code>taskBinding</code></th><td>Does the payload bind the intended issuer, tenant, Task, transcript, terminal state, and non-evidence Artifacts?</td></tr>
     <tr><th><code>localInclusion</code></th><td>Is the evidence ID included in the stated CLL checkpoint under the declared MMR profile?</td></tr>
     <tr><th><code>checkpointSignature</code></th><td>Did the configured log key sign the checkpoint?</td></tr>
     <tr><th><code>externalRegistration</code></th><td>Does a Receipt verified under a configured Transparency Service trust anchor register the exact checkpoint statement?</td></tr>
@@ -402,7 +464,7 @@
     <tr><th><code>captureCoverage</code></th><td>Which boundary and recording rule produced the transcript, and what compliance evidence is present?</td></tr>
     <tr><th><code>outcomeCorroboration</code></th><td>Is there a separate external confirmation, independent observation, replay comparison, or labeled judgment?</td></tr>
   </tbody>
-</table>
+</table></div>
 <p>No aggregate <code>trusted: true</code> result is defined. A valid bundle can have <code>PASS</code> for content and signatures while identity, capture coverage, or outcome corroboration remains unestablished.</p>
 
 <h2>14. Security, authorization, and privacy</h2>
@@ -436,7 +498,7 @@
   <li>direct per-Capsule SCITT registration;</li>
   <li>late proof discovery or selective disclosure;</li>
   <li>caller signatures or bilateral completeness;</li>
-  <li>aggregate Task history, ranges, pair accounts, or reputation;</li>
+  <li>aggregate Task history, ranges, or pair accounts;</li>
   <li>dispute adjudication or appeals;</li>
   <li>proof that the Task output or claimed effect is true;</li>
   <li>proof that every eligible Task was captured;</li>
@@ -455,7 +517,7 @@
   <li>an A2A v1 client activates the extension, receives explicit acceptance, completes a Task, retrieves the immutable bundle with <code>GetTask</code>, and verifies it offline;</li>
   <li>the same semantic Task over every implemented A2A binding derives the same ID;</li>
   <li>conformance vectors cover every normative field, terminal state, multi-turn sequence, streaming rule, exclusion, proof object, and error path;</li>
-  <li>negative vectors detect mutation, omission, substitution, stale proof, wrong authority/tenant, wrong Task binding, wrong trust anchor, and false continuity claims;</li>
+  <li>negative vectors detect mutation, omission, substitution, stale proof, wrong issuer/tenant, wrong Task binding, wrong trust anchor, and false continuity claims;</li>
   <li>tests keep signature, local inclusion, external registration, continuity, identity, capture coverage, and truth results distinct;</li>
   <li>witness independence is assessed externally; a same-operator service may establish registration under an accepted key but is labeled producer-operated, and never promoted to independent continuity;</li>
   <li>a published privacy review documents checkpoint metadata and low-entropy digest risks; and</li>
@@ -478,7 +540,7 @@
 <p>Before contribution, document the licensing and IPR boundary between the IETF-defined evidence formats and schema, code, or prose contributed under A2A&rsquo;s Apache-2.0 requirements.</p>
 
 <h2>18. Existing work and remaining work</h2>
-<p>AAC, CPB, CLL, emitters, witness work, and offline verification can serve as implementation substrate. Mesh-LLM is a field implementation of parts of that substrate, not evidence that this A2A extension interoperates or has been adopted.</p>
+<p>AAC, CPB, CLL, emitters, witness work, and offline verification can serve as implementation substrate. The capsule-emit-mesh plugin (v0.1.0) for mesh-llm is a field implementation of parts of that substrate, not evidence that this A2A extension interoperates or has been adopted.</p>
 <p>Before public filing, every implementation-status claim should link to a release, commit, test result, or reproducible demonstration under one status vocabulary. The A2A middleware, normative Task Evidence payload class, exclusion set, manifest schema, cross-binding vectors, conformance tests, second implementation, checkpoint-aware independent witness, and requiring-party pilot remain to be demonstrated.</p>
 
 <h2>19. Why this is worth doing</h2>
@@ -495,12 +557,12 @@
   <li>IETF SCITT, <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> and <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a>.</li>
   <li>IETF, <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9421">HTTP Message Signatures, RFC 9421</a>.</li>
   <li>IETF Internet-Drafts: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Agent Action Capsule</a>, <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">Canonical Payload Binding</a>, and <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">Checkpointed Local Log</a>.</li>
-  <li>A2A discussions: <a class="ln" href="https://github.com/a2aproject/A2A/issues/1713">cross-organization accountability #1713</a>, <a class="ln" href="https://github.com/a2aproject/A2A/issues/1769">verifier-side artifacts #1769</a>, <a class="ln" href="https://github.com/a2aproject/A2A/issues/1628">trust signals #1628</a>, and <a class="ln" href="https://github.com/a2aproject/A2A/discussions/1962">verifiable reputation #1962</a>.</li>
+  <li>A2A discussions: <a class="ln" href="https://github.com/a2aproject/A2A/issues/1713">cross-organization accountability #1713</a>, <a class="ln" href="https://github.com/a2aproject/A2A/issues/1769">verifier-side artifacts #1769</a>, <a class="ln" href="https://github.com/a2aproject/A2A/issues/1628">trust signals #1628</a>, and <a class="ln" href="https://github.com/a2aproject/A2A/discussions/1962">discussion #1962</a>.</li>
 </ul>
 
   </article>
 </main>
-<footer>
+<!--chrome:footer--><footer>
   <div class="wrap">
     <div class="foot-in">
       <div class="foot-brand">
@@ -511,9 +573,13 @@
         <div class="foot-col">
           <h5>Standard</h5>
           <a href="/">Overview</a>
+          <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Internet-Draft &#x2197;</a>
-          <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding ↗</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (latest) &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (latest) &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (latest) &#x2197;</a>
+          <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding &#x2197;</a>
+          <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
@@ -523,7 +589,9 @@
         <div class="foot-col">
           <h5>Source</h5>
           <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
-          <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
+          <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
+          <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
+          <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Project</h5>
@@ -534,6 +602,15 @@
     </div>
     <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
-</footer>
+</footer><!--/chrome:footer-->
+<!--chrome:js--><script>
+(function(){
+  var t=document.querySelector('.nav-toggle'), l=document.getElementById('nav-links');
+  if(t&&l){ t.addEventListener('click',function(){ var o=l.classList.toggle('open'); t.setAttribute('aria-expanded',o?'true':'false'); }); }
+  if(window.matchMedia&&window.matchMedia('(max-width:900px)').matches){
+    document.querySelectorAll('details.side-d').forEach(function(d){ d.open=false; });
+  }
+})();
+</script><!--/chrome:js-->
 </body>
 </html>

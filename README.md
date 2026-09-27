@@ -18,7 +18,7 @@ LICENSE, NOTICE         Apache-2.0
 
 Neutral substrate: documents the open specification and the open-source implementations only;
 no product or business content. The three neutral surfaces (this site,
-`anchor.agentactioncapsule.org`, `verify.agentactioncapsule.org`) share one visual system and a common
+`witness.agentactioncapsule.org`, `verify.agentactioncapsule.org`) share one visual system and a common
 cross-site nav + footer.
 
 **CPB moved out (2026-09-02):** Canonical Payload Binding is a separate spec with its own
@@ -45,6 +45,13 @@ Edit content in `tools/build_docs.py` (the `PAGES` dict + `INDEX_BODY`), then re
 ```sh
 python3 tools/build_docs.py     # rewrites docs/*.html
 ```
+
+The build also owns the **shared chrome** of the hand-written pages (home, explore, log, bilateral,
+translation, witness-landing, the interop and extension pages, `/ip`): the header with its mobile
+menu, the docs sidebar, prev/next and the footer. It rewrites only what sits between
+`<!--chrome:NAME-->` markers, so edit those parts in `tools/build_docs.py` (`TOC`, `nav_html`,
+`FOOTER`, `CHROME_CSS`), never in the page, or the next build will overwrite the edit. A new docs
+page goes into `TOC` once, and its sidebar entry, prev/next neighbors and index card all follow.
 
 ## Deploy to Cloud Run (gated — Steven only)
 
