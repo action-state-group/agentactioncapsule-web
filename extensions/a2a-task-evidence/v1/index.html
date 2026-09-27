@@ -216,14 +216,16 @@
 <main class="wrap" id="main">
   <article style="max-width:760px;padding:40px 0 64px">
     <div class="crumb">Proposals</div>
-<div class="callout warn"><strong>Independent proposal.</strong> Not an official A2A extension; not sponsored; not endorsed by the A2A project. Draft v3.1, 2026-09-04.</div>
+<div class="callout warn"><strong>Independent proposal.</strong> Not an official A2A extension; not sponsored; not endorsed by the A2A project. Draft v3.2, 2026-09-26 (revises v3.1 of 2026-09-04; see <a class="ln" href="#version-history">version history</a>).</div>
 
 <h1>Proposal: A2A Verifiable Task Evidence Extension</h1>
-<p class="lede"><strong>2026-09-05 &middot; Steven Mih &middot; v3.1 discussion draft</strong><br>
+<p class="lede"><strong>2026-09-26 &middot; Steven Mih &middot; v3.2 discussion draft</strong><br>
 <strong>Provisional extension URI:</strong> <code>https://agentactioncapsule.org/extensions/a2a-task-evidence/v1</code><br>
 <strong>Status:</strong> independent proposal; not an official A2A extension</p>
 
 <p>This proposal supersedes the earlier &ldquo;Account Card&rdquo; and broad &ldquo;task-history&rdquo; designs. A2A already defines one Agent Card, <code>GetTask</code>, <code>ListTasks</code>, and Task history. This proposal addresses one narrower gap: how a caller can require and receive a portable evidence object for one terminal A2A Task.</p>
+
+<p>v3.2 adds two things to v3.1: how this extension composes with the A2A Traceability sample extension (<a class="ln" href="#traceability">&sect;4.1</a>), and how evidence records a Task that pauses in <code>TASK_STATE_INPUT_REQUIRED</code> or <code>TASK_STATE_AUTH_REQUIRED</code> and later resumes (<a class="ln" href="#interrupted">&sect;8.1</a>). The extension URI is unchanged.</p>
 
 <p>The examples define proposed extension fields, not existing A2A fields or a finished conformance specification. AAC, CPB, and CLL are work-in-progress Internet-Drafts. This document does not claim that their A2A mapping is already implemented.</p>
 
@@ -244,9 +246,9 @@
 <div class="callout"><strong>A2A lacks a standard convention for negotiating, carrying, and verifying portable evidence about one terminal Task while keeping authorship, inclusion, external registration, continuity, identity, coverage, and outcome truth as separate claims.</strong></div>
 <p>This is a composition extension. A2A owns negotiation and carriage. Agent Action Capsule (AAC), Canonical Payload Binding (CPB), the Checkpointed Local Log (CLL), SCITT, and identity systems retain their own formats and verification rules.</p>
 
-<h2>3. Why no new method in v3.1</h2>
+<h2>3. Why no new method</h2>
 <p>A2A already permits namespaced metadata on Tasks and explicit extension metadata on Messages and Artifacts. Artifacts can carry structured data or raw bytes, and <code>GetTask</code> retrieves the current Task and its Artifacts. The first interoperable experiment should use those facilities.</p>
-<p>The v3.1 extension therefore adds no <code>GetTaskEvidence</code> operation and no separate <code>historyEndpoint</code>.</p>
+<p>The extension therefore adds no <code>GetTaskEvidence</code> operation and no separate <code>historyEndpoint</code>.</p>
 <p>A later version may add dedicated retrieval only if implementation shows that existing A2A cannot express a necessary semantic, such as evidence retention after Task purging, late-arriving proof negotiation, selective disclosure, or authorization distinct from the Task. That case must be made from deployed requirements rather than assumed in advance.</p>
 
 <h2>4. Relationship to adjacent work</h2>
@@ -258,10 +260,24 @@
     <tr><th>OBO / A2A #1713</th><td>Principal delegation and cross-organization accountability plus a post-Task envelope</td><td>Content binding, local-log inclusion, checkpoint registration, and typed verification; no delegation credential.</td></tr>
     <tr><th>Verifiable Agent Trust Envelope / A2A #1769</th><td>Pre-action admission and permit/receipt decisions</td><td>Post-Task evidence carriage; no <code>allow / attenuate / deny</code> policy engine.</td></tr>
     <tr><th><code>trust.signals[]</code> / A2A #1628</th><td>Agent Card trust signals</td><td>Per-Task evidence; no precomputed trust signal or ranking.</td></tr>
+    <tr><th>Traceability sample extension (a2a-samples)</th><td>Operational step trace: tool and agent invocations, cost, tokens, latency, timing</td><td>Commits to the trace the server returned when the capture policy includes it; does not define, sign, or alter the trace format. See &sect;4.1.</td></tr>
     <tr><th>AP2 and other domain protocols</th><td>Domain-specific mandates, authorizations, and transaction receipts</td><td>A2A carriage of evidence for non-payment and payment Tasks without replacing domain evidence.</td></tr>
   </tbody>
 </table></div>
 <p>Before opening a new A2A Issue, the project should comment on the existing accountability and verifier-artifact threads and ask whether this work should share a composition point.</p>
+
+<h3 id="traceability">4.1 Composition with the Traceability sample extension</h3>
+<p>The A2A samples repository publishes a Traceability extension (<code>https://github.com/a2aproject/a2a-samples/extensions/traceability/v1</code>). It returns a <code>ResponseTrace</code>&mdash;a <code>trace_id</code> and a list of <code>Step</code> objects describing tool and agent invocations, parent/child structure, cost, tokens, latency, and timing&mdash;in Message or Artifact metadata or as an additional Artifact. It is operational telemetry: it carries no signature, digest, or receipt, and it does not need one to do its job.</p>
+<p>The two extensions answer different questions. The trace says what the server reports its steps were. Task evidence says what a key committed about the Task, whether that commitment entered a log, and whether the log checkpoint was registered. This proposal does not re-implement tracing, define a trace format, or ask the Traceability extension to change.</p>
+<p>When a client activates both extensions on the same Task:</p>
+<ol>
+  <li><strong>Independent activation.</strong> Each extension is activated, advertised, and ignored independently. Activating one never implies the other. Evidence acceptance (&sect;8) says nothing about whether a trace will be returned.</li>
+  <li><strong>The capture policy says whether the trace is committed.</strong> A trace delivered as an additional Artifact is a non-evidence Artifact and is already bound by &sect;12. A trace carried in Message or Artifact metadata under the Traceability key is bound only if the capture-policy identifier says that key is included in the committed metadata digest. A relying party reads the capture policy; it does not assume inclusion.</li>
+  <li><strong>What is committed is the returned trace object.</strong> The payload commits to the canonical form of the <code>ResponseTrace</code> as returned at the boundary, by digest. Later alteration of the returned trace is then detectable. Cost, token, latency, and step values are not made true by being committed; they remain the server&rsquo;s report, and <code>outcomeCorroboration</code> is unaffected.</li>
+  <li><strong>Citation runs outward, never back to itself.</strong> For an <code>AgentInvocation</code> step where the callee also returned task evidence, the caller may record the callee Task&rsquo;s evidence ID in <code>Step.additional_attributes</code> under the key <code>https://agentactioncapsule.org/extensions/a2a-task-evidence/v1#evidenceId</code>. That makes the caller&rsquo;s evidence cite the callee&rsquo;s by ID without changing the trace schema. A step must not carry the evidence ID of the Task whose trace it is; that value is outside the payload by &sect;12&rsquo;s exclusion set, and embedding it would make the ID depend on itself.</li>
+  <li><strong>Correlation, not authority.</strong> A <code>trace_id</code>, <code>step_id</code>, or cited evidence ID is a correlation handle. It grants nothing, and a verifier checks a cited callee record under its own trust configuration, not because the caller&rsquo;s trace named it.</li>
+  <li><strong>Privacy.</strong> <code>ToolInvocation.parameters</code> and <code>AgentInvocation.requests</code> can carry sensitive content. The default-deny admission rule of &sect;14 applies: a capture policy that includes traces commits digests of those fields, not their values, unless the selected profile supplies appropriate protection.</li>
+</ol>
 
 <h2>5. Design principles</h2>
 <ol>
@@ -361,7 +377,21 @@
   <li><code>EVIDENCE_STATUS_FAILED</code>.</li>
 </ul>
 <p><code>EVIDENCE_STATUS_PENDING</code> is forbidden on a terminal Task. If the requested minimum is not achieved by the declared deadline, the terminal Task carries <code>EVIDENCE_STATUS_FAILED</code> and a typed reason. The server does not downgrade silently.</p>
-<p>The terminal evidence bundle is immutable. A later receipt, credential, or corroboration must appear in a new successor manifest that cites the prior manifest; it does not change the original evidence-record ID or terminal manifest digest. Successor-manifest discovery is outside v3.1.</p>
+<p>The terminal evidence bundle is immutable. A later receipt, credential, or corroboration must appear in a new successor manifest that cites the prior manifest; it does not change the original evidence-record ID or terminal manifest digest. Successor-manifest discovery is outside this version.</p>
+
+<h3 id="interrupted">8.1 Interrupted states: input-required and auth-required</h3>
+<p>A2A defines <code>TASK_STATE_INPUT_REQUIRED</code> and <code>TASK_STATE_AUTH_REQUIRED</code> as interrupted states, not terminal ones. A Task can pause in either state, receive a further Message from the client, and continue. The evidence rules for a paused Task are:</p>
+<ol>
+  <li><strong>One Task, one terminal record.</strong> A pause does not end the evidence obligation or split the Task into two records. The terminal bundle covers the whole Task, before and after every pause.</li>
+  <li><strong>The status stays pending while paused.</strong> On an interrupted Task, <code>evidenceStatus</code> is <code>EVIDENCE_STATUS_PENDING</code>. No terminal status is emitted and no terminal bundle is attached at a pause.</li>
+  <li><strong>The accepted obligation carries across the pause.</strong> <code>evidenceAcceptance</code> is fixed for the life of the Task. A resuming Message that omits the extension metadata inherits it. A resuming Message that carries a different requirement, profile, or minimum is rejected with a typed error; it is not silently applied and not silently ignored.</li>
+  <li><strong>The pause and the resume are in the transcript.</strong> The boundary records, in sequence, the Message that requested input or authentication, the transition into the interrupted state, the resuming Message (its <code>messageId</code> and Task/context binding), and the transition out. Sequence positions are contiguous across the pause. A verifier can therefore see where the Task paused and what resumed it, and an omitted or substituted resumption breaks the sequence.</li>
+  <li><strong>Effects before the pause are recorded before the pause.</strong> If an external effect was attempted before the Task paused, the transcript records it ahead of the pause entry. A resumption is never evidence that nothing happened earlier.</li>
+  <li><strong>Optional interim record.</strong> A producer may seal an interim record when a Task pauses, for example when the pause may be long or an effect has already been attempted. An interim record is not a terminal bundle and does not change <code>evidenceStatus</code>. If one is sealed, the terminal Task Evidence payload cites its evidence ID, and both records enter the same local log. The chain across the pause is then one committed sequence: the interim record is included in a checkpoint, and the terminal record, which cites it, is included in the same or a later checkpoint of that log.</li>
+  <li><strong>Authentication material stays out.</strong> For <code>TASK_STATE_AUTH_REQUIRED</code>, the transcript records that authentication was requested and that the Task resumed. It does not record credentials or tokens. Whether the resuming party was authorized is an identity and authority question (<code>identityAuthorityBinding</code>), not something the transcript establishes.</li>
+  <li><strong>Paused time does not count against the registration deadline.</strong> <code>maximumRegistrationDelaySeconds</code> starts when the terminal business-result projection is frozen, as in &sect;8. Time spent paused is not part of it.</li>
+  <li><strong>A Task that never resumes still gets a terminal record.</strong> If a paused Task is canceled, fails, or is rejected, the terminal bundle is produced as for any other terminal Task. It covers the transcript up to the pause and the terminal transition.</li>
+</ol>
 
 <h2>9. TaskEvidenceReference and delivery</h2>
 <p>Every terminal Task for which the server accepted the extension carries an evidence result in <code>Task.metadata[extensionUri]</code>. If a record was successfully sealed, that result includes <code>TaskEvidenceReference</code>. If sealing itself failed, the result instead carries a typed failure reason and omits nonexistent IDs, digests, and Artifact references. If only registration failed, the result may retain the signed record and identifies each missing proof separately.</p>
@@ -383,8 +413,8 @@
   <li><code>INLINE_METADATA</code>: the immutable evidence bundle is carried inside the namespaced Task metadata. This is suitable only for small bundles.</li>
   <li><code>EVIDENCE_ARTIFACT</code>: <code>evidenceArtifactId</code> identifies an Artifact returned with the Task. The Artifact declares the extension in <code>Artifact.extensions</code> and carries the immutable bundle in a <code>raw</code> or <code>data</code> Part with an evidence media type.</li>
 </ul>
-<p>v3.1 does not use a mutable <code>Part.url</code> for the evidence bundle. A future reference-delivery profile must define immutable addressing, authorization, retention, and the distinction between the locator digest and the resolved-content digest.</p>
-<p>Existing <code>GetTask</code> retrieves the Task and available evidence Artifact under ordinary A2A authorization. A server that later purges the Task may make the bundle unavailable; retention beyond Task lifetime is explicitly outside v3.1.</p>
+<p>This version does not use a mutable <code>Part.url</code> for the evidence bundle. A future reference-delivery profile must define immutable addressing, authorization, retention, and the distinction between the locator digest and the resolved-content digest.</p>
+<p>Existing <code>GetTask</code> retrieves the Task and available evidence Artifact under ordinary A2A authorization. A server that later purges the Task may make the bundle unavailable; retention beyond Task lifetime is explicitly outside this version.</p>
 
 <h2 id="base-evidence-graph">10. The base evidence graph</h2>
 <p>The base profile defines one path:</p>
@@ -428,9 +458,11 @@
   <li>a stable server/agent issuer identifier;</li>
   <li>tenant or security domain when applicable;</li>
   <li>Task ID and <code>contextId</code>;</li>
-  <li>the accepted Task transcript captured at the A2A boundary;</li>
+  <li>the accepted Task transcript captured at the A2A boundary, including every transition into and out of an interrupted state (&sect;8.1);</li>
+  <li>the evidence IDs of any interim records sealed for this Task at a pause (&sect;8.1);</li>
   <li>terminal Task state;</li>
   <li>every non-evidence Artifact and its semantic content commitment;</li>
+  <li>a digest of any Traceability <code>ResponseTrace</code> the capture policy includes (&sect;4.1);</li>
   <li>the producer&rsquo;s declared seal time; and</li>
   <li>the capture-policy identifier.</li>
 </ul>
@@ -455,7 +487,7 @@
   <tbody>
     <tr><th><code>contentBinding</code></th><td>Does the canonical Task Evidence payload derive the claimed evidence ID?</td></tr>
     <tr><th><code>producerSignature</code></th><td>Did the holder of the referenced producer key sign that evidence ID?</td></tr>
-    <tr><th><code>taskBinding</code></th><td>Does the payload bind the intended issuer, tenant, Task, transcript, terminal state, and non-evidence Artifacts?</td></tr>
+    <tr><th><code>taskBinding</code></th><td>Does the payload bind the intended issuer, tenant, Task, transcript, terminal state, and non-evidence Artifacts, with an unbroken sequence across any interrupted states and every cited interim record present?</td></tr>
     <tr><th><code>localInclusion</code></th><td>Is the evidence ID included in the stated CLL checkpoint under the declared MMR profile?</td></tr>
     <tr><th><code>checkpointSignature</code></th><td>Did the configured log key sign the checkpoint?</td></tr>
     <tr><th><code>externalRegistration</code></th><td>Does a Receipt verified under a configured Transparency Service trust anchor register the exact checkpoint statement?</td></tr>
@@ -476,6 +508,7 @@
   <li>cross-tenant Task or proof substitution;</li>
   <li>Task, Message, and Artifact ID reuse or ambiguity across authorities;</li>
   <li>omitted or reordered multi-turn Messages;</li>
+  <li>a different or forged resumption spliced into a paused Task, or a requirement changed at resume;</li>
   <li>mutable URL content and incomplete streamed Artifacts;</li>
   <li>replay or transplantation of an evidence reference;</li>
   <li>stale checkpoints presented as current;</li>
@@ -492,9 +525,10 @@
 <p>Evidence payload admission is default-deny for secrets, personal data, and low-entropy fields unless the selected profile supplies appropriate protection. Digest-only commitments do not eliminate dictionary attacks or metadata leakage.</p>
 
 <h2>15. Deferred work and non-goals</h2>
-<p>v3.1 does not define:</p>
+<p>This version does not define:</p>
 <ul>
   <li>a new RPC, separate evidence endpoint, or evidence retention after Task purging;</li>
+  <li>a trace format, trace signing, or any change to the Traceability extension;</li>
   <li>direct per-Capsule SCITT registration;</li>
   <li>late proof discovery or selective disclosure;</li>
   <li>caller signatures or bilateral completeness;</li>
@@ -516,8 +550,8 @@
   <li>two independent implementations derive identical evidence IDs and verify each other&rsquo;s bundles;</li>
   <li>an A2A v1 client activates the extension, receives explicit acceptance, completes a Task, retrieves the immutable bundle with <code>GetTask</code>, and verifies it offline;</li>
   <li>the same semantic Task over every implemented A2A binding derives the same ID;</li>
-  <li>conformance vectors cover every normative field, terminal state, multi-turn sequence, streaming rule, exclusion, proof object, and error path;</li>
-  <li>negative vectors detect mutation, omission, substitution, stale proof, wrong issuer/tenant, wrong Task binding, wrong trust anchor, and false continuity claims;</li>
+  <li>conformance vectors cover every normative field, terminal state, multi-turn sequence, interrupted-state pause and resume, streaming rule, exclusion, proof object, and error path;</li>
+  <li>negative vectors detect mutation, omission, substitution, stale proof, wrong issuer/tenant, wrong Task binding, an omitted or spliced resumption, a dropped interim citation, wrong trust anchor, and false continuity claims;</li>
   <li>tests keep signature, local inclusion, external registration, continuity, identity, capture coverage, and truth results distinct;</li>
   <li>witness independence is assessed externally; a same-operator service may establish registration under an accepted key but is labeled producer-operated, and never promoted to independent continuity;</li>
   <li>a published privacy review documents checkpoint metadata and low-entropy digest risks; and</li>
@@ -542,10 +576,21 @@
 <h2>18. Existing work and remaining work</h2>
 <p>AAC, CPB, CLL, emitters, witness work, and offline verification can serve as implementation substrate. The capsule-emit-mesh plugin (v0.1.0) for mesh-llm is a field implementation of parts of that substrate, not evidence that this A2A extension interoperates or has been adopted.</p>
 <p>Before public filing, every implementation-status claim should link to a release, commit, test result, or reproducible demonstration under one status vocabulary. The A2A middleware, normative Task Evidence payload class, exclusion set, manifest schema, cross-binding vectors, conformance tests, second implementation, checkpoint-aware independent witness, and requiring-party pilot remain to be demonstrated.</p>
+<p>The v3.2 additions are specification text only. The existing reference flow and its positive and tamper-negative vectors predate them; interrupted-state and Traceability vectors are not yet published.</p>
 
 <h2>19. Why this is worth doing</h2>
 <p>The extension does not make an agent trustworthy. It gives a relying party a precise way to require evidence before consequential work begins and to inspect what a particular key committed about the resulting Task, whether that commitment entered the declared local history, whether the checkpoint was externally registered, whether continuity was separately established, and which stronger claims remain unproved.</p>
 <p>That is narrow enough to implement, specific enough to test, and useful enough for a party bearing liability to require.</p>
+
+<h2 id="version-history">Version history</h2>
+<div class="tw"><table class="t">
+  <thead><tr><th>Version</th><th>Date</th><th>Change</th></tr></thead>
+  <tbody>
+    <tr><th>v3.2</th><td>2026-09-26</td><td>Adds &sect;4.1 (composition with the Traceability sample extension) and &sect;8.1 (interrupted states: input-required and auth-required). Updates &sect;12, &sect;13 <code>taskBinding</code>, &sect;14, &sect;15, &sect;16, and &sect;18 to match. No change to the extension URI, the discovery fields, the request and acceptance fields, the terminal <code>evidenceStatus</code> values, or the base evidence graph. A v3.1 flow that never pauses and does not activate Traceability is unchanged.</td></tr>
+    <tr><th>v3.1</th><td>2026-09-04</td><td>Per-Task evidence only: request-time <code>PREFERRED</code>/<code>REQUIRED</code>, explicit acceptance before any external effect, terminal <code>evidenceStatus</code>, <code>TaskEvidenceReference</code>, immutable bundle via <code>GetTask</code>, and the ten verification properties. No new RPC.</td></tr>
+    <tr><th>Earlier drafts</th><td>Before 2026-09-04</td><td>The &ldquo;Account Card&rdquo; and broad &ldquo;task-history&rdquo; designs. Superseded by v3.1.</td></tr>
+  </tbody>
+</table></div>
 
 <hr>
 
@@ -554,6 +599,7 @@
   <li>A2A Project, <a class="ln" href="https://a2a-protocol.org/latest/specification/">Protocol Specification</a>.</li>
   <li>A2A Project, <a class="ln" href="https://a2a-protocol.org/latest/topics/extensions/">Extensions</a>.</li>
   <li>A2A Project, <a class="ln" href="https://a2a-protocol.org/latest/topics/extension-and-binding-governance/">Extension and binding governance</a>.</li>
+  <li>A2A Samples, <a class="ln" href="https://github.com/a2aproject/a2a-samples/blob/main/extensions/traceability/v1/spec.md">Traceability extension, v1</a>.</li>
   <li>IETF SCITT, <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> and <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a>.</li>
   <li>IETF, <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9421">HTTP Message Signatures, RFC 9421</a>.</li>
   <li>IETF Internet-Drafts: <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Agent Action Capsule</a>, <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">Canonical Payload Binding</a>, and <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">Checkpointed Local Log</a>.</li>
