@@ -77,12 +77,13 @@
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
   pre.code .fn{color:#7FB4FF} pre.code .ok{color:#54D08A;font-weight:600}
-  table.t{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 20px}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px;border:1px solid var(--line);border-radius:10px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px}
   table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
   table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
   table.t tbody th{font-weight:600;white-space:nowrap}
@@ -199,7 +200,7 @@
   }
 }</code></pre>
 <p>Illustrative: the capsule carries only the <em>digest</em> of the authorization grant, policy decision, or identity credential — never its contents. A verifier recomputes that digest from the artifact you (or a partner layer) present, and confirms the binding. The precise relation vocabulary is defined in the spec registry; to register a relation for your layer, <a class="ln" href="https://github.com/action-state-group/agent-action-capsule/issues">open an issue on the spec</a>.</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Layer</th><th>It answers</th><th>How the capsule composes</th></tr></thead>
   <tbody>
     <tr><th>Identity / delegation</th><td>who the agent is acting for</td><td>reference the identity or delegation credential by digest</td></tr>
@@ -207,7 +208,7 @@
     <tr><th>Anchoring / transparency log</th><td>that the record was publicly included</td><td>the SCITT receipt — the capsule is <a class="ln" href="/docs/verifiable-data-structures.html">log-agnostic</a></td></tr>
     <tr><th>Input integrity / provenance</th><td>whether upstream inputs are authentic</td><td>reference the input-integrity evidence by digest</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <h2>What only the capsule adds</h2>
 <p>A record of what the agent did that any third party can verify <strong>without trusting the operator, the model vendor, or the log</strong>. That neutrality is the point: it's the piece a single party's own system can't provide for itself, because a party vouching for its own actions is exactly what a verifier can't take on faith.</p>

@@ -77,7 +77,7 @@
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
@@ -134,6 +134,7 @@
   .step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
   .step-body h3{font-size:16px;font-weight:600;margin-bottom:5px}
   .step-body p{font-size:14px;color:var(--muted);margin:0}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px}
 </style>
 </head>
 <body>
@@ -189,7 +190,7 @@
 
 <h2>4. Relationship to adjacent work</h2>
 <p>The A2A community already has adjacent proposals. This extension should compose with them rather than claim an empty field.</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Work</th><th>Primary concern</th><th>Intended difference here</th></tr></thead>
   <tbody>
     <tr><th>A2A Task history</th><td>Server-served operational Message history; not all Messages are guaranteed to persist</td><td>Boundary-captured Task evidence with a stable derived identifier and proof material.</td></tr>
@@ -198,7 +199,7 @@
     <tr><th><code>trust.signals[]</code> / A2A #1628</th><td>Agent Card trust signals</td><td>Per-Task evidence; no precomputed trust signal or ranking.</td></tr>
     <tr><th>AP2 and other domain protocols</th><td>Domain-specific mandates, authorizations, and transaction receipts</td><td>A2A carriage of evidence for non-payment and payment Tasks without replacing domain evidence.</td></tr>
   </tbody>
-</table>
+</table></div>
 <p>Before opening a new A2A Issue, the project should comment on the existing accountability and verifier-artifact threads and ask whether this work should share a composition point.</p>
 
 <h2>5. Design principles</h2>
@@ -388,7 +389,7 @@
 
 <h2>13. Verification result</h2>
 <p>A verifier returns a structured result. Each property is <code>PASS</code>, <code>FAIL</code>, <code>NOT_PRESENT</code>, <code>NOT_CHECKED</code>, or <code>INCONCLUSIVE</code>, with diagnostic evidence.</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Property</th><th>Question answered</th></tr></thead>
   <tbody>
     <tr><th><code>contentBinding</code></th><td>Does the canonical Task Evidence payload derive the claimed evidence ID?</td></tr>
@@ -402,7 +403,7 @@
     <tr><th><code>captureCoverage</code></th><td>Which boundary and recording rule produced the transcript, and what compliance evidence is present?</td></tr>
     <tr><th><code>outcomeCorroboration</code></th><td>Is there a separate external confirmation, independent observation, replay comparison, or labeled judgment?</td></tr>
   </tbody>
-</table>
+</table></div>
 <p>No aggregate <code>trusted: true</code> result is defined. A valid bundle can have <code>PASS</code> for content and signatures while identity, capture coverage, or outcome corroboration remains unestablished.</p>
 
 <h2>14. Security, authorization, and privacy</h2>

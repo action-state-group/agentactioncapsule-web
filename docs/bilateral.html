@@ -134,6 +134,7 @@
   .step-num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent-soft);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent)}
   .step-body h3{font-size:16px;font-weight:600;margin-bottom:5px}
   .step-body p{font-size:14px;color:var(--muted);margin:0}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px}
 </style>
 </head>
 <body>
@@ -237,18 +238,18 @@
 
 <h2>A refusal to act vs. a failure to co-sign</h2>
 <p>The draft distinguishes two things this page's "refusals are first-class" section could otherwise blur. A <strong>declined action</strong> (the section above) is the performing party evaluating the request and choosing not to act &mdash; a completed exchange, and strong evidence because the refused counterparty signed it. A <strong>failure to co-sign</strong> is different: the exchange itself didn't complete symmetrically. Three narrower <em>asymmetry dispositions</em>, kept distinct from the action-disposition vocabulary above, cover that case:</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Disposition</th><th>Means</th></tr></thead>
   <tbody>
     <tr><th><code>delivery_unconfirmed</code></th><td>The requesting party emitted its attestation, but delivery to the performing party couldn't be confirmed &mdash; the weakest outcome; the counterparty may never have received the request.</td></tr>
     <tr><th><code>counterparty_timeout</code></th><td>Delivery was confirmed, but the performing party didn't co-sign within the request's validity window.</td></tr>
     <tr><th><code>countersign_refused</code></th><td>The performing party was reached and explicitly refused to co-sign.</td></tr>
   </tbody>
-</table>
+</table></div>
 <p>These MUST NOT be conflated with a declined action: a decline is a performed boundary decision the requester acknowledges, while a failure to co-sign is a failure of the exchange, not a decision about the action &mdash; only the latter distinction matters when weighing an anchored-but-unacknowledged record. A half that can't be matched to its counterpart is an <strong>orphan</strong> &mdash; a defined state, not an error, and still admissible evidence that the attempt was made.</p>
 
 <h2>What it composes with</h2>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Layer</th><th>Relationship</th></tr></thead>
   <tbody>
     <tr><th>Agent Action Capsule</th><td>Carries the attestations. The disposition vocabulary — <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>deferred</code>, <code>expired</code>, <code>escalated</code> — is reused verbatim.</td></tr>
@@ -256,7 +257,7 @@
     <tr><th>SCITT transparency log</th><td>Witnessing both capsules makes the record verifiable by parties who trust neither organization.</td></tr>
     <tr><th>Remote attestation (RATS)</th><td>RATS attests platform state; bilateral attestation attests actions. Orthogonal layers that compose.</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <h2>The Internet-Draft</h2>
 <p>The bilateral attestation exchange is specified as a companion Internet-Draft to the Agent Action Capsule profile:</p>

@@ -77,12 +77,13 @@
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
   pre.code .fn{color:#7FB4FF} pre.code .ok{color:#54D08A;font-weight:600}
-  table.t{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 20px}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px;border:1px solid var(--line);border-radius:10px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px}
   table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
   table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
   table.t tbody th{font-weight:600;white-space:nowrap}
@@ -186,20 +187,20 @@
 <p class="lede">Two concerns, deliberately kept apart: <strong>what happened</strong> (a signed statement) and <strong>where it is recorded</strong> (a transparency log). The statement never depends on which log technology you choose.</p>
 
 <h2>Two layers</h2>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Layer</th><th>Answers</th><th>Form</th></tr></thead>
   <tbody>
     <tr><th>Statement</th><td>What action happened, signed by whom?</td><td>A <code>COSE_Sign1</code> Signed Statement (the Agent Action Capsule profile).</td></tr>
     <tr><th>Transparency</th><td>Was this statement recorded in an append-only log, and can that be proven?</td><td>A transparency service that registers the statement and returns a receipt.</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <h2>Why the separation matters</h2>
 <p>Keeping the statement independent of the log means a single capsule can be anchored to more than one transparency service, and verified the same way regardless of how each log structures its proofs. The action layer never changes when the log changes &mdash; this is what we mean by <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure agnostic</a>.</p>
 
 <h2>The stack</h2>
 <p>Each layer is a separate, open-source library so the boundaries stay honest:</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Component</th><th>Role</th></tr></thead>
   <tbody>
     <tr><th>agent-action-capsule</th><td>The profile &mdash; the Signed Statement format and the reference verifier.</td></tr>
@@ -207,7 +208,7 @@
     <tr><th>scitt-cose</th><td>The verifier &mdash; checks SCITT receipts across verifiable data structures.</td></tr>
     <tr><th>capsule-anchor</th><td>The log &mdash; a neutral transparency service implementation.</td></tr>
   </tbody>
-</table>
+</table></div>
 <div class="callout">Read next: <a class="ln" href="/docs/what-is-a-transparency-service.html">what a transparency service is</a>, and how it differs from a verifier.</div>
 <div class="callout deeper"><strong>Go deeper</strong> &mdash; implementation &amp; usage docs in <code>capsule-emit</code>: <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/going-deeper.md">Going deeper — the layers &#x2197;</a></div>
       <div class="next"><a class="p" href="/docs/what-is-a-capsule.html"><div class="dir">&#8592; Previous</div><div class="ttl">What is a Capsule?</div></a><a class="n" href="/docs/what-is-a-transparency-service.html"><div class="dir">Next &#8594;</div><div class="ttl">What is a Transparency Service?</div></a></div>

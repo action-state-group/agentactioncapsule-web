@@ -128,6 +128,7 @@
     .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-links::-webkit-scrollbar{display:none}
   }
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px}
 </style>
 </head>
 <body>
@@ -207,13 +208,13 @@
 
 <h2>The grade you'll see</h2>
 <p>Not every checkpoint this witness shows you was built the same way, and the label tells you which:</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Grade</th><th>What it means</th></tr></thead>
   <tbody>
     <tr><th><code>mmr-verified</code></th><td>This witness holds the underlying log entries itself and independently recomputed the checkpoint from them. It rebuilt the tree; the root matches.</td></tr>
     <tr><th><code>countersigned-observed</code></th><td>The checkpoint was minted by a different log this witness doesn't hold the entries for. This witness checked the signature and co-signed it &mdash; so a stranger can't be shown two different versions &mdash; but it did not rebuild the tree behind it.</td></tr>
   </tbody>
-</table>
+</table></div>
 <p>These two are never presented as one guarantee. A <code>countersigned-observed</code> checkpoint is not proof this witness recomputed anything; it's proof the checkpoint you're looking at is the one everyone else sees too.</p>
 
 <h2>Run your own</h2>

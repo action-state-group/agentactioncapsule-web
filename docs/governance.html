@@ -77,12 +77,13 @@
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
   pre.code .fn{color:#7FB4FF} pre.code .ok{color:#54D08A;font-weight:600}
-  table.t{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 20px}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px;border:1px solid var(--line);border-radius:10px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px}
   table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
   table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
   table.t tbody th{font-weight:600;white-space:nowrap}
@@ -189,43 +190,43 @@
 <p>Verifiable records of what AI agents do are infrastructure the whole ecosystem depends on. We think AI safety and open standards matter far too much for that layer to be controlled by any single company — so the design goal from day one is to donate it. The maintainers have stewarded openly and neutrally governed software before (the Presto Foundation, under the Linux Foundation), and this project is modeled on that practice.</p>
 
 <h2>Principles</h2>
-<table class="t">
+<div class="tw"><table class="t">
   <tbody>
     <tr><th>Open</th><td>Apache-2.0 tooling; the specification under the IETF Trust's terms (BCP 78/79, code components under the Revised BSD License). Developed in public.</td></tr>
     <tr><th>Vendor-neutral</th><td>No required product; the specification favors no vendor. Any party can implement, run, and anchor — including in their own environment.</td></tr>
     <tr><th>Verifiable</th><td>Decisions, like capsules, happen in the open: public issues, public PRs, public discussion.</td></tr>
     <tr><th>Donate by design</th><td>The profile, the trademark, and the reference services are intended to transfer to a neutral foundation as the ecosystem matures.</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <h2>Where it stands today</h2>
 <p>The project is <strong>stewarded by Action State Group</strong>, which also operates the reference services (the public transparency log and the hosted verifier) for now. This is the honest current state: a single steward, structured to become neutral — not yet a multi-party foundation. We say so plainly rather than imply neutrality the structure doesn't yet have.</p>
 
 <h2>Roles</h2>
-<table class="t">
+<div class="tw"><table class="t">
   <tbody>
     <tr><th>Contributors</th><td>Anyone who opens an issue or PR. Contributions are made under the DCO (sign-off); no CLA.</td></tr>
     <tr><th>Maintainers</th><td>Review and merge changes, cut releases, and steward each repo. Co-maintainers from other organizations are explicitly welcome — earning merge rights through sustained, quality contribution.</td></tr>
     <tr><th>Technical Steering (planned)</th><td>As independent maintainers join, a lightweight Technical Steering Committee will take over cross-repo decisions — the standard Linux-Foundation-style model.</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <h2>How decisions are made</h2>
 <p>Changes happen by pull request and public discussion, with lazy consensus among maintainers; significant changes get an issue first. The <em>specification</em> evolves through the IETF process — it's an individual Internet-Draft (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>), and the goal is to bring it to the SCITT working group, where the WG — not this project — decides its standing.</p>
 
 <h2>Conformance to the final standard</h2>
-<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; COSE receipt specifications are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
+<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a> and COSE Receipts as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>; related specifications, such as the CCF receipt profile and SCRAPI, are still Internet-Drafts. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
 
 <h2>The path to a neutral foundation</h2>
 <p>Donation is a commitment, not just a hope. The intended sequence:</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Trigger</th><th>What transfers</th></tr></thead>
   <tbody>
     <tr><th>Independent implementers + a stable profile</th><td>governance moves to a Technical Steering Committee with multi-org maintainers</td></tr>
     <tr><th>Foundation home selected</th><td>the <code>agentactioncapsule.org</code> domain, the &ldquo;Agent Action Capsule&rdquo; trademark, and the reference services transfer to the neutral home</td></tr>
     <tr><th>Spec adoption</th><td>change control of the profile follows the IETF process on WG adoption / RFC publication</td></tr>
   </tbody>
-</table>
+</table></div>
 <p>Candidate homes are neutral, foundation-style bodies in the open-source / standards world; the specific home will be chosen with the community rather than announced unilaterally.</p>
 
 <h2>Scope &amp; boundaries</h2>

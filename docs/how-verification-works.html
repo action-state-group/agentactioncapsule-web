@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>How verification works: signature + inclusion proof &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="Verifying a capsule is two independent checks: the COSE signature proves who sealed it, and the receipt's inclusion proof shows the log recorded it. Both check from the bytes, offline.">
+<meta name="description" content="Verifying a capsule is three independent checks: recompute its capsule_id, check each producer signature over that id, and check the receipt's inclusion proof. All run from the bytes, offline.">
 <link rel="canonical" href="https://agentactioncapsule.org/docs/how-verification-works.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
 <meta property="og:title" content="How verification works: signature + inclusion proof">
-<meta property="og:description" content="Verifying a capsule is two independent checks: the COSE signature proves who sealed it, and the receipt's inclusion proof shows the log recorded it. Both check from the bytes, offline.">
+<meta property="og:description" content="Verifying a capsule is three independent checks: recompute its capsule_id, check each producer signature over that id, and check the receipt's inclusion proof. All run from the bytes, offline.">
 <meta property="og:url" content="https://agentactioncapsule.org/docs/how-verification-works.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="How verification works: signature + inclusion proof">
-<meta name="twitter:description" content="Verifying a capsule is two independent checks: the COSE signature proves who sealed it, and the receipt's inclusion proof shows the log recorded it. Both check from the bytes, offline.">
+<meta name="twitter:description" content="Verifying a capsule is three independent checks: recompute its capsule_id, check each producer signature over that id, and check the receipt's inclusion proof. All run from the bytes, offline.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -77,12 +77,13 @@
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
   pre.code .fn{color:#7FB4FF} pre.code .ok{color:#54D08A;font-weight:600}
-  table.t{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 20px}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px;border:1px solid var(--line);border-radius:10px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px}
   table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
   table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
   table.t tbody th{font-weight:600;white-space:nowrap}
@@ -183,12 +184,16 @@
       <div class="crumb">Concepts</div>
       
 <h1>How verification works</h1>
-<p class="lede">Verifying a capsule is two independent checks. The signature proves <strong>who sealed it</strong>. The receipt proves <strong>the log included it</strong>. Neither check requires trusting the operator &mdash; both run from the bytes, offline.</p>
+<p class="lede">Verifying a capsule is three independent checks, in order. The <code>capsule_id</code> shows <strong>the record is intact</strong>. The signature proves <strong>who sealed it</strong>. The receipt proves <strong>the log included it</strong>. None requires trusting the operator &mdash; all run from the bytes, offline.</p>
 
-<h2>Check 1 &mdash; the signature</h2>
-<p>The capsule is a <code>COSE_Sign1</code> structure. Given the issuer's public key, the verifier confirms the signature covers the protected header and payload. If any field changed after signing, the check fails. This establishes <em>who</em> made the statement and that it is intact.</p>
+<h2>Check 1 &mdash; the capsule_id</h2>
+<p>The verifier recomputes the <code>capsule_id</code>: the SHA-256 of the canonical capsule. A carried value is never trusted. If any field changed after sealing, the recomputed value differs and the check fails.</p>
 
-<h2>Check 2 &mdash; the inclusion proof</h2>
+<h2>Check 2 &mdash; the signature</h2>
+<p>A Producer Envelope is a <code>COSE_Sign1</code> whose payload is the 32-byte <code>capsule_id</code>. Given the producer's public key, the verifier confirms the signature covers that id. This establishes <em>who</em> sealed the record. A capsule can carry more than one envelope, and each is checked on its own; one with none is intact but unattributed.</p>
+<div class="callout">A capsule's identity is its <code>capsule_id</code>, a SHA-256 over the canonical capsule, and it does not depend on any signature. The specification makes signing optional: a producer MAY add one or more <code>COSE_Sign1</code> Producer Envelopes over the <code>capsule_id</code>. The reference producer, <a class="ln" href="https://github.com/action-state-group/capsule-emit">capsule-emit</a>, signs every capsule it seals, by default, with a per-ledger Ed25519 key; its only unsigned path is the separately named <code>log()</code> call.</div>
+
+<h2>Check 3 &mdash; the inclusion proof</h2>
 <p>The transparency service returns a receipt: a signed proof that the statement's leaf digest sits in the log's Merkle tree at a given size. Given the log's public key and the leaf digest, the verifier recomputes the path to the signed tree head. This establishes that the record was <em>recorded</em> and is discoverable &mdash; not held privately by the operator.</p>
 
 <pre class="code"><code><span class="c"># verify a receipt's inclusion proof, offline</span>

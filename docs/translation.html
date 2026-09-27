@@ -121,6 +121,7 @@
     .nav-links::-webkit-scrollbar{display:none}
     table.t{font-size:12px}
   }
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px}
 </style>
 </head>
 <body>
@@ -178,7 +179,7 @@
 <p class="lede">The same nouns and verbs, said three ways: the word you'd reach for talking to a developer, the phrase an auditor would actually trust, and the term the spec defines. Use this page when a word feels like it means two different things in two different places on this site &mdash; it probably does, on purpose, and this is the decoder.</p>
 
 <h2>Nouns</h2>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Concept</th><th>Dev</th><th>Auditor</th><th>Spec</th></tr></thead>
   <tbody>
     <tr><th>your record</th><td>receipt (yours) / capsule</td><td>the signed record the producer authored; a self-attested claim until witnessed</td><td>capsule (AAC record)</td></tr>
@@ -191,10 +192,10 @@
     <tr><th>the hand-over file</th><td>bundle</td><td>digests + proofs + stamps; lets anyone check integrity/order/completeness, carries no content</td><td>bundle</td></tr>
     <tr><th>content release</th><td>disclose</td><td>a deliberate, recorded release of content to a named audience; itself logged</td><td>disclosure record</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <h2>Verbs</h2>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>You type</th><th>Dev</th><th>Auditor</th><th>Spec</th></tr></thead>
   <tbody>
     <tr><th><code>seal(payload)</code></th><td>&ldquo;make a checkable record&rdquo;</td><td>mints a signed, logged, cadence-witnessed record</td><td>canonicalize (CPB) &rarr; sign &rarr; append (CLL) &rarr; checkpoint</td></tr>
@@ -206,17 +207,17 @@
     <tr><th><code>status</code></th><td>&ldquo;where's everything on the ladder&rdquo;</td><td>ladder position + witnessing lag per record</td><td>ladder + lag render</td></tr>
     <tr><th><code>report</code> (plugin)</th><td>&ldquo;the number, with the denominator&rdquo;</td><td>coverage with honest denominators; model-assisted rows labeled, never blended</td><td>rollup evaluation</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <h2>The ladder &mdash; three rungs, no more</h2>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Rung</th><th>Dev</th><th>Auditor</th><th>Spec</th></tr></thead>
   <tbody>
     <tr><th>self-attested</th><td>&ldquo;signed by me&rdquo;</td><td>record integrity by the producer's key alone; no third-party confirmation</td><td><code>attestation_mode=self_attested</code></td></tr>
     <tr><th>witnessed</th><td>&ldquo;an independent log confirmed it existed&rdquo;</td><td>existence + order + completeness checkable without trusting the producer</td><td>witnessed checkpoint (&ge;1 valid stamp)</td></tr>
     <tr><th>countersigned</th><td>&ldquo;someone else vouched&rdquo;</td><td>a non-producer's signed claim citing the record</td><td>counterparty / operator countersignature</td></tr>
   </tbody>
-</table>
+</table></div>
 <p style="color:var(--muted);font-size:14.5px">There is no fourth rung. A record you'll sometimes see called &ldquo;registered&rdquo; as if it were a step between self-attested and witnessed is not a separate assurance level &mdash; it's still self-attested until an independent witness has actually confirmed it. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a> for how you move a record up this ladder.</p>
 
 <h2>The honesty rows</h2>

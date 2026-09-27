@@ -77,7 +77,7 @@
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
@@ -129,6 +129,7 @@
     .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-links::-webkit-scrollbar{display:none}
   }
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px}
 </style>
 </head>
 <body>
@@ -191,7 +192,7 @@
 
 <h2>Which parts of CLL it uses</h2>
 <div style="overflow-x:auto">
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>CLL part</th><th>Used</th><th>How the registry uses it</th></tr></thead>
   <tbody>
     <tr><th>Append-only MMR over the log</th><td>yes</td><td>Entries anchored through the registry&rsquo;s aggregator fold as one leaf each into a single registry-wide Merkle Mountain Range (log id <code>trace-registry/v1</code>). Today that is one entry: the 2026-06-12 example predates this layer and is deliberately never folded in.</td></tr>
@@ -200,7 +201,7 @@
     <tr><th>Witness receipt over a checkpoint</th><td>yes, once</td><td>Checkpoint&nbsp;1 was registered with the public witness at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a>, and the returned receipt is published in the registry as an <a class="ln" href="https://github.com/agentrust-io/trace-registry/blob/4ae8c491ee1a2063b01780021dd31abe3f5560f9/docs/evidence/witness-2026-09-07/README.md">evidence packet</a>. Later checkpoints are not yet submitted automatically.</td></tr>
     <tr><th>MMR inclusion proof per record</th><td>no</td><td>Per-claim inclusion uses the per-batch RFC&nbsp;6962 proof described above.</td></tr>
   </tbody>
-</table>
+</table></div>
 </div>
 <p>The registry documents its CLL layer in <a class="ln" href="https://github.com/agentrust-io/trace-registry/blob/4ae8c491ee1a2063b01780021dd31abe3f5560f9/docs/mmr-checkpoint.md">docs/mmr-checkpoint.md</a>.</p>
 

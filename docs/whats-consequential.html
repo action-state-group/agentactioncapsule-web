@@ -77,12 +77,13 @@
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
   pre.code .fn{color:#7FB4FF} pre.code .ok{color:#54D08A;font-weight:600}
-  table.t{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 20px}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px;border:1px solid var(--line);border-radius:10px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px}
   table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
   table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
   table.t tbody th{font-weight:600;white-space:nowrap}
@@ -186,13 +187,13 @@
 <p class="lede">A capsule is for <em>consequential</em> actions, not every log line. The rule, in one sentence: <strong>seal what changes the world, plus reads of sensitive data; everything else is observability.</strong></p>
 
 <h2>Two signals</h2>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Signal</th><th>Seal it when…</th></tr></thead>
   <tbody>
     <tr><th>1 · Command vs. query</th><td>the action <strong>changes state or has a side effect</strong> — places an order, moves money, sends a message, writes a record. Pure reads (list / get / search) are queries — not sealed by default.</td></tr>
     <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>engine-side</em>, where data is classified — not at the gateway.</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <h2>Fail-safe by default</h2>
 <p>When a tool's nature is unknown, it is <strong>sealed</strong> — the safe default is to record, not to skip. An adapter only skips a call when it is explicitly marked a read (e.g. <code>action_type="fyi"</code>, or <code>seal_reads=False</code> for tools so annotated). You opt out of sealing deliberately; you never silently lose a consequential action.</p>
@@ -202,7 +203,7 @@
 
 <h2>Why this isn't a private invention</h2>
 <p>The command-vs-query distinction is decades-old accepted vocabulary. We stand on it deliberately:</p>
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Prior art</th><th>What we take from it</th></tr></thead>
   <tbody>
     <tr><th><a class="ln" href="https://en.wikipedia.org/wiki/Command%E2%80%93query_separation">Command–Query Separation</a> — Bertrand Meyer (1988)</th><td>the foundational command-vs-query split: commands change state, queries don't.</td></tr>
@@ -210,7 +211,7 @@
     <tr><th><a class="ln" href="https://modelcontextprotocol.io/">Model Context Protocol</a> tool annotations (Anthropic / AAIF)</th><td>tool-level read-only / destructive hints — the per-tool signal an adapter reads.</td></tr>
     <tr><th><a class="ln" href="https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C/section-164.312">HIPAA §164.312(b)</a> + <a class="ln" href="https://www.pcisecuritystandards.org/">PCI DSS</a></th><td>why a privileged <em>read</em> of regulated data is itself an auditable event (Signal 2).</td></tr>
   </tbody>
-</table>
+</table></div>
 <div class="callout">The canonical developer guide (the two-signal rule, the <code>seal_reads</code> knob, gateway vs. decorator patterns) lives in the producer's docs: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs">capsule-emit/docs</a>.</div>
 
       <div class="next"><a class="p" href="/docs/how-verification-works.html"><div class="dir">&#8592; Previous</div><div class="ttl">How verification works</div></a><a class="n" href="/docs/how-it-composes.html"><div class="dir">Next &#8594;</div><div class="ttl">How it composes</div></a></div>

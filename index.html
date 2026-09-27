@@ -247,13 +247,13 @@
     <div class="sec-head">
       <span class="eyebrow">The problem</span>
       <h2>Agents take actions. Right now, you have to trust the operator that they happened as claimed.</h2>
-      <p>The Agent Action Capsule closes that gap with three properties — the same shape <strong>SCITT</strong> (the IETF effort standardizing transparency for signed statements, now standardized in <a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:var(--accent);text-decoration:none">RFC&nbsp;9943</a> (the SCITT Architecture), with the COSE Receipts specification now published as <a href="https://www.rfc-editor.org/rfc/rfc9942" style="color:var(--accent);text-decoration:none">RFC&nbsp;9942</a>) defines for software supply chains, profiled for agent actions.</p>
+      <p>The Agent Action Capsule closes that gap with three properties — the same shape <strong>SCITT</strong> defines for software supply chains, profiled for agent actions. SCITT is the IETF effort standardizing transparency for signed statements: its Architecture is <a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:var(--accent);text-decoration:none">RFC&nbsp;9943</a> and its COSE Receipts are <a href="https://www.rfc-editor.org/rfc/rfc9942" style="color:var(--accent);text-decoration:none">RFC&nbsp;9942</a>, both published.</p>
     </div>
     <div class="grid3">
       <div class="card">
         <div class="k">Signed</div>
         <h3>Sealed at the moment of action</h3>
-        <p>A capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it — content-addressed by default, and COSE-signed at the Signed-Statement tier (COSE is the standard format for signing records like this). Tamper any byte and verification fails.</p>
+        <p>A capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it — always content-addressed, and signed with COSE (the standard format for signing records like this). The specification makes the signature optional; the reference producer signs every capsule by default. Tamper any byte and verification fails.</p>
       </div>
       <div class="card">
         <div class="k">Transparent</div>
@@ -734,7 +734,7 @@ capsule-emit verify --store ledger.jsonl
       <div class="ic-card">
         <span class="badge">TESTED AGAINST · CCF</span>
         <h3>Two-party, two logs</h3>
-        <p>One capsule, registered to our RFC9162 log <em>and</em> a real CCF (Confidential Consortium Framework) node — both receipts verify under our verifier stack. (CCF uses vds=2; RFC 9162 uses vds=1.) Tested against CCF; not an endorsement by the CCF project.</p>
+        <p>One capsule, registered to an RFC9162 log <em>and</em> a CCF (Confidential Consortium Framework) development node — both receipts verify with scitt-cose's <code>verify_receipt</code>, which reads both structures. (CCF uses vds=2; RFC 9162 uses vds=1.) Tested against CCF; not an endorsement by the CCF project.</p>
         <a href="https://github.com/action-state-group/scitt-cose">scitt-cose ↗</a>
       </div>
       <div class="ic-card">
@@ -783,7 +783,7 @@ capsule-emit verify --store ledger.jsonl
         <div><div class="rn">capsule-emit</div><div class="rd">The producer library and adapters — the one-decorator on-ramp for agents and MCP servers.</div><span class="tag">Apache-2.0</span></div>
       </a>
       <a class="repo" href="https://github.com/action-state-group/scitt-cose">
-        <div><div class="rn">scitt-cose</div><div class="rd">The SCITT receipt verifier — RFC9162_SHA256 (vds=1), cross-checked against CCF (vds=2).</div><span class="tag">Apache-2.0</span></div>
+        <div><div class="rn">scitt-cose</div><div class="rd">The SCITT receipt verifier — RFC9162_SHA256 (vds=1) and CCF ccf.v1 (vds=2) in Python and Go; the Rust crate reads vds=1 only.</div><span class="tag">Apache-2.0</span></div>
       </a>
       <a class="repo" href="https://github.com/action-state-group/capsule-anchor">
         <div><div class="rn">capsule-anchor</div><div class="rd">An open, product-free SCITT Transparency Service. Reference instance live at witness.agentactioncapsule.org.</div><span class="tag">Apache-2.0</span></div>
@@ -809,18 +809,6 @@ capsule-emit verify --store ledger.jsonl
   </div>
 </section>
 
-
-<!-- PLAYGROUND SLOT -->
-<section class="band" id="playground" style="background:var(--paper-2)">
-  <div class="wrap" style="max-width:780px;text-align:center">
-    <span class="eyebrow">Playground</span>
-    <h2 style="font-size:clamp(24px,3vw,34px);letter-spacing:-0.6px;margin:12px 0 16px">Mint your own capsule — in under 60 seconds.</h2>
-    <p style="font-size:17px;color:var(--muted);margin-bottom:28px">One button. No signup. No install. Your agent action sealed client-side, witnessed by the public log, and handed back as a shareable permalink anyone can verify.</p>
-    <p style="font-size:14px;color:var(--muted);font-family:var(--mono);border:1px dashed var(--line);border-radius:12px;padding:20px 24px;display:inline-block">
-      Playground launching soon &mdash; see the <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none">quickstart</a> to seal your first capsule now.
-    </p>
-  </div>
-</section>
 
 <!-- GET INVOLVED -->
 <section class="band stack" id="get-involved">
@@ -853,10 +841,10 @@ capsule-emit verify --store ledger.jsonl
     </div>
     <div class="sec-head" style="margin-top:44px;margin-bottom:20px">
       <span class="eyebrow">Adopters &amp; interop</span>
-      <h2 style="font-size:clamp(18px,2vw,24px);letter-spacing:-0.4px;margin:8px 0 8px">Who's already using it.</h2>
+      <h2 style="font-size:clamp(18px,2vw,24px);letter-spacing:-0.4px;margin:8px 0 8px">Early adopters wanted.</h2>
     </div>
     <div style="border:1px dashed var(--line);border-radius:12px;padding:22px 26px;font-size:14px;color:var(--muted);font-family:var(--mono)">
-      Adopter quotes and interop results arriving here. Building? <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none">Start with ADOPT.md ↗</a> &mdash; 30-minute self-serve path from zero to a witnessed, verified capsule.
+      No adopters are listed here yet. One is listed only when it has published something we can link to. Building? <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none">Start with ADOPT.md ↗</a>, a self-serve path from zero to a witnessed, verified capsule. Interop results so far are under <a href="#interop" style="color:var(--accent);text-decoration:none">Interop</a> above.
     </div>
 
     <p class="fit-note">New here? <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read how the project is governed →</a> · Join the conversation on <a href="https://github.com/action-state-group" style="color:var(--accent);text-decoration:none">GitHub</a>.</p>
@@ -884,7 +872,6 @@ capsule-emit verify --store ledger.jsonl
           <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (latest) ↗</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (latest) ↗</a>
           <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide ↗</a>
-          <a href="/playground.html">Playground</a>
           <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding ↗</a>
         </div>
         <div class="foot-col">

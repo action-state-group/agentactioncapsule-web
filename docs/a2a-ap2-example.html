@@ -123,6 +123,7 @@
     .nav-links{gap:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .nav-links::-webkit-scrollbar{display:none}
   }
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px}
 </style>
 </head>
 <body>
@@ -183,14 +184,14 @@
 <h2>The compose pattern</h2>
 <p>A2A (Agent-to-Agent protocol) and AP2 (A2A Payment Profile) handle authorization &mdash; who permitted this payment, for how much, to whom. They do not handle the <em>neutral witnessed record</em> of what the agent actually did. That&rsquo;s where the capsule fits: it binds the authorization to the outcome in a single sealed, content-private, independently verifiable record.</p>
 
-<table class="t">
+<div class="tw"><table class="t">
   <thead><tr><th>Layer</th><th>Protocol</th><th>What it shows</th></tr></thead>
   <tbody>
     <tr><th>Authorization</th><td>AP2 CartMandate</td><td>Caller permitted this payment (for up to X, to payee Y)</td></tr>
     <tr><th>Neutral record</th><td>AAC capsule</td><td>Callee sealed what actually happened &mdash; approved or refused</td></tr>
     <tr><th>Independent proof</th><td>SCITT receipt</td><td>Third-party log the capsule was registered; verifiable without trusting the callee</td></tr>
   </tbody>
-</table>
+</table></div>
 
 <div class="callout">Neither the AP2 mandate nor the payment details travel in the capsule &mdash; only their SHA-256 digests. Content stays local; the capsule is content-private by construction.</div>
 

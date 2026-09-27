@@ -13,11 +13,12 @@ Out:  docs/*.html  (one page per entry in PAGES, plus docs/index.html)
 NEUTRALITY: these pages are neutral substrate only. No product or business content.
 Standards status is stated honestly
 (individual Internet-Draft; SCITT Architecture = RFC 9943; COSE Receipts = RFC 9942,
-in AUTH48 final review, pre-publication).
+published; the CCF receipt profile is still an Internet-Draft).
 """
 from __future__ import annotations
 
 import pathlib
+import re
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "docs"
 
@@ -74,6 +75,19 @@ STATUS_NOTE = (
     "defines the shared canonicalization and digest-binding layer. Both build on the "
     'IETF SCITT Architecture (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>) '
     'and the COSE Receipts specification (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>, now published).'
+)
+
+# What is signed by default, stated once (2026-09-26 review: three pages disagreed). Settled from
+# the spec (-05: capsule identity is independent of signing; Producer Envelopes are a MAY) and from
+# capsule-emit's code (seal() always signs with a persisted per-ledger Ed25519 key; the only
+# unsigned append is the separately named log() verb).
+SIGNING_NOTE = (
+    "A capsule's identity is its <code>capsule_id</code>, a SHA-256 over the canonical capsule, and it "
+    "does not depend on any signature. The specification makes signing optional: a producer MAY add one "
+    "or more <code>COSE_Sign1</code> Producer Envelopes over the <code>capsule_id</code>. The reference "
+    'producer, <a class="ln" href="https://github.com/action-state-group/capsule-emit">capsule-emit</a>, '
+    "signs every capsule it seals, by default, with a per-ledger Ed25519 key; its only unsigned path is "
+    "the separately named <code>log()</code> call."
 )
 
 # ---------------------------------------------------------------------------
@@ -133,12 +147,13 @@ CSS = """
   article li{margin-bottom:7px}
   article a.ln{color:var(--accent);text-decoration:none}
   article a.ln:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
   pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
   pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
   pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
   pre.code .fn{color:#7FB4FF} pre.code .ok{color:#54D08A;font-weight:600}
-  table.t{border-collapse:collapse;width:100%;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:6px 0 20px}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px;border:1px solid var(--line);border-radius:10px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px}
   table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
   table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
   table.t tbody th{font-weight:600;white-space:nowrap}
@@ -374,7 +389,14 @@ PAGE = """<!DOCTYPE html>
 """
 
 
+def wrap_tables(body: str) -> str:
+    # Every table.t sits in a horizontal scroller so a wide table scrolls inside itself instead of
+    # widening the page on a phone (2026-09-26 review: 12 pages overflowed at 375px).
+    return re.sub(r'(<table class="t".*?</table>)', r'<div class="tw">\1</div>', body, flags=re.S)
+
+
 def render(slug, title, desc, crumb, body, *, is_index=False):
+    body = wrap_tables(body)
     url = "https://agentactioncapsule.org/docs/" if is_index else f"https://agentactioncapsule.org/docs/{slug}.html"
     return PAGE.format(
         title=title, desc=desc, css=CSS, nav=NAV, url=url,
@@ -404,14 +426,14 @@ PAGES["what-is-a-capsule"] = dict(
 <table class="t">
   <thead><tr><th>Property</th><th>What it means</th></tr></thead>
   <tbody>
-    <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it &mdash; content-addressed by default, and COSE-signed at the Signed-Statement tier. Change any byte and verification fails.</td></tr>
+    <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it. It is always content-addressed, and a producer signs that address with COSE; the reference producer signs every capsule by default. Change any byte and verification fails.</td></tr>
     <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was included in an append-only log that cannot quietly drop or rewrite history.</td></tr>
     <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems. You trust the log's key, not the operator.</td></tr>
   </tbody>
 </table>
 
 <h2>What a capsule commits to</h2>
-<p>A capsule is a <code>COSE_Sign1</code> envelope over the media type <code>application/agent-action-capsule+json</code>. The payload commits to:</p>
+<p>A capsule is a JSON record of media type <code>application/agent-action-capsule+json</code>. A producer signs it with a <code>COSE_Sign1</code> Producer Envelope whose payload is the capsule's 32-byte <code>capsule_id</code>. The record commits to:</p>
 <ul>
   <li>the <strong>action</strong> performed (an effect type and its identifying fields);</li>
   <li><strong>input and output digests</strong> &mdash; SHA-256 of what went in and what came out, so raw values stay local while the proof travels;</li>
@@ -442,7 +464,8 @@ PAGES["what-is-a-capsule"] = dict(
 <p>A <code>confirmed</code> capsule is sealed only when the agent observes a reply or receipt back from the system or party it acted on &mdash; that returning confirmation is what closes the loop. It's why <code>confirmed</code> carries more weight than <code>dispatched</code>, which records only that the action was sent. When no confirmation comes back to observe, the capsule honestly stays <code>dispatched</code> or <code>executed</code>.</p>
 
 <h2>Levels of assurance</h2>
-<p>Tamper-evidence is always present (the <code>capsule_id</code> hash). An <em>existence proof</em> comes from anchoring &mdash; the receipt held beside the capsule. A producer <em>signature</em> binding to a key is the SCITT Signed-Statement level, a step up from the default. You adopt as much as your use case needs.</p>
+<p>Tamper-evidence is always present (the <code>capsule_id</code> hash). A producer <em>signature</em> binds that hash to a key. An <em>existence proof</em> comes from registering the <code>capsule_id</code> with a transparency service &mdash; the receipt held beside the capsule. You adopt as much as your use case needs.</p>
+<div class="callout"><strong>What is signed by default.</strong> {SIGNING_NOTE}</div>
 
 <h2>What a capsule does not establish</h2>
 <p>Honest claims matter. Know the limits before relying on this for audit or compliance:</p>
@@ -450,7 +473,7 @@ PAGES["what-is-a-capsule"] = dict(
   <li><strong>Attested, not verified.</strong> A capsule records what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
   <li><strong>No anti-omission property.</strong> A capsule shows <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
   <li><strong>Signer = key-holder.</strong> The signature proves who held the signing key at the moment of sealing &mdash; not that the named agent actually ran the action. Key-management discipline is outside the capsule.</li>
-  <li><strong>Default may be signature-less.</strong> The base assurance level is a content hash (tamper-evident, content-private). A producer signature binding to a key requires the SCITT Signed-Statement level explicitly.</li>
+  <li><strong>A hash alone names no one.</strong> Without a Producer Envelope, a capsule is tamper-evident but says nothing about who sealed it. The specification allows that; the reference producer does not do it by default (see <em>What is signed by default</em>, above).</li>
   <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. A witness or a second independently-operated log removes this.</li>
 </ul>
 <p>These limits are features of being honest, not gaps to hide. Stating them is what makes the record trustworthy to an outside auditor.</p>
@@ -555,7 +578,7 @@ PAGES["verifiable-data-structures"] = dict(
 </table>
 
 <h2>Why two?</h2>
-<p>Different operators run different ledger technologies. The same Agent Action Capsule was registered to both an RFC&nbsp;9162 log (<code>vds=1</code>) <em>and</em> a real CCF node (<code>vds=2</code>), and both receipts check out &mdash; evidence that the statement layer is structure-independent. (The reference verifier <a class="ln" href="https://github.com/action-state-group/scitt-cose">scitt-cose</a> implements <code>vds=1</code>; the CCF receipt was cross-checked against a CCF node.)</p>
+<p>Different operators run different ledger technologies. The same Agent Action Capsule was registered to both an RFC&nbsp;9162 log (<code>vds=1</code>) <em>and</em> a real CCF node (<code>vds=2</code>), and both receipts check out &mdash; evidence that the statement layer is structure-independent. (The reference verifier <a class="ln" href="https://github.com/action-state-group/scitt-cose">scitt-cose</a> verifies both: its Python <code>verify_receipt</code> and its Go verifier accept <code>vds=1</code> and <code>vds=2</code>; its Rust crate accepts <code>vds=1</code> only and rejects anything else. The CCF receipt came from a CCF development node, not a production service.)</p>
 
 <h2>What stays constant</h2>
 <p>The signed statement &mdash; the capsule itself &mdash; does not change between <code>vds=1</code> and <code>vds=2</code>. Only the receipt differs. That is the whole point of separating <a class="ln" href="/docs/statement-vs-transparency-layer.html">the statement layer from the transparency layer</a>.</p>
@@ -565,16 +588,20 @@ PAGES["verifiable-data-structures"] = dict(
 
 PAGES["how-verification-works"] = dict(
     title="How verification works: signature + inclusion proof",
-    desc="Verifying a capsule is two independent checks: the COSE signature proves who sealed it, and the receipt's inclusion proof shows the log recorded it. Both check from the bytes, offline.",
+    desc="Verifying a capsule is three independent checks: recompute its capsule_id, check each producer signature over that id, and check the receipt's inclusion proof. All run from the bytes, offline.",
     crumb="Concepts",
-    body="""
+    body=f"""
 <h1>How verification works</h1>
-<p class="lede">Verifying a capsule is two independent checks. The signature proves <strong>who sealed it</strong>. The receipt proves <strong>the log included it</strong>. Neither check requires trusting the operator &mdash; both run from the bytes, offline.</p>
+<p class="lede">Verifying a capsule is three independent checks, in order. The <code>capsule_id</code> shows <strong>the record is intact</strong>. The signature proves <strong>who sealed it</strong>. The receipt proves <strong>the log included it</strong>. None requires trusting the operator &mdash; all run from the bytes, offline.</p>
 
-<h2>Check 1 &mdash; the signature</h2>
-<p>The capsule is a <code>COSE_Sign1</code> structure. Given the issuer's public key, the verifier confirms the signature covers the protected header and payload. If any field changed after signing, the check fails. This establishes <em>who</em> made the statement and that it is intact.</p>
+<h2>Check 1 &mdash; the capsule_id</h2>
+<p>The verifier recomputes the <code>capsule_id</code>: the SHA-256 of the canonical capsule. A carried value is never trusted. If any field changed after sealing, the recomputed value differs and the check fails.</p>
 
-<h2>Check 2 &mdash; the inclusion proof</h2>
+<h2>Check 2 &mdash; the signature</h2>
+<p>A Producer Envelope is a <code>COSE_Sign1</code> whose payload is the 32-byte <code>capsule_id</code>. Given the producer's public key, the verifier confirms the signature covers that id. This establishes <em>who</em> sealed the record. A capsule can carry more than one envelope, and each is checked on its own; one with none is intact but unattributed.</p>
+<div class="callout">{SIGNING_NOTE}</div>
+
+<h2>Check 3 &mdash; the inclusion proof</h2>
 <p>The transparency service returns a receipt: a signed proof that the statement's leaf digest sits in the log's Merkle tree at a given size. Given the log's public key and the leaf digest, the verifier recomputes the path to the signed tree head. This establishes that the record was <em>recorded</em> and is discoverable &mdash; not held privately by the operator.</p>
 
 <pre class="code"><code><span class="c"># verify a receipt's inclusion proof, offline</span>
@@ -848,7 +875,7 @@ PAGES["governance"] = dict(
 <p>Changes happen by pull request and public discussion, with lazy consensus among maintainers; significant changes get an issue first. The <em>specification</em> evolves through the IETF process — it's an individual Internet-Draft (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a>), and the goal is to bring it to the SCITT working group, where the WG — not this project — decides its standing.</p>
 
 <h2>Conformance to the final standard</h2>
-<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; COSE receipt specifications are still being finalized at the IETF. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
+<p>The SCITT Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a> and COSE Receipts as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>; related specifications, such as the CCF receipt profile and SCRAPI, are still Internet-Drafts. This profile is built to <strong>track them</strong>: as those specifications advance, the profile and its reference implementations will be updated to conform to the final versions, and any breaking changes will be versioned and documented. Building on it today should not strand you when the standard lands.</p>
 
 <h2>The path to a neutral foundation</h2>
 <p>Donation is a commitment, not just a hope. The intended sequence:</p>
@@ -879,7 +906,7 @@ PAGES["glossary"] = dict(
 <table class="t">
   <thead><tr><th>Term</th><th>Definition</th></tr></thead>
   <tbody>
-    <tr><th>SCITT</th><td>Supply Chain Integrity, Transparency, and Trust &mdash; the IETF working group and architecture for registering signed statements in transparency services. Its Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a>; some COSE receipt specifications are still drafts.</td></tr>
+    <tr><th>SCITT</th><td>Supply Chain Integrity, Transparency, and Trust &mdash; the IETF working group and architecture for registering signed statements in transparency services. Its Architecture is published as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9943">RFC&nbsp;9943</a> and COSE Receipts as <a class="ln" href="https://www.rfc-editor.org/rfc/rfc9942">RFC&nbsp;9942</a>; some related specifications, such as the CCF receipt profile, are still Internet-Drafts.</td></tr>
     <tr><th>SCITT profile</th><td>A specialization of the general SCITT signed-statement format for a domain. The Agent Action Capsule is the profile for <em>agent actions</em> &mdash; it builds on SCITT/COSE and interoperates with any SCITT transparency service, rather than being a separate standard.</td></tr>
     <tr><th>COSE</th><td>CBOR Object Signing and Encryption &mdash; the signature format used for statements and receipts.</td></tr>
     <tr><th>COSE_Sign1</th><td>A single-signer COSE structure: one signature over a protected header and payload. The envelope an Agent Action Capsule uses.</td></tr>
