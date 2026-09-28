@@ -1407,22 +1407,26 @@ PAGES["glossary"] = dict(
 """,
 )
 
-# Witness directory -- generated from data/witnesses.json, a copy of capsule-emit's
-# witnesses/witnesses.json (the source of truth; rows are added there by pull request).
+# Witness directory -- generated from data/witnesses.json, a copy of capsule-emit's root
+# witnesses.json (the source of truth; rows are added there by pull request).
 WITNESSES = json.loads((OUT.parent / "data" / "witnesses.json").read_text(encoding="utf-8"))["witnesses"]
 BINDING_LABEL = {"cll": "CLL <code>POST /checkpoints</code>", "rekor": "Rekor <code>dsse</code> entry",
                  "scrapi": "SCRAPI <code>POST /entries</code>"}
+BINDING_GRADES = {"cll": "<code>countersigned-observed</code> or <code>mmr-verified</code>, per receipt",
+                  "rekor": "<code>countersigned-observed</code>",
+                  "scrapi": "the receipt's own label, else <code>countersigned-observed</code>"}
 
 
 def witness_rows_html() -> str:
     rows = []
-    for w in sorted(WITNESSES, key=lambda r: r["operator"].casefold()):
+    for w in sorted(WITNESSES, key=lambda r: (r["name"].casefold(), r["endpoint"])):
         e = html.escape
-        grades = ", ".join(f"<code>{e(g)}</code>" for g in w["grades_issued"])
+        binding = w.get("binding", "cll")
+        keys = "<br>".join(f"<code>{e(k[:16])}&hellip;</code>" for k in w["key_ids"])
         rows.append(
-            f'<tr><th>{e(w["operator"])}</th><td><a class="ln" href="{e(w["endpoint"])}">{e(w["endpoint"])}</a></td>'
-            f'<td>{BINDING_LABEL.get(w["binding"], e(w["binding"]))}</td><td>{grades}</td>'
-            f'<td><code>{e(w["key_id"])}</code></td><td>{e(w["since"])}</td></tr>')
+            f'<tr><th>{e(w["name"])}</th><td><a class="ln" href="{e(w["endpoint"])}">{e(w["endpoint"])}</a></td>'
+            f'<td>{BINDING_LABEL.get(binding, e(binding))}</td><td>{BINDING_GRADES.get(binding, "")}</td>'
+            f'<td>{keys}</td><td>{e(w["since"])}</td></tr>')
     return "\n    ".join(rows)
 
 
@@ -1432,12 +1436,12 @@ PAGES["witnesses"] = dict(
     crumb="Reference",
     body=f"""
 <h1>Witness directory</h1>
-<p class="lede">Services that accept a log's checkpoint and return a receipt anyone can check offline. The list is alphabetical by operator and ordered by nothing else.</p>
+<p class="lede">Services that accept a log's checkpoint and return a receipt anyone can check offline. The list is alphabetical by name and ordered by nothing else.</p>
 
-<p>A checkpoint is witnessed more than once when it carries receipts from more than one operator. How many it needs is the <em>verifier's</em> choice: a policy such as &ldquo;two receipts, from two different operators&rdquo;, applied to the receipts that verify. Being listed here makes no receipt count, and no row is privileged. A verifier pins the keys it has decided to accept, and the keys below are printed to make that easier, not to make the decision for you.</p>
+<p>A checkpoint is witnessed more than once when it carries receipts from more than one operator. How many it needs is the <em>verifier's</em> choice: a policy such as &ldquo;two receipts, from two different operators&rdquo;, applied to the receipts that verify. No row is privileged: the reference verifier reads every row&rsquo;s keys the same way and has no key built in for any service, ours included. A verifier chooses which directory to use, and so which keys it accepts; being listed here is not that choice made for you.</p>
 
 <table class="t">
-  <thead><tr><th>Operator</th><th>Endpoint</th><th>Binding</th><th>Receipt grades</th><th>Key id</th><th>Since</th></tr></thead>
+  <thead><tr><th>Name</th><th>Endpoint</th><th>Binding</th><th>Receipt grades</th><th>Key ids</th><th>Since</th></tr></thead>
   <tbody>
     {witness_rows_html()}
   </tbody>
@@ -1458,7 +1462,7 @@ PAGES["witnesses"] = dict(
 <p>Each checkpoint goes to each witness independently. One failing never blocks the others, and a failed one is retried later from the log itself.</p>
 
 <h2>Adding a row</h2>
-<p>Open a pull request that adds one row to <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/witnesses/witnesses.json"><code>witnesses/witnesses.json</code> &#x2197;</a> in <code>capsule-emit</code>, using its witness-directory template. The fields are described in <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/witnesses/README.md">the directory README &#x2197;</a>.</p>
+<p>Open a pull request that adds one row to <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/witnesses.json"><code>witnesses.json</code> &#x2197;</a> in <code>capsule-emit</code>, using its directory-row template. The fields are described in <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/schemas/witnesses.schema.json">the schema &#x2197;</a>.</p>
 """,
 )
 
