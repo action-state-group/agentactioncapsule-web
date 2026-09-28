@@ -189,6 +189,8 @@ TOC = [
          "RFC9162_SHA256 (vds=1) vs CCF ccf.v1 (vds=2), and what stays constant across them."),
         ("how-verification-works", "/docs/how-verification-works.html", "How verification works", "How verification works",
          "Three independent checks: the capsule_id, the signature, then the inclusion proof &mdash; all from the bytes, offline."),
+        ("trust-map", "/docs/trust-map.html", "Trust map", "Trust map: what each check shows",
+         "Each check in plain words: what it shows, what it does not show, and what &ldquo;not checked here&rdquo; means."),
         ("whats-consequential", "/docs/whats-consequential.html", "What's consequential", "What's consequential",
          "Seal what changes the world, plus reads of sensitive data; everything else is observability."),
         ("how-it-composes", "/docs/how-it-composes.html", "How it composes", "How it composes with your stack",
@@ -1093,6 +1095,101 @@ r = verify_receipt(receipt, leaf_entry_hex=leaf,
   <li>Optionally, the log has stayed append-only between two tree heads (consistency).</li>
 </ul>
 <p>For the mechanics of each check, see <a class="ln" href="/docs/how-verification-works.html">how verification works</a>.</p>
+""",
+)
+
+TRUST_MAP_CSS = """
+.t td:last-child{color:var(--muted,#5b6470);font-size:.95em}
+.tm-terms{display:grid;grid-template-columns:max-content 1fr;gap:.35rem 1rem;margin:1rem 0}
+.tm-terms dt{font-weight:600}
+.tm-terms dd{margin:0}
+@media (max-width:560px){.tm-terms{grid-template-columns:1fr;gap:.1rem}.tm-terms dd{margin-bottom:.5rem}}
+@media (max-width:560px){
+  .t thead{display:none}
+  .t,.t tbody,.t tr,.t th,.t td{display:block;width:auto}
+  .t tr{padding:10px 0;border-top:1px solid var(--line,#e3e6ea)}
+  .t td::before{content:attr(data-label);display:block;font-family:var(--mono);font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted,#5b6470)}
+}
+"""
+
+PAGES["trust-map"] = dict(
+    title="Trust map: what each check shows",
+    desc="A plain-words map of the checks behind a record: what each one shows, what it does not show, and what it means when a view says a thing is not checked here.",
+    crumb="Concepts",
+    css=TRUST_MAP_CSS,
+    body=f"""
+<h1>Trust map: what each check shows</h1>
+<p class="lede">Each check answers one narrow question. A pass on one says nothing about the others. This page lists the checks behind a record, what each one shows, and what it does not show.</p>
+
+<p>If you followed a link from an evidence view, such as a node's Evidence tab in the <a class="ln" href="/docs/case-study-mesh-llm.html">Mesh-LLM case study</a>, this is the key to it. The <em>In the Mesh-LLM view</em> column says where that view gets each answer: a check it runs on your machine, or a state it only reads and marks <em>not checked here</em>.</p>
+
+<h2>The checks</h2>
+<table class="t">
+  <thead><tr><th>Check</th><th>What it shows</th><th>What it does not show</th><th>In the Mesh-LLM view</th></tr></thead>
+  <tbody>
+    <tr id="content-binding"><th>Content binding</th>
+      <td data-label="What it shows">The record's fingerprint is recomputed from its bytes and matches the id it was sealed under. Change one byte and it no longer matches.</td>
+      <td data-label="What it does not show">That what the record says is true. Who wrote it.</td>
+      <td data-label="In the Mesh-LLM view">Checked on this machine, for your records and for theirs.</td></tr>
+    <tr id="signature"><th>Signature</th>
+      <td data-label="What it shows">Proves the holder of a key signed this record's id.</td>
+      <td data-label="What it does not show">Who holds the key, or that the named machine did the work. For the other side's record, the key is the one they announce: their claim, not an identity anyone else vouched for.</td>
+      <td data-label="In the Mesh-LLM view">Checked on this machine, or by your node when their record arrives.</td></tr>
+    <tr id="inclusion"><th>Inclusion in a signed checkpoint</th>
+      <td data-label="What it shows">Proves the record sits in the log under that checkpoint's root.</td>
+      <td data-label="What it does not show">That the log holds nothing else, or that anyone outside the log's operator holds the checkpoint. A count of records a checkpoint covers is only a number the node reports.</td>
+      <td data-label="In the Mesh-LLM view">Checked by your node for their record before it keeps a citation. For your own records, the view shows the node's coverage count.</td></tr>
+    <tr id="checkpoint-signature"><th>Checkpoint signature</th>
+      <td data-label="What it shows">Proves the log's key signed that checkpoint: that root, at that size.</td>
+      <td data-label="What it does not show">That the operator showed everyone the same checkpoint. Only someone outside, such as a witness, can catch two different versions.</td>
+      <td data-label="In the Mesh-LLM view">Checked by your node, under the key on their record, together with inclusion.</td></tr>
+    <tr id="continuity"><th>Continuity</th>
+      <td data-label="What it shows">When checked with a consistency proof, it proves each checkpoint builds on the one before, so an earlier entry was not rewritten or dropped between them.</td>
+      <td data-label="What it does not show">That every action was recorded. A log can stay consistent and still leave an action out.</td>
+      <td data-label="In the Mesh-LLM view">Not checked here. The view reads the node's status.</td></tr>
+    <tr id="witness-receipt"><th>Witness receipt</th>
+      <td data-label="What it shows">A party you don't run holds a copy of your checkpoint, so a later rewrite would show to others. Witnesses see checkpoints, never records or text.</td>
+      <td data-label="What it does not show">That the records are true, or that they are all there. It says nothing about the content of any record.</td>
+      <td data-label="In the Mesh-LLM view">Not checked here. The view reads whether a receipt exists; it does not check the receipt, or the witnesses a checkpoint lists.</td></tr>
+    <tr id="matching-record"><th>The other side's matching record</th>
+      <td data-label="What it shows">Both sides sealed their own record of one exchange, and the two agree: the same request and answer fingerprints, the same serving machine, the same model weights fingerprint. Two signed records that disagree are a signed disagreement.</td>
+      <td data-label="What it does not show">That the answer is right. That the weights named are the ones that ran; the check compares fingerprints each side states. A model name alone never counts as a match.</td>
+      <td data-label="In the Mesh-LLM view">Checked on this machine. The view marks the serving-machine comparison as provisional.</td></tr>
+    <tr id="twin-referee"><th>Twin plus referee</th>
+      <td data-label="What it shows">The same request went to two machines and both answers were kept, with the settings each was asked to use, so they can be compared side by side. A referee can compare the two and seal a verdict.</td>
+      <td data-label="What it does not show">Which answer is right. A verdict that is not signed is a statement, not something you can check.</td>
+      <td data-label="In the Mesh-LLM view">The two answers are shown side by side. Verdicts: not checked here.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="not-checked-here">What &ldquo;not checked here&rdquo; means</h2>
+<p><em>Not checked here</em> means the view displays a state it read from somewhere else and did not verify itself. It is not a failure and not a pass. It tells you where the trust sits: with whoever reported that state.</p>
+<p>In the Mesh-LLM view, these are read and not checked:</p>
+<ul>
+  <li>witness receipts, and the witnesses a checkpoint lists;</li>
+  <li>continuity;</li>
+  <li>twin verdicts;</li>
+  <li>the link between a node and its owner, which the node reports about itself;</li>
+  <li>peer names, which each peer chooses.</li>
+</ul>
+<p>To check a record yourself, use a verifier you choose: <a class="ln" href="/docs/verify-a-capsule.html">Verify a capsule</a> runs the same checks in the browser, on the command line, or as a library. A view that cannot run a check should say so rather than show a pass.</p>
+
+<h2 id="terms">Terms, one line each</h2>
+<dl class="tm-terms">
+  <dt>Record</dt><dd>One sealed entry: a capsule.</dd>
+  <dt>Fingerprint</dt><dd>A SHA-256 digest of some bytes; any change gives a different one.</dd>
+  <dt>Signature</dt><dd>A COSE signature over a record's id, made with one key.</dd>
+  <dt>Log</dt><dd>A node's records, in order, append-only.</dd>
+  <dt>Checkpoint</dt><dd>A signed snapshot of a log: its root and size.</dd>
+  <dt>Inclusion proof</dt><dd>The path that places one record under a checkpoint's root.</dd>
+  <dt>Consistency proof</dt><dd>The path that shows a later checkpoint extends an earlier one.</dd>
+  <dt>Witness</dt><dd>A party you don't run that holds copies of your checkpoints; there can be several.</dd>
+  <dt>The other side</dt><dd>The machine you dealt with in an exchange, which keeps its own record of it.</dd>
+  <dt>Referee</dt><dd>A third party that compares two answers to the same request and seals a verdict.</dd>
+  <dt>Checked on this machine</dt><dd>Recomputed where you are reading it, from the bytes.</dd>
+  <dt>Not checked here</dt><dd>Read from elsewhere and shown as reported, not verified by this view.</dd>
+</dl>
+<p>Fuller definitions are in the <a class="ln" href="/docs/glossary.html">glossary</a>. The threat model behind the Mesh-LLM checks is in <a class="ln" href="https://github.com/action-state-group/capsule-emit-mesh/blob/main/docs/TRUST-MODEL.md">A trust model for strangers on a mesh &#x2197;</a>.</p>
 """,
 )
 
