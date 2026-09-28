@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How it works: creating capsules, and using them &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and a witness fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/how-it-works.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Agent Action Capsule">
+<meta property="og:title" content="How it works: creating capsules, and using them">
+<meta property="og:description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and a witness fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/how-it-works.html">
+<meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How it works: creating capsules, and using them">
+<meta name="twitter:description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and a witness fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
+<meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
+<meta name="theme-color" content="#0B0E14">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
+    --line:#E3E3DC; --line-2:#2A313F;
+    --muted:#5C6573; --muted-2:#6B7280;
+    --accent:#3A5BD9; --accent-soft:#EAEEFC;
+    --verify:#127A52; --verify-soft:#E6F2EC;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
+  .skip:focus{top:8px}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
+  .mono{font-family:var(--mono)}
+
+  /* DOCS SHELL */
+  .docs{display:grid;grid-template-columns:236px 1fr;gap:52px;padding:40px 0 64px}
+
+  /* ARTICLE */
+  article{min-width:0;max-width:760px}
+  .crumb{font-family:var(--mono);font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  article h1{font-size:clamp(28px,4vw,40px);letter-spacing:-1px;line-height:1.1;font-weight:700;margin-bottom:14px}
+  article .lede{font-size:18px;color:var(--muted);margin-bottom:30px;line-height:1.6}
+  article h2{font-size:23px;letter-spacing:-0.4px;font-weight:700;margin:38px 0 12px;padding-top:8px}
+  article h3{font-size:17px;font-weight:600;margin:24px 0 8px}
+  article p{margin-bottom:14px}
+  article ul,article ol{margin:0 0 16px 22px}
+  article li{margin-bottom:7px}
+  article a.ln{color:var(--accent);text-decoration:none}
+  article a.ln:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;overflow-wrap:anywhere}
+  pre.code{background:var(--ink);color:#E8ECF4;border-radius:12px;padding:20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.7;border:1px solid var(--line-2);margin:6px 0 18px}
+  pre.code code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
+  pre.code .c{color:#7E8AA0} pre.code .s{color:#9DE2B8} pre.code .k{color:#C58AF9}
+  pre.code .fn{color:#7FB4FF} pre.code .ok{color:#54D08A;font-weight:600}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:6px 0 20px;border:1px solid var(--line);border-radius:10px}
+  table.t{border-collapse:collapse;width:100%;font-size:13.5px}
+  table.t th,table.t td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+  table.t thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
+  table.t tbody th{font-weight:600;white-space:nowrap}
+  table.t tbody td{color:var(--muted)}
+  table.t tr:last-child th,table.t tr:last-child td{border-bottom:none}
+  .callout{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 18px;font-size:14px;margin:6px 0 20px}
+  .callout.warn{border-left-color:var(--verify)}
+  .callout.deeper{border-left-color:var(--verify);background:var(--verify-soft)}
+
+  /* DOCS INDEX CARDS */
+  .idx-group{margin-bottom:34px}
+  .idx-group h2{font-size:15px;font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px;font-weight:500}
+  .idx-group .note{font-size:14px;color:var(--muted);line-height:1.6;margin:-6px 0 14px}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .dcard{border:1px solid var(--line);border-radius:12px;padding:20px 22px;background:#fff;text-decoration:none;transition:border-color .15s,transform .15s;display:block}
+  .dcard:hover{border-color:var(--ink);transform:translateY(-2px)}
+  .dcard .n{font-size:16px;font-weight:600;letter-spacing:-0.2px;margin-bottom:6px}
+  .dcard .d{font-size:13.5px;color:var(--muted)}
+
+
+  @media(max-width:900px){ .cards{grid-template-columns:1fr} }
+
+  .hw-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:8px 0 22px}
+  .hw-col{border:1px solid var(--line);border-radius:12px;padding:18px 20px;background:#fff}
+  .hw-col.seal{border-color:var(--verify);background:var(--verify-soft)}
+  .hw-col h3{margin:0 0 4px;font-family:var(--mono);font-size:15px}
+  .hw-col .sub{font-size:13.5px;color:var(--muted);margin-bottom:10px}
+  .hw-col ul{margin:0 0 0 18px;font-size:14.5px}
+  .hw-col li{margin-bottom:5px}
+  .hw-col .bottom{font-size:13.5px;color:var(--muted);margin-top:10px;margin-bottom:0}
+  .hw-dia{display:grid;grid-template-columns:1.55fr 1fr 1fr;gap:12px;margin:10px 0 8px;font-size:13px;line-height:1.45}
+  .hw-p{border-radius:12px;padding:14px;min-width:0}
+  .hw-p .hd{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
+  .hw-p .who{font-size:12.5px;margin-bottom:10px}
+  .hw-org{background:var(--ink);color:#E8ECF4;border:1px solid var(--line-2)}
+  .hw-org .who{color:#9AA3B2}
+  .hw-wit{background:var(--paper-2);border:1px solid var(--line)}
+  .hw-wit .who,.hw-rp .who{color:var(--muted)}
+  .hw-rp{background:var(--accent-soft);border:1px solid #C9D3F5}
+  .hw-org-in{display:grid;grid-template-columns:auto 1fr;gap:10px}
+  .hw-agents{display:flex;flex-direction:column;gap:6px;padding-right:10px;border-right:1.5px dashed #5C6573}
+  .hw-agents .lb{font-family:var(--mono);font-size:10px;color:#9AA3B2;text-transform:uppercase;letter-spacing:1px}
+  .hw-chip{font-family:var(--mono);font-size:11.5px;border-radius:999px;padding:2px 10px;background:#54D08A;color:var(--ink);font-weight:600;text-align:center}
+  .hw-cll .lb{font-family:var(--mono);font-size:11px;color:#9DE2B8;margin-bottom:6px}
+  .hw-row{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line-2);background:var(--ink-2);border-radius:7px;padding:5px 9px;margin-bottom:5px;overflow-wrap:anywhere}
+  .hw-row.ck,.hw-row.rc{border-color:#54D08A;color:#9DE2B8}
+  .hw-row.rv{border-style:dashed}
+  .hw-row .d{color:#7E8AA0}
+  .hw-store{margin-top:10px;font-size:12px;color:#9AA3B2;border-top:1px solid var(--line-2);padding-top:8px}
+  .hw-store strong{color:#E8ECF4}
+  .hw-box{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:8px;overflow-wrap:anywhere}
+  .hw-box.ok{border-color:var(--verify)}
+  .hw-box.ghost{border-style:dashed;color:var(--muted-2);background:transparent}
+  .hw-box .t{font-family:var(--mono);font-size:11.5px;font-weight:600;margin-bottom:2px}
+  .hw-box.ok .t{color:var(--verify)}
+  .hw-note{font-style:italic;color:var(--muted);font-size:12.5px}
+  .hw-bundle{border:1.5px solid #C9A227;border-radius:9px;padding:9px 11px;margin-bottom:10px;font-family:var(--mono);font-size:11.5px}
+  .hw-bundle .t{color:#E8C766;font-weight:600;margin-bottom:3px}
+  .hw-out{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .hw-out span{font-family:var(--mono);font-size:11px;background:var(--paper);color:var(--ink);border-radius:999px;padding:2px 10px}
+  .hw-flow{font-family:var(--mono);font-size:12px;color:var(--verify);margin:4px 0 4px;overflow-wrap:anywhere}
+  .hw-cap{font-weight:600;font-size:15.5px;margin:6px 0 10px}
+  .hw-key{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:0 0 22px}
+  .hw-arrow{display:none}
+  .hw-q{display:grid;grid-template-columns:3fr 1.25fr;gap:14px;margin:10px 0 22px}
+  .hw-qg{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:8px;align-items:stretch}
+  .hw-qg .rl{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);align-self:center;padding-right:4px}
+  .hw-qc{border:1px solid var(--ink);border-radius:9px;padding:9px 10px;background:#fff;min-width:0}
+  .hw-qc .q{font-weight:600;font-size:13.5px;line-height:1.3;margin-bottom:4px}
+  .hw-qc .a{font-size:12px;color:var(--muted);line-height:1.4}
+  .hw-qc.ten{border:2px dashed var(--ink);background:var(--paper-2);padding:14px}
+  .hw-qc.ten .q{font-size:15px}
+  @media(max-width:760px){
+    .hw-cols,.hw-dia,.hw-q{grid-template-columns:1fr}
+    .hw-arrow{display:block;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);margin:-4px 0}
+    .hw-qg{grid-template-columns:1fr 1fr}
+    .hw-qg .rl{grid-column:1/-1;padding-top:6px}
+  }
+</style>
+<!--chrome:head--><script>document.documentElement.className+=' js';</script>
+<style>
+  /* shared chrome (tools/build_docs.py) */
+  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink);white-space:nowrap}
+  .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
+  .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
+  .nav-links{display:flex;gap:22px;align-items:center}
+  .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink);font-weight:600}
+  .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
+  .nav-ghost:hover{border-color:var(--ink)}
+  .nav-toggle{display:none;align-items:center;gap:8px;font:inherit;font-size:13.5px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:7px;padding:6px 12px;cursor:pointer}
+  .nav-toggle .bars{width:14px;height:10px;border-top:1.5px solid currentColor;border-bottom:1.5px solid currentColor;position:relative}
+  .nav-toggle .bars::after{content:'';position:absolute;left:0;right:0;top:3.5px;border-top:1.5px solid currentColor}
+  .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
+  .side-d>summary{display:none}
+  .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
+  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h5:first-child{margin-top:0}
+  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
+  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
+  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
+  .next a:hover{border-color:var(--ink)}
+  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
+  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
+  .next a.n{text-align:right}
+  footer{padding:48px 0 56px;border-top:1px solid var(--line)}
+  .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  .foot-brand{max-width:38ch}
+  .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
+  .foot-cols{display:flex;gap:48px;flex-wrap:wrap}
+  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
+  .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
+  .foot-col a:hover{color:var(--ink)}
+  .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
+  @media(max-width:900px){
+    .docs{grid-template-columns:1fr;gap:20px}
+    .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
+    .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+    .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
+    .side-d .side h5{width:100%;margin:8px 0 2px}
+    .side-d .side a{border-left:none;padding:3px 0}
+  }
+  @media(max-width:860px){
+    .nav-in{padding:12px 16px;flex-wrap:wrap;gap:10px}
+    .nav-links{flex-wrap:wrap;gap:6px 16px;overflow:visible}
+    html.js .nav-toggle{display:inline-flex}
+    html.js .nav-links{display:none;width:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 0 8px}
+    html.js .nav-links.open{display:flex}
+    html.js .nav-links a{display:block;padding:10px 0;font-size:15px}
+    html.js .nav-links a:not(.nav-ghost){display:block}
+    html.js .nav-ghost{border:none;padding:10px 0;font-family:inherit;font-size:15px}
+  }
+  @media(max-width:560px){ .wrap{padding-left:16px;padding-right:16px} footer{padding:36px 0 44px} .foot-cols{gap:28px} }
+</style><!--/chrome:head-->
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<!--chrome:nav--><nav aria-label="Site">
+  <div class="nav-in">
+    <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span class="bars" aria-hidden="true"></span>Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="/">Standard</a>
+      <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+      <a href="https://verify.agentactioncapsule.org">Verifier</a>
+      <a class="active" href="/docs/">Docs</a>
+      <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
+      <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) &#x2197;</a>
+    </div>
+  </div>
+</nav><!--/chrome:nav-->
+<main class="wrap" id="main">
+  <div class="docs">
+    <!--chrome:side--><details class="side-d" open><summary>Docs menu</summary>
+<nav class="side" aria-label="Docs">
+<h5>Documentation</h5>
+<a href="/docs/">Overview</a>
+<h5>Use cases</h5>
+<a href="/docs/use-cases.html">Use cases</a>
+<a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
+<h5>Interop</h5>
+<a href="/docs/interop/trace-registry.html">The TRACE Registry</a>
+<h5>Concepts</h5>
+<a href="/docs/witness-landing.html">You've reached a witness</a>
+<a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
+<a href="/docs/how-it-works.html" class="active">How it works</a>
+<a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
+<a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
+<a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
+<a href="/docs/how-verification-works.html">How verification works</a>
+<a href="/docs/whats-consequential.html">What's consequential</a>
+<a href="/docs/how-it-composes.html">How it composes</a>
+<a href="/docs/witness-anywhere.html">Witness anywhere</a>
+<h5>Guides</h5>
+<a href="/docs/quickstart.html">Quickstart</a>
+<a href="/docs/verify-a-capsule.html">Verify a capsule</a>
+<a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
+<h5>Live</h5>
+<a href="/docs/explore.html">Explore a capsule</a>
+<a href="/docs/log.html">The public log, live</a>
+<h5>Reference</h5>
+<a href="/docs/glossary.html">Glossary</a>
+<a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
+<h5>Extensions</h5>
+<a href="/docs/bilateral.html">Bilateral attestation</a>
+<h5>Project</h5>
+<a href="/docs/governance.html">Governance</a>
+<a href="/ip">Patent posture</a>
+</nav>
+</details><!--/chrome:side-->
+    <article>
+      <div class="crumb">Concepts</div>
+      
+<h1>How it works</h1>
+<p class="lede">A capsule has two sides. The organisation whose agent acts creates the record at the moment of the action. Later, someone who was not in the room asks for part of it and checks the answer for themselves. This page walks through both sides, in that order.</p>
+
+<h2 id="diary">A diary is not a signed record</h2>
+<p>Most agents already write logs. A log and a signed record answer different questions.</p>
+<div class="hw-cols">
+  <div class="hw-col">
+    <h3>An ordinary log</h3>
+    <div class="sub">The operator's diary</div>
+    <ul>
+      <li>Editable</li>
+      <li>Deletable</li>
+      <li>Reorderable</li>
+      <li>Often collected late, after something went wrong</li>
+      <li>Written by the system it describes</li>
+    </ul>
+  </div>
+  <div class="hw-col seal">
+    <h3>seal()</h3>
+    <div class="sub">A signed record</div>
+    <ul>
+      <li>Content-addressed: the record carries digests, and the content stays with you</li>
+      <li>Signed at the boundary, by a key the model never holds</li>
+      <li>Chained locally and append-only; checkpoints are registered with a witness</li>
+      <li>Checkable by anyone, offline, with published public keys</li>
+    </ul>
+  </div>
+</div>
+<div class="callout">A note on names: the reference producer, <a class="ln" href="https://github.com/action-state-group/capsule-emit">capsule-emit</a>, also has a <code>log()</code> call, and it is not the diary on the left. A <code>log()</code> entry is chained, checkpointed and witnessed like a sealed capsule. It only leaves out the producer's signature, so a verifier reports its authorship as <em>not claimed</em>. Use <code>seal()</code> when it matters who made the record.</div>
+
+<h2 id="line">The line</h2>
+<p><strong>A log is enough, until someone else has to believe it.</strong></p>
+<div class="tw"><table class="t">
+  <thead><tr><th>A log is good for</th><th>A log is not enough when</th></tr></thead>
+  <tbody>
+    <tr><td>debugging</td><td><strong>money moves</strong> &mdash; a payment, a trade, a refund</td></tr>
+    <tr><td>ops dashboards</td><td><strong>a duty applies</strong> &mdash; a regulator, a contract, a customer's right</td></tr>
+    <tr><td>&ldquo;what happened last night&rdquo;</td><td><strong>someone else was harmed</strong> &mdash; a counterparty, an evaluator, a court</td></tr>
+    <tr><td>the author's own memory</td><td></td></tr>
+  </tbody>
+</table></div>
+<p>Each case on the right has a party who was not in the room and does not take your word for it. For the operator, a diary is fine. Once a second party is entitled to the truth, the diary is a claim, not evidence. The rest of this page is what it takes for that party to believe a record without trusting whoever wrote it.</p>
+
+<h2 id="create">1 of 2 &middot; Creating capsules</h2>
+<p>Everything in this half happens inside the organisation, before anyone asks a question.</p>
+<div class="hw-dia" role="img" aria-label="Diagram: an organisation's agents seal actions at a boundary into an append-only local log whose content stays in a payload store; a signed checkpoint goes to a witness that sees no content and returns a receipt; the relying party has nothing to verify yet.">
+  <div class="hw-p hw-org">
+    <div class="hd">Organisation &middot; create</div>
+    <div class="who">the party whose agents act</div>
+    <div class="hw-org-in">
+      <div class="hw-agents">
+        <span class="lb">boundary</span>
+        <span class="hw-chip">agent</span>
+        <span class="hw-chip">agent</span>
+        <span class="hw-chip">agent</span>
+      </div>
+      <div class="hw-cll">
+        <div class="lb">CLL &middot; append-only</div>
+        <div class="hw-row ck">&#9650; checkpoint &middot; size 1,240 &middot; peaks &middot; signed</div>
+        <div class="hw-row rc">&#10003; receipt &middot; 09:41Z</div>
+        <div class="hw-row">&#9679; action &times;4 <span class="d">ad212d&hellip; 9f0e1c&hellip; 4b7a90&hellip;</span></div>
+        <div class="hw-row rv">&#9675; received <span class="d">71c2e5&hellip; theirs</span></div>
+        <div class="hw-row">&#9679; obligation <span class="d">a disclosure duty</span></div>
+        <div class="hw-row">&#9679; judgment</div>
+      </div>
+    </div>
+    <div class="hw-store"><strong>payload store</strong> &middot; the content stays here and never leaves</div>
+  </div>
+  <div class="hw-arrow">&darr; only the checkpoint goes out</div>
+  <div class="hw-p hw-wit">
+    <div class="hd">Witness</div>
+    <div class="who">sees no content &middot; not operated by the organisation</div>
+    <div class="hw-box"><div class="t">&#9650; checkpoint</div>received 09:41Z</div>
+    <div class="hw-box ok"><div class="t">&#10003; receipt</div>registered no later than 09:41Z &middot; consistent with the previous checkpoint</div>
+    <div class="hw-box ghost">&#10003; another witness</div>
+  </div>
+  <div class="hw-arrow">&darr; nobody has asked yet</div>
+  <div class="hw-p hw-rp">
+    <div class="hd">Relying party</div>
+    <div class="who">a regulator, counterparty, auditor or evaluator</div>
+    <div class="hw-box"><div class="t">verifier</div>verify.agentactioncapsule.org, or the CLI &middot; offline &middot; published keys</div>
+    <p class="hw-note">Nothing to verify yet. Nobody has asked.</p>
+  </div>
+</div>
+<p class="hw-cap">Nothing has left the organisation but a checkpoint, and the date is already fixed.</p>
+<p class="hw-key">&#9679; sealed by the organisation &middot; &#9675; received, signed by someone else &middot; &#9650; checkpoint &middot; &#10003; witness receipt</p>
+<ol>
+  <li><strong>Seal at the boundary.</strong> Each consequential action is sealed where it leaves the agent, by a key the model never holds. The capsule carries digests of the inputs and outputs. The content itself stays in your payload store.</li>
+  <li><strong>Carry in the other side's half.</strong> When a counterparty sends its own signed record, <code>received()</code> commits those exact bytes as they arrived. It never re-signs them, so the record stays theirs.</li>
+  <li><strong>Seal what applied, and what was decided.</strong> The same log can hold the obligation an action was under (here, a disclosure duty) and any judgment made against it. They are ordinary sealed records; the format has no special case for them.</li>
+  <li><strong>Checkpoint.</strong> The <a class="ln" href="https://github.com/action-state-group/checkpointed-local-log">checkpointed local log</a> (CLL) chains every entry, append-only. At intervals it signs a checkpoint: one small value that commits to its whole history so far, with its size and the tree's peaks.</li>
+  <li><strong>Witness.</strong> Only the checkpoint goes to a witness. The witness returns a receipt saying the checkpoint was registered no later than a given time and is consistent with the previous one. The organisation does not operate the witness, and you can register with more than one. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a>.</li>
+</ol>
+
+<h2 id="use">2 of 2 &middot; Using capsules</h2>
+<p>Months later, someone entitled to the truth asks. The organisation discloses the record, and only the part that was asked for.</p>
+<div class="hw-dia" role="img" aria-label="Diagram: the relying party sends an evidence request for a slice; the organisation answers with a bundle of the requested records, checkpoint, receipt and inclusion proofs, or a signed refusal; the relying party's verifier checks signatures, inclusion and the witness receipt offline.">
+  <div class="hw-p hw-org">
+    <div class="hd">Organisation &middot; asked about</div>
+    <div class="who">answers from the same log</div>
+    <div class="hw-bundle">
+      <div class="t">bundle</div>
+      &#9679; the requested records<br>
+      withheld: digest only<br>
+      &#9650; checkpoint &middot; &#10003; receipt<br>
+      inclusion proofs<br>
+      judgments
+    </div>
+    <div class="hw-cll">
+      <div class="lb">CLL &middot; append-only</div>
+      <div class="hw-row ck">&#9650; checkpoint &middot; size 1,240</div>
+      <div class="hw-row rc">&#10003; receipt &middot; 09:41Z</div>
+      <div class="hw-row">&#9679; action &times;4</div>
+      <div class="hw-row rv">&#9675; received</div>
+      <div class="hw-row">&#9679; obligation &middot; &#9679; judgment</div>
+    </div>
+    <div class="hw-out"><span>records</span><span>signed refusal</span></div>
+  </div>
+  <div class="hw-p hw-wit">
+    <div class="hd">Witness</div>
+    <div class="who">sees no content &middot; not operated by the organisation</div>
+    <div class="hw-box ok"><div class="t">&#10003; receipt &middot; 09:41Z</div>grade: consistency-verified</div>
+    <p class="hw-note">The date was fixed before anyone asked.</p>
+  </div>
+  <div class="hw-p hw-rp">
+    <div class="hd">Relying party</div>
+    <div class="who">a regulator, counterparty, auditor or evaluator</div>
+    <div class="hw-box"><div class="t">evidence request</div>show me: actions under a disclosure duty, September 2026<br>by: a party entitled to ask</div>
+    <div class="hw-box ok"><div class="t">verifier &middot; offline</div>signatures &#10003;<br>inclusion in checkpoint 09:41Z &#10003;<br>receipt &#10003; consistency-verified<br>counts recomputed &#10003;</div>
+    <div class="hw-box ghost"><div class="t">absence</div>if no answer comes in time, the asker records its own request and the empty window</div>
+  </div>
+</div>
+<p class="hw-flow">sealed &rarr; chained &rarr; checkpointed &rarr; registered &rarr; asked &rarr; disclosed &rarr; recomputed</p>
+<p class="hw-cap">The relying party recomputes everything offline. They trust the arithmetic and the published keys, not the organisation.</p>
+<p>The exchange follows <a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request</a>, an individual Internet-Draft. A request names a <em>slice</em> (what evidence is wanted) and the checkpoint the answer has to verify against. Every request ends in exactly one of three outcomes:</p>
+<div class="tw"><table class="t">
+  <thead><tr><th>Outcome</th><th>What it is</th><th>Who signs it</th></tr></thead>
+  <tbody>
+    <tr><th>The records</th><td>A bundle with the requested capsules, the checkpoint and its witness receipt, and an inclusion proof for each record. Anything outside the slice appears only as a digest.</td><td>The organisation, plus the witness's receipt</td></tr>
+    <tr><th>A signed refusal</th><td>A refusal with a machine-readable reason, such as <code>not_authorized</code> or <code>no_such_subject</code> (&ldquo;we hold no such record&rdquo;). It is an answer, and the asker can keep it and show it to others.</td><td>The organisation</td></tr>
+    <tr><th>Absence</th><td>No answer arrived before the asker's deadline. Nobody sends an absence; the asker records its own request and the window in which nothing came.</td><td>The asker, about its own attempt</td></tr>
+  </tbody>
+</table></div>
+<p>The three are never converted into one another. An asker cannot turn a timeout into a refusal, and an organisation that stays silent has not refused. Silence is recorded as silence. And because the records were checkpointed and witnessed when they were sealed, an answer given months later cannot be backdated: the date was fixed before anyone asked.</p>
+
+<h2 id="ten">Nine on your copy, one on theirs</h2>
+<p>These are ten questions an investigator asks about an agent's record. Nine can be answered from your own copy, by recomputation. The tenth needs the other party's copy.</p>
+<div class="hw-q">
+  <div class="hw-qg">
+    <div class="rl">Receipt</div>
+    <div class="hw-qc"><div class="q">Rewrote the record?</div><div class="a">The <code>capsule_id</code> is recomputed from the bytes; any change breaks it.</div></div>
+    <div class="hw-qc"><div class="q">Faked who signed?</div><div class="a">The signature is checked against the producer's published key.</div></div>
+    <div class="hw-qc"><div class="q">Swapped the task?</div><div class="a">The capsule commits its inputs by digest; a different task gives a different digest.</div></div>
+    <div class="rl">Log</div>
+    <div class="hw-qc"><div class="q">Left it out of the log?</div><div class="a">An inclusion proof ties the record to a checkpoint.</div></div>
+    <div class="hw-qc"><div class="q">Faked the log's seal?</div><div class="a">The checkpoint's signature is checked, and the witness receipt names the same checkpoint.</div></div>
+    <div class="hw-qc"><div class="q">Made it up later?</div><div class="a">The receipt bounds when the checkpoint existed; a later record is not in it.</div></div>
+    <div class="rl">Fine print</div>
+    <div class="hw-qc"><div class="q">Reordered history?</div><div class="a">A consistency proof between checkpoints shows the log only appended.</div></div>
+    <div class="hw-qc"><div class="q">Used a key it shouldn't?</div><div class="a">A key that is not in the producer's published set fails the signature check.</div></div>
+    <div class="hw-qc"><div class="q">Recorded only part?</div><div class="a">In a two-party exchange each half is signed, so a half with no match is counted, not estimated.</div></div>
+  </div>
+  <div class="hw-qc ten"><div class="q">10 &middot; Faked the outcome?</div><div class="a">Your copy shows what your side sealed. Whether it happened on the other side takes the other party's signed record: their half, carried in with <code>received()</code>, or their own copy. See <a class="ln" href="/docs/bilateral.html">bilateral attestation</a>.</div></div>
+</div>
+<div class="callout">A witnessed record is not a true record. Every check above is about integrity: who signed, what was included, and when. None of them says whether the agent did the right thing. See <a class="ln" href="/docs/how-verification-works.html">how verification works</a> for the checks themselves, and <a class="ln" href="/docs/verify-a-capsule.html">verify a capsule</a> to run them.</div>
+
+      <!--chrome:next--><div class="next"><a class="p" href="/docs/what-is-a-capsule.html"><div class="dir">&#8592; Previous</div><div class="ttl">What is a Capsule?</div></a><a class="n" href="/docs/statement-vs-transparency-layer.html"><div class="dir">Next &#8594;</div><div class="ttl">Statement vs transparency layer</div></a></div><!--/chrome:next-->
+    </article>
+  </div>
+</main>
+<!--chrome:footer--><footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <div class="foot-brand">
+        <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
+        <p>An open, individual profile (an IETF Internet-Draft; not WG-adopted) built on the SCITT Architecture (<a href="https://www.rfc-editor.org/rfc/rfc9943" style="color:inherit">RFC&nbsp;9943</a>), for verifiable records of agent actions. Stewarded today by Action State Group, built to be donated to a neutral home.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h5>Standard</h5>
+          <a href="/">Overview</a>
+          <a href="/#compose">Composition</a>
+          <a href="/docs/">Docs</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (latest) &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (latest) &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (latest) &#x2197;</a>
+          <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding &#x2197;</a>
+          <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h5>Services</h5>
+          <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
+          <a href="https://verify.agentactioncapsule.org">Verifier</a>
+        </div>
+        <div class="foot-col">
+          <h5>Source</h5>
+          <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
+          <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
+          <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
+          <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h5>Project</h5>
+          <a href="/docs/governance.html">Governance</a>
+          <a href="/ip">Patent posture</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
+  </div>
+</footer><!--/chrome:footer-->
+<!--chrome:js--><script>
+(function(){
+  var t=document.querySelector('.nav-toggle'), l=document.getElementById('nav-links');
+  if(t&&l){ t.addEventListener('click',function(){ var o=l.classList.toggle('open'); t.setAttribute('aria-expanded',o?'true':'false'); }); }
+  if(window.matchMedia&&window.matchMedia('(max-width:900px)').matches){
+    document.querySelectorAll('details.side-d').forEach(function(d){ d.open=false; });
+  }
+})();
+</script><!--/chrome:js-->
+</body>
+</html>
