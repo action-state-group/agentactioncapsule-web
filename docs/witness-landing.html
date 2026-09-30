@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>You've reached a witness &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="Followed a link from a checkpoint or a receipt? Here's what a witness is, what it shows and what it never shows, and how to check it yourself in about five minutes.">
+<meta name="description" content="Followed a link from a checkpoint or a receipt? This witness is a SCITT Transparency Service. Here's what it shows and what it never shows, and how to check it yourself in about five minutes.">
 <link rel="canonical" href="https://agentactioncapsule.org/docs/witness-landing.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
 <meta property="og:title" content="You've reached a witness">
-<meta property="og:description" content="Followed a link from a checkpoint or a receipt? Here's what a witness is, what it shows and what it never shows, and how to check it yourself in about five minutes.">
+<meta property="og:description" content="Followed a link from a checkpoint or a receipt? This witness is a SCITT Transparency Service. Here's what it shows and what it never shows, and how to check it yourself in about five minutes.">
 <meta property="og:url" content="https://agentactioncapsule.org/docs/witness-landing.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="You've reached a witness">
-<meta name="twitter:description" content="Followed a link from a checkpoint or a receipt? Here's what a witness is, what it shows and what it never shows, and how to check it yourself in about five minutes.">
+<meta name="twitter:description" content="Followed a link from a checkpoint or a receipt? This witness is a SCITT Transparency Service. Here's what it shows and what it never shows, and how to check it yourself in about five minutes.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -251,10 +251,10 @@
       <div class="crumb">Concepts</div>
 
 <h1>You've reached a witness</h1>
-<p class="lede">You probably followed a link from a checkpoint, a receipt, or a post about one. Here's the whole idea in about five minutes: what a checkpoint is, what a witness does and does not show, and how to check any of it yourself &mdash; without asking you to trust us.</p>
+<p class="lede">You probably followed a link from a checkpoint, a receipt, or a post about one. This witness is <strong>a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a></strong> (SCITT is the IETF architecture in RFC&nbsp;9943). Here's the whole idea in about five minutes: what a checkpoint is, what this service does and does not show, and how to check any of it yourself &mdash; without asking you to trust us.</p>
 
 <h2>What is a checkpoint?</h2>
-<p>A checkpoint is one signed value &mdash; a 32-byte root, signed: about 300&ndash;500 bytes on the wire &mdash; that commits an entire log's history to date. Whoever holds the log can recompute that value from every entry they've recorded; if even one byte of one past entry changed, the checkpoint would no longer match. It's <strong>witnessed</strong> when an independent party co-signs it, which is what turns "trust me, my log is complete" into something a stranger &mdash; you &mdash; can check without trusting anyone.</p>
+<p>A checkpoint is one signed value &mdash; a 32-byte root, signed: about 300&ndash;500 bytes on the wire &mdash; that commits an entire log's history to date. Whoever holds the log can recompute that value from every entry they've recorded; if even one byte of one past entry changed, the checkpoint would no longer match. It's <strong>registered</strong> when a Transparency Service its owner does not run records it in its own log and returns a Receipt. The Receipt proves the checkpoint is in that log; it does not say the service agrees with what the log contains. That is what turns "trust me, my log is complete" into something a stranger &mdash; you &mdash; can check.</p>
 
 <h2>What this witness shows &mdash; and what it never does</h2>
 <p>A witness is infrastructure, not a verdict. It commits to three things, checkable from the bytes alone:</p>
@@ -268,24 +268,24 @@
   <li>A witnessed record is not a true record. The stamp attests existence/order/completeness, never accuracy.</li>
   <li>A derived verdict is not an adjudicated one. <code>verify</code> never grades up &mdash; it never reports more assurance than the bytes support: absence &ne; forgery, unsigned &ne; invalid.</li>
   <li>Coverage is the range, not the population.</li>
-  <li>Registration &ne; Receipt &ne; Witnessing. Registration is the act, a Receipt is what the service returns, witnessing is a party co-signing the checkpoint so the log can't equivocate.</li>
+  <li>Registration &ne; Receipt &ne; agreement. Registration is the act. A Receipt is what the service returns: it proves inclusion in that service's log, not agreement with the content. When a checkpoint carries a consistency proof, this service registers it only if the proof shows it extends the last one it registered for the same log; that check is part of its published <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">Registration Policy</a>.</li>
 </ul>
 <p style="color:var(--muted);font-size:14.5px">Word-for-word, in three registers &mdash; dev, auditor, spec &mdash; on the <a class="ln" href="/docs/translation.html">translation page</a>.</p>
 
 <h2>The grade you'll see</h2>
-<p>Not every checkpoint this witness shows you was built the same way, and the label tells you which:</p>
+<p>Not every checkpoint this witness shows you was built the same way, and the label tells you which. These grade labels are this service's own; they are outside SCITT.</p>
 <div class="tw"><table class="t">
   <thead><tr><th>Grade</th><th>What it means</th></tr></thead>
   <tbody>
     <tr><th><code>mmr-verified</code></th><td>This witness holds the underlying log entries itself and independently recomputed the checkpoint from them. It rebuilt the tree; the root matches.</td></tr>
-    <tr><th><code>countersigned-observed</code></th><td>The checkpoint was minted by a different log this witness doesn't hold the entries for. This witness checked the signature and co-signed it &mdash; so a stranger can't be shown two different versions &mdash; but it did not rebuild the tree behind it.</td></tr>
+    <tr><th><code>countersigned-observed</code></th><td>The checkpoint was minted by a different log this witness doesn't hold the entries for. This witness checked the signature, registered the checkpoint and returned a Receipt, so anyone can compare the checkpoint they were shown with the one in this log; it did not rebuild the tree behind it.</td></tr>
   </tbody>
 </table></div>
-<p>These two are never presented as one guarantee. A <code>countersigned-observed</code> checkpoint is not proof this witness recomputed anything; it's proof the checkpoint you're looking at is the one everyone else sees too.</p>
+<p>These two are never presented as one guarantee. A <code>countersigned-observed</code> checkpoint is not proof this witness recomputed anything; it shows the checkpoint you're looking at is the one registered in this log.</p>
 
 <h2>Run your own</h2>
 <p>This witness runs on <a class="ln" href="https://github.com/action-state-group">open-source infrastructure</a> &mdash; auditable in full, Apache-2.0. You don't have to take this instance's word for anything you can check yourself, and you don't have to use this instance at all: run your own witness in the region you choose, or self-host it inside your own network where nothing but a digest ever leaves. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a> for the options.</p>
-<p>It is built to have no single point of trust, including whoever runs this instance. Other operators running the same log side by side is the design goal: more independent witnesses is strictly better for everyone checking a record, including the operators of any one of them.</p>
+<p>It is built to have no single point of trust, including whoever runs this instance. Other operators running the same service side by side is the design goal: registering the same checkpoint with more than one independently run Transparency Service is better for everyone checking a record, including the operators of any one of them.</p>
 
 <h2>Try it yourself, in order</h2>
 <div class="steps">

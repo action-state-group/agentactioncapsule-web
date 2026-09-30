@@ -180,7 +180,7 @@ TOC = [
         ("what-is-a-capsule", "/docs/what-is-a-capsule.html", "What is a Capsule?", "What is an Agent Action Capsule?",
          "A signed, tamper-evident record of an agent action &mdash; and the three properties that make it verifiable."),
         ("how-it-works", "/docs/how-it-works.html", "How it works", "How it works",
-         "Both sides: the organisation seals each action and a witness fixes the date; later, a party entitled to ask requests a slice and recomputes the answer offline."),
+         "Both sides: the organisation seals each action and registers a checkpoint with a Transparency Service, which fixes the date; later, a party entitled to ask requests a slice and recomputes the answer offline."),
         ("statement-vs-transparency-layer", "/docs/statement-vs-transparency-layer.html", "Statement vs transparency layer", "Statement vs transparency layer",
          "What happened vs where it is recorded &mdash; and why the statement is structure-independent."),
         ("what-is-a-transparency-service", "/docs/what-is-a-transparency-service.html", "What is a Transparency Service?", "What is a Transparency Service?",
@@ -609,7 +609,7 @@ PAGES["what-is-a-capsule"] = dict(
   <li><strong>No anti-omission property.</strong> A capsule shows <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
   <li><strong>Signer = key-holder.</strong> The signature proves who held the signing key at the moment of sealing &mdash; not that the named agent actually ran the action. Key-management discipline is outside the capsule.</li>
   <li><strong>A hash alone names no one.</strong> Without a Producer Envelope, a capsule is tamper-evident but says nothing about who sealed it. The specification allows that; the reference producer does not do it by default (see <em>What is signed by default</em>, above).</li>
-  <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. A witness or a second independently-operated log removes this.</li>
+  <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. Registering with a Transparency Service the operator does not run removes this.</li>
 </ul>
 <p>These limits are features of being honest, not gaps to hide. Stating them is what makes the record trustworthy to an outside auditor.</p>
 
@@ -662,7 +662,7 @@ PAGES["what-is-a-transparency-service"] = dict(
     crumb="Concepts",
     body="""
 <h1>What is a Transparency Service?</h1>
-<p class="lede">A Transparency Service (TS) registers signed statements, issues a receipt proving inclusion, and witnesses them into an append-only log &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
+<p class="lede">A Transparency Service (TS) registers signed statements in an append-only log and issues a receipt proving inclusion &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
 <p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
 
 <h2>What it does</h2>
@@ -824,7 +824,7 @@ HOW_IT_WORKS_CSS = """
 
 PAGES["how-it-works"] = dict(
     title="How it works: creating capsules, and using them",
-    desc="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and a witness fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.",
+    desc="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and registers a checkpoint with a Transparency Service, which fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.",
     crumb="Concepts",
     css=HOW_IT_WORKS_CSS,
     body="""
@@ -919,7 +919,7 @@ PAGES["how-it-works"] = dict(
   <li><strong>Carry in the other side's half.</strong> When a counterparty sends its own signed record, <code>received()</code> commits those exact bytes as they arrived. It never re-signs them, so the record stays theirs.</li>
   <li><strong>Seal what applied, and what was decided.</strong> The same log can hold the obligation an action was under (here, a disclosure duty) and any judgment made against it. They are ordinary sealed records; the format has no special case for them.</li>
   <li><strong>Checkpoint.</strong> The <a class="ln" href="https://github.com/action-state-group/checkpointed-local-log">checkpointed local log</a> (CLL) chains every entry, append-only. At intervals it signs a checkpoint: one small value that commits to its whole history so far, with its size and the tree's peaks.</li>
-  <li><strong>Witness.</strong> Only the checkpoint goes to a witness. The witness returns a receipt saying the checkpoint was registered no later than a given time and is consistent with the previous one. The organisation does not operate the witness, and you can register with more than one. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a>.</li>
+  <li><strong>Witness.</strong> Only the checkpoint goes to a witness, a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a>. It returns a Receipt saying the checkpoint was registered no later than a given time. Under that policy, a checkpoint that carries a consistency proof is registered only if it extends the previous one. The organisation does not operate the witness, and you can register with more than one. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a>.</li>
 </ol>
 
 <h2 id="use">2 of 2 &middot; Using capsules</h2>
@@ -1029,7 +1029,7 @@ print(cap.capsule_id, cap.signature)   <span class="c"># sealed, signed, and wit
 <div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter seals on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
 
 <h2>3. Where it's witnessed</h2>
-<p>By default, every <code>seal()</code> folds the capsule into your ledger's checkpoint/witness stream: roughly every 100 entries (or 15 minutes), a signed checkpoint of the whole ledger &mdash; never capsule content &mdash; is registered with the public witness at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a>, no signup, no key. Set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>) to seal fully offline; set <code>CAPSULE_WITNESS_URL</code> or pass <code>witness_url=&hellip;</code> to point at your own Transparency Service. The older per-capsule <em>anchor</em> channel (<code>cap.anchored</code>, <code>anchor=True</code> / <code>CAPSULE_ANCHOR=legacy-on</code>) is a legacy, explicit opt-in kept only as a rollback path &mdash; it has not been the default egress path since 0.5.0. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
+<p>By default, every <code>seal()</code> folds the capsule into your ledger's checkpoint/witness stream: roughly every 100 entries (or 15 minutes), a signed checkpoint of the whole ledger &mdash; never capsule content &mdash; is registered with the public witness, a SCITT Transparency Service, at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a>, no signup, no key. Set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>) to seal fully offline; set <code>CAPSULE_WITNESS_URL</code> or pass <code>witness_url=&hellip;</code> to point at your own Transparency Service. The older per-capsule <em>anchor</em> channel (<code>cap.anchored</code>, <code>anchor=True</code> / <code>CAPSULE_ANCHOR=legacy-on</code>) is a legacy, explicit opt-in kept only as a rollback path &mdash; it has not been the default egress path since 0.5.0. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
 
 <h2>4. Verify</h2>
 <p>Each <code>seal()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
@@ -1141,14 +1141,14 @@ PAGES["trust-map"] = dict(
       <td data-label="In the Mesh-LLM view">Checked by your node for their record before it keeps a citation. For your own records, the view shows the node's coverage count.</td></tr>
     <tr id="checkpoint-signature"><th>Checkpoint signature</th>
       <td data-label="What it shows">Proves the log's key signed that checkpoint: that root, at that size.</td>
-      <td data-label="What it does not show">That the operator showed everyone the same checkpoint. Only someone outside, such as a witness, can catch two different versions.</td>
+      <td data-label="What it does not show">That the operator showed everyone the same checkpoint. Only someone outside, such as a Transparency Service that registered the checkpoint, can catch two different versions.</td>
       <td data-label="In the Mesh-LLM view">Checked by your node, under the key on their record, together with inclusion.</td></tr>
     <tr id="continuity"><th>Continuity</th>
       <td data-label="What it shows">When checked with a consistency proof, it proves each checkpoint builds on the one before, so an earlier entry was not rewritten or dropped between them.</td>
       <td data-label="What it does not show">That every action was recorded. A log can stay consistent and still leave an action out.</td>
       <td data-label="In the Mesh-LLM view">Not checked here. The view reads the node's status.</td></tr>
-    <tr id="witness-receipt"><th>Witness receipt</th>
-      <td data-label="What it shows">A party you don't run holds a copy of your checkpoint, so a later rewrite would show to others. Witnesses see checkpoints, never records or text.</td>
+    <tr id="witness-receipt"><th>Witness receipt (a SCITT Receipt)</th>
+      <td data-label="What it shows">A Transparency Service you don't run registered your checkpoint in its own log, so a later rewrite would show to others. The Receipt proves the checkpoint is in that log, not that the service agrees with it. The service sees checkpoints, never records or text.</td>
       <td data-label="What it does not show">That the records are true, or that they are all there. It says nothing about the content of any record.</td>
       <td data-label="In the Mesh-LLM view">Not checked here. The view reads whether a receipt exists; it does not check the receipt, or the witnesses a checkpoint lists.</td></tr>
     <tr id="matching-record"><th>The other side's matching record</th>
@@ -1183,7 +1183,7 @@ PAGES["trust-map"] = dict(
   <dt>Checkpoint</dt><dd>A signed snapshot of a log: its root and size.</dd>
   <dt>Inclusion proof</dt><dd>The path that places one record under a checkpoint's root.</dd>
   <dt>Consistency proof</dt><dd>The path that shows a later checkpoint extends an earlier one.</dd>
-  <dt>Witness</dt><dd>A party you don't run that holds copies of your checkpoints; there can be several.</dd>
+  <dt>Witness</dt><dd>A SCITT Transparency Service you don't run that registers your checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a>; you can register with several.</dd>
   <dt>The other side</dt><dd>The machine you dealt with in an exchange, which keeps its own record of it.</dd>
   <dt>Referee</dt><dd>A third party that compares two answers to the same request and seals a verdict.</dd>
   <dt>Checked on this machine</dt><dd>Recomputed where you are reading it, from the bytes.</dd>
@@ -1286,7 +1286,7 @@ PAGES["witness-anywhere"] = dict(
     crumb="Concepts",
     body="""
 <h1>Witness anywhere — what leaves your walls</h1>
-<p class="lede">Witnessing proves a capsule was included in a public, append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
+<p class="lede">Witnessing means registering with a SCITT Transparency Service: its Receipt proves a capsule was included in an append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
 
 <h2>What leaves your walls</h2>
 <p>A capsule is <a class="ln" href="/docs/what-is-a-capsule.html">content-private by construction</a>: it carries digests of inputs and outputs, not the raw values. When it's witnessed, the log receives the statement's commitment — a hash — plus a timestamp. The raw content stays where you keep it, under your control. The public log stores <em>a commitment you can check</em>, not your data.</p>
@@ -1300,7 +1300,7 @@ PAGES["witness-anywhere"] = dict(
     <tr><th>Your own witness, inside your VPC</th><td>full control — self-host the container with your own storage</td><td>nothing — the hash never leaves your environment</td></tr>
   </tbody>
 </table>
-<p>The capsule is <strong>witness-agnostic</strong> (it makes no claim about the log's <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure</a>): the same statement verifies whichever log you choose, so you can move or mix witnesses without changing the record. This is also true of vendor lock-in more broadly: no vendor, including us, controls where your capsules get witnessed.</p>
+<p>The capsule <strong>does not depend on any one Transparency Service</strong> (it makes no claim about the log's <a class="ln" href="/docs/verifiable-data-structures.html">verifiable-data-structure</a>): the same statement verifies whichever log you choose, so you can move, or register with more than one, without changing the record. This is also true of vendor lock-in more broadly: no vendor, including us, controls where your capsules get registered.</p>
 
 <h2>What a digest hides — and what it doesn't</h2>
 <p>A digest hides a value only when that value is hard to guess. A high-entropy input (a full prompt, a document, a key) is safe. But a <em>low-entropy</em> value — a short dollar amount, a yes/no disposition, an ID from a known list — can be recovered by hashing candidate values until one matches. For those fields, <strong>salt before hashing</strong> with a random salt that stays secret, and disclose it only together with the value when you choose to reveal it. A published salt does not help: anyone can hash the candidates with it. And note the capsule commits some metadata in the clear — the action type and disposition — so &ldquo;content-private&rdquo; means your <em>payloads</em> stay private, not that the capsule reveals nothing about what kind of action occurred.</p>
@@ -1392,12 +1392,12 @@ PAGES["glossary"] = dict(
     <tr><th>VDS</th><td>Verifiable Data Structure &mdash; how a log proves inclusion and consistency. <code>vds=1</code> is RFC9162_SHA256; <code>vds=2</code> is CCF (ccf.v1).</td></tr>
     <tr><th>Inclusion proof</th><td>Evidence that a specific leaf is part of the log at a given size &mdash; answers &ldquo;is my record in the log?&rdquo;</td></tr>
     <tr><th>Consistency proof</th><td>Evidence that one tree head is an append-only extension of an earlier one &mdash; answers &ldquo;did the log stay honest?&rdquo;</td></tr>
-    <tr><th>STH</th><td>Signed Tree Head &mdash; the log's current Merkle root and size, signed, so verifiers and witnesses can pin its state.</td></tr>
+    <tr><th>STH</th><td>Signed Tree Head &mdash; the log's current Merkle root and size, signed, so verifiers and auditors can pin its state.</td></tr>
     <tr><th>Merkle tree</th><td>A hash tree whose root commits to every leaf; the structure behind RFC&nbsp;9162 inclusion and consistency proofs.</td></tr>
     <tr><th>RFC 9162</th><td>Certificate Transparency 2.0 &mdash; the published RFC whose SHA-256 Merkle proofs back <code>vds=1</code>.</td></tr>
     <tr><th>CCF</th><td>Confidential Consortium Framework &mdash; an open-source confidential ledger framework whose receipts back <code>vds=2</code>.</td></tr>
     <tr id="disposition"><th>Disposition</th><td>How an action was disposed, recorded in every capsule &mdash; refusals included. Its <code>verdict_class</code> is one of the spec's registered values: <code>executed</code>, <code>blocked</code>, <code>hitl_dispatched</code>, <code>denied</code>, <code>timeout</code>, <code>errored</code>, <code>engine_failure</code>, <code>deferred</code>, <code>needs_decision</code>, <code>expired</code>, <code>escalated</code>, <code>resolved</code>, <code>epoch_boundary</code>. Its <code>decision</code> is <code>accept</code>, <code>reject</code>, <code>needs_input</code> or <code>deferred</code>, and its <code>approver</code> is <code>human</code>, <code>policy</code> or <code>counterparty</code>. <em>Confirmed</em> is not a verdict: it is an effect status (the result was observed), and <code>confirms</code> is a chain relation. This is the one list the site uses.</td></tr>
-    <tr><th>Witness vs <code>anchored</code></th><td>A <strong>witness</strong> is an independent party that co-signs a log's checkpoint, and this site uses the word for both the service and the act. <code>anchored</code> is the specification's name for an assurance tier: a record whose chain has been registered with a transparency log, backed by a receipt a verifier has checked. Same event, two vocabularies. The site avoids &ldquo;anchor&rdquo; as a verb because it collides with &ldquo;trust anchor&rdquo;. The service's source is still named <code>capsule-anchor</code>.</td></tr>
+    <tr><th>Witness vs <code>anchored</code></th><td>On this site a <strong>witness</strong> is a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a>: when a new checkpoint carries a consistency proof, it registers it only if the proof shows it extends the last checkpoint it registered for the same log, and it returns a Receipt. The Receipt proves the checkpoint is in the service's log. It does not mean the service agrees with the records. RFC 9943 has no role called &ldquo;witness&rdquo;; the word is this site's name for the service, and &ldquo;witnessed&rdquo; means registered with one. <code>anchored</code> is the specification's name for an assurance tier: a record whose chain has been registered with a transparency log, backed by a receipt a verifier has checked. Same event, two vocabularies. The site avoids &ldquo;anchor&rdquo; as a verb because it collides with &ldquo;trust anchor&rdquo;. The service's source is still named <code>capsule-anchor</code>.</td></tr>
   </tbody>
 </table>
 """,

@@ -241,14 +241,14 @@
       <td data-label="In the Mesh-LLM view">Checked by your node for their record before it keeps a citation. For your own records, the view shows the node's coverage count.</td></tr>
     <tr id="checkpoint-signature"><th>Checkpoint signature</th>
       <td data-label="What it shows">Proves the log's key signed that checkpoint: that root, at that size.</td>
-      <td data-label="What it does not show">That the operator showed everyone the same checkpoint. Only someone outside, such as a witness, can catch two different versions.</td>
+      <td data-label="What it does not show">That the operator showed everyone the same checkpoint. Only someone outside, such as a Transparency Service that registered the checkpoint, can catch two different versions.</td>
       <td data-label="In the Mesh-LLM view">Checked by your node, under the key on their record, together with inclusion.</td></tr>
     <tr id="continuity"><th>Continuity</th>
       <td data-label="What it shows">When checked with a consistency proof, it proves each checkpoint builds on the one before, so an earlier entry was not rewritten or dropped between them.</td>
       <td data-label="What it does not show">That every action was recorded. A log can stay consistent and still leave an action out.</td>
       <td data-label="In the Mesh-LLM view">Not checked here. The view reads the node's status.</td></tr>
-    <tr id="witness-receipt"><th>Witness receipt</th>
-      <td data-label="What it shows">A party you don't run holds a copy of your checkpoint, so a later rewrite would show to others. Witnesses see checkpoints, never records or text.</td>
+    <tr id="witness-receipt"><th>Witness receipt (a SCITT Receipt)</th>
+      <td data-label="What it shows">A Transparency Service you don't run registered your checkpoint in its own log, so a later rewrite would show to others. The Receipt proves the checkpoint is in that log, not that the service agrees with it. The service sees checkpoints, never records or text.</td>
       <td data-label="What it does not show">That the records are true, or that they are all there. It says nothing about the content of any record.</td>
       <td data-label="In the Mesh-LLM view">Not checked here. The view reads whether a receipt exists; it does not check the receipt, or the witnesses a checkpoint lists.</td></tr>
     <tr id="matching-record"><th>The other side's matching record</th>
@@ -283,7 +283,7 @@
   <dt>Checkpoint</dt><dd>A signed snapshot of a log: its root and size.</dd>
   <dt>Inclusion proof</dt><dd>The path that places one record under a checkpoint's root.</dd>
   <dt>Consistency proof</dt><dd>The path that shows a later checkpoint extends an earlier one.</dd>
-  <dt>Witness</dt><dd>A party you don't run that holds copies of your checkpoints; there can be several.</dd>
+  <dt>Witness</dt><dd>A SCITT Transparency Service you don't run that registers your checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a>; you can register with several.</dd>
   <dt>The other side</dt><dd>The machine you dealt with in an exchange, which keeps its own record of it.</dd>
   <dt>Referee</dt><dd>A third party that compares two answers to the same request and seals a verdict.</dd>
   <dt>Checked on this machine</dt><dd>Recomputed where you are reading it, from the bytes.</dd>

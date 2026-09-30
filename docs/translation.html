@@ -251,10 +251,10 @@
   <thead><tr><th>Concept</th><th>Dev</th><th>Auditor</th><th>Spec</th></tr></thead>
   <tbody>
     <tr><th>your record</th><td>receipt (yours) / capsule</td><td>the signed record the producer authored; a self-attested claim until witnessed</td><td>capsule (AAC record)</td></tr>
-    <tr><th>the witness artifact</th><td>stamp</td><td>an independent party's confirmation the record's history existed at a time &mdash; never a statement about content</td><td>witness countersignature / RFC&nbsp;9942 Receipt over the checkpoint</td></tr>
+    <tr><th>the witness artifact</th><td>stamp</td><td>a Transparency Service's Receipt: the checkpoint was in its log at registration &mdash; never a statement about content, and not agreement</td><td>RFC&nbsp;9942 Receipt over the checkpoint (a Signed Statement whose payload is a log head)</td></tr>
     <tr><th>the log</th><td>your log / ledger</td><td>the producer's append-only history; tamper-evident by construction</td><td>CLL (Checkpointed Local Log, MMR)</td></tr>
     <tr><th>the commitment</th><td>checkpoint (&ldquo;the 32-byte root&rdquo;)</td><td>one signed value committing the entire history to date</td><td>CLL checkpoint (COSE_Sign1)</td></tr>
-    <tr><th>the witnessing party</th><td>witness (&ldquo;the notary&rdquo;)</td><td>the party that makes the log checkable by a stranger</td><td>witness / Transparency Service (SCITT)</td></tr>
+    <tr><th>the witnessing party</th><td>witness</td><td>the party that makes the log checkable by a stranger</td><td>Transparency Service (RFC&nbsp;9943)</td></tr>
     <tr><th>an action's account</th><td>proof (of an action)</td><td>the signed membership claim: which records constitute one action</td><td>composition capsule</td></tr>
     <tr><th>foreign bytes brought in</th><td>carry / received</td><td>someone else's already-signed record, committed as-transmitted</td><td>as-transmitted CPB binding</td></tr>
     <tr><th>the hand-over file</th><td>bundle</td><td>digests + proofs + stamps; lets anyone check integrity/order/completeness, carries no content</td><td>bundle</td></tr>
@@ -282,11 +282,11 @@
   <thead><tr><th>Rung</th><th>Dev</th><th>Auditor</th><th>Spec</th></tr></thead>
   <tbody>
     <tr><th>self-attested</th><td>&ldquo;signed by me&rdquo;</td><td>record integrity by the producer's key alone; no third-party confirmation</td><td><code>attestation_mode=self_attested</code></td></tr>
-    <tr><th>witnessed</th><td>&ldquo;an independent log confirmed it existed&rdquo;</td><td>existence + order + completeness checkable without trusting the producer</td><td>witnessed checkpoint (&ge;1 valid stamp)</td></tr>
+    <tr><th>witnessed</th><td>&ldquo;an independent log registered it&rdquo;</td><td>existence + order + completeness checkable without trusting the producer</td><td>registered checkpoint (&ge;1 valid Receipt)</td></tr>
     <tr><th>countersigned</th><td>&ldquo;someone else vouched&rdquo;</td><td>a non-producer's signed claim citing the record</td><td>counterparty / operator countersignature</td></tr>
   </tbody>
 </table></div>
-<p style="color:var(--muted);font-size:14.5px">There is no fourth rung. A record you'll sometimes see called &ldquo;registered&rdquo; as if it were a step between self-attested and witnessed is not a separate assurance level &mdash; it's still self-attested until an independent witness has actually confirmed it. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a> for how you move a record up this ladder.</p>
+<p style="color:var(--muted);font-size:14.5px">There is no fourth rung. A record is self-attested until a Transparency Service its producer does not run has registered its checkpoint and returned a Receipt. On this site &ldquo;witnessed&rdquo; and &ldquo;registered&rdquo; name that same step. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a> for how you move a record up this ladder.</p>
 
 <h2>The honesty rows</h2>
 <p>This is the auditor register's spine &mdash; the claims this project will not round up, anywhere:</p>
@@ -294,7 +294,7 @@
   <li>A witnessed record is not a true record. The stamp attests existence/order/completeness, never accuracy.</li>
   <li>A derived verdict is not an adjudicated one. <code>verify</code> never grades up: absence &ne; forgery, unsigned &ne; invalid.</li>
   <li>Coverage is the range, not the population.</li>
-  <li>Registration &ne; Receipt &ne; Witnessing. Registration is the act, a Receipt is what the service returns, witnessing is a party co-signing the checkpoint so the log can't equivocate. &ldquo;Anchor&rdquo; is avoided as a verb (it collides with &ldquo;trust anchor&rdquo;).</li>
+  <li>Registration &ne; Receipt &ne; agreement. Registration is the act. A Receipt is what the service returns: it proves inclusion in that service's log, not agreement with the content. When a checkpoint carries a consistency proof, this service registers it only if the proof shows it extends the last one it registered for the same log; that check is part of its published <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">Registration Policy</a>. &ldquo;Anchor&rdquo; is avoided as a verb (it collides with &ldquo;trust anchor&rdquo;).</li>
 </ul>
 
 <div class="callout">Why this page exists: the same underlying mechanism reads differently to the person wiring it into their agent, the person deciding whether to trust it, and the person implementing it from the spec text. Using the wrong register in the wrong place is how documentation quietly overclaims &mdash; this table is the check.</div>
