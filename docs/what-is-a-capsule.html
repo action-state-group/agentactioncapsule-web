@@ -263,7 +263,7 @@
   <li><strong>No anti-omission property.</strong> A capsule shows <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
   <li><strong>Signer = key-holder.</strong> The signature proves who held the signing key at the moment of sealing &mdash; not that the named agent actually ran the action. Key-management discipline is outside the capsule.</li>
   <li><strong>A hash alone names no one.</strong> Without a Producer Envelope, a capsule is tamper-evident but says nothing about who sealed it. The specification allows that; the reference producer does not do it by default (see <em>What is signed by default</em>, above).</li>
-  <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. A witness or a second independently-operated log removes this.</li>
+  <li><strong>Single-operator log &rArr; non-equivocation is operational.</strong> The public Transparency Service prevents the log from quietly rewriting history &mdash; but if one operator controls both the agent and the log, equivocation is an operational question, not a cryptographic one. Registering with a Transparency Service the operator does not run removes this.</li>
 </ul>
 <p>These limits are features of being honest, not gaps to hide. Stating them is what makes the record trustworthy to an outside auditor.</p>
 

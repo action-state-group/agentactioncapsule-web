@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>How it works: creating capsules, and using them &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and a witness fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
+<meta name="description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and registers a checkpoint with a Transparency Service, which fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
 <link rel="canonical" href="https://agentactioncapsule.org/docs/how-it-works.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
 <meta property="og:title" content="How it works: creating capsules, and using them">
-<meta property="og:description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and a witness fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
+<meta property="og:description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and registers a checkpoint with a Transparency Service, which fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
 <meta property="og:url" content="https://agentactioncapsule.org/docs/how-it-works.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="How it works: creating capsules, and using them">
-<meta name="twitter:description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and a witness fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
+<meta name="twitter:description" content="The two sides of an Agent Action Capsule. The organisation seals each action at the boundary and registers a checkpoint with a Transparency Service, which fixes the date. Later, a party entitled to ask requests a slice, gets the records or a signed refusal, and recomputes everything offline.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -354,7 +354,7 @@
   <li><strong>Carry in the other side's half.</strong> When a counterparty sends its own signed record, <code>received()</code> commits those exact bytes as they arrived. It never re-signs them, so the record stays theirs.</li>
   <li><strong>Seal what applied, and what was decided.</strong> The same log can hold the obligation an action was under (here, a disclosure duty) and any judgment made against it. They are ordinary sealed records; the format has no special case for them.</li>
   <li><strong>Checkpoint.</strong> The <a class="ln" href="https://github.com/action-state-group/checkpointed-local-log">checkpointed local log</a> (CLL) chains every entry, append-only. At intervals it signs a checkpoint: one small value that commits to its whole history so far, with its size and the tree's peaks.</li>
-  <li><strong>Witness.</strong> Only the checkpoint goes to a witness. The witness returns a receipt saying the checkpoint was registered no later than a given time and is consistent with the previous one. The organisation does not operate the witness, and you can register with more than one. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a>.</li>
+  <li><strong>Witness.</strong> Only the checkpoint goes to a witness, a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a>. It returns a Receipt saying the checkpoint was registered no later than a given time. Under that policy, a checkpoint that carries a consistency proof is registered only if it extends the previous one. The organisation does not operate the witness, and you can register with more than one. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a>.</li>
 </ol>
 
 <h2 id="use">2 of 2 &middot; Using capsules</h2>

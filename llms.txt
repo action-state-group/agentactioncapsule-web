@@ -25,14 +25,14 @@ capsule-emit verify --store ledger.jsonl   # offline: digests, chain links, prod
 - [You've reached a witness](https://agentactioncapsule.org/docs/witness-landing.html): arrived from a checkpoint or receipt? start here
 - [Quickstart](https://agentactioncapsule.org/docs/quickstart.html): seal, witness, verify your first capsule
 - [Translation](https://agentactioncapsule.org/docs/translation.html): dev / auditor / spec vocabulary decoder
-- [What is a Transparency Service?](https://agentactioncapsule.org/docs/what-is-a-transparency-service.html): register, receipt, witness
+- [What is a Transparency Service?](https://agentactioncapsule.org/docs/what-is-a-transparency-service.html): register, receipt, append-only log
 - [What is a Capsule?](https://agentactioncapsule.org/docs/what-is-a-capsule.html): the three properties and the limits
 - [How it works](https://agentactioncapsule.org/docs/how-it-works.html): creating capsules, then using them: an evidence request, the records or a signed refusal, offline recompute
 - [Docs index](https://agentactioncapsule.org/docs/): full concept + guide list
 
 ## Source (Apache-2.0)
 - [capsule-emit](https://github.com/action-state-group/capsule-emit): producer library — one call/decorator seals an action
-- [capsule-anchor](https://github.com/action-state-group/capsule-anchor): the neutral SCITT Transparency Service (witness log)
+- [capsule-anchor](https://github.com/action-state-group/capsule-anchor): the neutral SCITT Transparency Service (this site calls it "the witness")
 - [agent-action-capsule](https://github.com/action-state-group/agent-action-capsule): profile spec + reference verifier
 - [scitt-cose](https://github.com/action-state-group/scitt-cose): SCITT receipt verifier
 

@@ -343,7 +343,7 @@
       <div class="card">
         <div class="k">1 of 2 &middot; Creating capsules</div>
         <h3>Sealed at the boundary, dated by a witness</h3>
-        <p>Each action is sealed where it leaves the agent, by a key the model never holds. The record carries digests, and the content stays with the organisation. A signed checkpoint of the whole log goes to a witness that sees no content. Nothing else has left, and the date is already fixed.</p>
+        <p>Each action is sealed where it leaves the agent, by a key the model never holds. The record carries digests, and the content stays with the organisation. A signed checkpoint of the whole log goes to a witness, a SCITT Transparency Service that sees no content and returns a Receipt. Nothing else has left, and the date is already fixed.</p>
       </div>
       <div class="card">
         <div class="k">2 of 2 &middot; Using capsules</div>
@@ -777,7 +777,7 @@ capsule-emit verify --store ledger.jsonl
         <p>Self-host the witness (<code>capsule-anchor</code>) container inside your own environment — then even the hash never leaves your walls.</p>
       </div>
     </div>
-    <p class="fit-note">The capsule is witness-agnostic, so you can move or mix witnesses without changing the record. One caveat: a digest only hides values that aren't guessable — for low-entropy fields (a short amount, a known ID), salt before hashing. <a href="/docs/witness-anywhere.html" style="color:var(--accent);text-decoration:none">What a digest hides →</a></p>
+    <p class="fit-note">The capsule does not depend on any one Transparency Service, so you can move, or register with more than one, without changing the record. One caveat: a digest only hides values that aren't guessable — for low-entropy fields (a short amount, a known ID), salt before hashing. <a href="/docs/witness-anywhere.html" style="color:var(--accent);text-decoration:none">What a digest hides →</a></p>
   </div>
 </section>
 
@@ -891,7 +891,7 @@ capsule-emit verify --store ledger.jsonl
       <h2>Built by an agent developer who wanted proof, not promises.</h2>
       <p>The Agent Action Capsule was created by <strong>Steven Mih</strong> — a startup founder and agent developer with a long background in open source, including helping steward openly and neutrally governed software (the Presto Foundation, under the Linux Foundation). He built it after hitting the wall everyone building agents hits: once an agent takes a real action, the only "proof" it happened as intended is the operator's own word. The capsule is the answer — a verifiable record anyone can check, built to be owned by no one.</p>
       <p style="margin-top:14px"><strong>Why build it this way?</strong> Verifiable records of what agents do are infrastructure the whole ecosystem depends on — and we think AI safety and open standards matter far too much for that layer to be controlled by any single company. So the design goal from day one is to give it away.</p>
-      <p style="margin-top:14px"><strong>Where it stands today.</strong> The repositories are stewarded by Action State Group, with the stated intent to donate the profile, the trademark, and the reference services to a neutral foundation. Witnessing is plural by design: a capsule verifies against whichever Transparency Service registered it, and any party can run one (<a href="/docs/witness-anywhere.html" style="color:var(--accent);text-decoration:none">witness anywhere</a>). The governance model is public and modeled on Linux Foundation practice, and co-maintainers are welcome to join. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read the governance model →</a> · comments on the draft are welcome at <a href="mailto:spec@actionstate.ai" style="color:var(--accent);text-decoration:none">spec@actionstate.ai</a> and in the IETF SCITT working group.</p>
+      <p style="margin-top:14px"><strong>Where it stands today.</strong> The repositories are stewarded by Action State Group, with the stated intent to donate the profile, the trademark, and the reference services to a neutral foundation. Transparency Services are plural by design: a capsule verifies against whichever one registered it, and any party can run one (<a href="/docs/witness-anywhere.html" style="color:var(--accent);text-decoration:none">witness anywhere</a>). The governance model is public and modeled on Linux Foundation practice, and co-maintainers are welcome to join. <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read the governance model →</a> · comments on the draft are welcome at <a href="mailto:spec@actionstate.ai" style="color:var(--accent);text-decoration:none">spec@actionstate.ai</a> and in the IETF SCITT working group.</p>
     </div>
   </div>
 </section>
