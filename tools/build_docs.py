@@ -17,6 +17,8 @@ published; the CCF receipt profile is still an Internet-Draft).
 """
 from __future__ import annotations
 
+import html
+import json
 import pathlib
 import re
 
@@ -213,6 +215,8 @@ TOC = [
          "Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records."),
     ]),
     ("Reference", "Reference", [
+        ("witnesses", "/docs/witnesses.html", "Witness directory", "Witness directory",
+         "Services that accept a checkpoint and return a receipt you can check offline &mdash; alphabetical, none privileged."),
         ("glossary", "/docs/glossary.html", "Glossary", "Glossary",
          "SCITT, COSE_Sign1, Receipt, VDS, inclusion &amp; consistency proofs, the disposition list, witness vs anchored."),
         ("translation", "/docs/translation.html", "Translation (dev/auditor/spec)", "Translation: dev / auditor / spec",
@@ -1400,6 +1404,69 @@ PAGES["glossary"] = dict(
     <tr><th>Witness vs <code>anchored</code></th><td>On this site a <strong>witness</strong> is a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a>: when a new checkpoint carries a consistency proof, it registers it only if the proof shows it extends the last checkpoint it registered for the same log, and it returns a Receipt. The Receipt proves the checkpoint is in the service's log. It does not mean the service agrees with the records. RFC 9943 has no role called &ldquo;witness&rdquo;; the word is this site's name for the service, and &ldquo;witnessed&rdquo; means registered with one. <code>anchored</code> is the specification's name for an assurance tier: a record whose chain has been registered with a transparency log, backed by a receipt a verifier has checked. Same event, two vocabularies. The site avoids &ldquo;anchor&rdquo; as a verb because it collides with &ldquo;trust anchor&rdquo;. The service's source is still named <code>capsule-anchor</code>.</td></tr>
   </tbody>
 </table>
+""",
+)
+
+# Witness directory -- generated from data/witnesses.json, a copy of capsule-emit's root
+# witnesses.json (the source of truth; rows are added there by pull request).
+WITNESSES = json.loads((OUT.parent / "data" / "witnesses.json").read_text(encoding="utf-8"))["witnesses"]
+BINDING_LABEL = {"cll": "CLL <code>POST /checkpoints</code>", "rekor": "Rekor <code>dsse</code> entry",
+                 "scrapi": "SCRAPI <code>POST /entries</code>"}
+BINDING_GRADES = {"cll": "the service's own label, if any: <code>countersigned-observed</code> or <code>mmr-verified</code>",
+                  "rekor": "<code>countersigned-observed</code>",
+                  "scrapi": "the receipt's own label, else <code>countersigned-observed</code>"}
+
+
+def witness_rows_html() -> str:
+    rows = []
+    for w in sorted(WITNESSES, key=lambda r: (r["name"].casefold(), r["endpoint"])):
+        e = html.escape
+        binding = w.get("binding", "cll")
+        keys = "<br>".join(f"<code>{e(k[:16])}&hellip;</code>" for k in w["key_ids"])
+        rows.append(
+            f'<tr><th>{e(w["name"])}</th><td><a class="ln" href="{e(w["endpoint"])}">{e(w["endpoint"])}</a></td>'
+            f'<td>{BINDING_LABEL.get(binding, e(binding))}</td><td>{BINDING_GRADES.get(binding, "")}</td>'
+            f'<td>{keys}</td><td>{e(w["since"])}</td></tr>')
+    return "\n    ".join(rows)
+
+
+PAGES["witnesses"] = dict(
+    title="Witness directory",
+    desc="Transparency services that accept a checkpointed-local-log checkpoint and return a receipt a verifier can check offline. Alphabetical; none privileged.",
+    crumb="Reference",
+    body=f"""
+<h1>Witness directory</h1>
+<p class="lede">A witness is a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a> and returns a Receipt anyone can check offline. The list below is alphabetical by name and ordered by nothing else.</p>
+
+<p>A Receipt shows that the checkpoint is included in that service&rsquo;s log. It does not mean the service agrees with anything the checkpointed log contains.</p>
+
+<p>A checkpoint is witnessed more than once when it carries receipts from more than one operator. How many it needs is the <em>verifier's</em> choice: a policy such as &ldquo;two receipts, from two different operators&rdquo;, applied to the receipts that verify. No row is privileged: the reference verifier reads every row&rsquo;s keys the same way and has no key built in for any service. A verifier chooses which directory to use, and so which keys it accepts; being listed here is not that choice made for you.</p>
+
+<table class="t">
+  <thead><tr><th>Name</th><th>Endpoint</th><th>Binding</th><th>Receipt grades</th><th>Key ids</th><th>Since</th></tr></thead>
+  <tbody>
+    {witness_rows_html()}
+  </tbody>
+</table>
+
+<h2>What a receipt grade says</h2>
+<table class="t">
+  <tbody>
+    <tr><th><code>countersigned-observed</code></th><td>The service verified the checkpoint&rsquo;s signature and registered these exact bytes. It did not check the checkpoint against an earlier one from the same log.</td></tr>
+    <tr><th><code>mmr-verified</code></th><td>The service knows this log&rsquo;s accumulator and can check it: a checkpoint that carries a consistency proof is registered only if the proof shows it extends the last checkpoint the service accepted for that log.</td></tr>
+  </tbody>
+</table>
+<p>The grade is a label the service puts in its own Receipt, and a verifier reads it only from a Receipt that verifies. It says what that one service checked. Some Receipts carry no grade.</p>
+<p>A grade is not a refusal. Under the <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published policy</a>, a checkpoint from a log the service has never seen registers without a consistency check, because there is nothing yet to be consistent with. A later checkpoint that carries no consistency proof can also register, at a lower grade than one whose proof was checked, unless the service is set to refuse it. A checkpoint whose proof does not verify is refused.</p>
+<p>A Rekor entry is always <code>countersigned-observed</code>: Rekor records that the bytes existed, signed by the log&rsquo;s key, at Rekor&rsquo;s integrated time, and never checks the log&rsquo;s consistency.</p>
+
+<h2>Using more than one</h2>
+<p>With <code>capsule-emit</code>, the binding is the URL's scheme, so one setting takes all three:</p>
+<pre class="code"><code>export CAPSULE_WITNESS_URL="https://witness.example,rekor+https://rekor.sigstore.dev,scrapi+https://ts.example"</code></pre>
+<p>Each checkpoint goes to each witness independently. One failing never blocks the others, and a failed one is retried later from the log itself.</p>
+
+<h2>Adding a row</h2>
+<p>Open a pull request that adds one row to <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/witnesses.json"><code>witnesses.json</code> &#x2197;</a> in <code>capsule-emit</code>, using its directory-row template. The fields are described in <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/schemas/witnesses.schema.json">the schema &#x2197;</a>.</p>
 """,
 )
 

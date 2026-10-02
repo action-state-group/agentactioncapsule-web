@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trust map: what each check shows &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="A plain-words map of the checks behind a record: what each one shows, what it does not show, and what it means when a view says a thing is not checked here.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/trust-map.html">
+<title>Witness directory &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="Transparency services that accept a checkpointed-local-log checkpoint and return a receipt a verifier can check offline. Alphabetical; none privileged.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/witnesses.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Trust map: what each check shows">
-<meta property="og:description" content="A plain-words map of the checks behind a record: what each one shows, what it does not show, and what it means when a view says a thing is not checked here.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/trust-map.html">
+<meta property="og:title" content="Witness directory">
+<meta property="og:description" content="Transparency services that accept a checkpointed-local-log checkpoint and return a receipt a verifier can check offline. Alphabetical; none privileged.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/witnesses.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Trust map: what each check shows">
-<meta name="twitter:description" content="A plain-words map of the checks behind a record: what each one shows, what it does not show, and what it means when a view says a thing is not checked here.">
+<meta name="twitter:title" content="Witness directory">
+<meta name="twitter:description" content="Transparency services that accept a checkpointed-local-log checkpoint and return a receipt a verifier can check offline. Alphabetical; none privileged.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -85,18 +85,6 @@
 
 
   @media(max-width:900px){ .cards{grid-template-columns:1fr} }
-
-.t td:last-child{color:var(--muted,#5b6470);font-size:.95em}
-.tm-terms{display:grid;grid-template-columns:max-content 1fr;gap:.35rem 1rem;margin:1rem 0}
-.tm-terms dt{font-weight:600}
-.tm-terms dd{margin:0}
-@media (max-width:560px){.tm-terms{grid-template-columns:1fr;gap:.1rem}.tm-terms dd{margin-bottom:.5rem}}
-@media (max-width:560px){
-  .t thead{display:none}
-  .t,.t tbody,.t tr,.t th,.t td{display:block;width:auto}
-  .t tr{padding:10px 0;border-top:1px solid var(--line,#e3e6ea)}
-  .t td::before{content:attr(data-label);display:block;font-family:var(--mono);font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted,#5b6470)}
-}
 </style>
 <!--chrome:head--><script>document.documentElement.className+=' js';</script>
 <style>
@@ -194,7 +182,7 @@
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
 <a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
 <a href="/docs/how-verification-works.html">How verification works</a>
-<a href="/docs/trust-map.html" class="active">Trust map</a>
+<a href="/docs/trust-map.html">Trust map</a>
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/docs/witness-anywhere.html">Witness anywhere</a>
@@ -206,7 +194,7 @@
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
-<a href="/docs/witnesses.html">Witness directory</a>
+<a href="/docs/witnesses.html" class="active">Witness directory</a>
 <a href="/docs/glossary.html">Glossary</a>
 <a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
 <h5>Extensions</h5>
@@ -217,82 +205,43 @@
 </nav>
 </details><!--/chrome:side-->
     <article>
-      <div class="crumb">Concepts</div>
+      <div class="crumb">Reference</div>
       
-<h1>Trust map: what each check shows</h1>
-<p class="lede">Each check answers one narrow question. A pass on one says nothing about the others. This page lists the checks behind a record, what each one shows, and what it does not show.</p>
+<h1>Witness directory</h1>
+<p class="lede">A witness is a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a> and returns a Receipt anyone can check offline. The list below is alphabetical by name and ordered by nothing else.</p>
 
-<p>If you followed a link from an evidence view, such as a node's Evidence tab in the <a class="ln" href="/docs/case-study-mesh-llm.html">Mesh-LLM case study</a>, this is the key to it. The <em>In the Mesh-LLM view</em> column says where that view gets each answer: a check it runs on your machine, or a state it only reads and marks <em>not checked here</em>.</p>
+<p>A Receipt shows that the checkpoint is included in that service&rsquo;s log. It does not mean the service agrees with anything the checkpointed log contains.</p>
 
-<h2>The checks</h2>
+<p>A checkpoint is witnessed more than once when it carries receipts from more than one operator. How many it needs is the <em>verifier's</em> choice: a policy such as &ldquo;two receipts, from two different operators&rdquo;, applied to the receipts that verify. No row is privileged: the reference verifier reads every row&rsquo;s keys the same way and has no key built in for any service. A verifier chooses which directory to use, and so which keys it accepts; being listed here is not that choice made for you.</p>
+
 <div class="tw"><table class="t">
-  <thead><tr><th>Check</th><th>What it shows</th><th>What it does not show</th><th>In the Mesh-LLM view</th></tr></thead>
+  <thead><tr><th>Name</th><th>Endpoint</th><th>Binding</th><th>Receipt grades</th><th>Key ids</th><th>Since</th></tr></thead>
   <tbody>
-    <tr id="content-binding"><th>Content binding</th>
-      <td data-label="What it shows">The record's fingerprint is recomputed from its bytes and matches the id it was sealed under. Change one byte and it no longer matches.</td>
-      <td data-label="What it does not show">That what the record says is true. Who wrote it.</td>
-      <td data-label="In the Mesh-LLM view">Checked on this machine, for your records and for theirs.</td></tr>
-    <tr id="signature"><th>Signature</th>
-      <td data-label="What it shows">Proves the holder of a key signed this record's id.</td>
-      <td data-label="What it does not show">Who holds the key, or that the named machine did the work. For the other side's record, the key is the one they announce: their claim, not an identity anyone else vouched for.</td>
-      <td data-label="In the Mesh-LLM view">Checked on this machine, or by your node when their record arrives.</td></tr>
-    <tr id="inclusion"><th>Inclusion in a signed checkpoint</th>
-      <td data-label="What it shows">Proves the record sits in the log under that checkpoint's root.</td>
-      <td data-label="What it does not show">That the log holds nothing else, or that anyone outside the log's operator holds the checkpoint. A count of records a checkpoint covers is only a number the node reports.</td>
-      <td data-label="In the Mesh-LLM view">Checked by your node for their record before it keeps a citation. For your own records, the view shows the node's coverage count.</td></tr>
-    <tr id="checkpoint-signature"><th>Checkpoint signature</th>
-      <td data-label="What it shows">Proves the log's key signed that checkpoint: that root, at that size.</td>
-      <td data-label="What it does not show">That the operator showed everyone the same checkpoint. Only someone outside, such as a Transparency Service that registered the checkpoint, can catch two different versions.</td>
-      <td data-label="In the Mesh-LLM view">Checked by your node, under the key on their record, together with inclusion.</td></tr>
-    <tr id="continuity"><th>Continuity</th>
-      <td data-label="What it shows">When checked with a consistency proof, it proves each checkpoint builds on the one before, so an earlier entry was not rewritten or dropped between them.</td>
-      <td data-label="What it does not show">That every action was recorded. A log can stay consistent and still leave an action out.</td>
-      <td data-label="In the Mesh-LLM view">Not checked here. The view reads the node's status.</td></tr>
-    <tr id="witness-receipt"><th>Witness receipt (a SCITT Receipt)</th>
-      <td data-label="What it shows">A Transparency Service you don't run registered your checkpoint in its own log, so a later rewrite would show to others. The Receipt proves the checkpoint is in that log, not that the service agrees with it. The service sees checkpoints, never records or text.</td>
-      <td data-label="What it does not show">That the records are true, or that they are all there. It says nothing about the content of any record.</td>
-      <td data-label="In the Mesh-LLM view">Not checked here. The view reads whether a receipt exists; it does not check the receipt, or the witnesses a checkpoint lists.</td></tr>
-    <tr id="matching-record"><th>The other side's matching record</th>
-      <td data-label="What it shows">Both sides sealed their own record of one exchange, and the two agree: the same request and answer fingerprints, the same serving machine, the same model weights fingerprint. Two signed records that disagree are a signed disagreement.</td>
-      <td data-label="What it does not show">That the answer is right. That the weights named are the ones that ran; the check compares fingerprints each side states. A model name alone never counts as a match.</td>
-      <td data-label="In the Mesh-LLM view">Checked on this machine. The view marks the serving-machine comparison as provisional.</td></tr>
-    <tr id="twin-referee"><th>Twin plus referee</th>
-      <td data-label="What it shows">The same request went to two machines and both answers were kept, with the settings each was asked to use, so they can be compared side by side. A referee can compare the two and seal a verdict.</td>
-      <td data-label="What it does not show">Which answer is right. A verdict that is not signed is a statement, not something you can check.</td>
-      <td data-label="In the Mesh-LLM view">The two answers are shown side by side. Verdicts: not checked here.</td></tr>
+    <tr><th>rekor.sigstore.dev</th><td><a class="ln" href="https://rekor.sigstore.dev">https://rekor.sigstore.dev</a></td><td>Rekor <code>dsse</code> entry</td><td><code>countersigned-observed</code></td><td><code>c0d23d6ad406973f&hellip;</code></td><td>2022-10-25</td></tr>
+    <tr><th>witness.agentactioncapsule.org</th><td><a class="ln" href="https://witness.agentactioncapsule.org">https://witness.agentactioncapsule.org</a></td><td>CLL <code>POST /checkpoints</code></td><td>the service's own label, if any: <code>countersigned-observed</code> or <code>mmr-verified</code></td><td><code>39bb654c9dc0afe1&hellip;</code></td><td>2026-06-28</td></tr>
   </tbody>
 </table></div>
 
-<h2 id="not-checked-here">What &ldquo;not checked here&rdquo; means</h2>
-<p><em>Not checked here</em> means the view displays a state it read from somewhere else and did not verify itself. It is not a failure and not a pass. It tells you where the trust sits: with whoever reported that state.</p>
-<p>In the Mesh-LLM view, these are read and not checked:</p>
-<ul>
-  <li>witness receipts, and the witnesses a checkpoint lists;</li>
-  <li>continuity;</li>
-  <li>twin verdicts;</li>
-  <li>the link between a node and its owner, which the node reports about itself;</li>
-  <li>peer names, which each peer chooses.</li>
-</ul>
-<p>To check a record yourself, use a verifier you choose: <a class="ln" href="/docs/verify-a-capsule.html">Verify a capsule</a> runs the same checks in the browser, on the command line, or as a library. A view that cannot run a check should say so rather than show a pass.</p>
+<h2>What a receipt grade says</h2>
+<div class="tw"><table class="t">
+  <tbody>
+    <tr><th><code>countersigned-observed</code></th><td>The service verified the checkpoint&rsquo;s signature and registered these exact bytes. It did not check the checkpoint against an earlier one from the same log.</td></tr>
+    <tr><th><code>mmr-verified</code></th><td>The service knows this log&rsquo;s accumulator and can check it: a checkpoint that carries a consistency proof is registered only if the proof shows it extends the last checkpoint the service accepted for that log.</td></tr>
+  </tbody>
+</table></div>
+<p>The grade is a label the service puts in its own Receipt, and a verifier reads it only from a Receipt that verifies. It says what that one service checked. Some Receipts carry no grade.</p>
+<p>A grade is not a refusal. Under the <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published policy</a>, a checkpoint from a log the service has never seen registers without a consistency check, because there is nothing yet to be consistent with. A later checkpoint that carries no consistency proof can also register, at a lower grade than one whose proof was checked, unless the service is set to refuse it. A checkpoint whose proof does not verify is refused.</p>
+<p>A Rekor entry is always <code>countersigned-observed</code>: Rekor records that the bytes existed, signed by the log&rsquo;s key, at Rekor&rsquo;s integrated time, and never checks the log&rsquo;s consistency.</p>
 
-<h2 id="terms">Terms, one line each</h2>
-<dl class="tm-terms">
-  <dt>Record</dt><dd>One sealed entry: a capsule.</dd>
-  <dt>Fingerprint</dt><dd>A SHA-256 digest of some bytes; any change gives a different one.</dd>
-  <dt>Signature</dt><dd>A COSE signature over a record's id, made with one key.</dd>
-  <dt>Log</dt><dd>A node's records, in order, append-only.</dd>
-  <dt>Checkpoint</dt><dd>A signed snapshot of a log: its root and size.</dd>
-  <dt>Inclusion proof</dt><dd>The path that places one record under a checkpoint's root.</dd>
-  <dt>Consistency proof</dt><dd>The path that shows a later checkpoint extends an earlier one.</dd>
-  <dt>Witness</dt><dd>A SCITT Transparency Service you don't run that registers your checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a>; you can register with several.</dd>
-  <dt>The other side</dt><dd>The machine you dealt with in an exchange, which keeps its own record of it.</dd>
-  <dt>Referee</dt><dd>A third party that compares two answers to the same request and seals a verdict.</dd>
-  <dt>Checked on this machine</dt><dd>Recomputed where you are reading it, from the bytes.</dd>
-  <dt>Not checked here</dt><dd>Read from elsewhere and shown as reported, not verified by this view.</dd>
-</dl>
-<p>Fuller definitions are in the <a class="ln" href="/docs/glossary.html">glossary</a>. The threat model behind the Mesh-LLM checks is in <a class="ln" href="https://github.com/action-state-group/capsule-emit-mesh/blob/main/docs/TRUST-MODEL.md">A trust model for strangers on a mesh &#x2197;</a>.</p>
+<h2>Using more than one</h2>
+<p>With <code>capsule-emit</code>, the binding is the URL's scheme, so one setting takes all three:</p>
+<pre class="code"><code>export CAPSULE_WITNESS_URL="https://witness.example,rekor+https://rekor.sigstore.dev,scrapi+https://ts.example"</code></pre>
+<p>Each checkpoint goes to each witness independently. One failing never blocks the others, and a failed one is retried later from the log itself.</p>
 
-      <!--chrome:next--><div class="next"><a class="p" href="/docs/how-verification-works.html"><div class="dir">&#8592; Previous</div><div class="ttl">How verification works</div></a><a class="n" href="/docs/whats-consequential.html"><div class="dir">Next &#8594;</div><div class="ttl">What's consequential</div></a></div><!--/chrome:next-->
+<h2>Adding a row</h2>
+<p>Open a pull request that adds one row to <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/witnesses.json"><code>witnesses.json</code> &#x2197;</a> in <code>capsule-emit</code>, using its directory-row template. The fields are described in <a class="ln" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/schemas/witnesses.schema.json">the schema &#x2197;</a>.</p>
+
+      <!--chrome:next--><div class="next"><a class="p" href="/docs/log.html"><div class="dir">&#8592; Previous</div><div class="ttl">The public log, live</div></a><a class="n" href="/docs/glossary.html"><div class="dir">Next &#8594;</div><div class="ttl">Glossary</div></a></div><!--/chrome:next-->
     </article>
   </div>
 </main>
