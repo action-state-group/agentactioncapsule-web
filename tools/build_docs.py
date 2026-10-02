@@ -1412,7 +1412,7 @@ PAGES["glossary"] = dict(
 WITNESSES = json.loads((OUT.parent / "data" / "witnesses.json").read_text(encoding="utf-8"))["witnesses"]
 BINDING_LABEL = {"cll": "CLL <code>POST /checkpoints</code>", "rekor": "Rekor <code>dsse</code> entry",
                  "scrapi": "SCRAPI <code>POST /entries</code>"}
-BINDING_GRADES = {"cll": "<code>countersigned-observed</code> or <code>mmr-verified</code>, per receipt",
+BINDING_GRADES = {"cll": "the service's own label, if any: <code>countersigned-observed</code> or <code>mmr-verified</code>",
                   "rekor": "<code>countersigned-observed</code>",
                   "scrapi": "the receipt's own label, else <code>countersigned-observed</code>"}
 
@@ -1436,9 +1436,11 @@ PAGES["witnesses"] = dict(
     crumb="Reference",
     body=f"""
 <h1>Witness directory</h1>
-<p class="lede">Services that accept a log's checkpoint and return a receipt anyone can check offline. The list is alphabetical by name and ordered by nothing else.</p>
+<p class="lede">A witness is a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a> and returns a Receipt anyone can check offline. The list below is alphabetical by name and ordered by nothing else.</p>
 
-<p>A checkpoint is witnessed more than once when it carries receipts from more than one operator. How many it needs is the <em>verifier's</em> choice: a policy such as &ldquo;two receipts, from two different operators&rdquo;, applied to the receipts that verify. No row is privileged: the reference verifier reads every row&rsquo;s keys the same way and has no key built in for any service, ours included. A verifier chooses which directory to use, and so which keys it accepts; being listed here is not that choice made for you.</p>
+<p>A Receipt shows that the checkpoint is included in that service&rsquo;s log. It does not mean the service agrees with anything the checkpointed log contains.</p>
+
+<p>A checkpoint is witnessed more than once when it carries receipts from more than one operator. How many it needs is the <em>verifier's</em> choice: a policy such as &ldquo;two receipts, from two different operators&rdquo;, applied to the receipts that verify. No row is privileged: the reference verifier reads every row&rsquo;s keys the same way and has no key built in for any service. A verifier chooses which directory to use, and so which keys it accepts; being listed here is not that choice made for you.</p>
 
 <table class="t">
   <thead><tr><th>Name</th><th>Endpoint</th><th>Binding</th><th>Receipt grades</th><th>Key ids</th><th>Since</th></tr></thead>
@@ -1450,15 +1452,17 @@ PAGES["witnesses"] = dict(
 <h2>What a receipt grade says</h2>
 <table class="t">
   <tbody>
-    <tr><th><code>countersigned-observed</code></th><td>The service saw these exact checkpoint bytes at a time. Existence and time only.</td></tr>
-    <tr><th><code>mmr-verified</code></th><td>The service also checked that this checkpoint is consistent with the log's previous one.</td></tr>
+    <tr><th><code>countersigned-observed</code></th><td>The service verified the checkpoint&rsquo;s signature and registered these exact bytes. It did not check the checkpoint against an earlier one from the same log.</td></tr>
+    <tr><th><code>mmr-verified</code></th><td>The service knows this log&rsquo;s accumulator and can check it: a checkpoint that carries a consistency proof is registered only if the proof shows it extends the last checkpoint the service accepted for that log.</td></tr>
   </tbody>
 </table>
-<p>A Rekor entry is always <code>countersigned-observed</code>: Rekor records that the bytes existed, signed by the log's key, and never checks the log's consistency.</p>
+<p>The grade is a label the service puts in its own Receipt, and a verifier reads it only from a Receipt that verifies. It says what that one service checked. Some Receipts carry no grade.</p>
+<p>A grade is not a refusal. Under the <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published policy</a>, a checkpoint from a log the service has never seen registers without a consistency check, because there is nothing yet to be consistent with. A later checkpoint that carries no consistency proof can also register, at a lower grade than one whose proof was checked, unless the service is set to refuse it. A checkpoint whose proof does not verify is refused.</p>
+<p>A Rekor entry is always <code>countersigned-observed</code>: Rekor records that the bytes existed, signed by the log&rsquo;s key, at Rekor&rsquo;s integrated time, and never checks the log&rsquo;s consistency.</p>
 
 <h2>Using more than one</h2>
 <p>With <code>capsule-emit</code>, the binding is the URL's scheme, so one setting takes all three:</p>
-<pre><code>export CAPSULE_WITNESS_URL="https://witness.example,rekor+https://rekor.sigstore.dev,scrapi+https://ts.example"</code></pre>
+<pre class="code"><code>export CAPSULE_WITNESS_URL="https://witness.example,rekor+https://rekor.sigstore.dev,scrapi+https://ts.example"</code></pre>
 <p>Each checkpoint goes to each witness independently. One failing never blocks the others, and a failed one is retried later from the log itself.</p>
 
 <h2>Adding a row</h2>

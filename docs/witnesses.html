@@ -177,10 +177,12 @@
 <h5>Concepts</h5>
 <a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
+<a href="/docs/how-it-works.html">How it works</a>
 <a href="/docs/statement-vs-transparency-layer.html">Statement vs transparency layer</a>
 <a href="/docs/what-is-a-transparency-service.html">What is a Transparency Service?</a>
 <a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
 <a href="/docs/how-verification-works.html">How verification works</a>
+<a href="/docs/trust-map.html">Trust map</a>
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/docs/witness-anywhere.html">Witness anywhere</a>
@@ -206,30 +208,34 @@
       <div class="crumb">Reference</div>
       
 <h1>Witness directory</h1>
-<p class="lede">Services that accept a log's checkpoint and return a receipt anyone can check offline. The list is alphabetical by name and ordered by nothing else.</p>
+<p class="lede">A witness is a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a> and returns a Receipt anyone can check offline. The list below is alphabetical by name and ordered by nothing else.</p>
 
-<p>A checkpoint is witnessed more than once when it carries receipts from more than one operator. How many it needs is the <em>verifier's</em> choice: a policy such as &ldquo;two receipts, from two different operators&rdquo;, applied to the receipts that verify. No row is privileged: the reference verifier reads every row&rsquo;s keys the same way and has no key built in for any service, ours included. A verifier chooses which directory to use, and so which keys it accepts; being listed here is not that choice made for you.</p>
+<p>A Receipt shows that the checkpoint is included in that service&rsquo;s log. It does not mean the service agrees with anything the checkpointed log contains.</p>
+
+<p>A checkpoint is witnessed more than once when it carries receipts from more than one operator. How many it needs is the <em>verifier's</em> choice: a policy such as &ldquo;two receipts, from two different operators&rdquo;, applied to the receipts that verify. No row is privileged: the reference verifier reads every row&rsquo;s keys the same way and has no key built in for any service. A verifier chooses which directory to use, and so which keys it accepts; being listed here is not that choice made for you.</p>
 
 <div class="tw"><table class="t">
   <thead><tr><th>Name</th><th>Endpoint</th><th>Binding</th><th>Receipt grades</th><th>Key ids</th><th>Since</th></tr></thead>
   <tbody>
     <tr><th>rekor.sigstore.dev</th><td><a class="ln" href="https://rekor.sigstore.dev">https://rekor.sigstore.dev</a></td><td>Rekor <code>dsse</code> entry</td><td><code>countersigned-observed</code></td><td><code>c0d23d6ad406973f&hellip;</code></td><td>2022-10-25</td></tr>
-    <tr><th>witness.agentactioncapsule.org</th><td><a class="ln" href="https://witness.agentactioncapsule.org">https://witness.agentactioncapsule.org</a></td><td>CLL <code>POST /checkpoints</code></td><td><code>countersigned-observed</code> or <code>mmr-verified</code>, per receipt</td><td><code>39bb654c9dc0afe1&hellip;</code></td><td>2026-06-28</td></tr>
+    <tr><th>witness.agentactioncapsule.org</th><td><a class="ln" href="https://witness.agentactioncapsule.org">https://witness.agentactioncapsule.org</a></td><td>CLL <code>POST /checkpoints</code></td><td>the service's own label, if any: <code>countersigned-observed</code> or <code>mmr-verified</code></td><td><code>39bb654c9dc0afe1&hellip;</code></td><td>2026-06-28</td></tr>
   </tbody>
 </table></div>
 
 <h2>What a receipt grade says</h2>
 <div class="tw"><table class="t">
   <tbody>
-    <tr><th><code>countersigned-observed</code></th><td>The service saw these exact checkpoint bytes at a time. Existence and time only.</td></tr>
-    <tr><th><code>mmr-verified</code></th><td>The service also checked that this checkpoint is consistent with the log's previous one.</td></tr>
+    <tr><th><code>countersigned-observed</code></th><td>The service verified the checkpoint&rsquo;s signature and registered these exact bytes. It did not check the checkpoint against an earlier one from the same log.</td></tr>
+    <tr><th><code>mmr-verified</code></th><td>The service knows this log&rsquo;s accumulator and can check it: a checkpoint that carries a consistency proof is registered only if the proof shows it extends the last checkpoint the service accepted for that log.</td></tr>
   </tbody>
 </table></div>
-<p>A Rekor entry is always <code>countersigned-observed</code>: Rekor records that the bytes existed, signed by the log's key, and never checks the log's consistency.</p>
+<p>The grade is a label the service puts in its own Receipt, and a verifier reads it only from a Receipt that verifies. It says what that one service checked. Some Receipts carry no grade.</p>
+<p>A grade is not a refusal. Under the <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published policy</a>, a checkpoint from a log the service has never seen registers without a consistency check, because there is nothing yet to be consistent with. A later checkpoint that carries no consistency proof can also register, at a lower grade than one whose proof was checked, unless the service is set to refuse it. A checkpoint whose proof does not verify is refused.</p>
+<p>A Rekor entry is always <code>countersigned-observed</code>: Rekor records that the bytes existed, signed by the log&rsquo;s key, at Rekor&rsquo;s integrated time, and never checks the log&rsquo;s consistency.</p>
 
 <h2>Using more than one</h2>
 <p>With <code>capsule-emit</code>, the binding is the URL's scheme, so one setting takes all three:</p>
-<pre><code>export CAPSULE_WITNESS_URL="https://witness.example,rekor+https://rekor.sigstore.dev,scrapi+https://ts.example"</code></pre>
+<pre class="code"><code>export CAPSULE_WITNESS_URL="https://witness.example,rekor+https://rekor.sigstore.dev,scrapi+https://ts.example"</code></pre>
 <p>Each checkpoint goes to each witness independently. One failing never blocks the others, and a failed one is retried later from the log itself.</p>
 
 <h2>Adding a row</h2>
