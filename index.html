@@ -138,7 +138,7 @@
   .verify-points{display:flex;flex-direction:column;gap:16px}
   .vp{display:flex;gap:13px;align-items:flex-start}
   .vp .ic{flex-shrink:0;width:24px;height:24px;border-radius:7px;background:var(--verify-soft);color:var(--verify);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600}
-  .vp h4{font-size:15px;font-weight:600;margin-bottom:3px}
+  .vp h3{font-size:15px;font-weight:600;margin-bottom:3px;letter-spacing:normal}
   .vp p{font-size:14px;color:var(--muted)}
 
   /* INTEROP */
@@ -180,7 +180,7 @@
   .foot-brand{max-width:38ch}
   .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
   .foot-cols{display:flex;gap:56px;flex-wrap:wrap}
-  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .foot-col h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
   .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);font-family:var(--mono)}
@@ -216,8 +216,8 @@
   .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
   .side-d>summary{display:none}
   .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
-  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
-  .side h5:first-child{margin-top:0}
+  .side h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h2:first-child{margin-top:0}
   .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
   .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
   .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
@@ -232,7 +232,7 @@
   .foot-brand{max-width:38ch}
   .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
   .foot-cols{display:flex;gap:48px;flex-wrap:wrap}
-  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
+  .foot-col h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
   .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
@@ -241,7 +241,7 @@
     .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
     .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
     .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
-    .side-d .side h5{width:100%;margin:8px 0 2px}
+    .side-d .side h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;width:100%;margin:8px 0 2px}
     .side-d .side a{border-left:none;padding:3px 0}
   }
   @media(max-width:860px){
@@ -328,7 +328,7 @@
       <div class="card">
         <div class="k">Transparent</div>
         <h3>Witnessed by an independent log</h3>
-        <p>The statement is registered to a SCITT Transparency Service, which returns a receipt proving inclusion. The log can't quietly drop or rewrite history.</p>
+        <p>The statement is registered to a SCITT Transparency Service, which returns a receipt proving inclusion. The log is tamper-evident: a rewrite would be detectable.</p>
       </div>
       <div class="card">
         <div class="k">Third-party verifiable</div>
@@ -429,7 +429,7 @@ agent.invoke(payload, config={"callbacks": [listener]})</code></pre></div>
       </div>
 
       <div class="sw-panel" data-fw="crewai">
-        <div class="sw-fw"><b>CrewAI</b> — pip install capsule-emit crewai</div>
+        <div class="sw-fw"><b>CrewAI</b> — pip install "capsule-emit[crewai]"</div>
         <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.crewai import CrewAICapsuleEmitter
 
 emitter = CrewAICapsuleEmitter(operator="acme-co", developer="ops-agent@v1")
@@ -478,7 +478,7 @@ agent = LlmAgent(
     name="writer", tools=[write_order],
     after_tool_callback=emitter.after_tool_callback,   # one capsule per consequential call
 )</code></pre></div>
-        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md">ADK adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md#version" style="color:var(--muted);text-decoration:underline">verified against google-adk 2.3.x–2.9.1 ↗</a></span>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md">ADK adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/adk.md#reference" style="color:var(--muted);text-decoration:underline">verified against google-adk 2.3.x–2.9.1 ↗</a></span>
       </div>
 
       <div class="sw-panel" data-fw="agno">
@@ -705,9 +705,9 @@ capsule-emit verify --store ledger.jsonl
   <span class="c"># inclusion on the public log:</span>
   substrate.receipt_verified: <span class="ok">True</span></pre>
       <div class="verify-points">
-        <div class="vp"><div class="ic">1</div><div><h4>Inputs &amp; outputs committed by digest</h4><p>The capsule seals SHA-256 digests of what went in and came out. Raw values stay local; the proof travels.</p></div></div>
-        <div class="vp"><div class="ic">2</div><div><h4>Signature + inclusion, independently</h4><p>The signature proves who sealed it; the receipt proves the log included it. Both check from the bytes.</p></div></div>
-        <div class="vp"><div class="ic">3</div><div><h4>VDS-agnostic</h4><p>The same statement verifies whether the log uses RFC 9162 Merkle proofs or CCF (Confidential Consortium Framework). The action layer never changes.</p></div></div>
+        <div class="vp"><div class="ic">1</div><div><h3>Inputs &amp; outputs committed by digest</h3><p>The capsule seals SHA-256 digests of what went in and came out. Raw values stay local; the proof travels.</p></div></div>
+        <div class="vp"><div class="ic">2</div><div><h3>Signature + inclusion, independently</h3><p>The signature proves who sealed it; the receipt proves the log included it. Both check from the bytes.</p></div></div>
+        <div class="vp"><div class="ic">3</div><div><h3>VDS-agnostic</h3><p>The same statement verifies whether the log uses RFC 9162 Merkle proofs or CCF (Confidential Consortium Framework). The action layer never changes.</p></div></div>
       </div>
     </div>
   </div>
@@ -802,7 +802,7 @@ capsule-emit verify --store ledger.jsonl
       <tbody>
         <tr><th>Granularity</th><td>one record</td><td>the whole log</td></tr>
         <tr><th>What leaves</th><td>a digest per action, and its timing</td><td><strong>~300–500 content-free bytes</strong>, covering any number of records</td></tr>
-        <tr><th>You get back</th><td>a receipt with an inclusion proof, usable immediately</td><td>a co-signature pinning your history outside you</td></tr>
+        <tr><th>You get back</th><td>a receipt with an inclusion proof, usable immediately</td><td>a receipt for the signed checkpoint, pinning your history outside you</td></tr>
         <tr><th>Cost shape</th><td>one round-trip per action</td><td>flat, regardless of volume</td></tr>
         <tr><th>Needs</th><td>nothing extra</td><td>your own local log (<code>checkpointed-local-log</code>)</td></tr>
       </tbody>
@@ -959,7 +959,7 @@ capsule-emit verify --store ledger.jsonl
       </div>
       <div class="foot-cols">
         <div class="foot-col">
-          <h5>Standard</h5>
+          <h2>Standard</h2>
           <a href="/">Overview</a>
           <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
@@ -967,7 +967,7 @@ capsule-emit verify --store ledger.jsonl
           <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
         </div>
         <div class="foot-col">
-          <h5>Internet-Drafts</h5>
+          <h2>Internet-Drafts</h2>
           <a href="/docs/specifications.html">All specifications</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">Selective disclosure &#x2197;</a>
@@ -983,19 +983,19 @@ capsule-emit verify --store ledger.jsonl
           <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">MMR receipt profile &#x2197;</a>
         </div>
         <div class="foot-col">
-          <h5>Services</h5>
+          <h2>Services</h2>
           <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
-          <h5>Source</h5>
+          <h2>Source</h2>
           <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
           <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
           <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
           <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
         </div>
         <div class="foot-col">
-          <h5>Project</h5>
+          <h2>Project</h2>
           <a href="/docs/governance.html">Governance</a>
           <a href="/ip">Patent posture</a>
         </div>

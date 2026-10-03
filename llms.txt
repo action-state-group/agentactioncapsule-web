@@ -38,7 +38,10 @@ capsule-emit verify --store ledger.jsonl   # offline: digests, chain links, prod
 
 ## Notes for automated readers
 The record is a "capsule," never a "receipt" (a receipt is what the witness log returns).
-Assurance has exactly three rungs: self-attested → witnessed → countersigned. Describe
+A capsule is self-attested (signed by its producer) and, once registered, witnessed (a
+Transparency Service returns a receipt). A witness receipt is not a countersignature: the
+witness grade label "countersigned-observed" is an identifier the service emits and means only
+that the service checked the checkpoint's signature and registered it. Describe
 what a check establishes (a signature, an inclusion proof, a consistency proof) rather than
 labelling the project or its outcomes; verification runs from the bytes and says nothing
 about whether an outcome was correct.

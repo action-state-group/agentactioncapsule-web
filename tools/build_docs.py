@@ -409,8 +409,8 @@ CHROME_CSS = """
   .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
   .side-d>summary{display:none}
   .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
-  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
-  .side h5:first-child{margin-top:0}
+  .side h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h2:first-child{margin-top:0}
   .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
   .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
   .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
@@ -425,7 +425,7 @@ CHROME_CSS = """
   .foot-brand{max-width:38ch}
   .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
   .foot-cols{display:flex;gap:48px;flex-wrap:wrap}
-  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
+  .foot-col h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
   .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
@@ -434,7 +434,7 @@ CHROME_CSS = """
     .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
     .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
     .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
-    .side-d .side h5{width:100%;margin:8px 0 2px}
+    .side-d .side h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;width:100%;margin:8px 0 2px}
     .side-d .side a{border-left:none;padding:3px 0}
   }
   @media(max-width:860px){
@@ -498,7 +498,7 @@ FOOTER = f"""<footer>
       </div>
       <div class="foot-cols">
         <div class="foot-col">
-          <h5>Standard</h5>
+          <h2>Standard</h2>
           <a href="/">Overview</a>
           <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
@@ -506,23 +506,23 @@ FOOTER = f"""<footer>
           <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
         </div>
         <div class="foot-col">
-          <h5>Internet-Drafts</h5>
+          <h2>Internet-Drafts</h2>
           {footer_drafts_html()}
         </div>
         <div class="foot-col">
-          <h5>Services</h5>
+          <h2>Services</h2>
           <a href="{ANCHOR_URL}">Transparency Log</a>
           <a href="{VERIFY_URL}">Verifier</a>
         </div>
         <div class="foot-col">
-          <h5>Source</h5>
+          <h2>Source</h2>
           <a href="{ORG_URL}">GitHub &#x2197;</a>
           <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
           <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
           <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
         </div>
         <div class="foot-col">
-          <h5>Project</h5>
+          <h2>Project</h2>
           <a href="/docs/governance.html">Governance</a>
           <a href="{IP_URL}">Patent posture</a>
         </div>
@@ -536,9 +536,9 @@ FOOTER = f"""<footer>
 def sidebar_html(active: str) -> str:
     ov_cls = ' class="active"' if active == "index" else ""
     out = ['<details class="side-d" open><summary>Docs menu</summary>', '<nav class="side" aria-label="Docs">',
-           '<h5>Documentation</h5>', f'<a href="/docs/"{ov_cls}>Overview</a>']
+           '<h2>Documentation</h2>', f'<a href="/docs/"{ov_cls}>Overview</a>']
     for label, _, items in TOC:
-        out.append(f"<h5>{label}</h5>")
+        out.append(f"<h2>{label}</h2>")
         for key, href, short, _, _ in items:
             cls = ' class="active"' if key == active else ""
             out.append(f'<a href="{href}"{cls}>{short}</a>')
@@ -697,7 +697,7 @@ PAGES["what-is-a-capsule"] = dict(
   <thead><tr><th>Property</th><th>What it means</th></tr></thead>
   <tbody>
     <tr><th>Signed</th><td>The capsule is a statement committing to the action, its inputs and outputs (by digest), and the model/runtime that produced it. It is always content-addressed, and a producer signs that address with COSE; the reference producer signs every capsule by default. Change any byte and verification fails.</td></tr>
-    <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was included in an append-only log that cannot quietly drop or rewrite history.</td></tr>
+    <tr><th>Transparent</th><td>The statement is registered to a transparency service, which returns a receipt proving the record was included in an append-only log. Dropping or rewriting a logged entry would be detectable by anyone holding an earlier receipt or tree head.</td></tr>
     <tr><th>Third-party verifiable</th><td>An auditor, third party, or regulator checks the signature and the inclusion proof from the bytes alone &mdash; no access to the operator's systems. You trust the log's key, not the operator.</td></tr>
   </tbody>
 </table>
@@ -797,7 +797,7 @@ PAGES["what-is-a-transparency-service"] = dict(
     crumb="Concepts",
     body="""
 <h1>What is a Transparency Service?</h1>
-<p class="lede">A Transparency Service (TS) registers signed statements in an append-only log and issues a receipt proving inclusion &mdash; so a record can be shown to exist and to never have been quietly dropped or rewritten.</p>
+<p class="lede">A Transparency Service (TS) registers signed statements in an append-only log and issues a receipt proving inclusion &mdash; so a record can be shown to exist, and a later attempt to drop or rewrite it would be detectable.</p>
 <p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
 
 <h2>What it does</h2>
@@ -1204,7 +1204,7 @@ capsule-emit verify --store ledger.jsonl
 <p><code>capsule-emit verify</code> recomputes every capsule's digest and chain link with the reference verifier from <code>agent-action-capsule</code> (which ships as a dependency, and whose own <code>agent-action-capsule verify</code> runs that structural check alone) <em>and</em> checks each producer signature it finds. A tampered record prints <code>INVALID</code> and the command exits 1. Neither check needs the network.</p>
 
 <h2>With the Go CLI: <code>capsulectl</code></h2>
-<p>If you would rather not run Python, <code>capsulectl</code> is a standalone Go binary (built on <code>capsule-emit-go</code>) that seals and verifies its own artifact records &mdash; it does not read the Python <code>ledger.jsonl</code> above, so use it end to end. Install it with Go 1.27 or later, create a profile that pins the producer's public key, seal a request (format in the <a class="ln" href="https://github.com/action-state-group/capsule-cli#seal-request-and-stored-artifact">capsule-cli README</a>), and verify:</p>
+<p>If you would rather not run Python, <code>capsulectl</code> is a standalone Go binary (built on <code>capsule-emit-go</code>) that seals and verifies its own artifact records &mdash; it does not read the Python <code>ledger.jsonl</code> above, so use it end to end. Only pre-releases exist so far: <a class="ln" href="https://github.com/action-state-group/capsule-cli/releases/tag/v0.1.0-rc2"><code>v0.1.0-rc2</code></a> has binaries for Linux (amd64, arm64) and macOS (arm64). Or install it from source with Go 1.27 or later (the command below). Then create a profile that pins the producer's public key, seal a request (format in the <a class="ln" href="https://github.com/action-state-group/capsule-cli#seal-request-and-stored-artifact">capsule-cli README</a>), and verify:</p>
 <pre class="code"><code>go install github.com/action-state-group/capsule-cli/cmd/capsulectl@latest
 capsulectl key generate --output producer.seed        <span class="c"># prints the public key</span>
 capsulectl profile create --name local --type jsonl --jsonl-path ./capsules \\
@@ -1583,7 +1583,7 @@ PAGES["witnesses"] = dict(
 <h2>What a receipt grade says</h2>
 <table class="t">
   <tbody>
-    <tr><th><code>countersigned-observed</code></th><td>The service verified the checkpoint&rsquo;s signature and registered these exact bytes. It did not check the checkpoint against an earlier one from the same log.</td></tr>
+    <tr><th><code>countersigned-observed</code></th><td>The service verified the checkpoint&rsquo;s signature and registered these exact bytes. It did not check the checkpoint against an earlier one from the same log. The name is the identifier the service emits in its Receipts; despite the word, it is not a second party&rsquo;s countersignature or co-signature: it records only what this one service checked.</td></tr>
     <tr><th><code>mmr-verified</code></th><td>The service knows this log&rsquo;s accumulator and can check it: a checkpoint that carries a consistency proof is registered only if the proof shows it extends the last checkpoint the service accepted for that log.</td></tr>
   </tbody>
 </table>

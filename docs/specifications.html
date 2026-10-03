@@ -111,8 +111,8 @@
   .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
   .side-d>summary{display:none}
   .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
-  .side h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
-  .side h5:first-child{margin-top:0}
+  .side h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h2:first-child{margin-top:0}
   .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
   .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
   .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
@@ -127,7 +127,7 @@
   .foot-brand{max-width:38ch}
   .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
   .foot-cols{display:flex;gap:48px;flex-wrap:wrap}
-  .foot-col h5{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
+  .foot-col h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
   .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
@@ -136,7 +136,7 @@
     .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
     .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
     .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
-    .side-d .side h5{width:100%;margin:8px 0 2px}
+    .side-d .side h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;width:100%;margin:8px 0 2px}
     .side-d .side a{border-left:none;padding:3px 0}
   }
   @media(max-width:860px){
@@ -172,14 +172,14 @@
   <div class="docs">
     <!--chrome:side--><details class="side-d" open><summary>Docs menu</summary>
 <nav class="side" aria-label="Docs">
-<h5>Documentation</h5>
+<h2>Documentation</h2>
 <a href="/docs/">Overview</a>
-<h5>Use cases</h5>
+<h2>Use cases</h2>
 <a href="/docs/use-cases.html">Use cases</a>
 <a href="/docs/case-study-mesh-llm.html">Case study: Mesh-LLM</a>
-<h5>Interop</h5>
+<h2>Interop</h2>
 <a href="/docs/interop/trace-registry.html">The TRACE Registry</a>
-<h5>Concepts</h5>
+<h2>Concepts</h2>
 <a href="/docs/witness-landing.html">You've reached a witness</a>
 <a href="/docs/what-is-a-capsule.html">What is a Capsule?</a>
 <a href="/docs/how-it-works.html">How it works</a>
@@ -191,21 +191,21 @@
 <a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/docs/witness-anywhere.html">Witness anywhere</a>
-<h5>Guides</h5>
+<h2>Guides</h2>
 <a href="/docs/quickstart.html">Quickstart</a>
 <a href="/docs/verify-a-capsule.html">Verify a capsule</a>
 <a href="/docs/a2a-ap2-example.html">A2A + AP2 example</a>
-<h5>Live</h5>
+<h2>Live</h2>
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
-<h5>Reference</h5>
+<h2>Reference</h2>
 <a href="/docs/specifications.html" class="active">Specifications</a>
 <a href="/docs/witnesses.html">Witness directory</a>
 <a href="/docs/glossary.html">Glossary</a>
 <a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
-<h5>Extensions</h5>
+<h2>Extensions</h2>
 <a href="/docs/bilateral.html">Bilateral attestation</a>
-<h5>Project</h5>
+<h2>Project</h2>
 <a href="/docs/governance.html">Governance</a>
 <a href="/ip">Patent posture</a>
 </nav>
@@ -249,14 +249,14 @@
     <tr id="impl-capsule-emit"><th>capsule-emit</th><td>Python, Rust</td><td>Producer: one <code>seal()</code> call plus thin framework adapters; Rust crates for the producer and the evidence request.</td><td>AAC, Evidence Bundle, Evidence Request, Settlement records, Bilateral attestation</td><td><a class="ln" href="https://github.com/action-state-group/capsule-emit">Repository &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/rust">Rust crates &#x2197;</a></td></tr>
     <tr id="impl-capsule-emit-go"><th>capsule-emit-go</th><td>Go</td><td>Producer: builds and signs capsules from transport-neutral observed action facts.</td><td>AAC</td><td><a class="ln" href="https://github.com/action-state-group/capsule-emit-go">Repository &#x2197;</a></td></tr>
     <tr id="impl-capsule-emit-ts"><th>capsule-emit-ts</th><td>TypeScript</td><td>Producer and verifier for the current capsule format, TypeScript-native.</td><td>AAC</td><td><a class="ln" href="https://github.com/action-state-group/capsule-emit-ts">Repository &#x2197;</a></td></tr>
-    <tr id="impl-capsule-cli"><th>capsule-cli</th><td>Go</td><td><code>capsulectl</code>: a standalone executable that seals, builds bundles and verifies; prebuilt binaries for Linux and macOS.</td><td>Evidence Bundle</td><td><a class="ln" href="https://github.com/action-state-group/capsule-cli">Repository &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/capsule-cli#readme">README &#x2197;</a></td></tr>
+    <tr id="impl-capsule-cli"><th>capsule-cli</th><td>Go</td><td><code>capsulectl</code>: a standalone executable that seals, builds bundles and verifies. Only pre-releases so far: <code>v0.1.0-rc2</code> has binaries for Linux (amd64, arm64) and macOS (arm64); building from source needs Go 1.27 or later.</td><td>Evidence Bundle</td><td><a class="ln" href="https://github.com/action-state-group/capsule-cli">Repository &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/capsule-cli#readme">README &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/capsule-cli/releases/tag/v0.1.0-rc2">Pre-release v0.1.0-rc2 &#x2197;</a></td></tr>
     <tr id="impl-scitt-cose"><th>scitt-cose</th><td>Python</td><td>Verifier: COSE_Sign1 Signed Statements, COSE Receipts (RFC9162_SHA256 and CCF), inclusion and consistency proofs. Carries no capsule semantics.</td><td>&mdash;</td><td><a class="ln" href="https://github.com/action-state-group/scitt-cose">Repository &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/scitt-cose/tree/main/test-vectors">Test vectors &#x2197;</a></td></tr>
     <tr id="impl-scitt-payload-binding"><th>scitt-payload-binding</th><td>Python</td><td>Canonical Payload Binding library and its conformance vector suite.</td><td>CPB</td><td><a class="ln" href="https://github.com/action-state-group/scitt-payload-binding">Repository &#x2197;</a></td></tr>
     <tr id="impl-checkpointed-local-log"><th>checkpointed-local-log</th><td>Python, Rust</td><td>CLL library: append-only store, Merkle Mountain Range, signed COSE checkpoints, disclosure bundles; the draft source and its vectors.</td><td>CLL</td><td><a class="ln" href="https://github.com/action-state-group/checkpointed-local-log">Repository &#x2197;</a></td></tr>
     <tr id="impl-cll-go"><th>cll-go</th><td>Go</td><td>Ledger with CLL checkpoints, storage interfaces and witness integration.</td><td>CLL</td><td><a class="ln" href="https://github.com/action-state-group/cll-go">Repository &#x2197;</a></td></tr>
     <tr id="impl-cll-ts"><th>cll-ts</th><td>TypeScript</td><td>Ledger with CLL checkpoints and durable stores, TypeScript-native.</td><td>CLL</td><td><a class="ln" href="https://github.com/action-state-group/cll-ts">Repository &#x2197;</a></td></tr>
     <tr id="impl-capsule-anchor"><th>capsule-anchor</th><td>Python</td><td>Witness: a SCITT Transparency Service that registers a digest or checkpoint and returns an RFC 9162 COSE Receipt; one row in the witness directory.</td><td>&mdash;</td><td><a class="ln" href="https://github.com/action-state-group/capsule-anchor">Repository &#x2197;</a><br><a class="ln" href="https://witness.agentactioncapsule.org">Live log &#x2197;</a><br><a class="ln" href="/docs/witnesses.html">Witness directory</a></td></tr>
-    <tr id="impl-capsule-emit-mesh-plugin"><th>capsule-emit-mesh-plugin</th><td>Rust</td><td>Mesh-LLM plugin: seals a capsule for every exchange a node serves or asks for. On paid exchanges it seals both sides' payment lifecycle events; the host events it reads are merged in mesh-llm but not yet in a release.</td><td>&mdash;</td><td><a class="ln" href="https://github.com/Mesh-LLM/capsule-emit-mesh-plugin">Repository &#x2197;</a><br><a class="ln" href="https://github.com/Mesh-LLM/capsule-emit-mesh-plugin/pull/4">Paid-exchange sealing (PR #4) &#x2197;</a><br><a class="ln" href="/docs/case-study-mesh-llm.html">Case study</a></td></tr>
+    <tr id="impl-capsule-emit-mesh-plugin"><th>capsule-emit-mesh-plugin</th><td>Rust</td><td>Mesh-LLM plugin: seals a capsule for every exchange a node serves or asks for, including both sides' payment lifecycle events. Released as <code>v0.1.0</code> (3 Oct 2026); it runs on mesh-llm 0.77 or newer, and mesh-llm <code>v0.77.0</code> (28 Sep) carries the payment events it reads (mesh-llm PR #2035; issue #2017 closed as completed on 30 Sep). Sealing the settlement-records legs is an open pull request (#8), not released.</td><td>&mdash;</td><td><a class="ln" href="https://github.com/Mesh-LLM/capsule-emit-mesh-plugin">Repository &#x2197;</a><br><a class="ln" href="https://github.com/Mesh-LLM/capsule-emit-mesh-plugin/releases/tag/v0.1.0">Release v0.1.0 &#x2197;</a><br><a class="ln" href="https://github.com/Mesh-LLM/capsule-emit-mesh-plugin/pull/4">Payment events (PR #4, merged) &#x2197;</a><br><a class="ln" href="https://github.com/Mesh-LLM/capsule-emit-mesh-plugin/pull/8">Settlement legs (PR #8, open) &#x2197;</a><br><a class="ln" href="https://github.com/Mesh-LLM/mesh-llm/releases/tag/v0.77.0">mesh-llm v0.77.0 &#x2197;</a><br><a class="ln" href="https://github.com/Mesh-LLM/mesh-llm/pull/2035">mesh-llm PR #2035 &#x2197;</a><br><a class="ln" href="https://github.com/Mesh-LLM/mesh-llm/issues/2017">mesh-llm issue #2017 &#x2197;</a><br><a class="ln" href="/docs/case-study-mesh-llm.html">Case study</a></td></tr>
   </tbody>
 </table></div>
 
@@ -275,7 +275,7 @@
       </div>
       <div class="foot-cols">
         <div class="foot-col">
-          <h5>Standard</h5>
+          <h2>Standard</h2>
           <a href="/">Overview</a>
           <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
@@ -283,7 +283,7 @@
           <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
         </div>
         <div class="foot-col">
-          <h5>Internet-Drafts</h5>
+          <h2>Internet-Drafts</h2>
           <a href="/docs/specifications.html">All specifications</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">Selective disclosure &#x2197;</a>
@@ -299,19 +299,19 @@
           <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">MMR receipt profile &#x2197;</a>
         </div>
         <div class="foot-col">
-          <h5>Services</h5>
+          <h2>Services</h2>
           <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
           <a href="https://verify.agentactioncapsule.org">Verifier</a>
         </div>
         <div class="foot-col">
-          <h5>Source</h5>
+          <h2>Source</h2>
           <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
           <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
           <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
           <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
         </div>
         <div class="foot-col">
-          <h5>Project</h5>
+          <h2>Project</h2>
           <a href="/docs/governance.html">Governance</a>
           <a href="/ip">Patent posture</a>
         </div>
