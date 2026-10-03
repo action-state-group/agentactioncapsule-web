@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What's consequential — what to seal &mdash; Agent Action Capsule docs</title>
-<meta name="description" content="A capsule is for consequential actions, not every log line. The two-signal rule: seal what changes the world, plus reads of sensitive data; everything else is observability. Built on the field's accepted vocabulary, not a private invention.">
-<link rel="canonical" href="https://agentactioncapsule.org/docs/whats-consequential.html">
+<title>Specifications &mdash; Agent Action Capsule docs</title>
+<meta name="description" content="The Agent Action Capsule Internet-Drafts: revision and status from the IETF Datatracker, test vectors, and the open-source implementations.">
+<link rel="canonical" href="https://agentactioncapsule.org/docs/specifications.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="What's consequential — what to seal">
-<meta property="og:description" content="A capsule is for consequential actions, not every log line. The two-signal rule: seal what changes the world, plus reads of sensitive data; everything else is observability. Built on the field's accepted vocabulary, not a private invention.">
-<meta property="og:url" content="https://agentactioncapsule.org/docs/whats-consequential.html">
+<meta property="og:title" content="Specifications">
+<meta property="og:description" content="The Agent Action Capsule Internet-Drafts: revision and status from the IETF Datatracker, test vectors, and the open-source implementations.">
+<meta property="og:url" content="https://agentactioncapsule.org/docs/specifications.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="What's consequential — what to seal">
-<meta name="twitter:description" content="A capsule is for consequential actions, not every log line. The two-signal rule: seal what changes the world, plus reads of sensitive data; everything else is observability. Built on the field's accepted vocabulary, not a private invention.">
+<meta name="twitter:title" content="Specifications">
+<meta name="twitter:description" content="The Agent Action Capsule Internet-Drafts: revision and status from the IETF Datatracker, test vectors, and the open-source implementations.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -85,6 +85,11 @@
 
 
   @media(max-width:900px){ .cards{grid-template-columns:1fr} }
+
+  table.t .dname{font-weight:400;font-family:var(--mono);font-size:12px;margin-top:4px;white-space:normal;word-break:break-all}
+  table.t .dtitle{font-weight:400;font-size:12.5px;color:var(--muted);margin-top:2px;white-space:normal}
+  table.t .dep{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:4px}
+  #spec-drafts th:first-child{min-width:220px}
 </style>
 <!--chrome:head--><script>document.documentElement.className+=' js';</script>
 <style>
@@ -157,9 +162,9 @@
       <a href="/">Standard</a>
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
-      <a class="active" href="/docs/">Docs</a>
+      <a href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
-      <a href="/docs/specifications.html">Specifications</a>
+      <a class="active" href="/docs/specifications.html">Specifications</a>
     </div>
   </div>
 </nav><!--/chrome:nav-->
@@ -183,7 +188,7 @@
 <a href="/docs/verifiable-data-structures.html">Verifiable Data Structures</a>
 <a href="/docs/how-verification-works.html">How verification works</a>
 <a href="/docs/trust-map.html">Trust map</a>
-<a href="/docs/whats-consequential.html" class="active">What's consequential</a>
+<a href="/docs/whats-consequential.html">What's consequential</a>
 <a href="/docs/how-it-composes.html">How it composes</a>
 <a href="/docs/witness-anywhere.html">Witness anywhere</a>
 <h5>Guides</h5>
@@ -194,7 +199,7 @@
 <a href="/docs/explore.html">Explore a capsule</a>
 <a href="/docs/log.html">The public log, live</a>
 <h5>Reference</h5>
-<a href="/docs/specifications.html">Specifications</a>
+<a href="/docs/specifications.html" class="active">Specifications</a>
 <a href="/docs/witnesses.html">Witness directory</a>
 <a href="/docs/glossary.html">Glossary</a>
 <a href="/docs/translation.html">Translation (dev/auditor/spec)</a>
@@ -206,40 +211,58 @@
 </nav>
 </details><!--/chrome:side-->
     <article>
-      <div class="crumb">Concepts</div>
+      <div class="crumb">Reference</div>
       
-<h1>What's consequential — what to seal</h1>
-<p class="lede">A capsule is for <em>consequential</em> actions, not every log line. The rule, in one sentence: <strong>seal what changes the world, plus reads of sensitive data; everything else is observability.</strong></p>
+<h1>Specifications</h1>
+<p class="lede">The Internet-Drafts this site documents, the test vectors for each, and the open-source code that implements them.</p>
 
-<h2>Two signals</h2>
-<div class="tw"><table class="t">
-  <thead><tr><th>Signal</th><th>Seal it when…</th></tr></thead>
+<p>Every draft here is an individual Internet-Draft submitted for discussion: not adopted by a working group, and not a standard. Revision and status are read from the <a class="ln" href="https://datatracker.ietf.org/">IETF Datatracker</a> when the site is built (last read 2026-10-03 UTC), so this page is never ahead of what is posted. A draft that has not been posted is listed without a link or a revision.</p>
+
+<h2>Internet-Drafts</h2>
+<div class="tw"><table class="t" id="spec-drafts">
+  <thead><tr><th>Draft</th><th>Revision</th><th>Status</th><th>Test vectors</th><th>Implementations</th></tr></thead>
   <tbody>
-    <tr><th>1 · Command vs. query</th><td>the action <strong>changes state or has a side effect</strong> — places an order, moves money, sends a message, writes a record. Pure reads (list / get / search) are queries — not sealed by default.</td></tr>
-    <tr><th>2 · Privileged read</th><td>the action <strong>reads sensitive data</strong> (PII/PHI/cardholder data) even though it's a "read." This signal is evaluated <em>by the producer</em>, where data is classified — not at the gateway.</td></tr>
+    <tr><th>AAC<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule</a></div><div class="dtitle">An Agent Action Capsule Profile for SCITT</div></th><td><code>-05</code><div class="dtitle">2026-09-27</div></td><td>Active Internet-Draft, individual; expires 2027-03-31</td><td><a class="ln" href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">agent-action-capsule/vectors</a></td><td><a class="ln" href="#impl-agent-action-capsule">agent-action-capsule</a><br><a class="ln" href="#impl-capsule-emit">capsule-emit</a><br><a class="ln" href="#impl-capsule-emit-go">capsule-emit-go</a><br><a class="ln" href="#impl-capsule-emit-ts">capsule-emit-ts</a></td></tr>
+    <tr><th>Selective disclosure<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">draft-mih-scitt-agent-action-capsule-sel-disc</a></div><div class="dtitle">Selective Disclosure Profile for Agent Action Capsules</div></th><td><code>-00</code><div class="dtitle">2026-06-19</div></td><td>Active Internet-Draft, individual; expires 2026-12-21</td><td>&mdash;</td><td><a class="ln" href="#impl-agent-action-capsule">agent-action-capsule</a></td></tr>
+    <tr><th>Disclosure envelope<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">draft-mih-agent-disclosure-envelope</a></div><div class="dtitle">Disclosure Envelope Profile for Agent Action Capsules</div></th><td><code>-00</code><div class="dtitle">2026-09-27</div></td><td>Active Internet-Draft, individual; expires 2027-03-31</td><td><a class="ln" href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/disclosure-envelope">agent-action-capsule/vectors/disclosure-envelope</a></td><td><a class="ln" href="#impl-agent-action-capsule">agent-action-capsule</a></td></tr>
+    <tr><th>Evidence Bundle<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle</a></div><div class="dtitle">AAC Evidence Bundle</div></th><td><code>-00</code><div class="dtitle">2026-09-27</div></td><td>Active Internet-Draft, individual; expires 2027-03-31</td><td><a class="ln" href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/bundle">agent-action-capsule/vectors/bundle</a></td><td><a class="ln" href="#impl-agent-action-capsule">agent-action-capsule</a><br><a class="ln" href="#impl-capsule-emit">capsule-emit</a><br><a class="ln" href="#impl-capsule-cli">capsule-cli</a></td></tr>
+    <tr><th>Evidence Request<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request</a></div><div class="dtitle">An Interaction Model for Requesting Verifiable Evidence</div></th><td><code>-00</code><div class="dtitle">2026-09-27</div></td><td>Active Internet-Draft, individual; expires 2027-03-31</td><td><a class="ln" href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/evidence-request">agent-action-capsule/vectors/evidence-request</a></td><td><a class="ln" href="#impl-capsule-emit">capsule-emit</a></td></tr>
+    <tr><th>Evidence layer</th><td colspan="4">Not yet posted to the Datatracker.</td></tr>
+    <tr><th>CPB<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding</a></div><div class="dtitle">Canonicalization Declaration for SCITT Signed Statements</div></th><td><code>-05</code><div class="dtitle">2026-09-13</div></td><td>Active Internet-Draft, individual; expires 2027-03-17</td><td><a class="ln" href="https://github.com/action-state-group/scitt-payload-binding/tree/main/vectors">scitt-payload-binding/vectors</a></td><td><a class="ln" href="#impl-scitt-payload-binding">scitt-payload-binding</a></td></tr>
+    <tr><th>Settlement records<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records</a></div><div class="dtitle">Two-Party Settlement Records for Agent Payments</div></th><td><code>-00</code><div class="dtitle">2026-10-02</div></td><td>Active Internet-Draft, individual; expires 2027-04-05</td><td><a class="ln" href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/settlement">agent-action-capsule/vectors/settlement</a><br><a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/test-vectors/settlement-records">capsule-emit/test-vectors/settlement-records</a></td><td><a class="ln" href="#impl-capsule-emit">capsule-emit</a></td></tr>
+    <tr><th>Bilateral attestation<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation</a></div><div class="dtitle">Bilateral Attestation of Cross-Organization Agent Actions</div></th><td><code>-02</code><div class="dtitle">2026-09-14</div></td><td>Active Internet-Draft, individual; expires 2027-03-18</td><td><a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/test-vectors/bilateral-payloads">capsule-emit/test-vectors/bilateral-payloads</a></td><td><a class="ln" href="#impl-agent-action-capsule">agent-action-capsule</a><br><a class="ln" href="#impl-capsule-emit">capsule-emit</a></td></tr>
+    <tr><th>Composition<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">draft-mih-sato-agent-accountability-composition</a></div><div class="dtitle">Agent Accountability: Composition and Conformance</div></th><td><code>-01</code><div class="dtitle">2026-08-16</div></td><td>Active Internet-Draft, individual; expires 2027-02-17</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><th>Conformance<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-accountability-conformance/">draft-mih-agent-accountability-conformance</a></div><div class="dtitle">Agent Accountability: A Conformance and Verification Method</div></th><td><code>-00</code><div class="dtitle">2026-08-01</div></td><td>Active Internet-Draft, individual; expires 2027-02-02</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><th>CLL<div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log</a></div><div class="dtitle">The Checkpointed Local Log (CLL)</div></th><td><code>-01</code><div class="dtitle">2026-09-27</div></td><td>Active Internet-Draft, individual; expires 2027-03-31</td><td><a class="ln" href="https://github.com/action-state-group/checkpointed-local-log/tree/main/checkpoint-conformance-vectors">checkpointed-local-log/checkpoint-conformance-vectors</a><br><a class="ln" href="https://github.com/action-state-group/checkpointed-local-log/tree/main/mmr-conformance-vectors">checkpointed-local-log/mmr-conformance-vectors</a></td><td><a class="ln" href="#impl-checkpointed-local-log">checkpointed-local-log</a><br><a class="ln" href="#impl-cll-go">cll-go</a><br><a class="ln" href="#impl-cll-ts">cll-ts</a></td></tr>
+    <tr><th>MMR receipt profile <span class="dep">dependency</span><div class="dname"><a class="ln" href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">draft-bryce-cose-receipts-mmr-profile</a></div><div class="dtitle">COSE Receipts for MMRs</div></th><td><code>-03</code><div class="dtitle">2026-09-19</div></td><td>Active Internet-Draft, individual; expires 2027-03-23</td><td><a class="ln" href="https://github.com/action-state-group/checkpointed-local-log/tree/main/mmr-profile-vectors">checkpointed-local-log/mmr-profile-vectors</a></td><td>&mdash;</td></tr>
+    <tr><th>COSE deterministic encodings</th><td colspan="4">Not yet posted to the Datatracker.</td></tr>
+  </tbody>
+</table></div>
+<p>A row marked <em>dependency</em> is another author's draft that this family builds on; it is listed because the vectors here test against it.</p>
+
+<h2>Implementations</h2>
+<p>Open source, Apache-2.0. Each row links to the code; a claim in a row is one the linked repository or pull request shows.</p>
+<div class="tw"><table class="t">
+  <thead><tr><th>Name</th><th>Language</th><th>What it does</th><th>Drafts</th><th>Source</th></tr></thead>
+  <tbody>
+    <tr id="impl-agent-action-capsule"><th>agent-action-capsule</th><td>Python, Go, TypeScript</td><td>Reference library: build, seal and verify capsules; the Python, Go and TypeScript code all run the same vectors in CI.</td><td>AAC, Selective disclosure, Disclosure envelope, Evidence Bundle, Bilateral attestation</td><td><a class="ln" href="https://github.com/action-state-group/agent-action-capsule">Repository &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/agent-action-capsule/blob/main/vectors/README.md">Vectors README &#x2197;</a></td></tr>
+    <tr id="impl-capsule-emit"><th>capsule-emit</th><td>Python, Rust</td><td>Producer: one <code>seal()</code> call plus thin framework adapters; Rust crates for the producer and the evidence request.</td><td>AAC, Evidence Bundle, Evidence Request, Settlement records, Bilateral attestation</td><td><a class="ln" href="https://github.com/action-state-group/capsule-emit">Repository &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/rust">Rust crates &#x2197;</a></td></tr>
+    <tr id="impl-capsule-emit-go"><th>capsule-emit-go</th><td>Go</td><td>Producer: builds and signs capsules from transport-neutral observed action facts.</td><td>AAC</td><td><a class="ln" href="https://github.com/action-state-group/capsule-emit-go">Repository &#x2197;</a></td></tr>
+    <tr id="impl-capsule-emit-ts"><th>capsule-emit-ts</th><td>TypeScript</td><td>Producer and verifier for the current capsule format, TypeScript-native.</td><td>AAC</td><td><a class="ln" href="https://github.com/action-state-group/capsule-emit-ts">Repository &#x2197;</a></td></tr>
+    <tr id="impl-capsule-cli"><th>capsule-cli</th><td>Go</td><td><code>capsulectl</code>: a standalone executable that seals, builds bundles and verifies; prebuilt binaries for Linux and macOS.</td><td>Evidence Bundle</td><td><a class="ln" href="https://github.com/action-state-group/capsule-cli">Repository &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/capsule-cli#readme">README &#x2197;</a></td></tr>
+    <tr id="impl-scitt-cose"><th>scitt-cose</th><td>Python</td><td>Verifier: COSE_Sign1 Signed Statements, COSE Receipts (RFC9162_SHA256 and CCF), inclusion and consistency proofs. Carries no capsule semantics.</td><td>&mdash;</td><td><a class="ln" href="https://github.com/action-state-group/scitt-cose">Repository &#x2197;</a><br><a class="ln" href="https://github.com/action-state-group/scitt-cose/tree/main/test-vectors">Test vectors &#x2197;</a></td></tr>
+    <tr id="impl-scitt-payload-binding"><th>scitt-payload-binding</th><td>Python</td><td>Canonical Payload Binding library and its conformance vector suite.</td><td>CPB</td><td><a class="ln" href="https://github.com/action-state-group/scitt-payload-binding">Repository &#x2197;</a></td></tr>
+    <tr id="impl-checkpointed-local-log"><th>checkpointed-local-log</th><td>Python, Rust</td><td>CLL library: append-only store, Merkle Mountain Range, signed COSE checkpoints, disclosure bundles; the draft source and its vectors.</td><td>CLL</td><td><a class="ln" href="https://github.com/action-state-group/checkpointed-local-log">Repository &#x2197;</a></td></tr>
+    <tr id="impl-cll-go"><th>cll-go</th><td>Go</td><td>Ledger with CLL checkpoints, storage interfaces and witness integration.</td><td>CLL</td><td><a class="ln" href="https://github.com/action-state-group/cll-go">Repository &#x2197;</a></td></tr>
+    <tr id="impl-cll-ts"><th>cll-ts</th><td>TypeScript</td><td>Ledger with CLL checkpoints and durable stores, TypeScript-native.</td><td>CLL</td><td><a class="ln" href="https://github.com/action-state-group/cll-ts">Repository &#x2197;</a></td></tr>
+    <tr id="impl-capsule-anchor"><th>capsule-anchor</th><td>Python</td><td>Witness: a SCITT Transparency Service that registers a digest or checkpoint and returns an RFC 9162 COSE Receipt; one row in the witness directory.</td><td>&mdash;</td><td><a class="ln" href="https://github.com/action-state-group/capsule-anchor">Repository &#x2197;</a><br><a class="ln" href="https://witness.agentactioncapsule.org">Live log &#x2197;</a><br><a class="ln" href="/docs/witnesses.html">Witness directory</a></td></tr>
+    <tr id="impl-capsule-emit-mesh-plugin"><th>capsule-emit-mesh-plugin</th><td>Rust</td><td>Mesh-LLM plugin: seals a capsule for every exchange a node serves or asks for. On paid exchanges it seals both sides' payment lifecycle events; the host events it reads are merged in mesh-llm but not yet in a release.</td><td>&mdash;</td><td><a class="ln" href="https://github.com/Mesh-LLM/capsule-emit-mesh-plugin">Repository &#x2197;</a><br><a class="ln" href="https://github.com/Mesh-LLM/capsule-emit-mesh-plugin/pull/4">Paid-exchange sealing (PR #4) &#x2197;</a><br><a class="ln" href="/docs/case-study-mesh-llm.html">Case study</a></td></tr>
   </tbody>
 </table></div>
 
-<h2>Fail-safe by default</h2>
-<p>When a tool's nature is unknown, it is <strong>sealed</strong> — the safe default is to record, not to skip. An adapter only skips a call when it is explicitly marked a read (e.g. <code>action_type="fyi"</code>, or <code>seal_reads=False</code> for tools so annotated). You opt out of sealing deliberately; you never silently lose a consequential action.</p>
+<p>Implemented one of these drafts? Open a pull request on <a class="ln" href="https://github.com/action-state-group/agentactioncapsule-web">this site&rsquo;s repository</a> that adds a row to <code>data/specifications.json</code>, linking the public code.</p>
 
-<h2>Grey areas</h2>
-<p>Some reads matter (exporting a customer list); some "writes" are trivial (a cache warm). Signal 2 is exactly for the first case. For the rest, when in doubt, seal — a few extra capsules cost little; a missing one is the gap that matters.</p>
-
-<h2>Why this isn't a private invention</h2>
-<p>The command-vs-query distinction is decades-old accepted vocabulary. We stand on it deliberately:</p>
-<div class="tw"><table class="t">
-  <thead><tr><th>Prior art</th><th>What we take from it</th></tr></thead>
-  <tbody>
-    <tr><th><a class="ln" href="https://en.wikipedia.org/wiki/Command%E2%80%93query_separation">Command–Query Separation</a> — Bertrand Meyer (1988)</th><td>the foundational command-vs-query split: commands change state, queries don't.</td></tr>
-    <tr><th><a class="ln" href="https://www.rfc-editor.org/rfc/rfc9110.html#name-safe-methods">RFC 9110 — HTTP Semantics</a> (safe methods)</th><td>the web's codification of "safe" (read) vs. unsafe (state-changing) methods.</td></tr>
-    <tr><th><a class="ln" href="https://modelcontextprotocol.io/">Model Context Protocol</a> tool annotations (Anthropic / AAIF)</th><td>tool-level read-only / destructive hints — the per-tool signal an adapter reads.</td></tr>
-    <tr><th><a class="ln" href="https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-C/part-164/subpart-C/section-164.312">HIPAA §164.312(b)</a> + <a class="ln" href="https://www.pcisecuritystandards.org/">PCI DSS</a></th><td>why a privileged <em>read</em> of regulated data is itself an auditable event (Signal 2).</td></tr>
-  </tbody>
-</table></div>
-<div class="callout">The canonical developer guide (the two-signal rule, the <code>seal_reads</code> knob, gateway vs. decorator patterns) lives in the producer's docs: <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs">capsule-emit/docs</a>.</div>
-
-      <!--chrome:next--><div class="next"><a class="p" href="/docs/trust-map.html"><div class="dir">&#8592; Previous</div><div class="ttl">Trust map</div></a><a class="n" href="/docs/how-it-composes.html"><div class="dir">Next &#8594;</div><div class="ttl">How it composes</div></a></div><!--/chrome:next-->
+      <!--chrome:next--><div class="next"><a class="p" href="/docs/log.html"><div class="dir">&#8592; Previous</div><div class="ttl">The public log, live</div></a><a class="n" href="/docs/witnesses.html"><div class="dir">Next &#8594;</div><div class="ttl">Witness directory</div></a></div><!--/chrome:next-->
     </article>
   </div>
 </main>

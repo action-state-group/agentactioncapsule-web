@@ -151,6 +151,13 @@
   .ic-card ul{list-style:none;margin-top:6px}
   .ic-card li{font-size:14px;color:var(--muted);margin-top:8px}
   .ic-card li a{margin-top:0}
+  /* SPECIFICATIONS (generated list, tools/build_docs.py) */
+  .spec-list{list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 28px;font-size:14px}
+  .spec-list li{color:var(--muted-2);overflow-wrap:anywhere}
+  .spec-list .sp-short{color:var(--paper);font-weight:600;margin-right:6px}
+  .spec-list a{color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:12.5px}
+  .spec-list code{font-family:var(--mono)}
+  @media(max-width:760px){ .spec-list{grid-template-columns:1fr} }
 
   /* ONRAMP */
   .onramp{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
@@ -262,7 +269,7 @@
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
       <a href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
-      <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) &#x2197;</a>
+      <a href="/docs/specifications.html">Specifications</a>
     </div>
   </div>
 </nav><!--/chrome:nav-->
@@ -836,20 +843,6 @@ capsule-emit verify --store ledger.jsonl
         <p>A public, append-only registry of anchors for signed TRACE Trust Records. Its checkpoint layer uses the Checkpointed Local Log: an append-only MMR with signed checkpoints, and a witness receipt over a checkpoint &mdash; each checkable with the registry's own published verifier.</p>
         <a href="/docs/interop/trace-registry">How it uses CLL, and how to check an entry →</a>&ensp;&middot;&ensp;<a href="https://field-notes-on-the-agent-economy.ghost.io/deep-dive-how-the-public-trace-registry-is-built-to-be-distrusted/">joint post ↗</a>&ensp;&middot;&ensp;<a href="https://github.com/agentrust-io/trace-registry">agentrust-io/trace-registry ↗</a>
       </div>
-      <div class="ic-card" id="drafts" style="grid-column:1/-1">
-        <span class="badge">INTERNET-DRAFTS · INDIVIDUAL · NOT WG-ADOPTED</span>
-        <h3>The drafts, on the IETF Datatracker</h3>
-        <p>Each link opens the latest revision. These are individual Internet-Drafts submitted for discussion &mdash; not adopted by a working group, and not standards.</p>
-        <ul>
-          <li><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule ↗</a> &mdash; An Agent Action Capsule Profile for SCITT</li>
-          <li><a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding ↗</a> (CPB) &mdash; Canonicalization Declaration for SCITT Signed Statements</li>
-          <li><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log ↗</a> &mdash; The Checkpointed Local Log (CLL)</li>
-          <li><a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">draft-mih-sato-agent-accountability-composition ↗</a> &mdash; Agent Accountability: Composition and Conformance</li>
-          <li><a href="https://datatracker.ietf.org/doc/draft-mih-agent-accountability-conformance/">draft-mih-agent-accountability-conformance ↗</a> &mdash; Agent Accountability: A Conformance and Verification Method</li>
-          <li><a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation ↗</a> &mdash; Bilateral Attestation of Cross-Organization Agent Actions</li>
-          <li><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">draft-mih-scitt-agent-action-capsule-sel-disc ↗</a> &mdash; Selective Disclosure Profile for Agent Action Capsules</li>
-        </ul>
-      </div>
     </div>
   </div>
 </section>
@@ -926,13 +919,28 @@ capsule-emit verify --store ledger.jsonl
         <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/" style="color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:13.5px;display:inline-block;margin-top:12px">Read the draft ↗</a>
       </div>
     </div>
-    <div class="sec-head" style="margin-top:44px;margin-bottom:20px">
-      <span class="eyebrow">Adopters &amp; interop</span>
-      <h2 style="font-size:clamp(18px,2vw,24px);letter-spacing:-0.4px;margin:8px 0 8px">Early adopters wanted.</h2>
+    <!--chrome:specs--><div class="sec-head" id="specifications" style="margin-top:44px;margin-bottom:20px">
+      <span class="eyebrow">Specifications</span>
+      <h2 style="font-size:clamp(18px,2vw,24px);letter-spacing:-0.4px;margin:8px 0 8px">The Internet-Drafts, their vectors, and the code that implements them.</h2>
+      <p>Each is an individual Internet-Draft submitted for discussion &mdash; not adopted by a working group, and not a standard. Revisions are read from the IETF Datatracker when the site is built (last read 2026-10-03 UTC).</p>
     </div>
-    <div style="border:1px dashed var(--line);border-radius:12px;padding:22px 26px;font-size:14px;color:var(--muted);font-family:var(--mono)">
-      No adopters are listed here yet. One is listed only when it has published something we can link to. Building? <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md" style="color:var(--accent);text-decoration:none">Start with ADOPT.md ↗</a>, a self-serve path from zero to a witnessed, verified capsule. Interop results so far are under <a href="#interop" style="color:var(--accent);text-decoration:none">Interop</a> above.
-    </div>
+    <ul class="spec-list">
+      <li><span class="sp-short">AAC</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule <code>-05</code> &#x2197;</a></li>
+      <li><span class="sp-short">Selective disclosure</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">draft-mih-scitt-agent-action-capsule-sel-disc <code>-00</code> &#x2197;</a></li>
+      <li><span class="sp-short">Disclosure envelope</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">draft-mih-agent-disclosure-envelope <code>-00</code> &#x2197;</a></li>
+      <li><span class="sp-short">Evidence Bundle</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle <code>-00</code> &#x2197;</a></li>
+      <li><span class="sp-short">Evidence Request</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request <code>-00</code> &#x2197;</a></li>
+      <li><span class="sp-short">Evidence layer</span> &mdash; not yet posted</li>
+      <li><span class="sp-short">CPB</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding <code>-05</code> &#x2197;</a></li>
+      <li><span class="sp-short">Settlement records</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records <code>-00</code> &#x2197;</a></li>
+      <li><span class="sp-short">Bilateral attestation</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation <code>-02</code> &#x2197;</a></li>
+      <li><span class="sp-short">Composition</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">draft-mih-sato-agent-accountability-composition <code>-01</code> &#x2197;</a></li>
+      <li><span class="sp-short">Conformance</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-accountability-conformance/">draft-mih-agent-accountability-conformance <code>-00</code> &#x2197;</a></li>
+      <li><span class="sp-short">CLL</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log <code>-01</code> &#x2197;</a></li>
+      <li><span class="sp-short">MMR receipt profile (dependency)</span> <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">draft-bryce-cose-receipts-mmr-profile <code>-03</code> &#x2197;</a></li>
+      <li><span class="sp-short">COSE deterministic encodings</span> &mdash; not yet posted</li>
+    </ul>
+    <p class="fit-note"><a href="/docs/specifications.html" style="color:var(--accent);text-decoration:none">Vectors and implementations for each draft &rarr;</a></p><!--/chrome:specs-->
 
     <p class="fit-note">New here? <a href="/docs/governance.html" style="color:var(--accent);text-decoration:none">Read how the project is governed →</a> · Join the conversation on <a href="https://github.com/action-state-group" style="color:var(--accent);text-decoration:none">GitHub</a>.</p>
   </div>
@@ -954,11 +962,24 @@ capsule-emit verify --store ledger.jsonl
           <a href="/">Overview</a>
           <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (latest) &#x2197;</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (latest) &#x2197;</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition draft (latest) &#x2197;</a>
           <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding &#x2197;</a>
           <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h5>Internet-Drafts</h5>
+          <a href="/docs/specifications.html">All specifications</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">Selective disclosure &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">Disclosure envelope &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">Evidence Bundle &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">Evidence Request &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">Settlement records &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">Bilateral attestation &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-accountability-conformance/">Conformance &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">CLL &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">MMR receipt profile &#x2197;</a>
         </div>
         <div class="foot-col">
           <h5>Services</h5>
