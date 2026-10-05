@@ -386,6 +386,7 @@
         <button class="sw-tab" data-fw="llamaindex">LlamaIndex</button>
         <button class="sw-tab" data-fw="msft-agent-framework">Microsoft Agent Framework</button>
         <button class="sw-tab" data-fw="openai-agents">OpenAI Agents</button>
+        <button class="sw-tab" data-fw="strands">Strands</button>
       </div>
 
       <div class="sw-panel" data-fw="goose">
@@ -552,6 +553,16 @@ from capsule_emit.adapters.openai_agents_listener import OpenAIAgentsCapsuleProc
 processor = OpenAIAgentsCapsuleProcessor(operator="acme-co", developer="my-agent@v1")
 add_trace_processor(processor)   # keeps the SDK's own exporter; one capsule per tool-call span</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/openai-agents.md">OpenAI Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/openai-agents.md#version" style="color:var(--muted);text-decoration:underline">verified against openai-agents 0.22.0–0.22.2 ↗</a></span>
+      </div>
+
+      <div class="sw-panel" data-fw="strands">
+        <div class="sw-fw"><b>Strands Agents</b> — pip install "capsule-emit[strands]"   # strands-agents 1.54+</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from strands import Agent
+from capsule_emit.adapters.strands_listener import StrandsCapsuleListener
+
+listener = StrandsCapsuleListener(operator="acme-co", developer="my-agent@v1")
+agent = Agent(model=None, tools=[], hooks=[listener])  # your model and tools here</code></pre></div>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/strands.md">Strands Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/strands.md#version" style="color:var(--muted);text-decoration:underline">verified against capsule-emit 0.8.6 · strands-agents 1.54.0–1.56.0 ↗</a></span>
       </div>
 
       <p class="sw-note">Don't see your framework? The base is ~30 lines — <a href="https://github.com/action-state-group/capsule-emit" style="color:var(--accent);text-decoration:none">add an adapter or open a request ↗</a>. Full guides live in <a href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters" style="color:var(--accent);text-decoration:none">capsule-emit/docs/adapters</a>.</p>
