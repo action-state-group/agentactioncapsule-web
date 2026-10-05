@@ -1234,6 +1234,8 @@ r = verify_receipt(receipt, leaf_entry_hex=leaf,
 )
 
 TRUST_MAP_CSS = """
+h4{margin:1.75rem 0 .4rem}
+[id]{scroll-margin-top:72px}
 .t td:last-child{color:var(--muted,#5b6470);font-size:.95em}
 .tm-terms{display:grid;grid-template-columns:max-content 1fr;gap:.35rem 1rem;margin:1rem 0}
 .tm-terms dt{font-weight:600}
@@ -1352,6 +1354,28 @@ PAGES["trust-map"] = dict(
   <li><strong>Both sides agree.</strong> <a class="ln" href="#matching-record">The other side's matching record</a>: each agent seals its own record of the exchange (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">Bilateral attestation Internet-Draft &#x2197;</a>), and the two are compared.</li>
   <li><strong>Independent observation.</strong> Here it means more observers, not a recompute: a party that sees the exchange from outside either agent, such as a network boundary or the endpoint an agent called, keeps its own record. This is the multi-observer evidence work, in preparation as an Internet-Draft and not yet posted. Records kept in separate custody can corroborate each other; records kept by the same party cannot. When they disagree, the disagreement is reported and no record is declared the winner. There is no twin here, and nothing is recomputed.</li>
 </ul>
+
+<p id="when-it-goes-wrong">Four ways an exchange between agents can go wrong follow, each with what the checks show and what they still do not show. In every case the record states what it holds. It does not say why anything happened, and it does not judge anyone's conduct; that is for whoever reads the records.</p>
+
+<h4 id="case-honest-mistake">1. An honest mistake</h4>
+<p><strong>Example.</strong> An agent books a table for the wrong date, or pays 120 where its user said 12.</p>
+<p><strong>What the checks show.</strong> The agent's record of the action holds what it did, the date it booked or the amount it paid, and can cite the instruction it acted on by digest. <a class="ln" href="#content-binding">Content binding</a>, <a class="ln" href="#signature">signature</a> and <a class="ln" href="#inclusion">inclusion</a> show that this is the record the agent sealed and logged, so a reader can set the action against the instruction. Where the other side kept its own record, <a class="ln" href="#matching-record">the other side's matching record</a> shows whether both recorded the same booking or payment; if they differ, the two signed records are a signed disagreement.</p>
+<p><strong>What they do not show.</strong> That it was a mistake rather than intent. The record shows what was done and under which instruction, not why.</p>
+
+<h4 id="case-unwanted-help">2. Help the user did not ask for</h4>
+<p><strong>Example.</strong> An agent decides it is helping: it accepts an auto-renewal to keep a discount, shares its user's phone number to speed up a delivery, or buys a different item it judged better.</p>
+<p><strong>What the checks show.</strong> Each action's record, set against the intent or approval the user sealed. A record cites the approval it ran under by digest (<a class="ln" href="/docs/how-it-composes.html">How it composes</a>), and its <a class="ln" href="/docs/glossary.html#disposition">disposition</a> records who approved it: a human, a policy or the other side. An action whose record cites no approval stands out when the records are read side by side. What the agent sent to another party is in its record of the request, under <a class="ln" href="#content-binding">content binding</a>, and a disclosure record, where one is kept, shows what was released to whom and under which approval, or under none. <a class="ln" href="#matching-record">The other side's matching record</a> shows what the other side received.</p>
+<p><strong>What they do not show.</strong> The agent's reasons. Whether an approval it cites covers what it did is a question for the authorization layer, or for the person reading the records.</p>
+
+<h4 id="case-covering-tracks">3. Covering tracks</h4>
+<p><strong>Example.</strong> After the fact, the agent, or whoever runs it, rewrites a log entry or leaves one out.</p>
+<p><strong>What the checks show: rewrites.</strong> A rewrite is detectable by others. The <a class="ln" href="#checkpoint-signature">checkpoint signature</a> fixes each root and size under the log's key, <a class="ln" href="#continuity">continuity</a> shows each checkpoint builds on the one before, and a <a class="ln" href="#witness-receipt">witness receipt</a> places the checkpoint in a log someone else runs. Once a checkpoint covering an entry has been signed and registered, changing that entry gives a log that no longer matches it, and anyone holding the earlier checkpoint or receipt can see that.</p>
+<p><strong>What the checks do not show: omission.</strong> A log that never recorded an action can be fully consistent. No check on one party's own log shows an action that was left out of it. Only a record kept by someone else shows the gap: <a class="ln" href="#matching-record">the other side's matching record</a> of the exchange, or <a class="ln" href="#independent-observation">independent observation</a> by a party in separate custody, the multi-observer work above. If no one else kept a record of the exchange, the gap does not show.</p>
+
+<h4 id="case-directed-to-scam">4. A user directs their agent to scam others</h4>
+<p><strong>Example.</strong> A user sets their agent to take payment for goods that will never be sent, or to tell other agents things the user knows are false. This is like the stranger in <a class="ln" href="#mesh-llm">shared inference</a>, except that here the person the agent acts for intends it.</p>
+<p><strong>What the checks show.</strong> Each party that dealt with the agent sealed its own record of what it was told and what it sent or paid; <a class="ln" href="#content-binding">content binding</a>, <a class="ln" href="#signature">signature</a>, <a class="ln" href="#inclusion">inclusion</a> and a <a class="ln" href="#witness-receipt">witness receipt</a> apply to each. Where the agent sealed records too, <a class="ln" href="#matching-record">the other side's matching record</a> compares them, and records that disagree are a signed disagreement. What the agent itself sealed stays on its log under its key; once registered, it cannot be rewritten without that showing (case 3), though an exchange can still be left out of it. Each party can take its own records, the other side's records it holds, and the inclusion and consistency proofs as a portable bundle (<a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">Evidence Bundle Internet-Draft &#x2197;</a>) to an adjudicator, who can check them offline.</p>
+<p><strong>What they do not show.</strong> Prevention: the records are evidence after the fact. What can stop an action at the time is each party's own rules for pausing or approving it, and its records show what those rules held or refused, as a <a class="ln" href="/docs/glossary.html#disposition">disposition</a> such as <code>blocked</code> or <code>hitl_dispatched</code>. The records do not say that anyone acted in bad faith; that is for the adjudicator.</p>
 
 <h2 id="terms">Terms, one line each</h2>
 <dl class="tm-terms">
