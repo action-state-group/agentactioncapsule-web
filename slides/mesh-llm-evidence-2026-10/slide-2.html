@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What each check shows</title>
+<link rel="icon" href="data:,">
+<style>
+:root{
+  --bg:#FFFFFF; --ink:#111827; --muted:#374151; --line:#9CA3AF; --panel:#F3F4F6;
+  --accent:#1D4ED8; --accent-2:#0F766E; --gap:#B45309; --gap-bg:#FFF7ED;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:var(--bg);overflow:hidden}
+body{font-family:Arial, Helvetica, "Liberation Sans", sans-serif;color:var(--ink)}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;background:var(--bg);transform-origin:0 0;overflow:hidden}
+.abs{position:absolute;left:80px;width:1760px}
+h1{top:64px;font-size:64px;line-height:64px;font-weight:bold;color:var(--ink)}
+
+/* trust map */
+.map{top:150px;display:grid;grid-template-columns:710px 530px 520px;font-size:38px;line-height:42px}
+.map > div{padding:4px 14px}
+.hd{font-weight:bold;height:46px;padding-top:2px !important;border-bottom:3px solid var(--line)}
+.hd.shows{color:var(--accent)}
+.hd.not{color:var(--gap)}
+.q{font-weight:bold}
+.pill{display:inline-block;margin-top:0;padding:0 16px;border-radius:21px;background:var(--panel);color:var(--accent);font-weight:bold;line-height:42px}
+.hd .pill{margin-left:10px}
+.cell{height:92px;border-bottom:3px solid var(--panel)}
+.not{background:var(--gap-bg);border-left:3px solid var(--gap)}
+.cell.not{color:var(--ink)}
+.last{border-bottom:none}
+
+/* honesty band + history arrow */
+.band{top:666px;left:80px;width:1086px;height:146px;padding:10px 24px;border:3px solid var(--accent-2);border-radius:16px;background:var(--panel);position:absolute;font-size:38px;line-height:42px}
+.band h2{font-size:38px;line-height:42px;color:var(--accent-2);font-weight:bold}
+.band ul{list-style:none;display:grid;grid-template-columns:510px 510px;column-gap:0}
+.band li{padding-left:30px;position:relative}
+.band li::before{content:"";position:absolute;left:4px;top:13px;width:16px;height:16px;border-radius:50%;background:var(--accent-2)}
+.hist{position:absolute;top:666px;left:1190px;width:650px;height:146px;display:flex;align-items:center;font-size:38px;line-height:42px;color:var(--ink)}
+.hist .ar{color:var(--accent);font-weight:bold}
+
+/* go deeper */
+.deep{top:826px;display:grid;grid-template-columns:430px 1290px;column-gap:40px;font-size:38px;line-height:42px;padding-top:6px;border-top:3px solid var(--line)}
+.deep h2{font-size:38px;line-height:42px;font-weight:bold;color:var(--accent)}
+.deep ul{list-style:none}
+.url{color:var(--accent)}
+.foot{top:978px;font-size:38px;line-height:46px;font-style:italic;color:var(--ink)}
+
+/* build-in (disabled with ?static or reduced motion) */
+.anim .bi{opacity:0;transform:translateY(12px);transition:opacity .45s ease, transform .45s ease}
+.anim.go .bi{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<div id="stage">
+  <h1 class="abs bi">What each check shows, and what it doesn’t</h1>
+
+  <div class="abs map" role="table" aria-label="Trust map">
+    <div class="hd bi" role="columnheader">Question <span class="pill">Check</span></div>
+    <div class="hd shows bi" role="columnheader">Shows</div>
+    <div class="hd not bi" role="columnheader">Does not show</div>
+
+    <div class="cell bi"><div class="q">Who sent this, and was it changed?</div><span class="pill">Signed</span></div>
+    <div class="cell bi">who signed; unchanged since</div>
+    <div class="cell not bi">that the content is true</div>
+
+    <div class="cell bi"><div class="q">Was it there at the time?</div><span class="pill">Checkpointed</span></div>
+    <div class="cell bi">in the log by time T, in order</div>
+    <div class="cell not bi">that everything was logged</div>
+
+    <div class="cell bi"><div class="q">Did we both see the same exchange?</div><span class="pill">Both sides match</span></div>
+    <div class="cell bi">same request and answer, cited both ways</div>
+    <div class="cell not bi">which side is right</div>
+
+    <div class="cell bi"><div class="q">Was the claimed model served?</div><span class="pill">Second node + referee</span></div>
+    <div class="cell bi">a signed ruling on one <span style="white-space:nowrap">client-marked</span> pair</div>
+    <div class="cell not bi">every request; the referee is off by default today</div>
+
+    <div class="cell last bi"><div class="q">What actually ran?</div><span class="pill">Hardware attestation (next)</span></div>
+    <div class="cell last bi">a measured runtime</div>
+    <div class="cell last not bi">more than the quote covers</div>
+  </div>
+
+  <div class="band bi">
+    <h2>What keeps everyone honest</h2>
+    <ul>
+      <li>each side’s own signed log</li>
+      <li>the other side’s copy</li>
+      <li>an outside witness</li>
+      <li>a referee neither side picked</li>
+    </ul>
+  </div>
+  <div class="hist bi"><div><span class="ar">→</span> builds a history per peer <span style="white-space:nowrap">(counts, never a score)</span></div></div>
+
+  <div class="abs deep bi">
+    <div>
+      <h2>Go deeper</h2>
+      <ul>
+        <li class="url">agentactioncapsule.org</li>
+        <li>SCITT, RFC 9943</li>
+      </ul>
+    </div>
+    <ul>
+      <li><span class="url">datatracker.ietf.org/doc/search?name=draft-mih</span><br>(AAC, checkpointed log, bilateral, evidence layer; individual Internet-Drafts)</li>
+      <li><span class="url">github.com/Mesh-LLM/capsules</span> (evidence plugin)</li>
+    </ul>
+  </div>
+
+  <p class="abs foot bi">“No reputation score anywhere. You get a map of what was checked, and the gaps are named.”</p>
+</div>
+<script>
+(function(){
+  var st=document.getElementById('stage');
+  function fit(){var s=Math.min(window.innerWidth/1920,window.innerHeight/1080);
+    st.style.transform='scale('+s+')';
+    st.style.left=((window.innerWidth-1920*s)/2)+'px';st.style.top=((window.innerHeight-1080*s)/2)+'px';}
+  window.addEventListener('resize',fit);fit();
+  var isStatic=/[?&]static\b/.test(location.search)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if(isStatic)return;
+  var els=st.querySelectorAll('.bi');
+  st.classList.add('anim');
+  for(var i=0;i<els.length;i++){els[i].style.transitionDelay=Math.min(i*0.04,1.1)+'s';}
+  void st.offsetWidth;
+  requestAnimationFrame(function(){requestAnimationFrame(function(){st.classList.add('go');});});
+})();
+</script>
+</body>
+</html>
