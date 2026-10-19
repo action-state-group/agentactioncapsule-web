@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: Apache-2.0 */
-/* Shared style for the explain/ pages. Local-only: no web fonts, no external assets. */
+/* Shared style for the build/ pages (copied from explain/). Local-only: no web fonts, no external assets. */
 :root{
   --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
   --line:#E3E3DC; --line-2:#2A313F;

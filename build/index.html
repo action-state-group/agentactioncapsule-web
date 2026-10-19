@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contents · build</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b1-seams.html">Start &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">Contents</div>
+  <h1>Build your own evidence layer</h1>
+  <p class="lede">For an agent builder or an agent-economy platform that wants signed records of what its agents did, kept so
+    that any verifier can check them later, on any host. Every page follows one loop: an agent acts, the act is recorded,
+    the record is judged, the judgment is reported, and the history feeds the next act. The pages are in the order the
+    Mesh-LLM worked example was built; each ends with what you need before the next step.</p>
+
+  <figure class="anim" data-steps="6" data-delay="1700"
+    data-cap-0="Press Play, or Step to go once round the loop."
+    data-cap-1="Act. An agent does something through its host: a request served, a tool called, an approval given. The host exposes the event as a seam (b1)."
+    data-cap-2="Record. The act becomes a signed record of digests, appended to a local book with signed checkpoints, in open formats any verifier reads (b2, b3, b5)."
+    data-cap-3="Judge. A separate step decides whether the act was right: for inference, client-marked twins and a referee (b4); in general, rules or a judge (b9). A judgment is never rounded into evidence."
+    data-cap-4="Report. A verifier checks the records first; a report is then rendered from what verified, offline, and cannot change the verdict (b10)."
+    data-cap-5="History. A derived read over sealed records: counts anyone holding the records can recompute, never a score (b11)."
+    data-cap-6="Back into the next act. History feeds the next decision: which peer to route to, what a personal agent may do, whom to work with (b6, b7, b11).">
+    <svg viewBox="0 0 860 380" role="img" aria-labelledby="idx-t idx-d">
+      <title id="idx-t">The evidence loop: act, record, judge, report, history, and back into the next act</title>
+      <desc id="idx-d">Five stages arranged in a ring and joined by arrows: act at the top, record at the right, judge at the
+        lower right, report at the lower left, history at the left, with an arrow from history back to act. Each stage lists
+        the pages that cover it: act b1, b6 and b7; record b2, b3 and b5; judge b4 and b9; report b10; history b11. The
+        stages light one at a time, then the arrow from history back into the next act.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+        <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
+      </defs>
+
+      <!-- Stages (outlines always visible; fill lights at the stage's step) -->
+      <rect x="345" y="20" width="170" height="60" rx="10" fill="#fff" stroke="#E3E3DC"/>
+      <rect x="605" y="105" width="170" height="60" rx="10" fill="#fff" stroke="#E3E3DC"/>
+      <rect x="505" y="290" width="170" height="60" rx="10" fill="#fff" stroke="#E3E3DC"/>
+      <rect x="185" y="290" width="170" height="60" rx="10" fill="#fff" stroke="#E3E3DC"/>
+      <rect x="85" y="105" width="170" height="60" rx="10" fill="#fff" stroke="#E3E3DC"/>
+
+      <g class="st" data-step="1">
+        <rect x="345" y="20" width="170" height="60" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="430" y="45" text-anchor="middle" font-size="24" font-weight="600" fill="#0B0E14">act</text>
+        <text x="430" y="70" text-anchor="middle" font-size="18" class="mono" fill="#5C6573">b1 · b6 · b7</text>
+      </g>
+      <g class="st" data-step="2">
+        <rect x="605" y="105" width="170" height="60" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="690" y="130" text-anchor="middle" font-size="24" font-weight="600" fill="#0B0E14">record</text>
+        <text x="690" y="155" text-anchor="middle" font-size="18" class="mono" fill="#5C6573">b2 · b3 · b5</text>
+        <line x1="515" y1="58" x2="603" y2="118" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+      </g>
+      <g class="st" data-step="3">
+        <rect x="505" y="290" width="170" height="60" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="590" y="315" text-anchor="middle" font-size="24" font-weight="600" fill="#0B0E14">judge</text>
+        <text x="590" y="340" text-anchor="middle" font-size="18" class="mono" fill="#5C6573">b4 · b9</text>
+        <line x1="680" y1="165" x2="618" y2="288" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+      </g>
+      <g class="st" data-step="4">
+        <rect x="185" y="290" width="170" height="60" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="270" y="315" text-anchor="middle" font-size="24" font-weight="600" fill="#0B0E14">report</text>
+        <text x="270" y="340" text-anchor="middle" font-size="18" class="mono" fill="#5C6573">b10</text>
+        <line x1="505" y1="320" x2="357" y2="320" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+      </g>
+      <g class="st" data-step="5">
+        <rect x="85" y="105" width="170" height="60" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="170" y="130" text-anchor="middle" font-size="24" font-weight="600" fill="#0B0E14">history</text>
+        <text x="170" y="155" text-anchor="middle" font-size="18" class="mono" fill="#5C6573">b11</text>
+        <line x1="245" y1="290" x2="182" y2="167" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+      </g>
+      <g class="st" data-step="6">
+        <line x1="255" y1="118" x2="343" y2="58" stroke="#127A52" stroke-width="2.5" marker-end="url(#ahv)"/>
+        <text x="430" y="190" text-anchor="middle" font-size="20" fill="#127A52">history feeds the next act</text>
+        <text x="430" y="216" text-anchor="middle" font-size="17" fill="#5C6573">counts, never a score</text>
+      </g>
+      <text x="430" y="252" text-anchor="middle" font-size="17" fill="#5C6573">b8: the whole loop as a checklist</text>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">&mdash;</span>Build the layer: act and record</h2>
+  <ol class="agenda">
+    <li><a href="b1-seams.html"><span class="num">b1</span><span><span class="t">The seams the host exposes</span>
+      <span class="d">What the host hands an evidence plugin: an event per exchange naming both sides, a plugin key bound to the node key, capability flags, a page, and stop routing.</span></span></a></li>
+    <li><a href="b2-record-format.html"><span class="num">b2</span><span><span class="t">The record format</span>
+      <span class="d">What one record carries: digests, not payloads; request/response binding; the signer's key id.</span></span></a></li>
+    <li><a href="b3-evidencebook.html"><span class="num">b3</span><span><span class="t">The local evidence book</span>
+      <span class="d">An append-only log on the node: signed checkpoints, inclusion and consistency proofs, export.</span></span></a></li>
+    <li><a href="b4-use-case-evidence.html"><span class="num">b4</span><span><span class="t">Use-case evidence: twins and a referee</span>
+      <span class="d">What a sampled rate tells you, and what a signed verdict on one marked pair adds.</span></span></a></li>
+    <li><a href="b5-portable.html"><span class="num">b5</span><span><span class="t">Making it portable</span>
+      <span class="d">Open specs and vectors, libraries any host can link, an evidence file any verifier reads offline.</span></span></a></li>
+  </ol>
+
+  <h2><span class="n">&mdash;</span>Apply it</h2>
+  <ol class="agenda">
+    <li><a href="b6-personal-agents.html"><span class="num">b6</span><span><span class="t">Personal agents</span>
+      <span class="d">The same layers for an agent acting for one person, and a History card of counts as the shareable read.</span></span></a></li>
+    <li><a href="b7-agent-work.html"><span class="num">b7</span><span><span class="t">Agent work for someone else</span>
+      <span class="d">Both sides' records, evidence requests and settlement legs, when an agent works with a counterparty.</span></span></a></li>
+    <li><a href="b8-checklist.html"><span class="num">b8</span><span><span class="t">The builder's checklist</span>
+      <span class="d">Every step in order: what you need, where it lives today, and its status.</span></span></a></li>
+  </ol>
+
+  <h2><span class="n">&mdash;</span>Close the loop: judge, report, history</h2>
+  <ol class="agenda">
+    <li><a href="b9-judge.html"><span class="num">b9</span><span><span class="t">Judging: a separate step from evidence</span>
+      <span class="d">Who judges, what a judgment record carries, and why a judgment is never rounded into evidence.</span></span></a></li>
+    <li><a href="b10-report.html"><span class="num">b10</span><span><span class="t">Reporting: from a verified bundle to a page</span>
+      <span class="d">Verify first, then render from what verified, offline; wording changes never move an evidence id.</span></span></a></li>
+    <li><a href="b11-history-loop.html"><span class="num">b11</span><span><span class="t">History back into the loop</span>
+      <span class="d">History as a derived read over sealed records, recomputable by anyone, never a reputation number.</span></span></a></li>
+  </ol>
+
+  <footer class="pn"><span></span><a href="b1-seams.html">The seams the host exposes &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

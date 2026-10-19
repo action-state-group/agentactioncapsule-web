@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Step sequencer for the explain/ animations. No dependencies, no network.
+// Step sequencer for the build/ animations (copied from explain/). No dependencies, no network.
 //
 // Markup contract, per <figure class="anim" data-steps="N">:
 //   - SVG elements with class "st" and data-step="k" appear at step k (1..N) and stay.
