@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 · Mesh-LLM capsules plugin · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="09-grades.html">&larr; Prev</a><a href="index.html">Contents</a><a href="11-limits.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">10 / 11</div>
+  <h1>Mesh-LLM capsules plugin</h1>
+  <p class="lede">The open-source <code>capsules</code> plugin for Mesh-LLM (release v0.1.4) seals a signed record of every exchange a node serves or asks for, lets two nodes swap those records, and, for a pair of requests a client marked as twins, can ask a third node to referee answers that differ.</p>
+
+  <figure class="anim" data-steps="7"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="Keys. Each plugin signs with its own Ed25519 key. mesh-llm (PR 2299) lets a host bind a plugin's key with its node key (&quot;mesh-llm-plugin-key-v1:&quot; ‖ node id ‖ plugin name ‖ plugin key ‖ algorithm) and gossip it; a peer keeps it only if the binding verifies. capsules v0.1.4 reads peers' keys from the host's GET /api/plugin-keys or from the operator's CAPSULES_PEER_KEYS, but does not yet announce its own key, so its peers need the operator's entry."
+    data-cap-2="A client sends two requests through node R, both carrying the same x-mesh-twin-bracket value. The host copies that value into twin_bracket_id on R's exchange events. The host never sends a second request itself."
+    data-cap-3="R forwards one request to node A and one to node B. The twin-bracket header is stripped before forwarding, so neither serving node is told its answer is half of a pair."
+    data-cap-4="Each node's plugin seals its own record of the exchange: request and response by digest, the model, a hash-chain link, and a COSE_Sign1 signature by the plugin's Ed25519 key (its key_id; the file is keys/node-key.pub.pem, which is the plugin's key, not mesh-llm's node key). R seals its requester halves, carrying twin_bracket_id."
+    data-cap-5="With record push on at both ends (off by default), each side sends its sealed record over record-push/1, as a bundle with a signed checkpoint and an inclusion proof. R checks that the sender's key (listed by the host or set in CAPSULES_PEER_KEYS) is the record's key_id, then the signature, the claims and the proof; it holds the record only if all pass, else it sends a signed refusal."
+    data-cap-6="The host passes plugins digests, not text, so the client supplies the request and both answers (referee_supply_twin_texts). R keeps them only if the request's digest is both records' request_digest and each answer's digest is one record's response_digest. If the answers differ, at temperature 0 on the same model and weights, and adjudicate_differing_twins is on (off by default), R picks one eligible referee, node C, asks it to re-answer the request (x-mesh-target), then sends it both halves and its answer to adjudicate."
+    data-cap-7="C signs a verdict from its own re-answer: contradicted:&lt;node&gt; names the twin it did not agree with; otherwise inconclusive; a pair it finds cannot be compared gets a signed not_comparable. R holds the verdict. A pair whose answers agree is never sent to a referee, and any pair without a verdict reads &quot;Not adjudicated&quot; with its reason, counting against neither twin.">
+    <svg viewBox="0 0 860 400" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">Records, record push and a refereed twin pair across Mesh-LLM nodes</title>
+      <desc id="anim-d">Four Mesh-LLM nodes, each running the capsules plugin: R the requesting node on the left, A and B the two serving nodes in the middle, C the referee on the right, and a client at far left. Stage 1: each node shows its plugin's own key; dashed lines show mesh-llm's host gossip of plugin keys bound by node keys, labelled as not used by capsules v0.1.4 for its own key, which does not announce it; a note says peers' keys come from CAPSULES_PEER_KEYS, or from the host's list when a key is announced. Stage 2: the client sends two requests to R, both with the header x-mesh-twin-bracket: bracket-1. Stage 3: R forwards one request to A and one to B with the header stripped, so neither is told it is a twin. Stage 4: A and B each seal a record holding the request and response digests, the model and the key id, signed with COSE_Sign1 by the plugin key; R seals its own requester halves, carrying twin_bracket_id. The key file keys/node-key.pub.pem is the plugin's key, not mesh-llm's node key. Stage 5: A and B push their records to R over record-push/1; R checks that the sender's key, from the host's list or CAPSULES_PEER_KEYS, is the record's key_id, then the signature, the claims and the inclusion proof, then holds the record or sends a signed refusal. Stage 6: the client supplies the request and both answers to R, which keeps them only if their digests match its own records; the twins answered the same request at temperature 0 on the same model and weights with different answers, so R asks referee C to re-answer the request and then sends it both halves. Stage 7: C returns a signed verdict from its re-answer, here contradicted naming node B; the referee signs only contradicted, inconclusive or not_comparable; a pair whose answers agree is never sent to a referee, and a pair without a verdict reads Not adjudicated with its reason. The final picture shows all four nodes, their records, the record pushes, the referee call and the verdict.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+        <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
+        <marker id="ahw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A5B00"/></marker>
+      </defs>
+
+      <!-- Nodes (always visible) -->
+      <rect x="10" y="170" width="100" height="56" rx="8" fill="#fff" stroke="#5C6573"/>
+      <text x="60" y="203" text-anchor="middle" font-size="14" fill="#0B0E14">Client</text>
+
+      <rect x="140" y="150" width="170" height="96" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="225" y="174" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node R</text>
+      <text x="225" y="192" text-anchor="middle" font-size="12" fill="#5C6573">requesting node</text>
+      <text x="225" y="209" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">capsules plugin</text>
+
+      <rect x="430" y="20" width="170" height="96" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="515" y="44" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node A</text>
+      <text x="515" y="79" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">capsules plugin</text>
+
+      <rect x="430" y="284" width="170" height="96" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="515" y="308" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node B</text>
+      <text x="515" y="343" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">capsules plugin</text>
+
+      <rect x="680" y="150" width="170" height="96" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="765" y="174" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node C</text>
+      <text x="765" y="192" text-anchor="middle" font-size="12" fill="#5C6573">eligible referee</text>
+      <text x="765" y="209" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">capsules plugin</text>
+
+      <!-- Step 1: plugin keys bound by node keys, carried in gossip -->
+      <g class="st" data-step="1">
+        <rect x="148" y="218" width="154" height="22" rx="5" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="225" y="233" text-anchor="middle" font-size="12" fill="#127A52">own plugin key</text>
+        <rect x="438" y="88" width="154" height="22" rx="5" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="515" y="103" text-anchor="middle" font-size="12" fill="#127A52">own plugin key</text>
+        <rect x="438" y="352" width="154" height="22" rx="5" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="515" y="367" text-anchor="middle" font-size="12" fill="#127A52">own plugin key</text>
+        <rect x="688" y="218" width="154" height="22" rx="5" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="765" y="233" text-anchor="middle" font-size="12" fill="#127A52">own plugin key</text>
+        <text x="10" y="30" font-size="12" fill="#9A5B00">peers' keys in v0.1.4: CAPSULES_PEER_KEYS</text>
+        <text x="10" y="46" font-size="12" fill="#9A5B00">(own key in host gossip: not in v0.1.4)</text>
+      </g>
+      <g class="st" data-step="1" data-until="1">
+        <line x1="300" y1="150" x2="440" y2="116" stroke="#9A5B00" stroke-dasharray="5 4"/>
+        <line x1="300" y1="246" x2="440" y2="284" stroke="#9A5B00" stroke-dasharray="5 4"/>
+        <line x1="310" y1="198" x2="680" y2="198" stroke="#9A5B00" stroke-dasharray="5 4"/>
+        <text x="495" y="190" text-anchor="middle" font-size="12" class="mono" fill="#9A5B00">host gossip: PeerAnnouncement.plugin_keys</text>
+        <text x="495" y="218" text-anchor="middle" font-size="12" fill="#9A5B00">mesh-llm binds and gossips; capsules' own key: not in v0.1.4</text>
+      </g>
+
+      <!-- Step 2: client marks two requests with one twin-bracket value -->
+      <g class="st" data-step="2">
+        <text x="10" y="128" font-size="12" class="mono" fill="#9A5B00">x-mesh-twin-bracket: bracket-1</text>
+        <text x="10" y="144" font-size="12" fill="#9A5B00">same value on both requests</text>
+        <line x1="110" y1="188" x2="138" y2="188" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#ahw)"/>
+        <line x1="110" y1="208" x2="138" y2="208" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#ahw)"/>
+      </g>
+
+      <!-- Step 3: forward to A and B, header stripped -->
+      <g class="st" data-step="3">
+        <line x1="310" y1="160" x2="428" y2="70" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+        <line x1="310" y1="236" x2="428" y2="326" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="515" y="62" text-anchor="middle" font-size="12" fill="#0B0E14">serves; header stripped</text>
+        <text x="515" y="326" text-anchor="middle" font-size="12" fill="#0B0E14">serves; header stripped</text>
+      </g>
+
+      <!-- Step 4: each node seals its own record -->
+      <g class="st" data-step="4">
+        <rect x="612" y="20" width="240" height="96" rx="8" fill="#fff" stroke="#0B0E14"/>
+        <text x="622" y="40" font-size="12" font-weight="600" fill="#0B0E14">A's record (served half)</text>
+        <text x="622" y="58" font-size="12" class="mono" fill="#5C6573">request · response digests</text>
+        <text x="622" y="76" font-size="12" class="mono" fill="#5C6573">model · chain · key_id</text>
+        <text x="622" y="96" font-size="12" fill="#127A52">COSE_Sign1 by A's plugin key</text>
+        <rect x="612" y="284" width="240" height="96" rx="8" fill="#fff" stroke="#0B0E14"/>
+        <text x="622" y="304" font-size="12" font-weight="600" fill="#0B0E14">B's record (served half)</text>
+        <text x="622" y="322" font-size="12" class="mono" fill="#5C6573">request · response digests</text>
+        <text x="622" y="340" font-size="12" class="mono" fill="#5C6573">model · chain · key_id</text>
+        <text x="622" y="360" font-size="12" fill="#127A52">COSE_Sign1 by B's plugin key</text>
+        <rect x="140" y="262" width="200" height="58" rx="8" fill="#fff" stroke="#0B0E14"/>
+        <text x="150" y="282" font-size="12" font-weight="600" fill="#0B0E14">R's records (requester)</text>
+        <text x="150" y="300" font-size="12" class="mono" fill="#5C6573">twin_bracket_id · digests</text>
+        <text x="150" y="314" font-size="12" fill="#127A52">signed by R's plugin key</text>
+      </g>
+
+      <!-- Step 5: record push to R, checked before it is held -->
+      <g class="st" data-step="5">
+        <line x1="430" y1="100" x2="312" y2="182" stroke="#127A52" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ahv)"/>
+        <line x1="430" y1="296" x2="312" y2="214" stroke="#127A52" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ahv)"/>
+        <text x="395" y="164" text-anchor="middle" font-size="12" class="mono" fill="#127A52">record-push/1</text>
+        <text x="395" y="244" text-anchor="middle" font-size="12" class="mono" fill="#127A52">record-push/1</text>
+        <rect x="10" y="330" width="400" height="64" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="20" y="348" font-size="12" fill="#0B0E14">R checks: key (host list or CAPSULES_PEER_KEYS)</text>
+        <text x="20" y="366" font-size="12" fill="#0B0E14">= key_id, signature, claims, proof</text>
+        <text x="20" y="384" font-size="12" fill="#0B0E14">&#8594; held, or a signed refusal</text>
+      </g>
+
+      <!-- Step 6: answers differ, ask one eligible referee -->
+      <g class="st" data-step="6">
+        <line x1="312" y1="192" x2="678" y2="192" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#ahw)"/>
+        <text x="495" y="184" text-anchor="middle" font-size="12" fill="#9A5B00">re-answer request, then both halves (x-mesh-target)</text>
+        <line x1="110" y1="220" x2="138" y2="236" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#ahw)"/>
+        <text x="10" y="246" font-size="12" fill="#9A5B00">client supplies</text>
+        <text x="10" y="261" font-size="12" fill="#9A5B00">the 3 texts; kept</text>
+        <text x="10" y="276" font-size="12" fill="#9A5B00">if digests match</text>
+      </g>
+
+      <!-- Step 7: signed verdict comes back -->
+      <g class="st" data-step="7">
+        <line x1="680" y1="206" x2="314" y2="206" stroke="#127A52" stroke-width="1.5" marker-end="url(#ahv)"/>
+        <text x="495" y="224" text-anchor="middle" font-size="12" class="mono" fill="#127A52">signed verdict: contradicted:&lt;B&gt;</text>
+        <text x="852" y="268" text-anchor="end" font-size="12" fill="#5C6573">else: &#8220;Not adjudicated&#8221; + reason</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p><code>capsules</code> is a Mesh-LLM plugin that keeps, on each node's own disk, a signed and hash-chained record of every exchange that node serves or asks for, in the Agent Action Capsule format.</p>
+    <p>When the operators turn it on, the two sides of an exchange send each other their own sealed records, and each side checks the other's against the peer's key: one its host announced, bound to its node key, or one the operator configured.</p>
+    <p>When a client marks two requests as one pair and the two answers differ, a node can ask a third node to re-answer the request and sign a verdict on the pair.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a pair exists only when a client sends the same <code>x-mesh-twin-bracket</code> value on two requests.</div>
+      <div class="not"><b>Rejected:</b> the host sending a second request, or pairs guessed from timing or content: the host never does either. (mesh-llm <code>docs/plugins/openai-exchange-lifecycle.md</code>, &ldquo;Client-marked pairs&rdquo;; capsules <code>docs/TWIN-REFEREE-SELECTION.md</code> §4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the header is stripped before a request is forwarded to the serving node.</div>
+      <div class="not"><b>Rejected:</b> passing it on, which would let a serving node know its answer is half of a pair. (mesh-llm PR 2300; <code>openai-exchange-lifecycle.md</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the host signs a binding of the plugin's key with its node key and carries it in gossip; a peer keeps it only if the binding verifies, and never relays it.</div>
+      <div class="not"><b>Rejected:</b> operators copying each peer's key by hand, which does not scale and breaks for client nodes whose id changes on every start; and the node key signing plugin data itself. (mesh-llm PR 2299)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> when the host's announced key and the operator's <code>CAPSULES_PEER_KEYS</code> disagree for a peer, nothing from that peer verifies.</div>
+      <div class="not"><b>Rejected:</b> picking one of the two keys. (capsules <code>crates/evidence-plugin/src/peer_keys.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> referee eligibility is a set of yes/no rules; the pick is random within a tier, and the tier is sealed in the verdict.</div>
+      <div class="not"><b>Rejected:</b> ordering nodes by merit, weighting, or combining anything into a number. (capsules <code>docs/TWIN-REFEREE-SELECTION.md</code> §2, §3, §5)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> any difference between the two answers counts, and at most one referee call is made per pair.</div>
+      <div class="not"><b>Rejected:</b> a similarity threshold, and retrying another referee after one did not answer. (capsules <code>docs/TWIN-REFEREE-SELECTION.md</code> §1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> by default nothing leaves the node on its own: record push, verdict delivery and the referee are each off until the operator turns them on.</div>
+      <div class="not"><b>Rejected:</b> sharing on by default. Asking a referee sends it the twins' prompt, so it needs an explicit switch. (capsules <code>docs/SHARING-POLICY.md</code>; <code>CHANGELOG.md</code> 0.1.3)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>That the holder of a given plugin key signed a record of one exchange, and that the record's bytes are unchanged (its <code>capsule_id</code> recomputes).</li>
+      <li>Where a host lists a peer's plugin key (mesh-llm PR 2299): that the peer's node key vouched for that key. capsules v0.1.4 reads such keys; it does not yet announce its own.</li>
+      <li>With record push on at both ends: each side holds the other's signed record of the same exchange.</li>
+      <li>For a pushed bundle: inclusion of the record under a checkpoint the sender signed.</li>
+      <li>For a refereed pair: a signed ruling on one pair of answers, which twin the referee's re-answer agrees with, and the word position where they start to differ (<code>divergence_index</code>).</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>Who holds a key in the real world. The node key's binding says nothing about whether the node served honestly (PR 2299).</li>
+      <li>That a model claim is true. <code>model_name_digest</code> is a hash of the model's name, not of its weights.</li>
+      <li>Anything about a pair no client marked: those read &ldquo;Not adjudicated&rdquo; and nothing is called.</li>
+      <li>A node's future answers. A verdict is a ruling on one pair; nothing counts against a twin without one.</li>
+      <li>That the referee's prompt is the twins' prompt: the verdict records it as the requester's word (<code>referee_prompt: requester_attested</code>).</li>
+      <li>In v0.1.4, the plugin announcing its own key: it reads peers' announced keys; announcing its own &ldquo;follows once a mesh-llm plugin release carries the request&rdquo; (INSTALL.md).</li>
+      <li>A live run: host-announced keys were exercised only against a test build of the host, and a referee verdict on live hosts is covered by tests only (CHANGELOG 0.1.4).</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>A verdict signed by a reference referee, kept as a test fixture; the plugin's test checks that its signature verifies under <code>referee_key_id</code>. It rules on a twin pair in which node <code>aaaa…</code> served half A and node <code>bbbb…</code> served half B.</p>
+  <pre class="code"><code>{
+  …
+  "referee_key_id": "6a9a93a3af20ca17d85764e3206fd1d0417ea943f53f07157792299ba9b6f033",
+  "verdict_capsule": {
+    …
+    "capsule_id": "1bd4fa92a5ff02c278b3c79e4e0398ede6c62212483c5a9466176bfc45408f62",
+    "action_id": "adjudicate/1bb92507-473a-49b7-96a0-a6752fb42308",
+    "action_type": "decide",
+    …
+    "provenance": "referee",
+    "model_attestation": {
+      "compute_attestation": {
+        "epistemic_type": "adjudication",
+        "adjudication": {
+          "schema": "capsule-emit-mesh/adjudication/v1",
+          "source": "twin_comparison",
+          "capture_method": "deterministic_replay",
+          "verdict": "contradicted:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "status": "CONTRADICTED",
+          "divergence_index": 3,
+          "margin": "0",
+          "margin_tau": "0.9",
+          "prefix_digest": "0ec7db901e57f96f8d195aa69bbdbd858eb13d125021a24c90972a5ce35d587b",
+          "twin_owner_distinct": true,
+          "weights_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "half_a_capsule_id": "7dc9427b6df5ff222617fb721f25d3c54aebe32682329bb7075902336437fb06",
+          "half_b_capsule_id": "b80db10999779aa17c8fcf7006a57aeaecbc81f5e9de3ecea33e9365c2bfd4d9",
+          "referee_capsule_id": "5d6b949bc8a8f20cd0dc4ba25642b12d4906eeccf5763adbe27f00841356cd44",
+          …
+          "referee_node_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "half_a_node_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "half_b_node_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "twins_request_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "referee_prompt": "requester_attested",
+          "referee_answer_digest": "0242bc9526adbb014565b8175ff134e2ba8731f4a13cab2d1b4d8aff8727586e",
+          "twin_bracket_id": "bracket-1"
+        }
+      }
+    },
+    "assurance": {
+      "attestation_mode": "self_attested",
+      …
+    },
+    …
+    "chain": {
+      "parent_capsule_id": "7dc9427b6df5ff222617fb721f25d3c54aebe32682329bb7075902336437fb06",
+      "relation": "adjudicates"
+    },
+    …
+    "key_id": "6a9a93a3af20ca17d85764e3206fd1d0417ea943f53f07157792299ba9b6f033"
+  }
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>referee_key_id</td><td>hex</td><td>The referee's Ed25519 public key; the fixture's signature verifies under it.</td></tr>
+      <tr><td>capsule_id</td><td>hex</td><td>SHA-256 of the record's canonical (JCS) bytes; changing any committed field changes it.</td></tr>
+      <tr><td>action_type</td><td>string</td><td><code>decide</code>: this record is a ruling, not a served exchange.</td></tr>
+      <tr><td>provenance</td><td>string</td><td><code>referee</code>: the node that wrote it was asked as referee.</td></tr>
+      <tr><td>source / capture_method</td><td>string</td><td>A comparison of twins, decided by the referee re-answering the request.</td></tr>
+      <tr><td>verdict</td><td>string</td><td>A referee signs <code>contradicted:</code> + the node id its re-answer did not agree with, <code>inconclusive</code>, or <code>not_comparable</code>. (<code>corroborated</code> applies only when the answers agree, and then no referee is called.)</td></tr>
+      <tr><td>status</td><td>string</td><td>Paired with the verdict: SATISFIED, CONTRADICTED or UNKNOWN.</td></tr>
+      <tr><td>divergence_index</td><td>integer</td><td>The word position at which the two answers start to differ.</td></tr>
+      <tr><td>prefix_digest</td><td>hex</td><td>Digest of the words the two answers share before they differ.</td></tr>
+      <tr><td>margin / margin_tau</td><td>string</td><td>Read and shown by the v0.1.4 web UI; written by no v0.1.4 Rust code. <span class="unverified">unverified</span> what they mean.</td></tr>
+      <tr><td>twin_owner_distinct</td><td>bool</td><td>The twins have different owners; a same-owner pair gets no verdict.</td></tr>
+      <tr><td>weights_digest</td><td>hex</td><td>The weights both halves name; set only when both name the same.</td></tr>
+      <tr><td>half_a/b_capsule_id</td><td>hex</td><td>The two twins' served records (A's and B's), pushed to the requesting node and held there.</td></tr>
+      <tr><td>referee_capsule_id</td><td>hex</td><td>The referee's own record of its re-answer.</td></tr>
+      <tr><td>half_a/b_node_id, referee_node_id</td><td>hex</td><td>The node ids of the two twins and the referee.</td></tr>
+      <tr><td>twins_request_digest</td><td>hex</td><td>Digest of the request both twins answered.</td></tr>
+      <tr><td>referee_prompt</td><td>string</td><td><code>requester_attested</code>: the prompt is the requester's word, not checked by the referee. The requesting node checks a supplied request against both records' <code>request_digest</code>.</td></tr>
+      <tr><td>referee_answer_digest</td><td>hex</td><td>Digest of the referee's own answer.</td></tr>
+      <tr><td>twin_bracket_id</td><td>string</td><td>The value the client sent in <code>x-mesh-twin-bracket</code>.</td></tr>
+      <tr><td>attestation_mode</td><td>string</td><td><code>self_attested</code>: the signer's own key, with no outside vouching.</td></tr>
+      <tr><td>chain</td><td>object</td><td>Links the verdict to half A's record with the relation <code>adjudicates</code>.</td></tr>
+      <tr><td>key_id</td><td>hex</td><td>The plugin's own key that signed this record (here <code>referee_key_id</code>); on disk <code>keys/node-key.pub.pem</code>, not mesh-llm's node key.</td></tr>
+    </tbody>
+  </table></div>
+  <p>This fixture's <code>spec_version</code> (trimmed above) names an earlier revision of the capsule Internet-Draft; the v0.1.4 producer seals <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+
+  <h2><span class="n">5</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record format each node seals.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the node's checkpointed Merkle log; a pushed bundle carries a checkpoint and an inclusion proof.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; why the plugin coarsens committed latency (a timing side channel).</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> signature on each record.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every digest and <code>capsule_id</code> covers.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: the witness an operator may name for checkpoints (none by default).</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts: what a named witness returns.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the plugin, its Evidence page, vectors and docs.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2299">Mesh-LLM/mesh-llm#2299</a> &mdash; plugin keys bound to the node key, carried in gossip (merged).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">Mesh-LLM/mesh-llm#2300</a> &mdash; the <code>twin_bracket</code> capability; the header stripped before forwarding (merged).</li>
+  </ul>
+
+  <footer class="pn"><a href="09-grades.html">&larr; Evidence grades</a><a href="11-limits.html">Limits &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

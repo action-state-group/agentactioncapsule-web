@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07 · Bilateral attestation and settlement · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="06-cll-mmr.html">&larr; Prev</a><a href="index.html">Contents</a><a href="08-bundles-disclosure.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">07 / 11</div>
+  <h1>Bilateral attestation and settlement</h1>
+  <p class="lede">Two parties who do not trust each other each seal only what their own side observed, and a verifier who trusts neither derives from the two records whether they agree.</p>
+
+  <figure class="anim" data-steps="6"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="The payee seals a terms leg: 1000 in BTC at assetScale 11, with a Lightning payment hash fixed in advance."
+    data-cap-2="The payer seals only what its own wallet reported, under its own key, and cites the terms leg by its capsule_id."
+    data-cap-3="The payee seals only what its own wallet reported, under a different key: 995 received and a receive fee of 5."
+    data-cap-4="The verifier compares the bound fields: two distinct keys, the same payment reference, the same status."
+    data-cap-5="The amount rule is payer.amount = payee.received + payee.receive_fee. 1000 = 995 + 5, so the derived state is agreed."
+    data-cap-6="Second vector: the payee reports receive_fee 0. 995 + 0 is not 1000, so the same comparison lands on mismatch, differs: amount.">
+    <svg viewBox="0 0 860 350" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">Two sealed views of one payment, compared by a verifier</title>
+      <desc id="anim-d">Left column: three leg records. Step 1: a terms leg sealed by the payee states an amount of 1000 (BTC, assetScale 11) and a Lightning payment hash. Step 2: a payer_observed leg, sealed by the payer key 2cbf..., cites the terms leg and records payment_ref 6aaa35ab..., amount 1000, routing_fee 0, status settled. Step 3: a payee_observed leg, sealed by the payee key 7125..., cites the same terms leg and records the same payment_ref, received 995, receive_fee 5, status settled. Step 4: both observed legs flow into a verifier in the middle, which checks that the two keys differ, that the payment references are the same, and that the statuses are equal. Step 5: the verifier applies the amount rule 1000 = 995 + 5, which holds, and the derived state lands on agreed. Right column: six slots for the derived payment state of settlement records: terms_only, payer_stated, payee_stated, agreed, mismatch, unjoined. Step 6: a second conformance vector in which the payee reports receive_fee 0; 995 + 0 does not equal 1000, so the state lands on mismatch with differs: amount. The final picture shows both cases: receive_fee 5 gives agreed, receive_fee 0 gives mismatch.</desc>
+
+      <!-- six state slots: always visible -->
+      <text x="600" y="22" font-size="12" fill="#5C6573">derived payment state (§9.2)</text>
+      <g font-size="12">
+        <rect x="600" y="32" width="244" height="40" rx="7" fill="#fff" stroke="#E3E3DC"/>
+        <text x="612" y="50" class="mono" font-size="13" fill="#0B0E14">terms_only</text><text x="612" y="65" fill="#5C6573">no observed leg cites the terms</text>
+        <rect x="600" y="78" width="244" height="40" rx="7" fill="#fff" stroke="#E3E3DC"/>
+        <text x="612" y="96" class="mono" font-size="13" fill="#0B0E14">payer_stated</text><text x="612" y="111" fill="#5C6573">payer leg only: a stated claim</text>
+        <rect x="600" y="124" width="244" height="40" rx="7" fill="#fff" stroke="#E3E3DC"/>
+        <text x="612" y="142" class="mono" font-size="13" fill="#0B0E14">payee_stated</text><text x="612" y="157" fill="#5C6573">payee leg only: a stated claim</text>
+        <rect x="600" y="170" width="244" height="40" rx="7" fill="#fff" stroke="#E3E3DC"/>
+        <text x="612" y="188" class="mono" font-size="13" fill="#0B0E14">agreed</text><text x="612" y="203" fill="#5C6573">both, joined, consistent</text>
+        <rect x="600" y="216" width="244" height="40" rx="7" fill="#fff" stroke="#E3E3DC"/>
+        <text x="612" y="234" class="mono" font-size="13" fill="#0B0E14">mismatch</text><text x="612" y="249" fill="#5C6573">both, joined, amount/status/ref differ</text>
+        <rect x="600" y="262" width="244" height="40" rx="7" fill="#fff" stroke="#E3E3DC"/>
+        <text x="612" y="280" class="mono" font-size="13" fill="#0B0E14">unjoined</text><text x="612" y="295" fill="#5C6573">both present, cannot be joined</text>
+      </g>
+
+      <!-- step 1: terms leg -->
+      <g class="st" data-step="1">
+        <rect x="16" y="14" width="270" height="62" rx="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="28" y="34" font-size="13" font-weight="600" fill="#0B0E14">terms leg · sealed by payee</text>
+        <text x="28" y="52" class="mono" font-size="12" fill="#0B0E14">amount 1000 · BTC · scale 11</text>
+        <text x="28" y="68" class="mono" font-size="12" fill="#5C6573">capsule_id 7fcbce84…</text>
+      </g>
+
+      <!-- step 2: payer leg -->
+      <g class="st" data-step="2">
+        <rect x="16" y="92" width="270" height="104" rx="9" fill="#fff" stroke="#3A5BD9"/>
+        <text x="28" y="112" font-size="13" font-weight="600" fill="#0B0E14">payer_observed</text>
+        <text x="28" y="130" class="mono" font-size="12" fill="#5C6573">terms_ref 7fcbce84…</text>
+        <text x="28" y="147" class="mono" font-size="12" fill="#0B0E14">payment_ref 6aaa35ab…</text>
+        <text x="28" y="164" class="mono" font-size="12" fill="#0B0E14">amount 1000 · routing_fee 0</text>
+        <text x="28" y="181" class="mono" font-size="12" fill="#0B0E14">status settled</text>
+        <rect x="200" y="100" width="78" height="20" rx="10" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="239" y="114" text-anchor="middle" class="mono" font-size="12" fill="#127A52">kid 2cbf…</text>
+        <path d="M151 92 V80" stroke="#3A5BD9" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+      </g>
+
+      <!-- step 3: payee leg (receive_fee 5 until step 5, then 0) -->
+      <g class="st" data-step="3">
+        <rect x="16" y="212" width="270" height="104" rx="9" fill="#fff" stroke="#3A5BD9"/>
+        <text x="28" y="232" font-size="13" font-weight="600" fill="#0B0E14">payee_observed</text>
+        <text x="28" y="250" class="mono" font-size="12" fill="#5C6573">terms_ref 7fcbce84…</text>
+        <text x="28" y="267" class="mono" font-size="12" fill="#0B0E14">payment_ref 6aaa35ab…</text>
+        <text x="28" y="301" class="mono" font-size="12" fill="#0B0E14">status settled</text>
+        <rect x="200" y="220" width="78" height="20" rx="10" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="239" y="234" text-anchor="middle" class="mono" font-size="12" fill="#127A52">kid 7125…</text>
+      </g>
+      <text class="st mono" data-step="3" data-until="5" x="28" y="284" font-size="12" fill="#0B0E14">received 995 · receive_fee 5</text>
+      <g class="st" data-step="6">
+        <text x="28" y="284" class="mono" font-size="12" fill="#B42318">received 995 · receive_fee 0</text>
+      </g>
+
+      <!-- step 4: flow into verifier and comparisons -->
+      <g class="st" data-step="4">
+        <path d="M286 144 C 310 144, 310 170, 330 170" stroke="#3A5BD9" stroke-width="1.6" fill="none"/>
+        <path d="M286 264 C 310 264, 310 236, 330 236" stroke="#3A5BD9" stroke-width="1.6" fill="none"/>
+        <polygon points="330,166 338,170 330,174" fill="#3A5BD9"/>
+        <polygon points="330,232 338,236 330,240" fill="#3A5BD9"/>
+        <rect x="340" y="92" width="236" height="224" rx="10" fill="#F4F4F0" stroke="#0B0E14"/>
+        <text x="352" y="112" font-size="13" font-weight="600" fill="#0B0E14">verifier (trusts neither)</text>
+        <text x="352" y="136" font-size="12" fill="#127A52">✓ kid 2cbf… ≠ kid 7125…</text>
+        <text x="352" y="154" font-size="12" fill="#127A52">✓ same payment_ref (same type)</text>
+        <text x="352" y="172" font-size="12" fill="#127A52">✓ status settled = settled</text>
+        <text x="352" y="196" font-size="12" fill="#5C6573">amount rule:</text>
+        <text x="352" y="212" class="mono" font-size="12" fill="#5C6573">payer.amount =</text>
+        <text x="352" y="228" class="mono" font-size="12" fill="#5C6573">  received + receive_fee</text>
+      </g>
+      <g class="st" data-step="5" data-until="5">
+        <text x="352" y="256" class="mono" font-size="13" fill="#127A52">✓ 1000 = 995 + 5</text>
+        <text x="352" y="276" font-size="12" fill="#5C6573">state is derived, not read</text>
+        <rect x="598" y="168" width="248" height="44" rx="8" fill="#E6F2EC" stroke="#127A52" stroke-width="3" fill-opacity=".3"/>
+        <path d="M576 256 C 588 256, 588 190, 598 190" stroke="#127A52" stroke-width="1.6" fill="none"/>
+      </g>
+      <g class="st" data-step="6">
+        <text x="352" y="256" class="mono" font-size="13" fill="#B42318">✗ 1000 ≠ 995 + 0</text>
+        <text x="352" y="276" class="mono" font-size="12" fill="#B42318">differs: amount</text>
+        <rect x="598" y="214" width="248" height="44" rx="8" fill="#FDECEA" stroke="#B42318" stroke-width="3" fill-opacity=".3"/>
+        <path d="M576 266 C 588 266, 588 236, 598 236" stroke="#B42318" stroke-width="1.6" fill="none"/>
+        <text x="16" y="338" font-size="12" fill="#5C6573">Two conformance vectors: receive_fee 5 → agreed · receive_fee 0 → mismatch (differs: amount)</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>Bilateral attestation is an exchange in which the requesting party signs what it asked for, the performing party signs what it did about it (performed, declined, or escalated), and each acknowledges the other's record.</p>
+    <p>Settlement records apply the same idea to a payment: the payer and the payee each seal, under their own key, only what their own system observed, as separate Agent Action Capsule leg records that cite one terms leg.</p>
+    <p>No record states whether the two sides agree; a verifier derives that from which records are present and whether their bound fields match.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> each sealer records its own side only, under its own key, and may cite the counterparty's leg as custody, never as its own observation.</div>
+      <div class="not"><b>Rejected:</b> one party recording both sides; that is one party's account, the my-log-versus-your-log problem again. (settlement-records §3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the settlement state is derived by the verifier from the legs present; no member of a leg states it.</div>
+      <div class="not"><b>Rejected:</b> a status field in the record; it would let one sealer state a fact only both sides' records can establish. (settlement-records §4.2, §9)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> exact amounts (integer string plus decimal scale) and the rule payer.amount = payee.received + payee.receive_fee, with no tolerance.</div>
+      <div class="not"><b>Rejected:</b> comparing sent with received directly, or allowing a tolerance; an honest receive fee would read as a mismatch, and a tolerance would hide a real one. (settlement-records §6, §9.2)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a verifier reports three distinct bilateral states: both halves present and agreeing, one half unavailable, both present and disagreeing.</div>
+      <div class="not"><b>Rejected:</b> one "incomplete" outcome; a half that aged out of retention is not a finding against the record, while a disagreement is a contradiction that must stay one. (bilateral-attestation §10.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a declined request is a completed exchange, recorded with its constraint basis and acknowledged by the refused party.</div>
+      <div class="not"><b>Rejected:</b> treating a decline as a failed exchange; and a failure to countersign (<code>delivery_unconfirmed</code>, <code>counterparty_timeout</code>, <code>countersign_refused</code>) is kept apart from a decline. (bilateral-attestation §6, §8)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> signed objects from existing payment protocols are carried by digest, optionally with their exact bytes, and never re-signed.</div>
+      <div class="not"><b>Rejected:</b> re-signing another issuer's object with the leg's own key, which a verifier reports as <code>wrapped_resigned</code>; restating its claims as the leg's own members is also forbidden, though no vector checks for it. (settlement-records §8, rule 3)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>That two records sealed under two distinct keys commit to the same payment reference, amount (after the receive fee) and status: <code>agreed</code>.</li>
+      <li>Which of <code>amount</code>, <code>status</code> and <code>payment_ref</code> differ, when both sides are present and joinable.</li>
+      <li>When only one side sealed: <code>payer_stated</code> or <code>payee_stated</code>, labelled as a stated claim.</li>
+      <li>When a payer-observed and a payee-observed leg share one key: <code>sealer_conflation</code>, never <code>agreed</code>.</li>
+      <li>Delivery separately: <code>none</code>, <code>stated</code>, <code>matched</code> or <code>mismatch</code> on the delivered content digest.</li>
+      <li>For a bilateral exchange: that a refusal was made and acknowledged, recorded with the same fidelity as performance.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That either side's observation is true; agreement on a digest attests to the digest, not to what it represents (bilateral-attestation §10.1).</li>
+      <li>That a key belongs to the payer or the payee; that is the verifier's own key policy.</li>
+      <li>That a missing leg means disagreement; it may not exist yet, may not have been shared, or may never be produced.</li>
+      <li>Whether a fee was acceptable; <code>agreed</code> is about the payment only, and the terms comparison is reported separately as <code>terms_amount</code>.</li>
+      <li>That delivered content matches a description; with only a <code>description_digest</code> that judgment is outside the draft.</li>
+      <li>Who is right in a disagreement; neither half is preferred, and no dispute mechanism is defined.</li>
+    </ul></div>
+  </div>
+  <p>A note on counts: the six slots above are the payment states of the settlement-records draft (§9.2). The bilateral-attestation draft defines three verifier states (§10.1), plus the three asymmetry dispositions and the orphan half of §8, and the reduced-assurance indicator of §7.</p>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>The payee's leg from the conformance vector for two Lightning payments: 995 received plus a receive fee of 5 explains the payer's 1000, so the expected state is <code>agreed</code>.</p>
+  <pre class="code"><code>"id": "pos-ln-receive-fee-two-payments",
+…
+"label": "ln-payee-observed-1",
+"capsule": {
+  "spec_version": "draft-mih-scitt-agent-action-capsule-05",
+  "format_version": "4",
+  "canonicalization_id": "jcs",
+  "action_id": "ln-payee-observed-1",
+  "action_type": "fyi",
+  "operator": "payee.example",
+  …
+  "settlement": {
+    "version": "0",
+    "leg": "payee_observed",
+    "sealer_role": "payee",
+    "terms_ref": "7fcbce842a8ac9c67c18c004905d06743709de02ecedd83dc486f9e4ac419005",
+    "payment_ref": {
+      "type": "ln.payment_hash",
+      "value": "6aaa35ab4414eae0f97b9e5c2674aea404c421f8106b476295145ad7e13c6097"
+    },
+    "received": {
+      "value": "995",
+      "assetCode": "BTC",
+      "assetScale": 11
+    },
+    "status": "settled",
+    "observed_at": "2026-10-01T12:02:05Z",
+    "receive_fee": {
+      "value": "5",
+      "assetCode": "BTC",
+      "assetScale": 11
+    }
+  },
+  "references": [
+    {
+      "type": "agent-action-capsule",
+      "digest_alg": "SHA-256",
+      "digest": "27c08813e6d7640f88d6b5ade05c4310312b47bcb3b47c89900ad411ef722173",
+      "citation_purpose": "counterparty_half"
+    }
+  ],
+  "capsule_id": "63271df109557076918258ed3e7e8586264db676054de716b18535f199a62db5"
+},
+…
+"envelope_kid": "7125e78196a360c3a278d00944a6133f53265c295fe8e1ed7f75a2a65d4681f8"
+…
+"terms": "ln-terms-1",
+"payment_state": "agreed",
+"agreed_status": "settled",
+"terms_amount": "equal",
+"delivery_state": "none"</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>settlement.leg</td><td>string</td><td>Which of the four legs this is; a closed set.</td></tr>
+      <tr><td>settlement.sealer_role</td><td>string</td><td><code>payee</code>; must match the leg (payee_observed is sealed by the payee).</td></tr>
+      <tr><td>settlement.terms_ref</td><td>string</td><td>capsule_id of the terms leg this leg answers; the verifier recomputes and compares it.</td></tr>
+      <tr><td>settlement.payment_ref</td><td>object</td><td>Typed join key both sides report; here a Lightning payment hash.</td></tr>
+      <tr><td>settlement.received</td><td>object</td><td>Amount credited to the payee: integer string, asset code, decimal scale.</td></tr>
+      <tr><td>settlement.receive_fee</td><td>object</td><td>Fee deducted on the receiving side; enters the amount rule.</td></tr>
+      <tr><td>settlement.status</td><td>string</td><td>What the payee's own system reported: pending, settled, failed or reversed.</td></tr>
+      <tr><td>references[]</td><td>array</td><td>Cites the payer's leg by capsule_id as <code>counterparty_half</code>: custody, not an observation.</td></tr>
+      <tr><td>envelope_kid</td><td>hex</td><td>The payee's key; differs from the payer leg's <code>2cbfe3c8…</code>.</td></tr>
+      <tr><td>payment_state</td><td>string</td><td>The expected derived state, written by hand from the draft text.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/settlement/cases.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+
+  <h2><span class="n">5</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; the four-move exchange, refusals, asymmetry dispositions, the three verifier states.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a> &mdash; the four legs, exact amounts, payment references, derived payment and delivery states.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record each leg is, its capsule_id and Producer Envelope.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme (JCS), the canonical form under each capsule_id.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE; each leg's Producer Envelope is a COSE_Sign1.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture; anchoring makes the record checkable by everyone else.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/settlement">action-state-group/agent-action-capsule</a> &mdash; settlement conformance vectors and their generator.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-emit">action-state-group/capsule-emit</a> &mdash; <code>capsule_emit.bilateral</code>, the four-move handshake helpers.</li>
+  </ul>
+
+  <footer class="pn"><a href="06-cll-mmr.html">&larr; Checkpointed local log and MMR</a><a href="08-bundles-disclosure.html">Bundles and selective disclosure &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

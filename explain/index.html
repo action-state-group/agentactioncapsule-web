@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contents · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="01-problem.html">Start &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">Contents</div>
+  <h1>Verifiable records for inference on a mesh of strangers</h1>
+  <p class="lede">Eleven short pages, one per topic. Each page has the same five parts: what it is, the design choices, what it
+    shows and what it does not, one real example with its fields, and the specifications behind it. Each page has one
+    animation of the mechanism; every page opens offline.</p>
+
+  <ol class="agenda">
+    <li><a href="01-problem.html"><span class="num">01</span><span><span class="t">The problem: a stranger node</span>
+      <span class="d">A node you have never met serves your request. What each check shows, and what it does not.</span></span></a></li>
+    <li><a href="02-aac.html"><span class="num">02</span><span><span class="t">Agent Action Capsule</span>
+      <span class="d">Digests, not payloads. Request/response binding, epoch chaining, the inference_completion effect.</span></span></a></li>
+    <li><a href="03-cose-deterministic.html"><span class="num">03</span><span><span class="t">COSE and deterministic encoding</span>
+      <span class="d">The COSE Sign1 envelope, and why two implementations must hash identical bytes.</span></span></a></li>
+    <li><a href="04-cpb.html"><span class="num">04</span><span><span class="t">Canonicalization-declared payload binding</span>
+      <span class="d">A signed statement names its canonicalization so a verifier can recompute the binding.</span></span></a></li>
+    <li><a href="05-scitt.html"><span class="num">05</span><span><span class="t">SCITT: statements, receipts, transparency</span>
+      <span class="d">Signed statements, transparency services, and what a receipt shows.</span></span></a></li>
+    <li><a href="06-cll-mmr.html"><span class="num">06</span><span><span class="t">Checkpointed local log and MMR</span>
+      <span class="d">Each node keeps its own log, signs checkpoints, and registers them later.</span></span></a></li>
+    <li><a href="07-bilateral-settlement.html"><span class="num">07</span><span><span class="t">Bilateral attestation and settlement</span>
+      <span class="d">Two parties, neither trusted, each seal what they saw; a verifier derives agreement.</span></span></a></li>
+    <li><a href="08-bundles-disclosure.html"><span class="num">08</span><span><span class="t">Bundles and selective disclosure</span>
+      <span class="d">Packaging records for a verifier, and withholding fields without breaking signatures.</span></span></a></li>
+    <li><a href="09-grades.html"><span class="num">09</span><span><span class="t">Evidence grades</span>
+      <span class="d">Self-attested, witnessed, countersigned: re-derived by the verifier, overclaims reported.</span></span></a></li>
+    <li><a href="10-mesh-llm.html"><span class="num">10</span><span><span class="t">Mesh-LLM capsules plugin</span>
+      <span class="d">What each node records, how peers exchange records, and the referee for marked pairs.</span></span></a></li>
+    <li><a href="11-limits.html"><span class="num">11</span><span><span class="t">Limits</span>
+      <span class="d">What a verified key means and does not, and the routes beyond self-report.</span></span></a></li>
+  </ol>
+
+  <footer class="pn"><span></span><a href="01-problem.html">The problem: a stranger node &rarr;</a></footer>
+</div></main>
+</body>
+</html>
