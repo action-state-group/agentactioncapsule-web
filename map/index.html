@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map · Agent Action Capsule</title>
+<link rel="stylesheet" href="../explain/explain.css">
+<link rel="stylesheet" href="map.css">
+</head>
+<body>
+<header class="top"><div class="wrap wide">
+  <a href="index.html">Agent Action Capsule · map</a>
+  <nav><a href="../explain/index.html">Explain</a><a href="../build/index.html">Build</a></nav>
+</div></header>
+<main><div class="wrap wide">
+  <div class="crumb">Map</div>
+  <h1 id="maptitle">The whole picture, from bytes to reports</h1>
+  <p class="lede">One stack, read from the bottom up: how a single agent action becomes signed bytes, a record, a log
+    entry, both sides' evidence, a judgment, a history and a report. Select a layer to see what it does and every page
+    about it. New here? Start with <a href="../explain/01-problem.html">the problem: a stranger node</a>.</p>
+
+  <div class="mapgrid">
+    <figure class="mapfig" aria-describedby="mapcap">
+      <div class="mapscroll">
+<svg id="mapsvg" viewBox="0 0 1020 1542" role="group" aria-labelledby="maptitle">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="ahp"/></marker></defs>
+<text class="mono axis" x="44" y="28">WHAT PEOPLE READ</text>
+<text class="mono axis" x="640" y="28">APPLIED TO</text>
+<path class="track" d="M22 1506 L22 80"/>
+<a class="node" href="#L-cose" data-layer="cose" aria-label="COSE + deterministic encoding: The signed envelope, and identical bytes across implementations.">
+<rect class="box" x="44" y="1380" width="560" height="92" rx="10"/>
+<text class="mono num" x="60" y="1403">01</text>
+<text class="ttl" x="86" y="1403">COSE + deterministic encoding</text>
+<rect class="sc rfc" x="499.3" y="1390" width="88.7" height="17" rx="8.5"/><text class="sct rfc" x="543.6" y="1402" text-anchor="middle">published RFC</text>
+<text class="lab" x="60" y="1424">The signed envelope, and identical bytes across implementations.</text>
+<rect class="chip rfc" x="60.0" y="1438" width="63.2" height="18" rx="4"/><text class="mono chipt" x="67.0" y="1450.5">RFC 9052</text>
+<rect class="chip rfc" x="129.2" y="1438" width="63.2" height="18" rx="4"/><text class="mono chipt" x="136.2" y="1450.5">RFC 8785</text>
+<rect class="chip rfc" x="198.4" y="1438" width="63.2" height="18" rx="4"/><text class="mono chipt" x="205.4" y="1450.5">RFC 9995</text>
+<rect class="chip other" x="267.6" y="1438" width="290.8" height="18" rx="4"/><text class="mono chipt" x="274.6" y="1450.5">COSE deterministic encodings (in preparation)</text>
+</a>
+<path class="flow" d="M164 1378 L164 1344" marker-end="url(#ah)"/><text class="mono fl" x="174" y="1362.0">signed bytes</text>
+<a class="node" href="#L-cpb" data-layer="cpb" aria-label="CPB · canonical payload binding: The statement declares its canonicalization, so a verifier recomputes the binding.">
+<rect class="box" x="44" y="1226" width="560" height="110" rx="10"/>
+<text class="mono num" x="60" y="1249">02</text>
+<text class="ttl" x="86" y="1249">CPB · canonical payload binding</text>
+<rect class="sc id" x="493.4" y="1236" width="94.6" height="17" rx="8.5"/><text class="sct id" x="540.7" y="1248" text-anchor="middle">Internet-Draft</text>
+<text class="lab" x="60" y="1270">The statement declares its canonicalization, so a verifier recomputes the</text>
+<text class="lab" x="60" y="1288">binding.</text>
+<rect class="chip id" x="60.0" y="1302" width="272.3" height="18" rx="4"/><text class="mono chipt" x="67.0" y="1314.5">draft-mih-sokolov-scitt-payload-binding-05</text>
+</a>
+<path class="flow" d="M164 1224 L164 1190" marker-end="url(#ah)"/><text class="mono fl" x="174" y="1208.0">bound digests</text>
+<a class="node" href="#L-aac" data-layer="aac" aria-label="AAC capsule: A signed record of one action: digests, not payloads; one record type per kind of action.">
+<rect class="box" x="44" y="1072" width="560" height="110" rx="10"/>
+<text class="mono num" x="60" y="1095">03</text>
+<text class="ttl" x="86" y="1095">AAC capsule</text>
+<rect class="sc rel" x="481.6" y="1082" width="106.4" height="17" rx="8.5"/><text class="sct rel" x="534.8" y="1094" text-anchor="middle">library released</text>
+<rect class="sc id" x="382.0" y="1082" width="94.6" height="17" rx="8.5"/><text class="sct id" x="429.3" y="1094" text-anchor="middle">Internet-Draft</text>
+<text class="lab" x="60" y="1116">A signed record of one action: digests, not payloads; one record type per</text>
+<text class="lab" x="60" y="1134">kind of action.</text>
+<rect class="chip id" x="60.0" y="1148" width="253.9" height="18" rx="4"/><text class="mono chipt" x="67.0" y="1160.5">draft-mih-scitt-agent-action-capsule-05</text>
+</a>
+<path class="flow" d="M164 1070 L164 1036" marker-end="url(#ah)"/><text class="mono fl" x="174" y="1054.0">capsule_id</text>
+<a class="node" href="#L-cll" data-layer="cll" aria-label="CLL / MMR + SCITT: The node&#x27;s own append-only log, signed checkpoints, inclusion and consistency proofs; receipts from a witness.">
+<rect class="box" x="44" y="896" width="560" height="132" rx="10"/>
+<text class="mono num" x="60" y="919">05</text>
+<text class="ttl" x="86" y="919">CLL / MMR + SCITT</text>
+<rect class="sc rel" x="481.6" y="906" width="106.4" height="17" rx="8.5"/><text class="sct rel" x="534.8" y="918" text-anchor="middle">library released</text>
+<rect class="sc rfc" x="387.9" y="906" width="88.7" height="17" rx="8.5"/><text class="sct rfc" x="432.3" y="918" text-anchor="middle">published RFC</text>
+<rect class="sc id" x="288.3" y="906" width="94.6" height="17" rx="8.5"/><text class="sct id" x="335.6" y="918" text-anchor="middle">Internet-Draft</text>
+<text class="lab" x="60" y="940">The node&#x27;s own append-only log, signed checkpoints, inclusion and</text>
+<text class="lab" x="60" y="958">consistency proofs; receipts from a witness.</text>
+<rect class="chip id" x="60.0" y="972" width="266.1" height="18" rx="4"/><text class="mono chipt" x="67.0" y="984.5">draft-mih-scitt-checkpointed-local-log-02</text>
+<rect class="chip id" x="60.0" y="994" width="260.0" height="18" rx="4"/><text class="mono chipt" x="67.0" y="1006.5">draft-bryce-cose-receipts-mmr-profile-03</text>
+<rect class="chip rfc" x="326.0" y="994" width="63.2" height="18" rx="4"/><text class="mono chipt" x="333.0" y="1006.5">RFC 9943</text>
+<rect class="chip rfc" x="395.2" y="994" width="63.2" height="18" rx="4"/><text class="mono chipt" x="402.2" y="1006.5">RFC 9942</text>
+</a>
+<path class="flow" d="M164 894 L164 860" marker-end="url(#ah)"/><text class="mono fl" x="174" y="878.0">logged records</text>
+<a class="node" href="#L-bil" data-layer="bil" aria-label="Bilateral + settlement: Both sides&#x27; records of one exchange reconciled by a verifier; the payment legs.">
+<rect class="box" x="44" y="742" width="560" height="110" rx="10"/>
+<text class="mono num" x="60" y="765">06</text>
+<text class="ttl" x="86" y="765">Bilateral + settlement</text>
+<rect class="sc bnl" x="487.5" y="752" width="100.5" height="17" rx="8.5"/><text class="sct bnl" x="537.8" y="764" text-anchor="middle">built, not live</text>
+<rect class="sc id" x="387.9" y="752" width="94.6" height="17" rx="8.5"/><text class="sct id" x="435.2" y="764" text-anchor="middle">Internet-Draft</text>
+<text class="lab" x="60" y="786">Both sides&#x27; records of one exchange reconciled by a verifier; the payment</text>
+<text class="lab" x="60" y="804">legs.</text>
+<rect class="chip id" x="60.0" y="818" width="260.0" height="18" rx="4"/><text class="mono chipt" x="67.0" y="830.5">draft-mih-agent-bilateral-attestation-02</text>
+<rect class="chip id" x="326.0" y="818" width="241.6" height="18" rx="4"/><text class="mono chipt" x="333.0" y="830.5">draft-mih-agent-settlement-records-00</text>
+</a>
+<path class="flow" d="M164 740 L164 706" marker-end="url(#ah)"/><text class="mono fl" x="174" y="724.0">both halves</text>
+<a class="node" href="#L-book" data-layer="book" aria-label="Evidencebook: The library that keeps the book on a node and exports it as an Evidence Bundle.">
+<rect class="box" x="44" y="588" width="560" height="110" rx="10"/>
+<text class="mono num" x="60" y="611">07</text>
+<text class="ttl" x="86" y="611">Evidencebook</text>
+<rect class="sc rel" x="481.6" y="598" width="106.4" height="17" rx="8.5"/><text class="sct rel" x="534.8" y="610" text-anchor="middle">library released</text>
+<text class="lab" x="60" y="632">The library that keeps the book on a node and exports it as an Evidence</text>
+<text class="lab" x="60" y="650">Bundle.</text>
+<rect class="chip id" x="60.0" y="664" width="217.0" height="18" rx="4"/><text class="mono chipt" x="67.0" y="676.5">draft-mih-agent-evidence-layer-00</text>
+</a>
+<path class="flow" d="M164 586 L164 552" marker-end="url(#ah)"/><text class="mono fl" x="174" y="570.0">the book</text>
+<a class="node" href="#L-judge" data-layer="judge" aria-label="Judge + grades: Grades the verifier re-derives; twins and a referee; judgment kept apart from evidence.">
+<rect class="box" x="44" y="434" width="560" height="110" rx="10"/>
+<text class="mono num" x="60" y="457">08</text>
+<text class="ttl" x="86" y="457">Judge + grades</text>
+<rect class="sc rel" x="481.6" y="444" width="106.4" height="17" rx="8.5"/><text class="sct rel" x="534.8" y="456" text-anchor="middle">library released</text>
+<rect class="sc id" x="382.0" y="444" width="94.6" height="17" rx="8.5"/><text class="sct id" x="429.3" y="456" text-anchor="middle">Internet-Draft</text>
+<text class="lab" x="60" y="478">Grades the verifier re-derives; twins and a referee; judgment kept apart</text>
+<text class="lab" x="60" y="496">from evidence.</text>
+<rect class="chip id" x="60.0" y="510" width="217.0" height="18" rx="4"/><text class="mono chipt" x="67.0" y="522.5">draft-mih-agent-evidence-layer-00</text>
+</a>
+<path class="flow" d="M164 432 L164 398" marker-end="url(#ah)"/><text class="mono fl" x="174" y="416.0">verdicts</text>
+<a class="node" href="#L-hist" data-layer="hist" aria-label="History: Counts derived from sealed records, read into the next decision; never a score.">
+<rect class="box" x="44" y="258" width="560" height="132" rx="10"/>
+<text class="mono num" x="60" y="281">09</text>
+<text class="ttl" x="86" y="281">History</text>
+<rect class="sc des" x="528.8" y="268" width="59.2" height="17" rx="8.5"/><text class="sct des" x="558.4" y="280" text-anchor="middle">designed</text>
+<rect class="sc bnl" x="423.3" y="268" width="100.5" height="17" rx="8.5"/><text class="sct bnl" x="473.5" y="280" text-anchor="middle">built, not live</text>
+<text class="lab" x="60" y="302">Counts derived from sealed records, read into the next decision; never a</text>
+<text class="lab" x="60" y="320">score.</text>
+<rect class="chip id" x="60.0" y="334" width="229.2" height="18" rx="4"/><text class="mono chipt" x="67.0" y="346.5">draft-mih-agent-evidence-request-00</text>
+<rect class="chip other" x="60.0" y="356" width="346.1" height="18" rx="4"/><text class="mono chipt" x="67.0" y="368.5">Personal-Agent History Profile v0 (pre-Internet-Draft)</text>
+</a>
+<path class="flow" d="M164 256 L164 222" marker-end="url(#ah)"/><text class="mono fl" x="174" y="240.0">history_card/1</text>
+<a class="node" href="#L-rep" data-layer="rep" aria-label="Reports: Bundles, selective disclosure, evidence requests, the presentation pipeline, the offline evidence report.">
+<rect class="box" x="44" y="60" width="560" height="154" rx="10"/>
+<text class="mono num" x="60" y="83">10</text>
+<text class="ttl" x="86" y="83">Reports</text>
+<rect class="sc rel" x="481.6" y="70" width="106.4" height="17" rx="8.5"/><text class="sct rel" x="534.8" y="82" text-anchor="middle">library released</text>
+<rect class="sc id" x="382.0" y="70" width="94.6" height="17" rx="8.5"/><text class="sct id" x="429.3" y="82" text-anchor="middle">Internet-Draft</text>
+<text class="lab" x="60" y="104">Bundles, selective disclosure, evidence requests, the presentation pipeline,</text>
+<text class="lab" x="60" y="122">the offline evidence report.</text>
+<rect class="chip id" x="60.0" y="136" width="272.3" height="18" rx="4"/><text class="mono chipt" x="67.0" y="148.5">draft-mih-zhang-agent-disclosure-bundle-00</text>
+<rect class="chip id" x="60.0" y="158" width="309.2" height="18" rx="4"/><text class="mono chipt" x="67.0" y="170.5">draft-mih-scitt-agent-action-capsule-sel-disc-00</text>
+<rect class="chip id" x="60.0" y="180" width="229.2" height="18" rx="4"/><text class="mono chipt" x="67.0" y="192.5">draft-mih-agent-evidence-request-00</text>
+<rect class="chip id" x="295.2" y="180" width="247.7" height="18" rx="4"/><text class="mono chipt" x="302.2" y="192.5">draft-mih-agent-disclosure-envelope-00</text>
+</a>
+<a class="node" href="#L-comp" data-layer="comp" aria-label="Composition: Joins records of separate formats by one shared action digest: WHO, CAN, WHAT, AUDIT.">
+<rect class="box" x="640" y="1072" width="364" height="110" rx="10"/>
+<text class="mono num" x="656" y="1095">04</text>
+<text class="ttl" x="682" y="1095">Composition</text>
+<rect class="sc des" x="928.8" y="1082" width="59.2" height="17" rx="8.5"/><text class="sct des" x="958.4" y="1094" text-anchor="middle">designed</text>
+<rect class="sc id" x="829.2" y="1082" width="94.6" height="17" rx="8.5"/><text class="sct id" x="876.5" y="1094" text-anchor="middle">Internet-Draft</text>
+<text class="lab" x="656" y="1116">Joins records of separate formats by one shared</text>
+<text class="lab" x="656" y="1134">action digest: WHO, CAN, WHAT, AUDIT.</text>
+<rect class="chip id" x="656.0" y="1148" width="321.5" height="18" rx="4"/><text class="mono chipt" x="663.0" y="1160.5">draft-mih-sato-agent-accountability-composition-01</text>
+</a>
+<path class="flow" d="M606 1127.0 L636 1127.0" marker-end="url(#ah)"/><text class="mono fl" x="610" y="1119.0">reads</text>
+<path class="flow side" d="M606 610 L622 610 L622 192 L612 192" marker-end="url(#ah)"/>
+<text class="mono fl" x="628" y="522" transform="rotate(-90 628 522)" text-anchor="middle">Evidence Bundle</text>
+<a class="node" href="#L-mesh" data-layer="mesh" aria-label="Mesh-LLM: The worked example: a capsules plugin on a mesh of strangers.">
+<rect class="box" x="658" y="40" width="346" height="78" rx="10"/>
+<text class="ttl" x="674" y="63">Mesh-LLM</text>
+<rect class="sc rel" x="822.6" y="50" width="165.4" height="17" rx="8.5"/><text class="sct rel" x="905.3" y="62" text-anchor="middle">released (capsules v0.1.4)</text>
+<text class="lab" x="674" y="84">The worked example: a capsules plugin on a</text>
+<text class="lab" x="674" y="102">mesh of strangers.</text>
+</a>
+<a class="node" href="#L-pa" data-layer="pa" aria-label="Personal agents: Tool calls and approvals into a person&#x27;s own book.">
+<rect class="box" x="658" y="128" width="346" height="78" rx="10"/>
+<text class="ttl" x="674" y="151">Personal agents</text>
+<rect class="sc des" x="928.8" y="138" width="59.2" height="17" rx="8.5"/><text class="sct des" x="958.4" y="150" text-anchor="middle">designed</text>
+<text class="lab" x="674" y="172">Tool calls and approvals into a person&#x27;s own</text>
+<text class="lab" x="674" y="190">book.</text>
+</a>
+<a class="node" href="#L-work" data-layer="work" aria-label="Agent work for someone else: Principal, agent and counterparty, with settlement legs.">
+<rect class="box" x="658" y="216" width="346" height="78" rx="10"/>
+<text class="ttl" x="674" y="239">Agent work for someone else</text>
+<rect class="sc des" x="928.8" y="226" width="59.2" height="17" rx="8.5"/><text class="sct des" x="958.4" y="238" text-anchor="middle">designed</text>
+<text class="lab" x="674" y="260">Principal, agent and counterparty, with</text>
+<text class="lab" x="674" y="278">settlement legs.</text>
+</a>
+<a class="node" href="#L-check" data-layer="check" aria-label="Builder&#x27;s checklist: The steps in order, each with its status today.">
+<rect class="box" x="658" y="304" width="346" height="78" rx="10"/>
+<text class="ttl" x="674" y="327">Builder&#x27;s checklist</text>
+<text class="lab" x="674" y="348">The steps in order, each with its status</text>
+<text class="lab" x="674" y="366">today.</text>
+</a>
+<path class="bracket" d="M646 40 L646 382"/>
+<path class="flow loop" d="M606 324.0 L654 324.0" marker-end="url(#ah)"/><text class="mono fl" x="608" y="316.0">next act</text>
+<path class="base" d="M44 1506 L604 1506"/>
+<text class="mono axis" x="44" y="1528">BYTES · ONE ACTION'S REQUEST AND RESPONSE</text>
+<path class="flow" d="M164 1504 L164 1480" marker-end="url(#ah)"/>
+<g id="dot" class="dot" transform="translate(22 1506)"><circle r="8"/><circle class="core" r="3.5"/></g>
+</svg>
+      </div>
+      <figcaption>
+        <button type="button" data-act="play">Play</button>
+        <button type="button" data-act="step">Step</button>
+        <button type="button" data-act="replay">Replay</button>
+        <span class="cap" id="mapcap" aria-live="polite">One action, from bytes at the bottom to a report at the top.</span>
+      </figcaption>
+      <ul class="legend">
+        <li><span class="stc rfc">published RFC</span></li>
+        <li><span class="stc id">Internet-Draft</span></li>
+        <li><span class="stc rel">library released</span></li>
+        <li><span class="stc bnl">built, not live</span></li>
+        <li><span class="stc des">designed</span></li>
+      </ul>
+    </figure>
+    <aside class="panel" id="panel" aria-live="polite" tabindex="-1">
+      <div id="panel-body">
+        <p class="hint">Select a layer on the map. Each one lists what it does, its status today, every page about it, and
+          its specifications.</p>
+      </div>
+    </aside>
+  </div>
+
+  <h2><span class="n">1</span>By layer, bottom to top</h2>
+  <div class="layers">
+<article class="layer" id="L-cose">
+<h3><span class="mono n">01</span> COSE + deterministic encoding</h3>
+<p class="stl"><span class="stc rfc">published RFC</span></p>
+<p>Every record and checkpoint is signed as a COSE_Sign1 (RFC 9052). A signature over a digest checks only if the verifier hashes the same bytes the signer hashed, so JSON records are canonicalized with JCS (RFC 8785).</p>
+<p>RFC 9995, the COSE Hash Envelope, signs the digest of a preimage held elsewhere; the COSE deterministic encodings Internet-Draft, in preparation, names the deterministic CBOR encoding behind that preimage.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../explain/03-cose-deterministic.html">explain 03 · COSE and deterministic encoding</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE</li>
+<li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JCS</li>
+<li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9995">RFC 9995</a> &mdash; COSE Hash Envelope</li>
+<li><span class="kind">In preparation</span> <a href="https://github.com/action-state-group/cose-deterministic-encodings">COSE deterministic encodings (in preparation)</a></li>
+</ul>
+<p class="src">Status from explain/03, section 6 Specs: RFC 9052, RFC 8785, RFC 9995; COSE deterministic encodings is an Internet-Draft in preparation (repository link only).</p>
+</article>
+<article class="layer" id="L-cpb">
+<h3><span class="mono n">02</span> CPB · canonical payload binding</h3>
+<p class="stl"><span class="stc id">Internet-Draft</span></p>
+<p>A Signed Statement names, from a registry, the canonicalization its payload digest was computed under, so the construction is declared by name and never guessed.</p>
+<p>The capsule format is one payload profile that uses this binding and declares jcs.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../explain/04-cpb.html">explain 04 · Canonicalization-declared payload binding</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-05</a></li>
+</ul>
+<p class="src">Status from explain/04, section 6 Specs.</p>
+</article>
+<article class="layer" id="L-aac">
+<h3><span class="mono n">03</span> AAC capsule</h3>
+<p class="stl"><span class="stc id">Internet-Draft</span> <span class="stc rel">library released</span></p>
+<p>A Capsule is a JSON record of one agent action that commits to what went in and what came out by digest, never by content; its identity, the capsule_id, is the SHA-256 of its own canonical bytes.</p>
+<p>explain 13 lists every capsule type the mesh plugin seals; build b2 walks the record format field by field.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../explain/02-aac.html">explain 02 · Agent Action Capsule</a></li>
+<li><a href="../explain/13-capsule-types.html">explain 13 · Every capsule type</a></li>
+<li><a href="../build/b2-record-format.html">build b2 · The record format</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a></li>
+</ul>
+<p class="src">Status from explain/02 and build/b2, Specs; build/b5, section 5 Status: capsule-emit 0.0.6 on crates.io, tagged live.</p>
+</article>
+<article class="layer" id="L-comp">
+<h3><span class="mono n">04</span> Composition</h3>
+<p class="stl"><span class="stc id">Internet-Draft</span> <span class="stc des">designed</span></p>
+<p>Composition keeps each format separate and joins them by a shared action digest: who authorized it (WHO), was it permitted (CAN), what the agent did (WHAT), did the runtime enforce it (AUDIT). A capsule fills the WHAT slot, so this layer sits beside the capsule and reads it, rather than under it.</p>
+<p>Matching digests alone do not show that the action was authorized or that the record set is complete (accountability-composition-01 §6.2). One WHAT-to-WHO vector set is built; the CAN and AUDIT slots are designed.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../build/b7-agent-work.html">build b7 · Agent work for someone else</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">draft-mih-sato-agent-accountability-composition-01</a></li>
+</ul>
+<p class="src">Status from build/b7, banner and section 5 Status: the whole flow designed; the WHAT-to-WHO vector set built, not live; CAN and AUDIT slots designed.</p>
+</article>
+<article class="layer" id="L-cll">
+<h3><span class="mono n">05</span> CLL / MMR + SCITT</h3>
+<p class="stl"><span class="stc id">Internet-Draft</span> <span class="stc rfc">published RFC</span> <span class="stc rel">library released</span></p>
+<p>Each node keeps its own append-only Merkle Mountain Range, signs small checkpoints over it, and can register those checkpoints with a SCITT Transparency Service, while the entries never leave the node.</p>
+<p>An inclusion proof shows a record is in the log under a checkpoint; a consistency proof shows the log only grew between two checkpoints. A witness returns a COSE Receipt; the mesh plugin names none by default.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../explain/06-cll-mmr.html">explain 06 · Checkpointed local log and MMR</a></li>
+<li><a href="../explain/05-scitt.html">explain 05 · SCITT: statements, receipts, transparency</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a></li>
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">draft-bryce-cose-receipts-mmr-profile-03</a></li>
+<li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture</li>
+<li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts</li>
+</ul>
+<p class="src">Status from explain/05 and explain/06, Specs; build/b5, section 5 Status: checkpointed-local-log 0.2.1 on crates.io, tagged live.</p>
+</article>
+<article class="layer" id="L-bil">
+<h3><span class="mono n">06</span> Bilateral + settlement</h3>
+<p class="stl"><span class="stc id">Internet-Draft</span> <span class="stc bnl">built, not live</span></p>
+<p>Two parties who do not trust each other each seal only what their own side observed, and a verifier who trusts neither derives from the two records whether they agree; when they differ, the asymmetry is named.</p>
+<p>Settlement records add the four legs of a payment with exact amounts and payment references. explain 12 shows the same records checked locally, by the other party, and by anyone with the evidence file.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../explain/07-bilateral-settlement.html">explain 07 · Bilateral attestation and settlement</a></li>
+<li><a href="../explain/12-vantage-points.html">explain 12 · Who can check what: three vantage points</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a></li>
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a></li>
+</ul>
+<p class="src">Status from explain/07, Specs; build/b7, section 5 Status: settlement-record legs, libraries and vectors built-not-live.</p>
+</article>
+<article class="layer" id="L-book">
+<h3><span class="mono n">07</span> Evidencebook</h3>
+<p class="stl"><span class="stc rel">library released</span></p>
+<p>Keep every record you seal in an append-only log on your own disk, sign a checkpoint over it every N records or T minutes, and hand out a record with its inclusion proof and checkpoint so anyone can check it offline.</p>
+<p>evidencebook Go v0.5.0 and the Rust crate 0.0.6 are tagged releases; the mesh plugin does not build on it yet (planned).</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../build/b3-evidencebook.html">build b3 · The local evidence book</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a></li>
+</ul>
+<p class="src">Status from build/b3, section 5 Status: evidencebook Go v0.5.0 and Rust crate 0.0.6, tagged live; the plugin on the evidencebook crate is planned. The chip is the draft b3 cites for what a book must supply (§8).</p>
+</article>
+<article class="layer" id="L-judge">
+<h3><span class="mono n">08</span> Judge + grades</h3>
+<p class="stl"><span class="stc id">Internet-Draft</span> <span class="stc rel">library released</span></p>
+<p>A record may say how much evidence stands behind it; the verifier works that out again from the record&#x27;s own bytes and reports any claim they do not support.</p>
+<p>On the mesh, two answers to a marked pair are compared and a referee can sign a verdict (built, off by default). A verdict is its own record, linked by adjudicates, and never changes the record it judges.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../explain/09-grades.html">explain 09 · Evidence grades</a></li>
+<li><a href="../explain/14-verdict-and-history.html">explain 14 · Twin verdicts and peer history</a></li>
+<li><a href="../build/b4-use-case-evidence.html">build b4 · Use-case evidence: twins and a referee</a></li>
+<li><a href="../build/b9-judge.html">build b9 · Judging: a separate step from evidence</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a></li>
+</ul>
+<p class="src">Status from explain/09 and build/b9, Specs; build/b9, section 5 Status: overclaim recomputation built, released; the referee-signed verdict built, not live; the judge record family designed.</p>
+</article>
+<article class="layer" id="L-hist">
+<h3><span class="mono n">09</span> History</h3>
+<p class="stl"><span class="stc bnl">built, not live</span> <span class="stc des">designed</span></p>
+<p>A node folds referee verdicts about a peer into counts kept locally, and an opt-in rule, off by default, can stop routing to that peer. Counts in their own units, no ranking and no score.</p>
+<p>In a personal agent the person hands one recipient a History of selected deals; history_card/1 carries a stream&#x27;s checkpoint history with no record content.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../build/b11-history-loop.html">build b11 · History back into the loop</a></li>
+<li><a href="../explain/14-verdict-and-history.html">explain 14 · Twin verdicts and peer history</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a></li>
+<li><span class="kind">Profile</span> <a href="../build/b6-personal-agents.html">Personal-Agent History Profile v0 (pre-Internet-Draft)</a></li>
+</ul>
+<p class="src">Status from build/b11, section 5 Status: verdict counts, the opt-in rule and history_card/1 built-not-live; the personal-agent History profile designed.</p>
+</article>
+<article class="layer" id="L-rep">
+<h3><span class="mono n">10</span> Reports</h3>
+<p class="stl"><span class="stc id">Internet-Draft</span> <span class="stc rel">library released</span></p>
+<p>A bundle packages a record with what makes it checkable and says exactly what it left out; selective disclosure withholds single fields without breaking the signature; an evidence request asks another party for a record.</p>
+<p>The evidence report is one exchange as a file a stranger checks offline. A report page is drawn only after the file verifies, in words that live outside the evidence.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../explain/08-bundles-disclosure.html">explain 08 · Bundles and selective disclosure</a></li>
+<li><a href="../explain/15-evidence-report.html">explain 15 · The evidence report</a></li>
+<li><a href="../build/b10-report.html">build b10 · Reporting: from a verified bundle to a page</a></li>
+</ul>
+<p class="lbl">Specifications</p><ul class="specs">
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-00</a></li>
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">draft-mih-scitt-agent-action-capsule-sel-disc-00</a></li>
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a></li>
+<li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">draft-mih-agent-disclosure-envelope-00</a></li>
+</ul>
+<p class="src">Status from explain/08 and explain/15, Specs; build/b10, section 5 Status: verify core live in the TypeScript package 0.3.0; explain/15 Status: capsule-emit verify --bundle live.</p>
+</article>
+  </div>
+
+  <h2><span class="n">2</span>Applied to</h2>
+  <div class="layers">
+<article class="layer" id="L-mesh">
+<h3>Mesh-LLM</h3>
+<p class="stl"><span class="stc rel">released (capsules v0.1.4)</span></p>
+<p>Each node seals what it served, keeps its own log, exchanges records with peers, and can send a client-marked pair to a referee. The limits page says what a verified key does and does not mean.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../explain/10-mesh-llm.html">explain 10 · Mesh-LLM capsules plugin</a></li>
+<li><a href="../explain/11-limits.html">explain 11 · Limits</a></li>
+<li><a href="../explain/16-split-model-stages.html">explain 16 · One model split across peers</a></li>
+<li><a href="../build/b1-seams.html">build b1 · The seams the host exposes</a></li>
+<li><a href="../build/b5-portable.html">build b5 · Making it portable</a></li>
+</ul>
+<p class="src">Status from build/b5, section 5 Status: Mesh-LLM/capsules release v0.1.4, tagged live.</p>
+</article>
+<article class="layer" id="L-pa">
+<h3>Personal agents</h3>
+<p class="stl"><span class="stc des">designed</span></p>
+<p>Tool-call and approval records are in a released library; no personal-agent host here wires its connectors, scheduler and approvals into a book end to end.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../build/b6-personal-agents.html">build b6 · Personal agents</a></li>
+</ul>
+<p class="src">Status from build/b6, banner: designed, not built for a personal-agent host.</p>
+</article>
+<article class="layer" id="L-work">
+<h3>Agent work for someone else</h3>
+<p class="stl"><span class="stc des">designed</span></p>
+<p>The parts in code at a pinned commit are the settlement-record legs, the evidence request protocol and one composition vector set; the whole flow in one host is designed.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../build/b7-agent-work.html">build b7 · Agent work for someone else</a></li>
+</ul>
+<p class="src">Status from build/b7, banner: designed, not built as a whole.</p>
+</article>
+<article class="layer" id="L-check">
+<h3>Builder&#x27;s checklist</h3>
+<p>What to build, in order, to give your own host an evidence layer, with the status of each step.</p>
+<p class="lbl">Pages</p><ul class="pl">
+<li><a href="../build/b8-checklist.html">build b8 · The builder&#x27;s checklist</a></li>
+</ul>
+</article>
+  </div>
+
+  <p class="src">Labels, specification names and status chips are taken from the explain and build pages they link to;
+    each layer names the page section its status comes from. Internet-Drafts are works in progress.</p>
+
+  <footer class="pn"><a href="../explain/index.html">&larr; Explain: contents</a><a href="../build/index.html">Build: contents &rarr;</a></footer>
+</div></main>
+<script type="application/json" id="map-stops">[{"layer": null, "x": 22, "y": 1506, "cap": "Bytes: the action's request and response, turned into exactly one byte string and digested."}, {"layer": "cose", "x": 22, "y": 1426.0, "cap": "Signed: the record is signed in a COSE_Sign1 envelope over one canonical byte string."}, {"layer": "cpb", "x": 22, "y": 1281.0, "cap": "Bound: the statement names its canonicalization (jcs), so a verifier can recompute each digest."}, {"layer": "aac", "x": 22, "y": 1127.0, "cap": "Capsule: one signed record of the action, digests not payloads; its capsule_id is the hash of its own bytes."}, {"layer": "comp", "x": 626, "y": 1127.0, "cap": "Composed (designed): the capsule fills the WHAT slot, joined by one action digest to who authorized it, what was permitted and what was enforced."}, {"layer": "cll", "x": 22, "y": 962.0, "cap": "Logged: the capsule_id is appended to the node's own log, under a signed checkpoint with inclusion and consistency proofs."}, {"layer": "bil", "x": 22, "y": 797.0, "cap": "Reconciled: the other party sealed its own half; a verifier derives whether the two agree."}, {"layer": "book", "x": 22, "y": 643.0, "cap": "Booked: the book keeps every record and exports an Evidence Bundle another party verifies offline."}, {"layer": "judge", "x": 22, "y": 489.0, "cap": "Judged: the verifier re-derives the grade; a twin pair can go to a referee, whose verdict is a separate record."}, {"layer": "hist", "x": 22, "y": 324.0, "cap": "History: verdicts become per-peer counts that can shape the next routing choice; counts, never a score."}, {"layer": "rep", "x": 22, "y": 137.0, "cap": "Report: one exchange as a file a stranger checks offline, presented only after it verifies."}]</script>
+<script src="map.js"></script>
+</body>
+</html>
