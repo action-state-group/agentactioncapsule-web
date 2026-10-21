@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>b3 · The local evidence book · build</title>
+<title>b3 · The local evidence log · build</title>
 <link rel="stylesheet" href="explain.css">
 <style>
   /* page-local: status tags for section 5 (folded into explain.css by the integrator if shared) */
@@ -25,8 +25,10 @@
 </div></header>
 <main><div class="wrap">
   <div class="crumb">b3 / 11</div>
-  <h1>The local evidence book</h1>
+  <h1>The local evidence log</h1>
+  <p class="seam"><b>Seam ① Record.</b> Build: an append-only local log with signed checkpoints and inclusion proofs. Conform to: <code>draft-mih-scitt-checkpointed-local-log-02</code> (reference implementation: checkpointed-local-log; any conforming log).</p>
   <p class="lede">Once you can seal a record, keep every one you seal in an append-only log on your own disk, sign a small checkpoint over it every N records or T minutes, and hand out a record with its inclusion proof and checkpoint so anyone can check it offline.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk through it."
@@ -143,9 +145,10 @@
 
   <h2><span class="n">1</span>What it is</h2>
   <div class="what">
-    <p>An evidence book is a producer's own append-only log of the records it seals: each record's id goes in as a leaf of a Merkle Mountain Range (MMR) on the producer's disk, and nothing leaves unless the producer sends it.</p>
+    <p>A local evidence log is a producer's own append-only log of the records it seals: each record's id goes in as a leaf of a Merkle Mountain Range (MMR) on the producer's disk, and nothing leaves unless the producer sends it.</p>
     <p>Every N records or T minutes the producer signs a small checkpoint over the whole log. Any record can then be shown to sit at a position under that checkpoint (an inclusion proof), and any later checkpoint can be shown to extend it (a consistency proof).</p>
     <p>What you export is one record plus its inclusion proof plus the checkpoint: a file or a push that another party checks offline against the producer's key. The producer can also register its checkpoints with a transparency service it does not run.</p>
+    <p>The reference implementation is checkpointed-local-log (CLL), in Python, Go, TypeScript and Rust. Any log that meets the CLL draft's checks is acceptable: a verifier checks the proofs and the signed checkpoint, not which library produced them.</p>
   </div>
 
   <h3>Where the library sits today</h3>
@@ -154,12 +157,12 @@
     <thead><tr><th>Layer</th><th>Package</th><th>What it does</th></tr></thead>
     <tbody>
       <tr><td>log</td><td>checkpointed-local-log</td><td>The MMR, leaf and node hashing, signed checkpoints, and inclusion and consistency proofs, in Python, Go, TypeScript and Rust. v0.1.4 pins crate 0.2.1; the latest crate tag is 0.3.1. (<code>action-state-group/checkpointed-local-log</code>)</td></tr>
-      <tr><td>book</td><td>evidencebook</td><td>Record semantics over a log it embeds and never exposes: append, query, bundle, request and respond, reconcile and close. Go module v0.5.0 and Rust crate 0.0.6. v0.1.4 reaches crate 0.0.1 only through the next layer up, for its log wrapper, canonicalization and padding records. (<code>action-state-group/evidencebook</code>)</td></tr>
+      <tr><td>book</td><td>any conforming book</td><td>Record semantics over a log it embeds and never exposes: append, query, bundle, request and respond. The Evidence Layer draft (&sect;8) says what a book must supply and names no implementation. v0.1.4 has no separate book layer of its own; capsule-emit 0.0.6 supplies the log wrapper, canonicalization and padding records.</td></tr>
       <tr><td>producer</td><td>capsule-emit</td><td>Seals and signs each capsule, writes <code>capsules.jsonl</code>, and decides when to cut a checkpoint and where to send it. v0.1.4 pins crate 0.0.6. (<code>action-state-group/capsule-emit</code>)</td></tr>
       <tr><td>host plugin</td><td>capsules</td><td>The timer that drives the checkpoints, push to the other side, receipt of pushed records, and the Evidence page. (<code>Mesh-LLM/capsules</code> v0.1.4)</td></tr>
     </tbody>
   </table></div>
-  <p>That layering is moving. The open plan in <a href="https://github.com/action-state-group/evidencebook/issues/66">evidencebook#66</a> includes moving the plugin off its own book-shaped code and onto the evidencebook Rust crate, through a store trait (<a href="https://github.com/action-state-group/evidencebook/issues/35">evidencebook#35</a>, open). The checkpoint timer stays in the plugin. capsule-emit's <code>main</code> already builds its checkpoints on checkpointed-local-log directly, without evidencebook (<a href="https://github.com/action-state-group/capsule-emit/pull/326">capsule-emit#326</a>, merged). Section 5 gives the status of each piece.</p>
+  <p>That layering is moving. capsule-emit's <code>main</code> already builds its checkpoints on checkpointed-local-log directly (<a href="https://github.com/action-state-group/capsule-emit/pull/326">capsule-emit#326</a>, merged); the plugin still pins capsule-emit 0.0.6. The checkpoint timer stays in the plugin. Section 5 gives the status of each piece.</p>
 
   <h2><span class="n">2</span>Design choices</h2>
   <div class="choices">
@@ -172,8 +175,8 @@
       <div class="not"><b>Rejected:</b> assembling the log at the end of a period, which "permits curation that no later verification can detect". (CLL &sect;2 items 1 and 2)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> checkpoint on two triggers, a count and a clock. capsules v0.1.4 uses 100 records or 300 s, the clock running from when a tick first sees records no checkpoint covers. It also cuts a checkpoint at start-up, at shutdown, and when a record is about to be pushed (at most one per 100 ms). The Go book takes <code>CheckpointEvery</code> N appends.</div>
-      <div class="not"><b>Rejected:</b> checkpointing only when someone asks. Once a producer publishes checkpoints, the draft requires it to declare a cadence and meet it, because "a checkpoint regime with discretionary gaps supports none of the claims". Registering every record as it is made is the central-log cost the draft is written to avoid. (CLL &sect;4.4 item 1, &sect;1; capsules <code>checkpoint_cadence.rs</code>; evidencebook <code>book.go</code>)</div>
+      <div class="pick"><b>Chosen:</b> checkpoint on two triggers, a count and a clock. capsules v0.1.4 uses 100 records or 300 s, the clock running from when a tick first sees records no checkpoint covers. It also cuts a checkpoint at start-up, at shutdown, and when a record is about to be pushed (at most one per 100 ms).</div>
+      <div class="not"><b>Rejected:</b> checkpointing only when someone asks. Once a producer publishes checkpoints, the draft requires it to declare a cadence and meet it, because "a checkpoint regime with discretionary gaps supports none of the claims". Registering every record as it is made is the central-log cost the draft is written to avoid. (CLL &sect;4.4 item 1, &sect;1; capsules <code>checkpoint_cadence.rs</code>)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> before a checkpoint leaves the node, pad the log with padding records until its record count is a multiple of a bucket size. capsules v0.1.4 defaults to 32; a setting of 0 turns padding off.</div>
@@ -181,7 +184,7 @@
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> the book embeds its commitment log and exposes no type from it. Callers ask for records, bundles and answers, and the book builds every proof.</div>
-      <div class="not"><b>Rejected:</b> a book tied to one mechanism. The Evidence Layer draft requires four properties (append order, inclusion, consistency, checkpoint identity) and no particular mechanism. A checkpointed local log is one way to meet them; registration with a SCITT service is another, and evidencebook ships a stub for it. (Evidence Layer -00 &sect;8; evidencebook <code>docs/design.md</code> "Layering", <code>substrate_scitt.go</code>)</div>
+      <div class="not"><b>Rejected:</b> a book tied to one mechanism. The Evidence Layer draft requires four properties (append order, inclusion, consistency, checkpoint identity) and no particular mechanism. A checkpointed local log is one way to meet them; registration with a SCITT service is another. (Evidence Layer -00 &sect;8)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> checkpoints stay local by default. They go to a transparency service only if the operator names one (the plugin's setting calls it a witness: <code>CAPSULES_CHECKPOINT_WITNESS_URLS</code>), and an unreachable service never blocks local checkpointing.</div>
@@ -280,11 +283,9 @@
   <ul class="status">
     <li><span class="stat live">live</span> The plugin seals every exchange into <code>&lt;data dir&gt;/ledger/capsules.jsonl</code> and checkpoints it into <code>checkpoints.jsonl</code>. The checkpoint timer is on by default and local only (100 records or 300 s; padding to 32). <code>Mesh-LLM/capsules:crates/evidence-plugin/src/checkpoint_cadence.rs</code>, <code>INSTALL.md</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>; defaults in <code>action-state-group/capsule-emit:rust/capsule-emit/src/checkpoint.rs</code> @ <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code> (crate 0.0.6).</li>
     <li><span class="stat live">live</span> A pushed bundle (record, inclusion proof, checkpoint) is checked in-process and kept only if every check passes. Record push is off by default. <code>Mesh-LLM/capsules:README.md</code> "What works today" and the record-push parity corpus @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>.</li>
-    <li><span class="stat live">live</span> evidencebook Go v0.5.0: <code>Append</code> with <code>CheckpointEvery</code>, and <code>Bundle</code> producing an Evidence Bundle v2. In the repository's CI, a bundle from a book is verified by the Python Agent Action Capsule bundle verifier and by the Python checkpointed-local-log reference (<code>README.md</code> "Development" @ <code>cdf8aea1f80a8c37bf6cd227a8e4cde252ee3cf7</code>). Tag v0.5.0 &rarr; <code>91bfc844eb5685e2e14638dec324b536447204fb</code>.</li>
-    <li><span class="stat live">live</span> evidencebook Rust crate 0.0.6, built on checkpointed-local-log 0.3.1. Tag <code>crates/evidencebook-v0.0.6</code> &rarr; <code>5d670340615071ef7ecc92c484ab3e15d7a0c25b</code>.</li>
-    <li><span class="stat live">live</span> capsule-emit crate 0.0.8 builds its checkpoints on checkpointed-local-log directly, with no evidencebook dependency (<a href="https://github.com/action-state-group/capsule-emit/pull/326">capsule-emit#326</a>, merged; tag <code>crates/capsule-emit-v0.0.8</code> &rarr; <code>fd4e619ab87e920ea60614b030f9371ae0f606d9</code>). The plugin does not use it yet: v0.1.4 pins capsule-emit 0.0.6, which uses evidencebook 0.0.1's log wrapper, canonicalization and padding records.</li>
+    <li><span class="stat live">live</span> capsule-emit crate 0.0.8 builds its checkpoints on checkpointed-local-log directly (<a href="https://github.com/action-state-group/capsule-emit/pull/326">capsule-emit#326</a>, merged; tag <code>crates/capsule-emit-v0.0.8</code> &rarr; <code>fd4e619ab87e920ea60614b030f9371ae0f606d9</code>). The plugin does not use it yet: v0.1.4 pins capsule-emit 0.0.6.</li>
     <li><span class="stat designed">designed</span> The -02 checkpoint wire form: peaks concatenated, the consistency proof inside the signed payload, and one fixed <code>sub</code> per log. Per the draft's Implementation Status, all four checkpointed-local-log implementations still emit the previous COSE wire form (a CBOR array of peaks, a per-checkpoint <code>sub</code>). Separately, the v0.1.4 bundle above carries the internal JSON record with a bagged <code>root</code>. CLL -02 &sect;8; vectors in <code>action-state-group/checkpointed-local-log:cll-02-vectors/</code> @ <code>40dabd74508d0f8649c8754873e316badef1057d</code>.</li>
-    <li><span class="stat planned">planned</span> The plugin built on the evidencebook Rust crate, with a store trait, received log and served summary (<a href="https://github.com/action-state-group/evidencebook/issues/35">evidencebook#35</a>, open). It waits on <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">Mesh-LLM/mesh-llm#2459</a> (open), which moves the plugin into the mesh-llm workspace. The checkpoint timer stays in the plugin.</li>
+    <li><span class="stat planned">planned</span> The plugin moves into the mesh-llm workspace: <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">Mesh-LLM/mesh-llm#2459</a> (open). The checkpoint timer stays in the plugin.</li>
   </ul>
 
   <h2><span class="n">6</span>Specs</h2>
@@ -296,12 +297,12 @@
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: registering a checkpoint as a Signed Statement.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts: what a transparency service returns for a registered checkpoint.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes <code>capsule_id</code> covers.</li>
-    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/checkpointed-local-log">action-state-group/checkpointed-local-log</a> &middot; <a href="https://github.com/action-state-group/evidencebook">action-state-group/evidencebook</a> &middot; <a href="https://github.com/action-state-group/capsule-emit">action-state-group/capsule-emit</a> &middot; <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a></li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/checkpointed-local-log">action-state-group/checkpointed-local-log</a> &middot; <a href="https://github.com/action-state-group/capsule-emit">action-state-group/capsule-emit</a> &middot; <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a></li>
   </ul>
 
   <h2><span class="n">7</span>What you need before the next step</h2>
   <ul>
-    <li>A book that records every exchange you take part in, as requester or provider, signed with a key the other side can check.</li>
+    <li>A local log that records every exchange you take part in, as requester or provider, signed with a key the other side can check.</li>
     <li>A checkpoint cadence you can state (N records or T seconds), and padding to a bucket size before any checkpoint leaves.</li>
     <li>An export the other side can check offline: the record, its inclusion proof and the checkpoint.</li>
     <li>A way to send your half to the other side and keep theirs. The next step compares two halves of one exchange and needs both.</li>

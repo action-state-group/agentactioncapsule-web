@@ -14,10 +14,12 @@
 <main><div class="wrap">
   <div class="crumb">Contents</div>
   <h1>Build your own evidence layer</h1>
+  <p class="seam"><b>Seams ① Record to ⑤ View.</b> Build: the five seams in order: ① Record, ② Contract, ③ Check/judge, ④ Result, ⑤ View; each page names the one it builds. Conform to: the Internet-Drafts each page cites, starting with <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
   <p class="lede">For an agent builder or an agent-economy platform that wants signed records of what its agents did, kept so
     that any verifier can check them later, on any host. Every page follows one loop: an agent acts, the act is recorded,
     the record is judged, the judgment is reported, and the history feeds the next act. The pages are in the order the
     Mesh-LLM worked example was built; each ends with what you need before the next step.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="6" data-delay="1700"
     data-cap-0="Press Play, or Step to go once round the loop."
@@ -94,7 +96,7 @@
       <span class="d">What the host hands an evidence plugin: an event per exchange naming both sides, a plugin key bound to the node key, capability flags, a page, and stop routing.</span></span></a></li>
     <li><a href="b2-record-format.html"><span class="num">b2</span><span><span class="t">The record format</span>
       <span class="d">What one record carries: digests, not payloads; request/response binding; the signer's key id.</span></span></a></li>
-    <li><a href="b3-evidencebook.html"><span class="num">b3</span><span><span class="t">The local evidence book</span>
+    <li><a href="b3-local-log.html"><span class="num">b3</span><span><span class="t">The local evidence log</span>
       <span class="d">An append-only log on the node: signed checkpoints, inclusion and consistency proofs, export.</span></span></a></li>
     <li><a href="b4-use-case-evidence.html"><span class="num">b4</span><span><span class="t">Use-case evidence: twins and a referee</span>
       <span class="d">What a sampled rate tells you, and what a signed verdict on one marked pair adds.</span></span></a></li>
