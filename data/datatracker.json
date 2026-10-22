@@ -74,12 +74,12 @@
       "updated": "2026-06-19"
     },
     "draft-mih-scitt-checkpointed-local-log": {
-      "expires": "2027-03-31",
-      "rev": "01",
+      "expires": "2027-04-17",
+      "rev": "02",
       "state": "Active",
       "stream": null,
       "title": "The Checkpointed Local Log (CLL)",
-      "updated": "2026-09-27"
+      "updated": "2026-10-14"
     },
     "draft-mih-sokolov-scitt-payload-binding": {
       "expires": "2027-03-17",
@@ -90,13 +90,13 @@
       "updated": "2026-09-13"
     },
     "draft-mih-zhang-agent-disclosure-bundle": {
-      "expires": "2027-03-31",
-      "rev": "00",
+      "expires": "2027-04-23",
+      "rev": "01",
       "state": "Active",
       "stream": null,
       "title": "AAC Evidence Bundle",
-      "updated": "2026-09-27"
+      "updated": "2026-10-20"
     }
   },
-  "fetched": "2026-10-03"
+  "fetched": "2026-10-22"
 }
