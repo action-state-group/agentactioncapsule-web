@@ -26,7 +26,9 @@
 <main><div class="wrap">
   <div class="crumb">b7 / 11</div>
   <h1>Agent work for someone else</h1>
+  <p class="seam"><b>Seam ② Contract.</b> Build: both sides' records of a deal between a principal's agent and a counterparty. Conform to: <code>draft-mih-agent-evidence-request-00</code> and <code>draft-mih-agent-settlement-records-00</code>.</p>
   <p class="lede">When an agent acts for a principal and deals with a counterparty, three parties hold records, and the evidence layer has to let each one check the others without trusting them.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
   <div class="banner"><b>Status: next &mdash; designed, not built as a whole.</b> No host on this site's path yet records a principal, an agent and a counterparty end to end. Each side's sealed half of a paid exchange has been sealed on two live nodes in the Mesh-LLM worked example. The parts that exist in code at a pinned commit are the settlement-record legs, the evidence request protocol, and one composition vector set joining a WHAT record to a WHO record; section 5 lists each with its evidence.</div>
 
   <figure class="anim" data-steps="6"

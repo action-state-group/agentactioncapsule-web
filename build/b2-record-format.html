@@ -15,11 +15,13 @@
 </head>
 <body>
 <header class="top"><div class="wrap"><a href="index.html">Agent Action Capsule · build your own evidence layer</a>
-  <nav><a href="b1-seams.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b3-evidencebook.html">Next &rarr;</a></nav></div></header>
+  <nav><a href="b1-seams.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b3-local-log.html">Next &rarr;</a></nav></div></header>
 <main><div class="wrap">
   <div class="crumb">b2 / 11</div>
   <h1>The record format</h1>
+  <p class="seam"><b>Seam ① Record.</b> Build: one sealed record: digests, the effect, a nonce, a signature over its id. Conform to: <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
   <p class="lede">Before you keep a book of records, decide what one record carries: digests of what went in and what came out, the effect it names and who vouches for it, a nonce the store draws itself, and the key that signs the record's identity.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk through it."
@@ -336,7 +338,7 @@
     <li>A decision on where hardware evidence would be cited (<code>ran_under</code>), even before you have any.</li>
   </ul>
 
-  <footer class="pn"><a href="b1-seams.html">&larr; The seams the host exposes</a><a href="b3-evidencebook.html">The local evidence book &rarr;</a></footer>
+  <footer class="pn"><a href="b1-seams.html">&larr; The seams the host exposes</a><a href="b3-local-log.html">The local evidence log &rarr;</a></footer>
 </div></main>
 <script src="anim.js"></script>
 </body>

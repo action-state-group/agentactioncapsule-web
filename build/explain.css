@@ -109,3 +109,7 @@ footer.pn a{text-decoration:none}
   .cols{grid-template-columns:1fr}
   .wrap{padding:0 16px}
 }
+.seam{font-size:14.5px;margin:-4px 0 14px;max-width:760px}
+.seam b{color:var(--accent)}
+.hold{background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:12px 18px;margin:-8px 0 26px;max-width:760px;font-size:14.5px}
+.hold ul{margin:6px 0 0 18px}
