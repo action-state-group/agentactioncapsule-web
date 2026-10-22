@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conform · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+/* Page-local: the source line under each command block, as on the Start page. */
+p.src{font-size:12.5px;color:var(--muted);margin-top:-8px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b11-history-loop.html">&larr; Prev</a><a href="index.html">Contents</a><a href="index.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">Conform</div>
+  <h1>Conform</h1>
+  <p class="seam"><b>Seams ① Record to ⑤ View.</b> Build: nothing new; check that what you built is read the same way by code you did not write. Conform to: the conformance vectors published beside each Internet-Draft.</p>
+  <p class="lede">An evidence layer is portable when a stranger's verifier accepts your bundle without talking to you,
+    your host, an account or an operator. Four checks get you there: run the vectors, pass a verifier you did not
+    write, keep your own fields in the slot made for them, and hand the bundle to someone else.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+
+  <h2><span class="n">1</span>Run the vectors</h2>
+  <p>Each draft ships frozen bytes and the result a verifier must reach on them. Run them in your tests, unchanged, pinned
+    to a tag. A conforming implementation accepts every positive case and rejects every negative case for the stated
+    reason; passing only the positive ones shows nothing.</p>
+  <pre class="code"><code># a known-good conformance vector  ->  ok: True (one info finding: chain checks need a store)
+agent-action-capsule verify vectors/capsule/pos-v4-jcs-chain-committed/input.json
+
+# a tampered capsule               ->  ok: False, capsule_id_mismatch
+agent-action-capsule verify vectors/capsule/neg-v4-chain-tampered/input.json</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/agent-action-capsule/blob/db9de0f0d2b78efdd096dc4016a63785cca96601/README.md">agent-action-capsule README</a> at <code>db9de0f0d2b78efdd096dc4016a63785cca96601</code>. Every directory under <code>vectors/capsule/</code> is one case: <code>input.json</code> is the capsule, <code>expected.json</code> the verifier's expected result.</p>
+  <pre class="code"><code>python3 commitment-conformance-vectors/reference_verifier.py
+python3 mmr-profile-vectors/generate.py --check
+cd python &amp;&amp; python3 -m pytest tests/checkpoint</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/checkpointed-local-log/blob/32ce9f3f901ea85c80a4b42b6fd3ee007fdda2c0/README.md">checkpointed-local-log README</a> at <code>32ce9f3f901ea85c80a4b42b6fd3ee007fdda2c0</code>: the log's checkpoint and proof vectors.</p>
+  <p>Vector sets for the other drafts, the Evidence Bundle, the Evidence Request and the Evidence Result among them, are
+    in <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">agent-action-capsule/vectors</a>.</p>
+
+  <h2><span class="n">2</span>Pass a verifier you did not write</h2>
+  <p>Write your bundle in the open format, <code>evidence-bundle/v2</code>, not a schema of your own, and check it with
+    a verifier that was written independently of your producer.</p>
+  <pre class="code"><code>capsulectl verify --bundle BUNDLE.json [--witness-directory WITNESSES.json]</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/capsule-cli/blob/f8aefe98445eaa9217e24627e255681c3857ae3d/README.md#commands">capsule-cli README, Commands</a> at <code>f8aefe98445eaa9217e24627e255681c3857ae3d</code>.</p>
+  <p>It says <code>VALID</code> (exit 0) when the checkpoint's signature, the interval coverage, each record's place in
+    the log, the citation closure, the records' signatures and every disclosed payload all check out;
+    <code>INVALID</code> (exit 1) when a record or payload changed after sealing; <code>INCOMPLETE</code> (exit 3)
+    naming what the bundle does not show. <code>VALID</code> means the signatures verify under the keys the bundle
+    carries. Whether you trust those keys is a separate step:</p>
+  <pre class="code"><code>jq -r '.records[].key_id, .checkpoint.key_id' bundle.json | sort -u   # here: "$public"</code></pre>
+  <p class="src">From the same README, <a href="https://github.com/action-state-group/capsule-cli/blob/f8aefe98445eaa9217e24627e255681c3857ae3d/README.md#example-a-self-checking-report-of-records-you-sealed">worked example</a>: compare the keys it prints with the producer's public key, obtained some other way.</p>
+
+  <h2><span class="n">3</span>Keep your own fields in the slot made for them</h2>
+  <p>A format stays checkable by strangers only if everyone keeps to its closed shape. Where a draft gives you room for
+    your own data, use that room and nothing else. In an Evidence Result, the document and each claim admit members
+    whose name begins with <code>x-</code> (lowercase); any other member that the specification does not define fails
+    validation (<a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/evidence-result-v0.md">Evidence Result v0</a>, §8a).
+    A verifier never needs to understand your <code>x-</code> members to check the rest.</p>
+  <p>A kind of record or field that other implementations should read belongs in the registry, not in a private name:
+    the interim registry of record is <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/REGISTRY.md"><code>spec/REGISTRY.md</code></a>
+    until IANA registries are established.</p>
+
+  <h2><span class="n">4</span>What portable means</h2>
+  <p>Hand your bundle to someone who has never talked to your host. With only the file and your public key, obtained
+    from you some other way, their verifier reaches the same verdict yours does. If it needs your service, your account
+    or a call back to you, the layer is not portable yet.</p>
+  <ul>
+    <li>No default service in the path: a witness only when you name one.</li>
+    <li>The vectors in your tests, unchanged and pinned.</li>
+    <li>At least one verifier you did not write, run in your CI against a bundle your code produced.</li>
+  </ul>
+  <p>Independent and same-team implementations, and the evidence for each, are listed in the specification
+    repository's <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/INTEROP.md">INTEROP.md</a>
+    and on <a href="../docs/specifications.html">Specifications</a>.</p>
+
+  <footer class="pn"><a href="b11-history-loop.html">&larr; History back into the loop</a><a href="index.html">Contents &rarr;</a></footer>
+</div></main>
+</body>
+</html>

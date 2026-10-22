@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Start · Five basic things · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+/* Page-local: status tags (as on b8) and the per-step line naming seam, spec and tool. */
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.03em;text-transform:uppercase;border-radius:4px;padding:0 6px;margin:0 4px 3px 0;border:1px solid;white-space:nowrap}
+.tag.live{color:var(--verify);background:var(--verify-soft);border-color:#9FD0B8}
+.tag.built{color:var(--accent);background:var(--accent-soft);border-color:#B7C4F3}
+.tag.planned{color:var(--muted);background:var(--paper-2);border-color:var(--line)}
+dl.step{display:grid;grid-template-columns:max-content 1fr;gap:2px 14px;font-size:14.5px;margin:0 0 14px;max-width:760px}
+dl.step dt{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding-top:3px}
+dl.step dd{margin:0}
+p.src{font-size:12.5px;color:var(--muted);margin-top:-8px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="index.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b1-seams.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">Start</div>
+  <h1>Five basic things</h1>
+  <p class="seam"><b>Seams ① Record to ⑤ View.</b> Build: one record carried through all five seams, by hand, with the open tools. Conform to: the Internet-Draft or specification each step names.</p>
+  <p class="lede">An afternoon's worth of first steps for a builder who wants an evidence layer of their own. Seal a record,
+    keep it in a log, check it offline, hand it to someone who asks, then seal a Result and show it. The first three
+    have their own pages already; this page links them and writes out the last two. The rest of the build pages
+    explain each seam in depth.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+
+  <p>Every command below is copied from the README of the tool that runs it, at the commit named under it.
+    <code>capsulectl</code> is published as release candidates (latest <code>v0.1.0-rc20</code>, 2026-10-22);
+    <code>capsule-emit</code>, <code>checkpointed-local-log</code> and <code>agent-action-capsule</code> install from PyPI.</p>
+
+  <h2><span class="n">1</span>Seal a record</h2>
+  <dl class="step">
+    <dt>Seam</dt><dd>① Record</dd>
+    <dt>Spec</dt><dd><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a></dd>
+    <dt>Tool</dt><dd><a href="https://github.com/action-state-group/capsule-emit">capsule-emit</a> (one <code>seal()</code> call), or <code>capsulectl seal</code> from <a href="https://github.com/action-state-group/capsule-cli">capsule-cli</a></dd>
+  </dl>
+  <p>One call turns an action your agent took into a signed record of digests: who acted, what was done, and digests of
+    the input and output. You keep the raw values; the record carries only their digests.</p>
+  <pre class="code"><code>pip install capsule-emit</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/capsule-emit/blob/69febf023368769d82f9e1985dbd8049a8aadb8c/README.md">capsule-emit README</a> at <code>69febf023368769d82f9e1985dbd8049a8aadb8c</code>.</p>
+  <p><b>Do it:</b> <a href="../docs/quickstart.html">Quickstart: seal your first capsule</a>, or try it in the browser in the <a href="../playground.html">Playground</a>.</p>
+
+  <h2><span class="n">2</span>Keep it in a checkpointed log</h2>
+  <dl class="step">
+    <dt>Seam</dt><dd>① Record</dd>
+    <dt>Spec</dt><dd><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> (CLL)</dd>
+    <dt>Tool</dt><dd><a href="https://github.com/action-state-group/checkpointed-local-log">checkpointed-local-log</a>, or <code>capsulectl cll</code></dd>
+  </dl>
+  <p>Append the record to a log on your own disk and sign a small checkpoint over it. The checkpoint lets anyone check
+    that a record is in the log (an inclusion proof) and that the log only grew (a consistency proof). Sending the
+    checkpoint to a public witness is optional; only a digest and a timestamp leave.</p>
+  <pre class="code"><code>pip install checkpointed-local-log</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/checkpointed-local-log/blob/32ce9f3f901ea85c80a4b42b6fd3ee007fdda2c0/README.md">checkpointed-local-log README</a> at <code>32ce9f3f901ea85c80a4b42b6fd3ee007fdda2c0</code>.</p>
+  <pre class="code"><code>capsulectl cll append --profile demo --capsule artifact.json
+capsulectl cll checkpoint create --profile demo</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/capsule-cli/blob/f8aefe98445eaa9217e24627e255681c3857ae3d/README.md#quickstart-no-database-server">capsule-cli README, Quickstart</a> at <code>f8aefe98445eaa9217e24627e255681c3857ae3d</code>, which makes the <code>demo</code> profile first.</p>
+  <p><b>Read more:</b> <a href="b3-local-log.html">b3 · The local evidence log</a>.</p>
+
+  <h2><span class="n">3</span>Verify it offline</h2>
+  <dl class="step">
+    <dt>Seam</dt><dd>① Record to ④ Result</dd>
+    <dt>Spec</dt><dd><a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> and its conformance vectors</dd>
+    <dt>Tool</dt><dd>the reference verifier in <a href="https://github.com/action-state-group/agent-action-capsule">agent-action-capsule</a>; <a href="https://github.com/action-state-group/scitt-cose">scitt-cose</a> for COSE Receipts</dd>
+  </dl>
+  <p>Check the record from its bytes alone: no account, no network, no clock. A record changed after sealing no longer
+    matches its own <code>capsule_id</code>, and the verifier says so.</p>
+  <pre class="code"><code>git clone https://github.com/action-state-group/agent-action-capsule
+cd agent-action-capsule
+pip install -e python            # or: pip install agent-action-capsule
+
+# a known-good conformance vector  ->  ok: True (one info finding: chain checks need a store)
+agent-action-capsule verify vectors/capsule/pos-v4-jcs-chain-committed/input.json
+
+# a tampered capsule               ->  ok: False, capsule_id_mismatch
+agent-action-capsule verify vectors/capsule/neg-v4-chain-tampered/input.json</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/agent-action-capsule/blob/db9de0f0d2b78efdd096dc4016a63785cca96601/README.md">agent-action-capsule README</a> at <code>db9de0f0d2b78efdd096dc4016a63785cca96601</code>.</p>
+  <p><b>Do it:</b> <a href="../docs/verify-a-capsule.html">Verify a capsule</a>, in the browser, on the command line, or as a library.</p>
+
+  <h2><span class="n">4</span>Answer an evidence request with a bundle</h2>
+  <dl class="step">
+    <dt>Seam</dt><dd>① Record to ⑤ View</dd>
+    <dt>Spec</dt><dd><a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> (the request) and <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-00</a> (the Evidence Bundle, <code>evidence-bundle/v2</code>)</dd>
+    <dt>Tool</dt><dd><code>capsulectl disclose</code> and <code>capsulectl verify --bundle</code> from <a href="https://github.com/action-state-group/capsule-cli">capsule-cli</a></dd>
+  </dl>
+  <p>Someone asks you for evidence of an action. Under the Evidence Request draft the answer is one of three outcomes:
+    the artifact, a signed refusal, or a recorded absence. When you answer with the artifact, you hand over one file:
+    an Evidence Bundle.</p>
+  <p><b>What the requester gets:</b> the records the answer cites, their signatures, a signed checkpoint, and one
+    inclusion proof per record, so they can check the records are in your log under that checkpoint. With
+    <code>--payloads selected</code>, only the payloads you choose travel with it.</p>
+  <p><b>What stays withheld:</b> any payload you leave out, or name with <code>--suppress agent_input</code> or
+    <code>--suppress agent_output</code>. The record still commits to it by digest, so the requester can see that it
+    exists and that you did not show it, and can check it later if you do.</p>
+  <pre class="code"><code>capsulectl disclose --profile NAME --root CAPSULE_ID --out BUNDLE.json [--html PAGE.html] [--payloads all|selected] [--suppress agent_input|agent_output] [--producer-key HEX]
+capsulectl verify --bundle BUNDLE.json [--witness-directory WITNESSES.json]</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/capsule-cli/blob/f8aefe98445eaa9217e24627e255681c3857ae3d/README.md#commands">capsule-cli README, Commands</a> at <code>f8aefe98445eaa9217e24627e255681c3857ae3d</code>. The README's <a href="https://github.com/action-state-group/capsule-cli/blob/f8aefe98445eaa9217e24627e255681c3857ae3d/README.md#example-a-self-checking-report-of-records-you-sealed">worked example</a> runs both end to end.</p>
+  <p><code>verify --bundle</code> says <code>VALID</code> (exit 0), <code>INVALID</code> (exit 1) when a record or
+    payload changed after sealing, or <code>INCOMPLETE</code> (exit 3) naming what the bundle does not show. A
+    <code>VALID</code> bundle means the signatures verify under the keys the bundle carries; whether those are keys
+    the requester trusts is a separate check, against the producer's public key obtained some other way.</p>
+  <p>The request side, its outcomes and the signed refusal have conformance vectors in
+    <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/evidence-request">agent-action-capsule/vectors/evidence-request</a>.
+    <b>Read more:</b> <a href="b5-portable.html">b5 · Making it portable</a>, <a href="b7-agent-work.html">b7 · Agent work for someone else</a>.</p>
+
+  <h2 id="s5"><span class="n">5</span>Seal a Result and show it <span class="tag planned">planned</span></h2>
+  <dl class="step">
+    <dt>Seam</dt><dd>④ Result to ⑤ View</dd>
+    <dt>Spec</dt><dd><a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/evidence-result-v0.md">Evidence Result v0</a> (schema <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/schemas/evidence-result-v0.json"><code>evidence-result-v0.json</code></a>) and the <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/presentation-contract-v0.md">Presentation contract v0</a></dd>
+    <dt>Tool</dt><dd><code>capsulectl result build</code> from <a href="https://github.com/action-state-group/capsule-cli">capsule-cli</a></dd>
+  </dl>
+  <p>A Result says, per requirement, what was judged and with what assurance, and cites the records each claim rests on.
+    Sealing it makes it a record like any other, so it can be the root of a bundle. A page is then drawn only from a
+    bundle that has verified: the page cannot change the verdict, and wording changes never move an evidence id.</p>
+  <pre class="code"><code>capsulectl result build --profile NAME --result RESULT.json [--out CANONICAL.json] [--contract REF] [--capsule-out RECORD.json]</code></pre>
+  <p class="src">From the <a href="https://github.com/action-state-group/capsule-cli/blob/f8aefe98445eaa9217e24627e255681c3857ae3d/README.md#commands">capsule-cli README, Commands</a> at <code>f8aefe98445eaa9217e24627e255681c3857ae3d</code>.</p>
+  <p><b>Status.</b> This step is marked planned. <code>result build</code> needs no plugin and is in the
+    <code>capsulectl</code> release candidates from <code>v0.1.0-rc19</code>; it validates against the
+    <code>evidence-result-v0</code> schema and refuses a headline value that does not recompute from the claims. The
+    page half is defined by the Presentation contract, which is a v0 design specification. Until the whole step runs
+    from a neutral release on its own, read this one as the shape of the step, not a finished path.</p>
+  <p><b>Read more:</b> <a href="b9-judge.html">b9 · Judging</a>, <a href="b10-report.html">b10 · Reporting: from a verified bundle to a page</a>.</p>
+
+  <h2><span class="n">&mdash;</span>Next</h2>
+  <p>To check that what you built works with verifiers you did not write, go to <a href="conform.html">Conform</a>. For
+    each seam in depth, start at <a href="b1-seams.html">b1 · The seams the host exposes</a>.</p>
+
+  <footer class="pn"><a href="index.html">&larr; Contents</a><a href="b1-seams.html">The seams the host exposes &rarr;</a></footer>
+</div></main>
+</body>
+</html>
