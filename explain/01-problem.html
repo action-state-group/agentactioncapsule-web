@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01 · The problem: a stranger node · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="index.html">&larr; Prev</a><a href="index.html">Contents</a><a href="02-aac.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">01 / 11</div>
+  <h1>The problem: a stranger node</h1>
+  <p class="lede">A machine you have never dealt with answers your inference request and tells you things about it; each check below settles one of those things, and some are left open.</p>
+
+  <figure class="anim" data-steps="7"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="You send a request to a node you have never dealt with."
+    data-cap-2="A response comes back with claims: who signed, what it answers, when it was recorded, which model, and that the answer is right."
+    data-cap-3="Signature: the holder of key K signed this record. It does not say who holds K."
+    data-cap-4="Digest binding: the response digest and the request digest are sealed together, so this response belongs to this request."
+    data-cap-5="Log inclusion and Receipt: the record is in the node's log under a signed checkpoint, and a Transparency Service's Receipt shows that checkpoint is in its log. The time T is still the node's own word."
+    data-cap-6="Which model ran is not shown by any of these. A twin and a referee can test whether two answers agree under weights both nodes say are the same; that narrows a misstated model but does not establish which model ran."
+    data-cap-7="Two claims stay open: that model X ran, and that the answer is right. No check on this page covers them.">
+    <svg viewBox="0 0 860 320" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">A stranger node's claims, and which check covers each</title>
+      <desc id="anim-d">Step 1: a requester box at top left sends request Q down to a dashed box labelled stranger node. Step 2: the node returns response R with five claims listed on the right: signed by key K; R answers Q; recorded at time T; served model X; the answer is right. Step 3: a green badge next to claim one reads Signature: the holder of K signed it, not who holds K. Step 4: a green badge next to claim two reads Digest binding: R's digest is sealed with Q's. Step 5: a green badge next to claim three reads Log inclusion and receipt: it is in the log; T is still the node's word. Step 6: an amber dashed badge next to claim four reads Open: not shown; a twin and a referee only narrow it. Step 7: a red badge next to claim five reads Open: no check here, and a bracket marks the last two claims as still open.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
+      </defs>
+      <!-- requester and node -->
+      <g><rect x="20" y="24" width="150" height="56" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/><text x="95" y="50" text-anchor="middle" font-size="14" fill="#0B0E14">You (requester)</text><text x="95" y="68" text-anchor="middle" font-size="12" fill="#5C6573">request Q</text></g>
+      <g><rect x="20" y="228" width="150" height="70" rx="10" fill="#FFFFFF" stroke="#5C6573" stroke-dasharray="6 4"/><text x="95" y="258" text-anchor="middle" font-size="14" fill="#0B0E14">Stranger node</text><text x="95" y="278" text-anchor="middle" font-size="12" fill="#5C6573">never met, key K</text></g>
+      <g class="st" data-step="1"><line x1="70" y1="82" x2="70" y2="224" stroke="#5C6573" stroke-width="1.6" marker-end="url(#ah)"/><text x="62" y="160" text-anchor="end" font-size="12" fill="#5C6573">Q</text></g>
+      <g class="st" data-step="2"><line x1="120" y1="226" x2="120" y2="84" stroke="#3A5BD9" stroke-width="1.6" marker-end="url(#ah)"/><text x="128" y="160" font-size="12" fill="#3A5BD9">R + claims</text>
+        <line x1="172" y1="150" x2="206" y2="150" stroke="#E3E3DC" stroke-width="1.5"/></g>
+      <!-- claims column -->
+      <g class="st" data-step="2">
+        <text x="216" y="16" font-size="12" fill="#5C6573">The node says</text>
+        <rect x="210" y="24" width="300" height="48" rx="8" fill="#F4F4F0" stroke="#E3E3DC"/><text x="224" y="53" font-size="13" fill="#0B0E14">Signed by key K</text>
+        <rect x="210" y="82" width="300" height="48" rx="8" fill="#F4F4F0" stroke="#E3E3DC"/><text x="224" y="111" font-size="13" fill="#0B0E14">Response R answers your request Q</text>
+        <rect x="210" y="140" width="300" height="48" rx="8" fill="#F4F4F0" stroke="#E3E3DC"/><text x="224" y="169" font-size="13" fill="#0B0E14">Recorded at time T</text>
+        <rect x="210" y="198" width="300" height="48" rx="8" fill="#F4F4F0" stroke="#E3E3DC"/><text x="224" y="227" font-size="13" fill="#0B0E14">Served model X</text>
+        <rect x="210" y="256" width="300" height="48" rx="8" fill="#F4F4F0" stroke="#E3E3DC"/><text x="224" y="285" font-size="13" fill="#0B0E14">The answer is right</text>
+        <text x="536" y="16" font-size="12" fill="#5C6573">What a check shows</text>
+      </g>
+      <!-- badges -->
+      <g class="st" data-step="3"><rect x="530" y="24" width="316" height="48" rx="8" fill="#E6F2EC" stroke="#127A52"/><text x="544" y="44" font-size="13" font-weight="600" fill="#127A52">&#10003; Signature</text><text x="544" y="62" font-size="12" fill="#0B0E14">the holder of K signed it; not who holds K</text></g>
+      <g class="st" data-step="4"><rect x="530" y="82" width="316" height="48" rx="8" fill="#E6F2EC" stroke="#127A52"/><text x="544" y="102" font-size="13" font-weight="600" fill="#127A52">&#10003; Digest binding</text><text x="544" y="120" font-size="12" fill="#0B0E14">R's digest is sealed with Q's digest</text></g>
+      <g class="st" data-step="5"><rect x="530" y="140" width="316" height="48" rx="8" fill="#E6F2EC" stroke="#127A52"/><text x="544" y="160" font-size="13" font-weight="600" fill="#127A52">&#10003; Log inclusion + receipt</text><text x="544" y="178" font-size="12" fill="#0B0E14">it is in the log; T is still the node's word</text></g>
+      <g class="st" data-step="6"><rect x="530" y="198" width="316" height="48" rx="8" fill="#FBF1E1" stroke="#9A5B00" stroke-dasharray="6 4"/><text x="544" y="218" font-size="13" font-weight="600" fill="#9A5B00">Open: not shown by these checks</text><text x="544" y="236" font-size="12" fill="#0B0E14">twin + referee only narrow it (page 11)</text></g>
+      <g class="st" data-step="7"><rect x="530" y="256" width="316" height="48" rx="8" fill="#FDECEA" stroke="#B42318"/><text x="544" y="276" font-size="13" font-weight="600" fill="#B42318">Open: no check here</text><text x="544" y="294" font-size="12" fill="#0B0E14">no record check says an answer is right</text></g>
+      <g class="st" data-step="7"><path d="M514,200 L520,200 L520,302 L514,302" fill="none" stroke="#B42318" stroke-width="2"/></g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>In a shared inference mesh, a machine you have never dealt with serves your request and hands back an answer along with things it says about that answer.</p>
+    <p>Each check a verifier can run answers one narrow question about the record, and a pass on one says nothing about the others.</p>
+    <p>Some of the node's claims, such as which model ran and whether the answer is right, are not covered by any check on the record alone.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the record carries digests of the request body and the completion body, sealed together.</div>
+      <div class="not"><b>Rejected:</b> carrying the prompt and completion in the record; the digests bind them without publishing them. (AAC -05 &sect;5.3, <code>inference_completion</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a signature check returns the authenticated public key and stops there; whether that key may speak for anyone is the caller's policy.</div>
+      <div class="not"><b>Rejected:</b> reading a verified signature as the identity of the operator or developer the record names. (AAC -05 &sect;3.2)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a verifier reports each check as its own finding in a structured result.</div>
+      <div class="not"><b>Rejected:</b> one overall "trusted" answer, which would hide which question was actually checked. (AAC -05 &sect;6)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a producer states only the assurance it reached, and a verifier re-derives it from the bytes.</div>
+      <div class="not"><b>Rejected:</b> taking the node's own label for how strong its record is. (AAC -05 &sect;5.4)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <p>This follows the Trust map in the docs, check by check.</p>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li><b>Content binding:</b> the record's fingerprint, recomputed from its bytes, matches the id it was sealed under.</li>
+      <li><b>Signature:</b> proves the holder of a key signed the record's id.</li>
+      <li><b>Digest binding:</b> this response digest was sealed with this request digest.</li>
+      <li><b>Inclusion in a signed checkpoint:</b> proves inclusion: the record is in the node's log, against that checkpoint's commitment (the MMR peaks).</li>
+      <li><b>Receipt for the checkpoint:</b> proves inclusion of the checkpoint in a Transparency Service's log. Only if that service applies a Consistency Registration Policy would a later rewrite of the node's log be refused there.</li>
+      <li><b>Twin plus referee:</b> whether two nodes' answers to the same request agree, under weights both records say are the same; a referee can rule on one differing pair.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That what the record says is true.</li>
+      <li>Who holds the key, or that the node the record names did the work. The key is the one the node announces: its claim.</li>
+      <li>That the model weights named are the ones that ran. A model name alone never counts as a match.</li>
+      <li>That the log holds every action, or that the time in the record is when it happened.</li>
+      <li>That a receipt's service agrees with the record; it sees checkpoints, never records.</li>
+      <li>Which model ran. Twins that serve the same wrong model agree with each other, and the shared weights are each node's own word. A referee verdict is a ruling on one pair.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>A record a demo node sealed for one served inference (line 1 of the file, reformatted for reading). The record's <code>spec_version</code> is an earlier revision. In this demo it is signed as a COSE_Sign1 statement (in <code>signed-statements/d4b16756….cose</code>) whose attached payload is the whole record in JSON, with alg EdDSA (-8), CWT <code>iss</code> <code>mesh-node-demo-1</code> and <code>sub</code> equal to the <code>capsule_id</code>, and no <code>kid</code>. That is not the -05 Producer Envelope, which signs the raw 32-byte Capsule ID under a <code>kid</code> carrying the public key (AAC -05 &sect;3.1).</p>
+  <pre class="code"><code>{
+  "action_id": "mesh-poc/mesh-node-demo-1/db961447-9996-47c4-8137-0d5291df3438",
+  "assurance": {
+    "attestation_mode": "self_attested",
+    "effect_mode": "confirmed",
+    "ledger_mode": "standalone"
+  },
+  "capsule_id": "d4b16756ecf59fa7a530757a9888a0b1cedb68e4e73e738b09b7abfbc57a8df8",
+  …
+  "effect": {
+    "effect_attestation": "gate_executed",
+    "request_digest": "3e931d5f6efde26a335b082e509dee4e2635e92f4d146b62af47126dccf3ec1f",
+    "response_digest": "004d18a0002e12a9c5bd63e655d8f16a8ee4e98aa7b6c364dfc74d96b8cc486e",
+    "status": "confirmed",
+    "type": "inference_completion"
+  },
+  …
+  "model_attestation": {
+    "compute_attestation": {
+      …
+      "x-mesh-poc-v1": {
+        …
+        "evidence_refs": {
+          …
+          "tee_attestation": {
+            "context": null,
+            "digest": null,
+            "type": "tee_attestation"
+          }
+        },
+        …
+        "generation_parameters": {
+          "max_tokens": 64,
+          "seed": 1,
+          "temperature": "0.2"
+        },
+        …
+        "serving_provenance": {
+          …
+          "model_canonical_ref": "capsule-emit-poc/tiny-fixture-model:Q4_K_XL",
+          "quantization": "unknown",
+          "requesting_party": "unknown",
+          "role": "provider",
+          "served_by_node_id": "mesh-node-demo-1"
+        }
+      }
+    },
+    "model_id": "capsule-emit-poc/tiny-fixture-model:Q4_K_XL",
+    …
+  },
+  …
+  "timestamp": "2026-09-03T07:23:31.301211Z"
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>capsule_id</td><td>hex tstr</td><td>SHA-256 of the record's JCS bytes with <code>capsule_id</code> removed (AAC -05 &sect;5.1).</td></tr>
+      <tr><td>assurance</td><td>object</td><td>The producer's stated assurance; a verifier re-derives each mode.</td></tr>
+      <tr><td>effect.type</td><td>tstr</td><td><code>inference_completion</code>: a served completion.</td></tr>
+      <tr><td>effect.request_digest</td><td>hex tstr</td><td>Digest of the request body as received.</td></tr>
+      <tr><td>effect.response_digest</td><td>hex tstr</td><td>Digest of the completion body as returned; required for <code>confirmed</code>.</td></tr>
+      <tr><td>effect.effect_attestation</td><td>tstr</td><td>Who vouches for the effect, as the producer states it.</td></tr>
+      <tr><td>model_id</td><td>tstr</td><td>The model the node says it served: a claim, not a check.</td></tr>
+      <tr><td>serving_provenance.served_by_node_id</td><td>tstr</td><td>The node that says it served; the node's own word.</td></tr>
+      <tr><td>serving_provenance.quantization</td><td>tstr</td><td>Recorded as <code>unknown</code> here, not guessed.</td></tr>
+      <tr><td>generation_parameters</td><td>object</td><td>Settings the request asked for; needed to re-run it.</td></tr>
+      <tr><td>evidence_refs.tee_attestation</td><td>object</td><td>Hardware attestation slot, empty: none was taken.</td></tr>
+      <tr><td>timestamp</td><td>tstr</td><td>When the node says it sealed the record; the node's own clock.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>action-state-group/capsule-emit-mesh:ledger-checkpoint-demo/capsules.jsonl</code> (line 1) @ <code>8500e254a02bd6f5e145ab2d471a0f997cf2fa5a</code></p>
+
+  <h2><span class="n">5</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record, its digests, the signature envelope and the verifier's checks.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; each node's own log and signed checkpoints.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; the other side's matching record.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: structures and process.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-emit-mesh">action-state-group/capsule-emit-mesh</a> &mdash; the harness that sealed the example record.</li>
+  </ul>
+
+  <footer class="pn"><a href="index.html">&larr; Contents</a><a href="02-aac.html">Agent Action Capsule &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

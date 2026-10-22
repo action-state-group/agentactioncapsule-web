@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>b3 · The local evidence log · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+  /* page-local: status tags for section 5 (folded into explain.css by the integrator if shared) */
+  .stat{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:0 6px;margin-right:6px;border:1px solid var(--line);white-space:nowrap}
+  .stat.live{color:var(--verify);background:var(--verify-soft);border-color:#B5D9C7}
+  .stat.built{color:var(--accent);background:var(--accent-soft);border-color:#C5D0F5}
+  .stat.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+  .stat.planned{color:var(--muted);background:var(--paper-2)}
+  ul.status{list-style:none;margin-left:0}
+  ul.status li{padding:8px 0;border-bottom:1px solid var(--line)}
+  ul.status li:last-child{border-bottom:none}
+  ol.recompute li{font-size:14.5px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b2-record-format.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b4-use-case-evidence.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">b3 / 11</div>
+  <h1>The local evidence log</h1>
+  <p class="seam"><b>Seam ① Record.</b> Build: an append-only local log with signed checkpoints and inclusion proofs. Conform to: <code>draft-mih-scitt-checkpointed-local-log-02</code> (reference implementation: checkpointed-local-log; any conforming log).</p>
+  <p class="lede">Once you can seal a record, keep every one you seal in an append-only log on your own disk, sign a small checkpoint over it every N records or T minutes, and hand out a record with its inclusion proof and checkpoint so anyone can check it offline.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+
+  <figure class="anim" data-steps="7"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="Append. Each sealed record's capsule_id is appended to the log as a leaf, SHA-256(0x00 || capsule_id). Records 0 and 1 become leaves at positions 0 and 1 and merge into node 2. Log size 3."
+    data-cap-2="Records 2 and 3 become leaves 3 and 4. They merge into node 5, and node 5 merges with node 2 into node 6, one peak of height 2. Log size 7."
+    data-cap-3="Records 4 and 5 become leaves 7 and 8 and merge into node 9. Six records, log size 10, two peaks: nodes 6 and 9. Record 4 is the served half used in the example below."
+    data-cap-4="Checkpoint. The plugin's cadence task wakes every 300 s. If anything was appended since the last checkpoint and either 100 records have built up or the backlog has waited 300 s since a tick first saw it, it signs a checkpoint over the peaks. Mesh-LLM's capsules v0.1.4 still writes a single bagged root here; the CLL -02 draft carries the peaks themselves."
+    data-cap-5="Inclusion proof for record 4 (leaf 7): hash the leaf, combine it with sibling node 8 to get node 9, then combine node 9 with the left peak, node 6. The result equals the checkpoint's root, so record 4 is in the log at that position."
+    data-cap-6="Export. The record, its inclusion proof and the checkpoint travel together: pushed to the other side of the exchange when record push is turned on (off by default). No other record leaves the node in the bundle, and neither does any prompt or answer text."
+    data-cap-7="The receiver checks the bundle offline against the sender's key: the record's signature, the checkpoint's signature by the same key, and the proof reaching the root. It keeps the record only if every check passes, including the sender's announced key and the record's claims. Otherwise it returns a signed refusal: inclusion_unverified when the checkpoint or proof fails, and another reason for the other checks.">
+    <svg viewBox="0 0 860 396" role="img" aria-labelledby="b3-t b3-d">
+      <title id="b3-t">Six records become MMR leaves, a signed checkpoint commits to the two peaks, an inclusion proof for one record reaches the root, and the record, proof and checkpoint are exported and checked</title>
+      <desc id="b3-d">Left: a Merkle Mountain Range with MMR positions written in each node. Step 1: records 0 and 1 become leaves 0 and 1 and merge into node 2; the leaf value is SHA-256 of 0x00 followed by the capsule_id. Step 2: records 2 and 3 become leaves 3 and 4, merge into node 5, and node 5 merges with node 2 into node 6, a peak of height 2. Step 3: records 4 and 5 become leaves 7 and 8 and merge into node 9; the log has six records, size 10, and peaks 6 and 9; leaf 7 is the served half d804c0bf. Step 4: dashed lines take the peaks to a checkpoint card on the right. It shows the v0.1.4 form: kind mmr_checkpoint, log_id sender-log, mmr_size 10, prev_size 0, root 6473683c, key_id 1d2ffc84, an Ed25519 signature and a timestamp. The cut rule is shown: something new, and either 100 records or 300 seconds. A note says the -02 draft carries the peaks concatenated instead of a bagged root. Step 5: the proof path is highlighted. Leaf 7 is hashed, combined with sibling node 8 (c93642d9) into node 9, and node 9 is combined with left peak node 6 (d1b17708) into the root 6473683c, which matches the checkpoint. Step 6: a bundle box holds the capsule, the inclusion proof and the checkpoint, with an arrow to the peer. Step 7: a receiver box lists three checks (the half's signature, the checkpoint's signature by the same key, the proof reaching the root), then held, or else a signed refusal, for example inclusion_unverified.</desc>
+      <defs><marker id="ahb3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker></defs>
+
+      <text x="20" y="22" font-size="13" font-weight="600" fill="#0B0E14">The node's own log (capsules.jsonl, MMR)</text>
+      <text x="20" y="42" font-size="12" class="mono" fill="#5C6573">leaf = SHA-256(0x00 &#8214; capsule_id)</text>
+      <text x="4" y="134" font-size="12" fill="#5C6573">h2</text>
+      <text x="4" y="194" font-size="12" fill="#5C6573">h1</text>
+      <text x="4" y="254" font-size="12" fill="#5C6573">h0</text>
+
+      <!-- Step 1: leaves 0,1 -> node 2 -->
+      <g class="st" data-step="1">
+        <line x1="75" y1="190" x2="50" y2="250" stroke="#5C6573"/><line x1="75" y1="190" x2="100" y2="250" stroke="#5C6573"/>
+        <circle cx="50" cy="250" r="13" fill="#EAEEFC" stroke="#3A5BD9"/><text x="50" y="254" text-anchor="middle" font-size="12" class="mono">0</text>
+        <circle cx="100" cy="250" r="13" fill="#EAEEFC" stroke="#3A5BD9"/><text x="100" y="254" text-anchor="middle" font-size="12" class="mono">1</text>
+        <circle cx="75" cy="190" r="13" fill="#F4F4F0" stroke="#5C6573"/><text x="75" y="194" text-anchor="middle" font-size="12" class="mono">2</text>
+        <text x="50" y="282" text-anchor="middle" font-size="12" fill="#5C6573">r0</text><text x="100" y="282" text-anchor="middle" font-size="12" fill="#5C6573">r1</text>
+      </g>
+      <text class="st mono" data-step="1" data-until="1" x="20" y="312" font-size="12" fill="#0B0E14">mmr_size 3 &#183; 2 records &#183; peaks [2]</text>
+
+      <!-- Step 2: leaves 3,4 -> 5 -> 6 -->
+      <g class="st" data-step="2">
+        <line x1="185" y1="190" x2="160" y2="250" stroke="#5C6573"/><line x1="185" y1="190" x2="210" y2="250" stroke="#5C6573"/>
+        <line x1="130" y1="130" x2="75" y2="190" stroke="#5C6573"/><line x1="130" y1="130" x2="185" y2="190" stroke="#5C6573"/>
+        <circle cx="160" cy="250" r="13" fill="#EAEEFC" stroke="#3A5BD9"/><text x="160" y="254" text-anchor="middle" font-size="12" class="mono">3</text>
+        <circle cx="210" cy="250" r="13" fill="#EAEEFC" stroke="#3A5BD9"/><text x="210" y="254" text-anchor="middle" font-size="12" class="mono">4</text>
+        <circle cx="185" cy="190" r="13" fill="#F4F4F0" stroke="#5C6573"/><text x="185" y="194" text-anchor="middle" font-size="12" class="mono">5</text>
+        <circle cx="130" cy="130" r="13" fill="#F4F4F0" stroke="#5C6573"/><text x="130" y="134" text-anchor="middle" font-size="12" class="mono">6</text>
+        <text x="160" y="282" text-anchor="middle" font-size="12" fill="#5C6573">r2</text><text x="210" y="282" text-anchor="middle" font-size="12" fill="#5C6573">r3</text>
+      </g>
+      <text class="st mono" data-step="2" data-until="2" x="20" y="312" font-size="12" fill="#0B0E14">mmr_size 7 &#183; 4 records &#183; peaks [6]</text>
+
+      <!-- Step 3: leaves 7,8 -> 9 -->
+      <g class="st" data-step="3">
+        <line x1="315" y1="190" x2="290" y2="250" stroke="#5C6573"/><line x1="315" y1="190" x2="340" y2="250" stroke="#5C6573"/>
+        <circle cx="290" cy="250" r="13" fill="#EAEEFC" stroke="#3A5BD9" stroke-width="2"/><text x="290" y="254" text-anchor="middle" font-size="12" class="mono">7</text>
+        <circle cx="340" cy="250" r="13" fill="#EAEEFC" stroke="#3A5BD9"/><text x="340" y="254" text-anchor="middle" font-size="12" class="mono">8</text>
+        <circle cx="315" cy="190" r="13" fill="#F4F4F0" stroke="#5C6573"/><text x="315" y="194" text-anchor="middle" font-size="12" class="mono">9</text>
+        <text x="290" y="282" text-anchor="middle" font-size="12" fill="#3A5BD9">r4</text><text x="340" y="282" text-anchor="middle" font-size="12" fill="#5C6573">r5</text>
+        <text x="250" y="300" font-size="12" class="mono" fill="#3A5BD9">r4 = d804c0bf&#8230; (served half)</text>
+        <circle cx="130" cy="130" r="19" fill="none" stroke="#3A5BD9" stroke-width="2" stroke-dasharray="4 3"/>
+        <circle cx="315" cy="190" r="19" fill="none" stroke="#3A5BD9" stroke-width="2" stroke-dasharray="4 3"/>
+      </g>
+      <text class="st mono" data-step="3" data-until="4" x="20" y="330" font-size="12" fill="#0B0E14">mmr_size 10 &#183; 6 records &#183; peaks [6, 9]</text>
+
+      <!-- Step 4: checkpoint card -->
+      <g class="st" data-step="4">
+        <g stroke="#3A5BD9" stroke-width="1.3" stroke-dasharray="5 4" fill="none">
+          <path d="M149,130 C280,80 400,96 466,96"/>
+          <path d="M334,190 C410,190 430,104 466,104"/>
+        </g>
+        <rect x="470" y="12" width="376" height="170" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="482" y="31" font-size="13" font-weight="600" fill="#0B0E14">Checkpoint &#183; v0.1.4 form, Ed25519</text>
+        <text x="482" y="50" font-size="12" class="mono" fill="#0B0E14">kind      mmr_checkpoint</text>
+        <text x="482" y="66" font-size="12" class="mono" fill="#0B0E14">log_id    sender-log</text>
+        <text x="482" y="82" font-size="12" class="mono" fill="#0B0E14">mmr_size  10    prev_size 0</text>
+        <text x="482" y="100" font-size="12" class="mono" fill="#3A5BD9">root      6473683c&#8230; (peaks bagged)</text>
+        <text x="482" y="116" font-size="12" class="mono" fill="#0B0E14">key_id    1d2ffc84&#8230;  signature e5783347&#8230;</text>
+        <text x="482" y="132" font-size="12" class="mono" fill="#0B0E14">timestamp 2026-09-27T00:00:10Z</text>
+        <text x="482" y="152" font-size="12" fill="#5C6573">cut when: new records AND (100 records OR 300 s)</text>
+        <text x="482" y="170" font-size="12" fill="#9A5B00">CLL -02: peaks 6 &#8214; 9, no bagged root</text>
+      </g>
+
+      <!-- Step 5: inclusion proof path -->
+      <g class="st" data-step="5">
+        <circle cx="290" cy="250" r="19" fill="none" stroke="#127A52" stroke-width="2.5"/>
+        <circle cx="340" cy="250" r="19" fill="none" stroke="#9A5B00" stroke-width="2.5" stroke-dasharray="4 3"/>
+        <circle cx="315" cy="190" r="19" fill="none" stroke="#127A52" stroke-width="2.5"/>
+        <circle cx="130" cy="130" r="19" fill="none" stroke="#9A5B00" stroke-width="2.5" stroke-dasharray="4 3"/>
+        <line x1="290" y1="250" x2="315" y2="190" stroke="#127A52" stroke-width="3"/>
+        <text x="20" y="352" font-size="12" class="mono" fill="#127A52">node 9 = H(be64(10) &#8214; leaf 7 &#8214; node 8 c93642d9&#8230;)</text>
+        <text x="20" y="370" font-size="12" class="mono" fill="#127A52">root = H(node 9 &#8214; node 6 d1b17708&#8230;) = 6473683c&#8230; &#10003;</text>
+        <text x="360" y="244" font-size="12" fill="#9A5B00">witness</text>
+        <text x="40" y="104" font-size="12" fill="#9A5B00">peaks_left</text>
+      </g>
+
+      <!-- Step 6: export bundle -->
+      <g class="st" data-step="6">
+        <rect x="470" y="196" width="376" height="78" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="482" y="215" font-size="13" font-weight="600" fill="#0B0E14">Exported bundle (record_push_bundle 1)</text>
+        <text x="482" y="233" font-size="12" class="mono" fill="#0B0E14">capsule     the half, signed</text>
+        <text x="482" y="249" font-size="12" class="mono" fill="#0B0E14">inclusion   leaf_index 4, size 10, path</text>
+        <text x="482" y="265" font-size="12" class="mono" fill="#0B0E14">checkpoint  the card above</text>
+        <line x1="658" y1="274" x2="658" y2="290" stroke="#5C6573" stroke-width="1.5" marker-end="url(#ahb3)"/>
+      </g>
+
+      <!-- Step 7: receiver check -->
+      <g class="st" data-step="7">
+        <rect x="470" y="294" width="376" height="96" rx="10" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="482" y="313" font-size="13" font-weight="600" fill="#0B0E14">The other side, offline</text>
+        <text x="482" y="331" font-size="12" fill="#127A52">&#10003; half's signature  &#10003; checkpoint by the same key</text>
+        <text x="482" y="348" font-size="12" fill="#127A52">&#10003; proof reaches root &#8594; held, status received</text>
+        <text x="482" y="366" font-size="12" fill="#B42318">any check fails &#8594; signed refusal, e.g.</text>
+        <text x="482" y="380" font-size="12" class="mono" fill="#B42318">inclusion_unverified</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>A local evidence log is a producer's own append-only log of the records it seals: each record's id goes in as a leaf of a Merkle Mountain Range (MMR) on the producer's disk, and nothing leaves unless the producer sends it.</p>
+    <p>Every N records or T minutes the producer signs a small checkpoint over the whole log. Any record can then be shown to sit at a position under that checkpoint (an inclusion proof), and any later checkpoint can be shown to extend it (a consistency proof).</p>
+    <p>What you export is one record plus its inclusion proof plus the checkpoint: a file or a push that another party checks offline against the producer's key. The producer can also register its checkpoints with a transparency service it does not run.</p>
+    <p>The reference implementation is checkpointed-local-log (CLL), in Python, Go, TypeScript and Rust. Any log that meets the CLL draft's checks is acceptable: a verifier checks the proofs and the signed checkpoint, not which library produced them.</p>
+  </div>
+
+  <h3>Where the library sits today</h3>
+  <p>The Mesh-LLM plugin is a worked example with four layers, each in its own repository. They are listed bottom-up, with the versions pinned in the plugin's v0.1.4 <code>Cargo.lock</code> and the current release of each.</p>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Layer</th><th>Package</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td>log</td><td>checkpointed-local-log</td><td>The MMR, leaf and node hashing, signed checkpoints, and inclusion and consistency proofs, in Python, Go, TypeScript and Rust. v0.1.4 pins crate 0.2.1; the latest crate tag is 0.3.1. (<code>action-state-group/checkpointed-local-log</code>)</td></tr>
+      <tr><td>book</td><td>any conforming book</td><td>Record semantics over a log it embeds and never exposes: append, query, bundle, request and respond. The Evidence Layer draft (&sect;8) says what a book must supply and names no implementation. v0.1.4 has no separate book layer of its own; capsule-emit 0.0.6 supplies the log wrapper, canonicalization and padding records.</td></tr>
+      <tr><td>producer</td><td>capsule-emit</td><td>Seals and signs each capsule, writes <code>capsules.jsonl</code>, and decides when to cut a checkpoint and where to send it. v0.1.4 pins crate 0.0.6. (<code>action-state-group/capsule-emit</code>)</td></tr>
+      <tr><td>host plugin</td><td>capsules</td><td>The timer that drives the checkpoints, push to the other side, receipt of pushed records, and the Evidence page. (<code>Mesh-LLM/capsules</code> v0.1.4)</td></tr>
+    </tbody>
+  </table></div>
+  <p>That layering is moving. capsule-emit's <code>main</code> already builds its checkpoints on checkpointed-local-log directly (<a href="https://github.com/action-state-group/capsule-emit/pull/326">capsule-emit#326</a>, merged); the plugin still pins capsule-emit 0.0.6. The checkpoint timer stays in the plugin. Section 5 gives the status of each piece.</p>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the log holds a 32-byte digest per record (the plugin uses <code>capsule_id</code>), and its leaf value is <code>SHA-256(0x00 &#8214; entry)</code>.</div>
+      <div class="not"><b>Rejected:</b> putting record content in the log. A digest lets the content be erased from separate storage later while its entry stays in the log, and the 0x00 prefix keeps a leaf from ever matching an interior node. (CLL &sect;1.1 "Entry", &sect;2 item 2, &sect;3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> append each record when it is sealed or received, and never modify or remove an entry.</div>
+      <div class="not"><b>Rejected:</b> assembling the log at the end of a period, which "permits curation that no later verification can detect". (CLL &sect;2 items 1 and 2)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> checkpoint on two triggers, a count and a clock. capsules v0.1.4 uses 100 records or 300 s, the clock running from when a tick first sees records no checkpoint covers. It also cuts a checkpoint at start-up, at shutdown, and when a record is about to be pushed (at most one per 100 ms).</div>
+      <div class="not"><b>Rejected:</b> checkpointing only when someone asks. Once a producer publishes checkpoints, the draft requires it to declare a cadence and meet it, because "a checkpoint regime with discretionary gaps supports none of the claims". Registering every record as it is made is the central-log cost the draft is written to avoid. (CLL &sect;4.4 item 1, &sect;1; capsules <code>checkpoint_cadence.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> before a checkpoint leaves the node, pad the log with padding records until its record count is a multiple of a bucket size. capsules v0.1.4 defaults to 32; a setting of 0 turns padding off.</div>
+      <div class="not"><b>Rejected:</b> exact sizes. Anyone holding two checkpoints would learn how many records the producer committed between them, across every counterparty, not only their own. (Evidence Layer -00 &sect;12.1; capsules <code>CAPSULES_CHECKPOINT_PAD_BUCKET</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the book embeds its commitment log and exposes no type from it. Callers ask for records, bundles and answers, and the book builds every proof.</div>
+      <div class="not"><b>Rejected:</b> a book tied to one mechanism. The Evidence Layer draft requires four properties (append order, inclusion, consistency, checkpoint identity) and no particular mechanism. A checkpointed local log is one way to meet them; registration with a SCITT service is another. (Evidence Layer -00 &sect;8)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> checkpoints stay local by default. They go to a transparency service only if the operator names one (the plugin's setting calls it a witness: <code>CAPSULES_CHECKPOINT_WITNESS_URLS</code>), and an unreachable service never blocks local checkpointing.</div>
+      <div class="not"><b>Rejected:</b> sending checkpoints out by default. Also rejected: counting a service the producer runs itself as independent, since the draft calls that "a replica". (capsules <code>checkpoint_cadence.rs</code>, <code>CAPSULES_CHECKPOINT_WITNESS_URLS</code>; CLL &sect;4.4 item 3)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li><i>The producer signed every checkpoint and chose what to present, so the next three points hold only as far as the verifier trusts the producer (CLL &sect;5.3):</i></li>
+      <li>A record with a given <code>capsule_id</code> is in the log at a given position under a checkpoint the producer's key signed (an inclusion proof, as in the example below).</li>
+      <li>A later checkpoint extends an earlier one without rewriting it (a consistency proof, CLL &sect;4.3 step 8).</li>
+      <li>A presented range of records is complete under one checkpoint (CLL &sect;6).</li>
+      <li>Once checkpoints are registered under a Consistency Registration Policy at a service independent of the producer, each record existed no later than the first registered checkpoint covering it, and the registered history was not rewritten (CLL &sect;7).</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That any record's content is true (CLL &sect;7).</li>
+      <li>That the producer appended everything it did, or that this is its only log (CLL &sect;7).</li>
+      <li>When a record was made, if no checkpoint was registered. The checkpoint's time is the producer's own claim.</li>
+      <li>Anything beyond the producer's own word for records appended after the last registered checkpoint (CLL &sect;4.4 item 4).</li>
+      <li>The exact number of records: padding hides it only to within the bucket size, and checkpoint times still show when the producer is active (Evidence Layer -00 &sect;12.1).</li>
+      <li>In v0.1.4, a gap in checkpoints as something a verifier can detect. The plugin cuts no checkpoint while nothing new is appended. The -02 draft asks a producer that publishes checkpoints to declare a cadence and keep to it even when idle (CLL &sect;4.4 item 1).</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>This is a bundle as the plugin pushes it to the other side of an exchange: a served half, its inclusion proof, and the checkpoint that proof resolves against. It comes from the plugin's record-push test corpus. The corpus was built from public material, its keys were discarded, and the request and response digests are placeholders. The test's expected answer is that the receiver keeps the half with status <code>received</code>. A copy whose root was changed after signing gets a signed refusal, <code>inclusion_unverified</code>.</p>
+  <pre class="code"><code>{
+  "capsule": {
+    "action_id": "serve_exchange/c79b9e3c-75b1-4ddf-b917-d38da457a94b",
+    &#8230;
+    "capsule_id": "d804c0bfc4df59def6edce207cefea1d6e4656792da7a1aeb3586017f2c977d5",
+    "effect": { &#8230; "type": "inference_completion" },
+    "key_id": "1d2ffc84c4a0bbeee8bae343e01feff0419e9f9f989cc5dc6ed3bdac3e40cbb9",
+    "signature": "d284584ca3&#8230;",
+    "spec_version": "draft-mih-scitt-agent-action-capsule-05",
+    &#8230;
+  },
+  "checkpoint": {
+    "key_id": "1d2ffc84c4a0bbeee8bae343e01feff0419e9f9f989cc5dc6ed3bdac3e40cbb9",
+    "kind": "mmr_checkpoint",
+    "log_id": "sender-log",
+    "mmr_size": 10,
+    "prev_root": "",
+    "prev_size": 0,
+    "root": "6473683c244f0220be10b3ee131a978bafbc29097a5563645a3258352aea0047",
+    "signature": "e5783347bc7400e44902dd43d3b98c809d42226d1a5d3b0ae67996f726e424e449f957753953f00c3619425a505562310700e9fd7d80da1bea4768fb174af806",
+    "timestamp": "2026-09-27T00:00:10Z",
+    "v": 1
+  },
+  "inclusion": {
+    "leaf_index": 4,
+    "proof": {
+      "kind": "inclusion",
+      "leaf_index": 4,
+      "peaks_left": ["d1b17708d8ce4bab928477715734afe2e841f174f51bbab7ce097287bc3480b1"],
+      "peaks_right": [],
+      "size": 10,
+      "v": 1,
+      "witness": ["c93642d9c7be9e0de1344d8c4002b1233519e95033ff67d7d3e38d7444d39254"]
+    }
+  },
+  "record_push_bundle": 1
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>record_push_bundle</td><td>uint</td><td>Bundle format version: 1. A receiver refuses any other value.</td></tr>
+      <tr><td>capsule.capsule_id</td><td>hex</td><td>SHA-256 of the JCS bytes of the record without <code>capsule_id</code>, <code>signature</code> and <code>key_id</code> (draft-mih-scitt-agent-action-capsule-05); it is also the log entry for this record.</td></tr>
+      <tr><td>capsule.key_id</td><td>hex</td><td>The sender's raw Ed25519 public key, which signed the record.</td></tr>
+      <tr><td>inclusion.leaf_index</td><td>uint</td><td>The record's index among leaves: 4, the fifth record. That is MMR position 7.</td></tr>
+      <tr><td>proof.size</td><td>uint</td><td>The MMR size the proof is for. It must equal the checkpoint's <code>mmr_size</code>.</td></tr>
+      <tr><td>proof.witness</td><td>hex[]</td><td>Sibling node values from the leaf up to its peak: node 8.</td></tr>
+      <tr><td>proof.peaks_left / peaks_right</td><td>hex[]</td><td>The other peaks, left and right of the one the path reaches: node 6 on the left, none on the right.</td></tr>
+      <tr><td>checkpoint.kind</td><td>string</td><td><code>mmr_checkpoint</code>: the log implementation's internal JSON checkpoint record (a single bagged root), signed separately from the COSE wire form.</td></tr>
+      <tr><td>checkpoint.log_id</td><td>string</td><td>Names the log. A real node uses <code>capsules/&lt;first 16 hex of SHA-256(public key)&gt;</code> by default (<code>CAPSULES_LOG_ID</code> overrides it), unique per node, because a witness keeps one history per log id.</td></tr>
+      <tr><td>checkpoint.mmr_size</td><td>uint</td><td>Node count of the MMR committed to: 10, which is six records.</td></tr>
+      <tr><td>checkpoint.prev_size / prev_root</td><td>uint / hex</td><td>The previous checkpoint's size and root. Here 0 and empty: this is the log's earliest checkpoint.</td></tr>
+      <tr><td>checkpoint.root</td><td>hex</td><td>The peaks folded right to left into one value: <code>SHA-256(node 9 &#8214; node 6)</code>.</td></tr>
+      <tr><td>checkpoint.signature</td><td>hex</td><td>Ed25519 by <code>key_id</code> over the hex SHA-256 of the sorted, compact JSON of the other fields (<code>2f422cdd&#8230;</code>).</td></tr>
+      <tr><td>checkpoint.timestamp</td><td>string</td><td>When the checkpoint was cut, as the producer states it.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Recompute it</h3>
+  <ol class="recompute">
+    <li>leaf 7 = <code>SHA-256(0x00 &#8214; d804c0bf&#8230;)</code>, over the 32 bytes of <code>capsule_id</code>.</li>
+    <li>node 9 = <code>SHA-256(be64(10) &#8214; leaf 7 &#8214; c93642d9&#8230;)</code>: the parent's position plus one, then left child, then right child.</li>
+    <li>root = <code>SHA-256(node 9 &#8214; d1b17708&#8230;)</code> = <code>6473683c&#8230;</code>, the checkpoint's <code>root</code>. Then check the checkpoint's signature under <code>key_id</code>.</li>
+  </ol>
+  <p>Under CLL -02 the same log at size 10 would carry <code>commitment</code> = node 6 &#8214; node 9 (64 bytes, tallest peak first), and a bagged root "MUST NOT be carried" (CLL &sect;4.1). The explain series' "Checkpointed local log and MMR" page walks through a -02 checkpoint.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:vectors/parity/corpus/record_push.json</code> (case <code>bundle_valid</code>) and <code>vectors/parity/golden/record_push.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <p>Tags: <span class="stat live">live</span> in a tagged release; <span class="stat built">built-not-live</span> merged but not released; <span class="stat designed">designed</span> written in a draft, not yet produced; <span class="stat planned">planned</span> an open issue or PR.</p>
+  <ul class="status">
+    <li><span class="stat live">live</span> The plugin seals every exchange into <code>&lt;data dir&gt;/ledger/capsules.jsonl</code> and checkpoints it into <code>checkpoints.jsonl</code>. The checkpoint timer is on by default and local only (100 records or 300 s; padding to 32). <code>Mesh-LLM/capsules:crates/evidence-plugin/src/checkpoint_cadence.rs</code>, <code>INSTALL.md</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>; defaults in <code>action-state-group/capsule-emit:rust/capsule-emit/src/checkpoint.rs</code> @ <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code> (crate 0.0.6).</li>
+    <li><span class="stat live">live</span> A pushed bundle (record, inclusion proof, checkpoint) is checked in-process and kept only if every check passes. Record push is off by default. <code>Mesh-LLM/capsules:README.md</code> "What works today" and the record-push parity corpus @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>.</li>
+    <li><span class="stat live">live</span> capsule-emit crate 0.0.8 builds its checkpoints on checkpointed-local-log directly (<a href="https://github.com/action-state-group/capsule-emit/pull/326">capsule-emit#326</a>, merged; tag <code>crates/capsule-emit-v0.0.8</code> &rarr; <code>fd4e619ab87e920ea60614b030f9371ae0f606d9</code>). The plugin does not use it yet: v0.1.4 pins capsule-emit 0.0.6.</li>
+    <li><span class="stat designed">designed</span> The -02 checkpoint wire form: peaks concatenated, the consistency proof inside the signed payload, and one fixed <code>sub</code> per log. Per the draft's Implementation Status, all four checkpointed-local-log implementations still emit the previous COSE wire form (a CBOR array of peaks, a per-checkpoint <code>sub</code>). Separately, the v0.1.4 bundle above carries the internal JSON record with a bagged <code>root</code>. CLL -02 &sect;8; vectors in <code>action-state-group/checkpointed-local-log:cll-02-vectors/</code> @ <code>40dabd74508d0f8649c8754873e316badef1057d</code>.</li>
+    <li><span class="stat planned">planned</span> The plugin moves into the mesh-llm workspace: <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">Mesh-LLM/mesh-llm#2459</a> (open). The checkpoint timer stays in the plugin.</li>
+  </ul>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the log discipline (&sect;2), the leaf (&sect;3), the checkpoint and its checks (&sect;4, &sect;4.3), required cadence (&sect;4.4), registration (&sect;4.5), and what it does and does not establish (&sect;7).</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">draft-bryce-cose-receipts-mmr-profile-03</a> &mdash; the MMR, its node hashing, and inclusion and consistency proofs.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; what a book must supply (&sect;8) and what a checkpoint reveals, including padding (&sect;12.1).</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record whose <code>capsule_id</code> is each entry.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: registering a checkpoint as a Signed Statement.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts: what a transparency service returns for a registered checkpoint.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes <code>capsule_id</code> covers.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/checkpointed-local-log">action-state-group/checkpointed-local-log</a> &middot; <a href="https://github.com/action-state-group/capsule-emit">action-state-group/capsule-emit</a> &middot; <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a></li>
+  </ul>
+
+  <h2><span class="n">7</span>What you need before the next step</h2>
+  <ul>
+    <li>A local log that records every exchange you take part in, as requester or provider, signed with a key the other side can check.</li>
+    <li>A checkpoint cadence you can state (N records or T seconds), and padding to a bucket size before any checkpoint leaves.</li>
+    <li>An export the other side can check offline: the record, its inclusion proof and the checkpoint.</li>
+    <li>A way to send your half to the other side and keep theirs. The next step compares two halves of one exchange and needs both.</li>
+  </ul>
+
+  <footer class="pn"><a href="b2-record-format.html">&larr; The record format</a><a href="b4-use-case-evidence.html">Use-case evidence: twins and a referee &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

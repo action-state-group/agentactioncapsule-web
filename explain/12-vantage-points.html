@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12 · Who can check what: three vantage points · explain</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+  /* Page-local: the status table's state chips. */
+  .chip{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:0 6px;border:1px solid var(--line);white-space:nowrap}
+  .chip.live{color:var(--verify);background:var(--verify-soft);border-color:#B5D9C6}
+  .chip.built{color:var(--accent);background:var(--accent-soft);border-color:#C3CEF5}
+  .chip.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+  table.t.status td:nth-child(2){white-space:normal}
+  table.t.status td:nth-child(1){white-space:normal}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="11-limits.html">&larr; Prev</a><a href="index.html">Contents</a><a href="13-capsule-types.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">12 / 16 · From the September deck</div>
+  <h1>Who can check what: three vantage points</h1>
+  <p class="lede">The same records, checked from three places: your own node, the other party to the exchange, and anyone holding the evidence file. Each place adds a party who can check without trusting the one before, and each check is reported on its own, with what it does not show.</p>
+
+  <figure class="anim" data-steps="7" data-delay="2300"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="Local. Your node seals the record: its capsule_id recomputes from its own bytes, and its signature verifies under this node's key."
+    data-cap-2="Still local. The record sits under a signed checkpoint (inclusion), and that checkpoint extends the one before it (consistency). My log is intact, in order, unchanged."
+    data-cap-3="Bilateral. The record travels to the other party as a bundle, with its inclusion proof and checkpoint. The sender's announced key must be the record's key, and the proof must reach the sender's own signed root."
+    data-cap-4="Still bilateral. A server a served half names must be its sender, and a model it names must not contradict the receiver's own record of that request fingerprint, if it holds one. Its checkpoint must not give another root for a size the receiver already holds. With both halves held, a difference between them shows."
+    data-cap-5="Relying party. Anyone with an evidence bundle checks its signatures, checkpoint, inclusion and disclosed text offline, with no account; for a mesh node's records this is not joined yet. If the operator named a witness, its receipt shows the checkpoint was held outside the node by a time."
+    data-cap-6="Still the relying party. A referee's verdict checks under the referee's own key. A refusal, when one is given, is signed, so which key refused is attributable; silence is a recorded absence, not a refusal. What was recorded, unchanged; when, only as far as a witness receipt shows."
+    data-cap-7="No ring shows whether the answer was right. That is judgment, layered on top, and it stays named as a gap.">
+    <svg viewBox="0 0 860 400" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">One record checked from three rings: local, bilateral, relying party</title>
+      <desc id="anim-d">Left: three concentric rings. The inner ring is your own node, the middle ring is the other party to the exchange, the outer ring is a relying party, such as an auditor or anyone with the evidence file. A record starts in the inner ring and moves outward one ring at a time. Right: three groups of checks, one per ring, that light as the record reaches that ring. Step 1, local: the capsule_id recomputes and the signature verifies under the node key. Step 2, local: inclusion under a signed checkpoint and consistency with the previous checkpoint; summary, my log is intact, in order, unchanged. Step 3, bilateral: the record arrives with its inclusion proof and checkpoint; the sender's announced key is the record's key and the signature verifies; the proof reaches the sender's signed root. Step 4, bilateral: a server a served half names is its sender, a model it names does not contradict the receiver's own record of that request fingerprint if one is held, and its checkpoint gives no other root for a size the receiver already holds; summary, with both halves held, a difference shows. Step 5, relying party: signatures, checkpoint, inclusion and disclosed text checked offline from an evidence bundle with no account, not yet joined for a mesh node's records, and a witness receipt if the operator named a witness. Step 6, relying party: a referee's verdict checks under the referee's key, and a refusal, when given, is signed; summary, what was recorded and when, unchanged. Step 7: a banner across the bottom says no ring shows whether the answer was right; that is judgment, layered on top.</desc>
+
+      <!-- rings: always visible -->
+      <circle cx="190" cy="190" r="172" fill="#FCFCFA" stroke="#E3E3DC" stroke-width="1.5"/>
+      <circle cx="190" cy="190" r="116" fill="#F4F4F0" stroke="#E3E3DC" stroke-width="1.5"/>
+      <circle cx="190" cy="190" r="58" fill="#fff" stroke="#E3E3DC" stroke-width="1.5"/>
+      <text x="190" y="166" text-anchor="middle" font-size="13" font-weight="600" fill="#0B0E14">1 · local</text>
+      <text x="190" y="226" text-anchor="middle" font-size="11" fill="#5C6573">your own node</text>
+      <text x="190" y="94" text-anchor="middle" font-size="13" font-weight="600" fill="#0B0E14">2 · bilateral</text>
+      <text x="190" y="110" text-anchor="middle" font-size="11" fill="#5C6573">the other party</text>
+      <text x="190" y="38" text-anchor="middle" font-size="13" font-weight="600" fill="#0B0E14">3 · relying party</text>
+      <text x="190" y="54" text-anchor="middle" font-size="11" fill="#5C6573">auditor, anyone with the file</text>
+
+      <!-- ring highlights -->
+      <circle class="st" data-step="1" data-until="2" cx="190" cy="190" r="58" fill="none" stroke="#127A52" stroke-width="3"/>
+      <circle class="st" data-step="3" data-until="4" cx="190" cy="190" r="116" fill="none" stroke="#127A52" stroke-width="3"/>
+      <circle class="st" data-step="5" data-until="6" cx="190" cy="190" r="172" fill="none" stroke="#127A52" stroke-width="3"/>
+
+      <!-- the record, one position per ring -->
+      <g class="st" data-step="1" data-until="2">
+        <rect x="160" y="178" width="60" height="24" rx="6" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="190" y="194" text-anchor="middle" class="mono" font-size="11" fill="#0B0E14">record</text>
+      </g>
+      <g class="st" data-step="2" data-until="2">
+        <rect x="160" y="206" width="60" height="16" rx="4" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="190" y="218" text-anchor="middle" class="mono" font-size="10" fill="#127A52">checkpoint</text>
+      </g>
+      <g class="st" data-step="3" data-until="4">
+        <path d="M222 190 H246" stroke="#3A5BD9" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+        <rect x="248" y="170" width="60" height="40" rx="6" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="278" y="186" text-anchor="middle" class="mono" font-size="11" fill="#0B0E14">record</text>
+        <text x="278" y="202" text-anchor="middle" class="mono" font-size="9.5" fill="#5C6573">+ proof + ckpt</text>
+      </g>
+      <g class="st" data-step="5">
+        <path d="M310 190 H312" stroke="#3A5BD9" stroke-width="1.5" fill="none"/>
+        <rect x="312" y="172" width="44" height="36" rx="5" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="334" y="187" text-anchor="middle" class="mono" font-size="10" fill="#0B0E14">file</text>
+        <text x="334" y="200" text-anchor="middle" class="mono" font-size="9" fill="#5C6573">offline</text>
+      </g>
+
+      <!-- group 1: local -->
+      <rect x="392" y="10" width="454" height="108" rx="9" fill="#fff" stroke="#E3E3DC"/>
+      <text x="404" y="30" font-size="13" font-weight="600" fill="#0B0E14">1 · Local: holds its own log and signed checkpoints</text>
+      <g class="st" data-step="1" font-size="12">
+        <text x="404" y="50" fill="#127A52">✓ capsule_id recomputes from the record (integrity)</text>
+        <text x="404" y="67" fill="#127A52">✓ signature verifies under this node's key</text>
+      </g>
+      <g class="st" data-step="2" font-size="12">
+        <text x="404" y="84" fill="#127A52">✓ inclusion under a signed checkpoint · consistency with the last</text>
+        <text x="404" y="106" font-style="italic" fill="#5C6573">My log is intact, in order, unchanged.</text>
+      </g>
+
+      <!-- group 2: bilateral -->
+      <rect x="392" y="126" width="454" height="108" rx="9" fill="#fff" stroke="#E3E3DC"/>
+      <text x="404" y="146" font-size="13" font-weight="600" fill="#0B0E14">2 · Bilateral: receives the sender's half, proof, checkpoint</text>
+      <g class="st" data-step="3" font-size="12">
+        <text x="404" y="166" fill="#127A52">✓ announced key = record's key_id; signature verifies</text>
+        <text x="404" y="183" fill="#127A52">✓ inclusion proof reaches the sender's own signed root</text>
+      </g>
+      <g class="st" data-step="4" font-size="12">
+        <text x="404" y="200" fill="#127A52">✓ server named = sender; model fits my record, if held</text>
+        <text x="404" y="222" font-style="italic" fill="#5C6573">Both halves held: a difference between them shows.</text>
+      </g>
+
+      <!-- group 3: relying party -->
+      <rect x="392" y="242" width="454" height="108" rx="9" fill="#fff" stroke="#E3E3DC"/>
+      <text x="404" y="262" font-size="13" font-weight="600" fill="#0B0E14">3 · Relying party: gets a file, needs no account</text>
+      <g class="st" data-step="5" font-size="12">
+        <text x="404" y="282" fill="#127A52">✓ signatures, checkpoint, inclusion (mesh: not joined)</text>
+        <text x="404" y="299" fill="#127A52">✓ witness receipt, if the operator named a witness</text>
+      </g>
+      <g class="st" data-step="6" font-size="12">
+        <text x="404" y="316" fill="#127A52">✓ verdict under referee's key · refusals, when given, signed</text>
+        <text x="404" y="338" font-style="italic" fill="#5C6573">Recorded, unchanged; when: a witness shows it.</text>
+      </g>
+
+      <!-- step 7: the gap -->
+      <g class="st" data-step="7">
+        <rect x="14" y="362" width="832" height="30" rx="7" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="430" y="382" text-anchor="middle" font-size="12.5" fill="#9A5B00">Not in any ring: whether the answer was right. That is judgment, layered on top, named as a gap.</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>A vantage point is a place a record is checked from: the node that sealed it, the other party to the same exchange, or a relying party who was in neither seat.</p>
+    <p>Each one holds different material (its own log; the other side's half with its proof; a file with no account behind it), so each can run a different set of checks.</p>
+    <p>Every check says what it shows and what it does not, and none of them, at any distance, says whether an answer was right.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> each check is a separate, independent link; a verifier stops at the level it needs, and each link states what it does not cover.</div>
+      <div class="not"><b>Rejected:</b> one combined trust value; it would hide which check failed and round a gap away. (capsules <code>docs/VERIFICATION-CHAIN.md</code>: "Each link is independent" under "The whole chain, as one offline check"; "History is evidence, not a score" in the closing list of what the chain leaves open)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the receiver looks up its own record of a pushed half by the half's request fingerprint. A fingerprint is not unique (one prompt sent to several peers shares it), and a push can arrive before the receiver seals its own record, so finding no own record is never a refusal. (<code>record_push_receive.rs</code> step 7)</div>
+      <div class="not"><b>Rejected:</b> joining by <code>exchange_id</code>; each node mints its own, so the two would never meet. (capsules <code>docs/VERIFICATION-CHAIN.md</code>, opening section, which joins the two halves for display by the shared client nonce; the request fingerprint is the receiver's lookup for its own record)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> cheap refusals before any work: a push from a sender with no announced key is refused before its record is checked, and a received half is held apart, never written into the receiver's own chain.</div>
+      <div class="not"><b>Rejected:</b> storing what arrives and checking later; anyone's flood would cost the receiver work and disk, and another node's record would sit in this node's history. (<code>record_push_receive.rs</code>, steps 1&ndash;9 and "What is kept")</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> no default witness. The operator names one or more; a receipt counts only once it checks offline under the witness's key.</div>
+      <div class="not"><b>Rejected:</b> a built-in witness; one log is only as neutral as its operator, and the structural answer is more than one witness holding the same checkpoint. (<code>witness_status.rs</code>; VERIFICATION-CHAIN Link 7)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a refusal is an answer: signed by the responder, binding the digest of the request and the time it was issued.</div>
+      <div class="not"><b>Rejected:</b> declining by silence, which leaves nothing a requester can show later; an unanswered request is a recorded absence, kept distinct from a refusal. (draft-mih-agent-evidence-request-00, "The Signed Refusal" and "The unaccountable refusal")</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li><b>Local:</b> this exact record has not changed since it was sealed; this node's key signed it; it is in the log under a signed checkpoint; each checkpoint this node holds extends the one before it.</li>
+      <li><b>Bilateral:</b> the other side's half is signed under the key it announced and is in its own signed log; a server a served half names is its sender, and a model it names does not contradict my own record of the same request fingerprint, when I hold one.</li>
+      <li><b>Bilateral:</b> a sender whose checkpoint gives another root for a size that a checkpoint I already hold signed is caught (<code>checkpoint_equivocation</code>).</li>
+      <li><b>Relying party:</b> from an evidence bundle, offline: record and checkpoint signatures, coverage, each record's place in the log, disclosed text against its digest; with a witness named, that the checkpoint existed outside the node by a time.</li>
+      <li><b>Relying party:</b> which key signed a verdict, and which key signed a refusal, when one was given.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li><b>Local:</b> that the content is true, or that the node keeps only this one history; that needs someone outside it.</li>
+      <li><b>Bilateral:</b> which side is right when the two differ, or that the two sides did not collude.</li>
+      <li><b>Bilateral:</b> who a key belongs to; the key is node-generated, so it shows continuity, not identity.</li>
+      <li><b>Relying party:</b> that a key is one they already trust: the signatures verify under keys the file itself carries.</li>
+      <li><b>Relying party:</b> that every event was logged, or that the witness is honest on its own; one witness is only as neutral as its operator.</li>
+      <li><b>Relying party:</b> the receiver-side checks of the bilateral ring, which are not in the bundle; and, for a mesh node's records, the bundle verifier is not joined yet.</li>
+      <li><b>Any ring:</b> who withheld a record by silence; that is a recorded absence, not a refusal.</li>
+      <li><b>Any ring:</b> whether the answer was right for you. That is judgment, and is named as a gap, never rounded away.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>What the bilateral ring receives: one node's sealed half of a served exchange, pushed as a bundle with its inclusion proof and the signed checkpoint it sits under. The plugin's own generator test writes this vector; trimmed here.</p>
+  <pre class="code"><code>{
+  "record_push_bundle": 1,
+  "capsule": {
+    "spec_version": "draft-mih-scitt-agent-action-capsule-05",
+    "format_version": "4",
+    "capsule_id": "ddd8685c1b578b39c9163a5c748ac7148108663719227f7636b2a113a1dd34dc",
+    …
+    "effect": {
+      "type": "inference_completion",
+      "request_digest": "6d139f1403cd84518768857efed6c375c0e3fe1af3f250cd3a5c59ea87a0323c",
+      "response_digest": "a8461110d26a1ceb91765128a3f8a648e86238810f4bdf27a330deb8681f9d87",
+      …
+    },
+    "chain": {
+      "parent_capsule_id": "6f1165b4e8f487815ea9bae5674c61ebe50862efa903ba8b0733c227f5303a1e",
+      "relation": "follows"
+    },
+    "signature": "d284584ca3012703…",
+    "key_id": "9e4480104975505a70ec6fc913efff2884a93af380a657adf39babf91fbe1fe1"
+  },
+  "inclusion": {
+    "leaf_index": 1,
+    "proof": { "v": 1, "kind": "inclusion", "size": 3, "leaf_index": 1,
+      "witness": ["8ec22eba289ccb94b3a7f9504ae4e648f91b4518bee10bb9b0da1e9a38d2af84"],
+      "peaks_left": [], "peaks_right": [] }
+  },
+  "checkpoint": {
+    "v": 1, "kind": "mmr_checkpoint", "log_id": "rust-node",
+    "mmr_size": 3,
+    "root": "f85629f081a79ba7b416e4ea5f1dec66c73bed90fb19e4c2b2af5e4df432f524",
+    "prev_size": 0, "prev_root": "",
+    "key_id": "9e4480104975505a70ec6fc913efff2884a93af380a657adf39babf91fbe1fe1",
+    "timestamp": "2026-09-30T03:38:00.000Z",
+    "signature": "802a4a60a953709b…"
+  }
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>record_push_bundle</td><td>integer</td><td>Marks a bundle (version 1), not a bare half. Plugin-internal, not a standardized wire.</td></tr>
+      <tr><td>capsule.capsule_id</td><td>hex</td><td>SHA-256 of the record's JCS form without <code>capsule_id</code>, <code>signature</code>, <code>key_id</code>. The local integrity check.</td></tr>
+      <tr><td>capsule.effect.request_digest</td><td>hex</td><td>The request fingerprint the receiver looks its own record up by.</td></tr>
+      <tr><td>capsule.chain</td><td>object</td><td>The previous record in the sender's own log; committed in format 4, so a forged parent changes the id.</td></tr>
+      <tr><td>capsule.key_id</td><td>hex</td><td>The sender's key. Must be the key the sender announced, and the signature must verify under it.</td></tr>
+      <tr><td>inclusion.proof</td><td>object</td><td>Sibling hashes from this leaf up to its peak, in an MMR of <code>size</code> 3 nodes (two records).</td></tr>
+      <tr><td>checkpoint.root</td><td>hex</td><td>The log's root at <code>mmr_size</code> 3 nodes, signed under the same key. The proof must reach it.</td></tr>
+      <tr><td>checkpoint.prev_size / prev_root</td><td>int / hex</td><td>The checkpoint this one extends; 0 and empty here, as this is the log's opening checkpoint.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Recomputed for this page: the record's sorted, compact JSON without those three members hashes to <code>ddd8685c…</code>, its stated <code>capsule_id</code>. The leaf hash is SHA-256(<code>0x00</code> &#8214; capsule_id); SHA-256 of the node position (2, 0-based, written as 3 in eight bytes), then the witness hash on the left and the leaf on the right, gives <code>f85629f0…</code>, the checkpoint's signed root. That is the bilateral ring's inclusion check (step 9 of <code>record_push_receive.rs</code>), by hand.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:vectors/record_push_bundle_rust.json</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code> (written by <code>writes_the_cross_language_bundle_fixture</code>, <code>vectors/SOURCES.md</code>); hashes per <code>action-state-group/checkpointed-local-log:rust/checkpointed-local-log/src/mmr.rs</code> @ <code>40dabd74508d0f8649c8754873e316badef1057d</code></p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <p>Checked today against the plugin's release tag v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>) and its <code>main</code> (<code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>, eleven commits later); each plugin row's claim holds at both, though the code under some rows changed in between. The verifier rows are checked against their own repositories. <span class="chip live">live</span> is in a release and on by default; <span class="chip built">built</span> is in the code and tested, but off by default, pre-release only, or not yet joined end to end; <span class="chip designed">designed</span> is specified, with no checking code on this path.</p>
+  <div class="tw"><table class="t status">
+    <thead><tr><th>Check</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>Local: integrity, signature, checkpoints, inclusion and consistency</td><td><span class="chip live">live</span></td><td>Each node seals its own record of every exchange; the log's checkpoints and integrity checks work. <code>README.md</code> "What works today"; <code>docs/VERIFICATION-CHAIN.md</code> Links 1 and 3&ndash;6 (Link 2, disclosed text, is the designed row below).</td></tr>
+      <tr><td>Bilateral: receive the other side's half and check key, signature, claims, proof, checkpoint</td><td><span class="chip built">built</span></td><td>Off by default; needs mesh-llm 0.78 or later (which names the peer that asked and the peer that served, mesh-llm#2138) and record push turned on at both ends. <code>README.md</code>; <code>record_push_receive.rs</code> steps 1&ndash;9.</td></tr>
+      <tr><td>Bilateral: shared text hashes to the sealed digest</td><td><span class="chip designed">designed</span></td><td>Blocked on the host: mesh-llm sends no exchange bodies today, so the plugin's opt-in text keeping (off by default) has nothing to keep, and there is no digest-match check on this path. <code>exchange_text.rs</code>. The disclosure format is draft-mih-zhang-agent-disclosure-bundle-00.</td></tr>
+      <tr><td>Relying party: verify a bundle offline, no account</td><td><span class="chip built">built</span></td><td>Pre-release CLI. <code>capsulectl verify --bundle</code> checks checkpoint signature, interval coverage, each record's place, citation closure, record signatures and disclosed payloads. <code>action-state-group/capsule-cli:README.md</code> @ <code>551b5c616641d15089eb0aac747f5c90aa29bf69</code>.</td></tr>
+      <tr><td>Relying party: the same, on a mesh node's records</td><td><span class="chip built">built</span></td><td>Not joined yet: a <code>mesh-plugin</code> profile asks a node's book over its evidence-request tool, but its bundles are carried, not verified. Same README, "A mesh-plugin profile".</td></tr>
+      <tr><td>Witness receipt (RFC 9942)</td><td><span class="chip built">built</span></td><td>No default witness, and none contacted until the operator names one; a receipt counts only once it checks offline under the witness's key, configured by the operator or, when none is, pinned from the witness itself. <code>witness_status.rs</code>; <code>scitt-cose-receipt</code> pinned at <code>8833281c11d33e3c1e289cf74f11d25ee7f3c6dc</code> in <code>Cargo.toml</code>.</td></tr>
+      <tr><td>Several witnesses: a split history is detectable</td><td><span class="chip designed">designed</span></td><td>VERIFICATION-CHAIN Link 7. What is built is one receiver's check: a checkpoint contradicting one already held is refused <code>checkpoint_equivocation</code> (<code>record_push_receive.rs</code> step 9).</td></tr>
+      <tr><td>Verdict under the referee's key</td><td><span class="chip built">built</span></td><td>Off by default; the verdict must verify under the referee's announced key before a node holds it. <code>README.md</code>; <code>referee/hold.rs</code> check 1.</td></tr>
+      <tr><td>Signed refusal</td><td><span class="chip live">live</span></td><td>Refusals of an evidence request and of a pushed record are signed and bind the digest of the request bytes as received (<code>evidence_answer.rs</code>, <code>record_push_receive.rs</code>). Two replies are not signed: the record-push bridge's own <code>citing_record_seal_failed</code> reply (<code>record_push_bridge.rs</code>) and refusals on the record-lookup channel (<code>ledger_fetch_bridge.rs</code>). <code>capsulectl book</code> accepts a refusal only if its signature verifies offline; that shows which key refused, not who holds it (capsule-cli README).</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Sources: <code>Mesh-LLM/capsules</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code> and tag v0.1.4 @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (paths under <code>crates/evidence-plugin/src/</code> unless shown); <code>action-state-group/capsule-cli</code> @ <code>551b5c616641d15089eb0aac747f5c90aa29bf69</code></p>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record, its capsule_id and Producer Envelope: the local ring.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; append, signed checkpoints, inclusion and consistency proofs.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; both sides' records of one exchange, and the verifier states when they differ.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> &mdash; asking for a record; artifact, signed refusal or recorded absence.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; the commitment-substrate properties (append order, inclusion, consistency, checkpoint identity).</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-00</a> &mdash; carrying disclosed text that hashes to a sealed digest.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE; each record and checkpoint signature.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts; a witness's receipt for a checkpoint.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture; a Transparency Service as the witness.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme, the bytes under each capsule_id.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules">Mesh-LLM/capsules</a> &mdash; the plugin: sealing, record push and its receive checks, witness status.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-cli">action-state-group/capsule-cli</a> &mdash; <code>capsulectl verify --bundle</code> and the <code>book</code> verbs.</li>
+  </ul>
+
+  <footer class="pn"><a href="11-limits.html">&larr; Limits</a><a href="13-capsule-types.html">Every capsule type &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

@@ -6,5 +6,9 @@ COPY docs/ /usr/share/nginx/html/docs/
 COPY talks/ /usr/share/nginx/html/talks/
 COPY extensions/ /usr/share/nginx/html/extensions/
 COPY profiles/ /usr/share/nginx/html/profiles/
+# Topic explainers, the build-your-own-evidence-layer pages, and the map over both (#51, #53, #54, #56, #58)
+COPY explain/ /usr/share/nginx/html/explain/
+COPY build/ /usr/share/nginx/html/build/
+COPY map/ /usr/share/nginx/html/map/
 RUN chmod -R a+rX /usr/share/nginx/html
 EXPOSE 8080

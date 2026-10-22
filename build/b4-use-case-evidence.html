@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>b4 · Use-case evidence: twins and a referee · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+  table.t td.tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+  table.t td.tag.built{color:var(--warn)}
+  table.t td.tag.designed{color:var(--muted)}
+  table.t td.tag.none{color:var(--bad)}
+  table.t.status td:first-child{white-space:normal;font-family:var(--sans);font-size:13.5px}
+  table.t.status td:nth-child(3){white-space:normal;font-family:var(--sans);font-size:13px;color:var(--ink)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b3-local-log.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b5-portable.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">b4 / 11</div>
+  <h1>Use-case evidence: twins and a referee</h1>
+  <p class="seam"><b>Seam ③ Check/judge.</b> Build: a sampled twin comparison and a signed referee ruling. Conform to: <code>draft-mih-agent-bilateral-attestation-02</code> and <code>draft-mih-agent-evidence-layer-00</code> &sect;4.1, &sect;5.</p>
+  <p class="lede">Sending a request to two nodes and comparing the answers tells you how often a pairing disagrees; asking a third node to re-answer one disagreeing pair and sign a ruling tells you which twin it agrees with, and when nobody can rule, the pair is left unruled rather than counted against anyone.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+
+  <figure class="anim" data-steps="9"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="The same bad provider in both regimes: node B's signed record says it serves weights W, the same as node A's, but B runs another file. The record carries B's word, not a measurement."
+    data-cap-2="A client marks pairs: it sends the same x-mesh-twin-bracket value on two requests. Node R forwards one to A and one to B and strips the header, so neither knows it is a twin. The host never sends a second request itself. Cost: one extra request per pair the client marks."
+    data-cap-3="R holds both twins' signed records; each seals a digest of its answer. Pair 1's answer digests match; pairs 2 and 3 differ."
+    data-cap-4="Regime 1, sampling only: the referee is off (the default). Each differing pair reads &quot;Not adjudicated: the independent check is turned off on this node.&quot; The Peers row states the facts: twin pairs 3, answers differed 2, not adjudicated."
+    data-cap-5="What sampling alone gives you is a rate: how often this pairing's answers differed. It does not say which twin was wrong, A, B or both, so nothing counts against either and routing is unchanged; and sampled pairs differ honestly. With pairs marked at random, the rate is an estimate with sampling error."
+    data-cap-6="Regime 2, adjudication: the operator turned the referee on. The client supplies the request and both answers; R keeps them only when their digests match the records. If both were answered at temperature 0 on the same model and weights, R compares them word by word and picks one eligible node, C: it serves the same model and weights, is neither twin, announced a key, and is not blocked or barred for that model. C re-answers the request at temperature 0. One call per pair, never retried."
+    data-cap-7="C compares its re-answer with both twins at the earliest differing word, agrees with A, and signs a verdict on that one pair: contradicted:B. R holds it and counts it under B: contradicted 1. A count, never one blended number."
+    data-cap-8="Same pair, a mesh with no eligible node: &quot;Not adjudicated: no eligible referee.&quot; No call is made and B is not contradicted. A missing ruling never counts against anyone."
+    data-cap-9="Both regimes rest on B's own claim about its weights. The route beyond self-report is hardware evidence of what was loaded, cited by digest from the record. In this plugin (v0.1.4) that slot is written empty: designed.">
+    <svg viewBox="0 0 860 460" role="img" aria-labelledby="b4-t b4-d">
+      <title id="b4-t">The same bad provider under sampling only and under adjudication</title>
+      <desc id="b4-d">Top band: a client, a requesting node R, two serving nodes A and B, and a compare box. Step 1: node B's record says weights W, like A's, but B runs another file. Step 2: the client marks three pairs with the header x-mesh-twin-bracket; R forwards one request of each pair to A and one to B with the header stripped; one extra request per marked pair. Step 3: R compares the answer digests in the twins' signed records: pair 1 the same, pairs 2 and 3 differ. Bottom left panel, sampling only with the referee off. Step 4: each differing pair reads Not adjudicated, the check is turned off; the Peers row reads twin pairs 3, answers differed 2, not adjudicated. Step 5: what this gives is a rate of differing pairs; it does not say which twin was wrong, nothing counts against either, routing is unchanged. Bottom right panel, with a referee. Step 6: the client supplies the texts, kept only when their digests match the records; for a temperature-0 pair on the same model and weights R compares them word by word and picks an eligible node C, which serves the same model and weights, is neither twin and has a key; C re-answers at temperature 0, one call per pair. Step 7: C signs a verdict on one pair, contradicted B; R counts it under B, contradicted 1. Step 8: with no eligible node, the pair reads Not adjudicated, no eligible referee, and B is not contradicted. Step 9: hardware evidence of what was loaded is the route beyond self-report; in this plugin at v0.1.4 the slot is written empty: designed.</desc>
+      <defs>
+        <marker id="b4a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+        <marker id="b4w" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A5B00"/></marker>
+        <marker id="b4g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
+      </defs>
+
+      <!-- Top band: always visible -->
+      <rect x="10" y="40" width="100" height="56" rx="8" fill="#fff" stroke="#5C6573"/>
+      <text x="60" y="73" text-anchor="middle" font-size="14" fill="#0B0E14">Client</text>
+
+      <rect x="150" y="30" width="150" height="76" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="225" y="54" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node R</text>
+      <text x="225" y="72" text-anchor="middle" font-size="12" fill="#5C6573">requesting node</text>
+      <text x="225" y="90" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">evidence plugin</text>
+
+      <rect x="380" y="6" width="200" height="70" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="392" y="28" font-size="14" font-weight="600" fill="#0B0E14">Node A</text>
+      <text x="392" y="47" font-size="12" class="mono" fill="#5C6573">record: weights W</text>
+      <text x="392" y="66" font-size="12" fill="#127A52">runs W</text>
+
+      <rect x="380" y="86" width="200" height="70" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="392" y="108" font-size="14" font-weight="600" fill="#0B0E14">Node B</text>
+      <text x="392" y="127" font-size="12" class="mono" fill="#5C6573">record: weights W</text>
+
+      <!-- Step 1: B runs another file -->
+      <g class="st" data-step="1">
+        <text x="392" y="146" font-size="12" font-weight="600" fill="#B42318">runs another file</text>
+      </g>
+
+      <!-- Step 2: client marks pairs; R forwards, header stripped -->
+      <g class="st" data-step="2">
+        <line x1="110" y1="58" x2="148" y2="58" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#b4w)"/>
+        <line x1="110" y1="78" x2="148" y2="78" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#b4w)"/>
+        <text x="10" y="124" font-size="12" fill="#9A5B00">marks 3 pairs:</text>
+        <text x="10" y="140" font-size="12" class="mono" fill="#9A5B00">x-mesh-twin-bracket</text>
+        <text x="10" y="158" font-size="12" fill="#5C6573">cost: +1 request per pair</text>
+        <line x1="300" y1="50" x2="378" y2="40" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#b4a)"/>
+        <line x1="300" y1="88" x2="378" y2="118" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#b4a)"/>
+        <text x="340" y="80" text-anchor="middle" font-size="12" fill="#0B0E14">stripped</text>
+      </g>
+
+      <!-- Step 3: compare -->
+      <g class="st" data-step="3">
+        <line x1="580" y1="41" x2="616" y2="58" stroke="#5C6573" stroke-width="1.5" marker-end="url(#b4g)"/>
+        <line x1="580" y1="121" x2="616" y2="104" stroke="#5C6573" stroke-width="1.5" marker-end="url(#b4g)"/>
+        <rect x="620" y="14" width="230" height="136" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="634" y="36" font-size="13" font-weight="600" fill="#0B0E14">R compares answer digests</text>
+        <text x="634" y="58" font-size="12" fill="#127A52">pair 1: same</text>
+        <text x="634" y="78" font-size="12" fill="#9A5B00">pair 2: differ</text>
+        <text x="634" y="98" font-size="12" fill="#9A5B00">pair 3: differ</text>
+        <text x="634" y="120" font-size="12" fill="#5C6573">from the digests each</text>
+        <text x="634" y="138" font-size="12" fill="#5C6573">twin's signed record seals</text>
+      </g>
+
+      <!-- Panels -->
+      <rect x="10" y="180" width="415" height="272" rx="10" fill="#F4F4F0" stroke="#E3E3DC"/>
+      <text x="24" y="204" font-size="14" font-weight="600" fill="#0B0E14">1 · Sampling only (referee off)</text>
+      <rect x="435" y="180" width="415" height="272" rx="10" fill="#F4F4F0" stroke="#E3E3DC"/>
+      <text x="449" y="204" font-size="14" font-weight="600" fill="#0B0E14">2 · With a referee (on)</text>
+
+      <!-- Step 4: sampling-only rows -->
+      <g class="st" data-step="4">
+        <rect x="24" y="216" width="387" height="50" rx="7" fill="#fff" stroke="#5C6573"/>
+        <text x="36" y="236" font-size="12" fill="#0B0E14">pairs 2, 3 · Not adjudicated: the independent</text>
+        <text x="36" y="254" font-size="12" fill="#0B0E14">check is turned off on this node.</text>
+        <rect x="24" y="276" width="387" height="34" rx="7" fill="#fff" stroke="#5C6573"/>
+        <text x="36" y="298" font-size="12" fill="#0B0E14">Peers · B: Twin pairs: 3 · answers differed: 2 · not adjudicated</text>
+      </g>
+
+      <!-- Step 5: what the rate tells you -->
+      <g class="st" data-step="5">
+        <text x="24" y="336" font-size="12" font-weight="600" fill="#0B0E14">What you get: a rate (2 of 3 pairs differed).</text>
+        <text x="24" y="358" font-size="12" fill="#0B0E14">It does not say which twin was wrong:</text>
+        <text x="24" y="376" font-size="12" fill="#0B0E14">A, B, or both. Nothing counts against</text>
+        <text x="24" y="394" font-size="12" fill="#0B0E14">either; routing is unchanged.</text>
+        <text x="24" y="420" font-size="12" fill="#5C6573">Pairs marked at random: an estimate,</text>
+        <text x="24" y="438" font-size="12" fill="#5C6573">with sampling error.</text>
+      </g>
+
+      <!-- Step 6: referee chosen, re-answers -->
+      <g class="st" data-step="6">
+        <rect x="449" y="216" width="172" height="70" rx="8" fill="#fff" stroke="#3A5BD9"/>
+        <text x="459" y="235" font-size="13" font-weight="600" fill="#3A5BD9">Node C · referee</text>
+        <text x="459" y="254" font-size="12" fill="#5C6573">same model + weights</text>
+        <text x="459" y="272" font-size="12" fill="#5C6573">neither twin · has a key</text>
+        <text x="632" y="236" font-size="12" fill="#0B0E14">re-answers the request</text>
+        <text x="632" y="254" font-size="12" fill="#0B0E14">at temperature 0</text>
+        <text x="632" y="272" font-size="12" fill="#5C6573">one call per pair, no retry</text>
+      </g>
+
+      <!-- Step 7: signed verdict -->
+      <g class="st" data-step="7">
+        <rect x="449" y="296" width="387" height="54" rx="7" fill="#FDECEA" stroke="#B42318"/>
+        <text x="461" y="317" font-size="12" fill="#0B0E14">pair 2 · signed by C: <tspan class="mono" fill="#B42318">contradicted:B</tspan></text>
+        <text x="461" y="337" font-size="12" fill="#0B0E14">R holds it · verdicts about B: contradicted 1</text>
+      </g>
+
+      <!-- Step 8: no eligible referee -->
+      <g class="st" data-step="8">
+        <rect x="449" y="358" width="387" height="44" rx="7" fill="#FBF1E1" stroke="#9A5B00" stroke-dasharray="5 4"/>
+        <text x="461" y="376" font-size="12" fill="#0B0E14">Nobody eligible: Not adjudicated: no eligible</text>
+        <text x="461" y="394" font-size="12" fill="#0B0E14">referee. No call made; B is not contradicted.</text>
+      </g>
+
+      <!-- Step 9: hardware evidence, designed -->
+      <g class="st" data-step="9">
+        <rect x="449" y="408" width="387" height="38" rx="7" fill="#fff" stroke="#5C6573" stroke-dasharray="6 5"/>
+        <text x="461" y="424" font-size="12" fill="#5C6573">Beyond self-report: hardware evidence of what B</text>
+        <text x="461" y="440" font-size="12" fill="#5C6573">loaded. v0.1.4: slot written empty · designed</text>
+        <path d="M580,140 L600,140 L600,168 L856,168 L856,427 L838,427" fill="none" stroke="#5C6573" stroke-width="1.3" stroke-dasharray="6 5" marker-end="url(#b4g)"/>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>Use-case evidence is what you add on top of the plain record when your use case asks a question the record cannot answer by itself; for inference served on strangers' machines that question is whether a node served the model its record names.</p>
+    <p>Sending some requests to two nodes and comparing the answers gives you a rate, how often a pairing's answers differed, which tells you something is off without telling you who.</p>
+    <p>Adjudication adds a third node that re-answers one differing pair and signs a ruling naming the twin it did not agree with; where no node can do that, the pair reads &ldquo;not adjudicated&rdquo; and counts against no one.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a pair exists only when a client sends the same <code>x-mesh-twin-bracket</code> value on two requests; the host copies it into <code>twin_bracket_id</code> and never sends a second request itself.</div>
+      <div class="not"><b>Rejected:</b> the host duplicating a share of requests at a configured rate, or pairs guessed from timing or content. No such rate setting exists in the host or in the plugin; the cost knob is how many pairs a client marks, plus the operator's referee switch. (mesh-llm <code>docs/plugins/openai-exchange-lifecycle.md</code>, &ldquo;Client-marked pairs&rdquo;; PR 2144; capsules <code>docs/TWIN-REFEREE-SELECTION.md</code> §1, §4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the header is stripped before a request is forwarded, so a serving node cannot know its answer is half of a pair.</div>
+      <div class="not"><b>Rejected:</b> forwarding it, which would tell a serving node which of its answers are being compared. (mesh-llm PR 2144, <code>forwarded_request.rs</code>; test added in PR 2300)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> compare only pairs answered at temperature 0, on the same model hash and the same weights digest, by exact words; any difference counts.</div>
+      <div class="not"><b>Rejected:</b> comparing sampled answers, which differ honestly, and a similarity threshold. A pair outside these rules reads &ldquo;not comparable&rdquo; with why. (capsules <code>crates/evidence-plugin/src/referee/request.rs</code>, <code>before_asking</code>; <code>crates/evidence-plugin/src/referee/verdict.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> without a referee a difference is inconclusive; only a referee's re-answer names a twin, and only the twin it did not agree with.</div>
+      <div class="not"><b>Rejected:</b> the requesting node deciding, or treating a difference as evidence against either side. (capsules <code>crates/evidence-plugin/src/referee/verdict.rs</code>, <code>referee_verdict</code>; <code>vectors/parity/referee/intended_differences.json</code>, &ldquo;only the referee signs&rdquo;)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> no eligible referee, a referee that cannot sign, or one that does not answer: &ldquo;not adjudicated&rdquo; with the reason, counting against neither twin; at most one call per pair, never retried on its own.</div>
+      <div class="not"><b>Rejected:</b> reading a missing ruling as a contradiction, and retrying other referees until one rules. (capsules <code>docs/TWIN-REFEREE-SELECTION.md</code> §4; <code>crates/evidence-plugin/src/referee/request.rs</code>, <code>NO_ELIGIBLE_IS_RETRIED_AUTOMATICALLY = false</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> eligibility is a set of yes/no rules (same model and weights, neither twin, announced key, not blocked, no contradiction for that model in the last <code>referee_bar_days</code>); the pick is random within a tier, and the tier is sealed in the verdict.</div>
+      <div class="not"><b>Rejected:</b> ordering nodes by merit or blending anything into one number; verdicts are counted per peer; the counts stay on this node and are never sent to anyone. (capsules <code>docs/TWIN-REFEREE-SELECTION.md</code> §2, §3, §5; <code>crates/evidence-plugin/src/verdict_counts.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the referee is off by default; the operator turns it on (<code>adjudicate_differing_twins</code>).</div>
+      <div class="not"><b>Rejected:</b> on by default: asking a referee sends the twins' request, including the prompt, to a third node. (capsules <code>docs/SHARING-POLICY.md</code>; <code>CHANGELOG.md</code> 0.1.3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the record keeps a slot for hardware evidence and writes it empty when no quote was taken.</div>
+      <div class="not"><b>Rejected:</b> filling it from what a node says about itself; a producer must not record an assurance mode it did not achieve, and the same rule applies here: no quote, no claim. (capsules <code>crates/evidence-plugin/src/producer/capsule.rs</code>, <code>tee_attestation</code>; draft-mih-scitt-agent-action-capsule-05 §5.4)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li><b>Sampling only:</b> for pairs a client marked, whether the two sealed answers were byte-identical (their answer digests); over many pairs, how often a pairing differed (&ldquo;Twin pairs: N · answers differed: M&rdquo;). Sampled answers count as differing too.</li>
+      <li><b>With a referee:</b> a signed ruling on one pair: which twin the referee's re-answer agreed with at the earliest differing word, with the other named <code>contradicted:&lt;node&gt;</code>.</li>
+      <li>What the ruling covers: both halves' record ids, the request digest, the weights digest and the referee's own answer digest, all under the referee's signature, which a holder can verify against the referee's key.</li>
+      <li>For a pair with no ruling, why: off, not marked, answers agree, not comparable (with why), no eligible referee, referee cannot sign, referee did not answer.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li><b>Sampling only:</b> which twin was wrong, or that either was. A difference counts against no one.</li>
+      <li>Which model ran. The matching weights are each node's own claim, and twins serving the same wrong file corroborate each other.</li>
+      <li>A node's future answers. A verdict is a ruling on one pair.</li>
+      <li>Honesty across different hardware: exact replay can differ on different silicon for reasons unrelated to honesty, so such a mismatch is grounds to investigate, not a ruling.</li>
+      <li>That the referee is independent of either twin; that is a claim about who runs it.</li>
+      <li>Anything about a pair no client marked.</li>
+      <li>Hardware evidence: at v0.1.4 no hardware quote is taken.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>One pair from the referee's rule corpus, the same pair run under three regimes. Node B's answer differs from A's at the fourth word (index 3: <code>"4,"</code> against <code>"999"</code>); the referee's re-answer is <code>"1, 2, 3, 4, 5"</code>. The pair, trimmed:</p>
+  <pre class="code"><code>"pair": {
+  "halves": [
+    { "capsule_id": "3cde7ec4853bdf6d2e33904c1d4b2e972984b8725b3f72abeee503dbd2065480",
+      "model_hash": "b2767326b03d5e629546363ebe41714b78065e028709580996d60d2d119192da",
+      "node_id": "node-a", "temperature": 0, "text": "1, 2, 3, 4, 5",
+      "weights_digest": "ac28b90e169cc75956ee6283ac8dc787a945696122692a3b2f266d8453ff56cc" },
+    { "capsule_id": "e96c12b9157ef4a7c82529e4ad1c1f6c823ac7b8a06b856a3cedada021945c4a",
+      "model_hash": "b2767326b03d5e629546363ebe41714b78065e028709580996d60d2d119192da",
+      "node_id": "node-b", "temperature": 0, "text": "1, 2, 3, 999 5",
+      "weights_digest": "ac28b90e169cc75956ee6283ac8dc787a945696122692a3b2f266d8453ff56cc" }
+  ],
+  "request_digest": "c0b439598e4ff10d8f55dc241798b2a80aa8de77e564a169f8931336ac33ef1a",
+  "twin_bracket_id": "bracket-1"
+}</code></pre>
+  <p>The answers the rules require for it, one line per regime:</p>
+  <pre class="code"><code>"operator_off_calls_nothing_and_says_so": [{"counts_against":null,"referee_calls":0,"row":{"reason":"off","state":"not_adjudicated"}}]
+"differing_pair_triggers_one_call": [{"counts_against":"node-b","referee_calls":1,"row":{"referee":"node-c","state":"adjudicated","tier":1,"verdict":"contradicted:node-b"}}]
+"no_eligible_referee": [{"counts_against":null,"referee_calls":0,"row":{"reason":"no_eligible_referee","state":"not_adjudicated"}}]</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>twin_bracket_id</td><td>string</td><td>The value the client sent in <code>x-mesh-twin-bracket</code>. Without one, nothing is compared and nobody is asked.</td></tr>
+      <tr><td>request_digest</td><td>hex</td><td>Digest of the request both twins answered; with the bracket id and the two node ids it is the pair's key, so a re-sealed half is the same pair.</td></tr>
+      <tr><td>capsule_id</td><td>hex</td><td>Each twin's own signed record of its half.</td></tr>
+      <tr><td>node_id</td><td>string</td><td>The node that served the half (placeholder ids in the corpus).</td></tr>
+      <tr><td>temperature</td><td>number</td><td>Above 0 means sampled: the pair reads &ldquo;not comparable&rdquo;, because sampled.</td></tr>
+      <tr><td>model_hash / weights_digest</td><td>hex</td><td>What each half's record says it served. Both must be named and equal, or the pair is not comparable. Self-report.</td></tr>
+      <tr><td>text</td><td>string</td><td>The answer. A node holds it only when the client supplies it and its digest is the record's <code>response_digest</code>.</td></tr>
+      <tr><td>state</td><td>string</td><td><code>adjudicated</code> or <code>not_adjudicated</code>.</td></tr>
+      <tr><td>reason</td><td>string</td><td>Why a pair has no ruling: <code>off</code>, <code>no_eligible_referee</code>, and the other reasons listed above.</td></tr>
+      <tr><td>verdict</td><td>string</td><td>The referee's ruling: <code>contradicted:</code> plus the twin it did not agree with, or <code>inconclusive</code>, or <code>not_comparable</code>.</td></tr>
+      <tr><td>referee / tier</td><td>string / int</td><td>Who was asked, and from which tier: 1 has a corroborated verdict for the model on this node's chain, 2 has none yet.</td></tr>
+      <tr><td>referee_calls</td><td>int</td><td>Calls this attempt made: 0 or 1.</td></tr>
+      <tr><td>counts_against</td><td>string / null</td><td>The node the row's contradiction counts against; <code>null</code> for every unruled pair.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The corpus states these answers from the rules; the plugin's tests run them. Two of the three cases leave the setting unset, which the test harness reads as on; a running node reads an unset <code>adjudicate_differing_twins</code> as off. The signed verdict record a referee seals, with its own fields, is <code>crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> at the same tag (the fixture predates -05 and carries <code>spec_version</code> -04; the plugin seals -05).</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:vectors/parity/referee/corpus/request.json</code> and <code>Mesh-LLM/capsules:vectors/parity/referee/rule_answers/request.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <div class="tw"><table class="t status">
+    <thead><tr><th>Item</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>Client-marked pairs in the host: <code>x-mesh-twin-bracket</code> copied into <code>twin_bracket_id</code> and stripped before forwarding</td><td class="tag live">live</td><td>Mesh-LLM/mesh-llm PR 2144, merged 2026-10-03 (merge <code>6d36f3845c5f021eac432dfdc8c20efcbfaa340a</code>); in release v0.78.1 (<code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>: <code>crates/mesh-llm-host-runtime/src/network/openai/forwarded_request.rs</code>, <code>ingress.rs</code>).</td></tr>
+      <tr><td>The host advertises <code>capabilities.twin_bracket</code></td><td class="tag built">built, not live</td><td>Mesh-LLM/mesh-llm PR 2300, merged 2026-10-11 (merge <code>572419fd1e3074f7e948996c292ca8e7972bda8c</code>), on upstream main <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code>; after the latest release, v0.78.1 (2026-10-05).</td></tr>
+      <tr><td>Twin comparison, &ldquo;not adjudicated&rdquo; rows with reasons, and the Peers twin row</td><td class="tag built">built, not live</td><td>Released in capsules v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>: <code>crates/evidence-plugin/src/referee/request.rs</code>, <code>CHANGELOG.md</code> 0.1.4). Works with the <code>twin_bracket_id</code> stock mesh-llm v0.78.1 already carries (PR 2144); not yet reported on live hosts.</td></tr>
+      <tr><td>Referee: selection, re-answer, signed verdict, bar window; off by default</td><td class="tag built">built, not live</td><td>capsules v0.1.4 <code>crates/evidence-plugin/src/referee/</code>, <code>docs/TWIN-REFEREE-SELECTION.md</code>. <code>CHANGELOG.md</code> 0.1.4: &ldquo;A referee verdict on live hosts waits on 0.1.5; until then it is covered by tests only.&rdquo;</td></tr>
+      <tr><td>Opt-in rule: stop routing to a peer after N referee-signed contradictions in D days</td><td class="tag built">built, not live</td><td>capsules v0.1.4 <code>docs/TWIN-REFEREE-SELECTION.md</code> §6, <code>crates/evidence-plugin/src/routing_rule.rs</code>; off by default, and it counts only referee-signed verdicts, which are not yet live.</td></tr>
+      <tr><td>A host-side rate that duplicates a share of requests</td><td class="tag none">not built</td><td>No such setting in mesh-llm at <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> or in capsules v0.1.4; the host &ldquo;sends no second request&rdquo; (<code>docs/plugins/openai-exchange-lifecycle.md</code>).</td></tr>
+      <tr><td>Hardware evidence of what was loaded, cited by digest from the record</td><td class="tag designed">in this plugin: designed</td><td>capsules v0.1.4 <code>crates/evidence-plugin/src/producer/capsule.rs</code>: the <code>tee_attestation</code> slot is always written empty, &ldquo;no TEE quote measured &hellip; recorded absent, never fabricated&rdquo;.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record each twin and the referee seals; §5.4, a producer must not record an assurance mode it did not achieve.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; §4.1, the <code>adjudication</code> epistemic type; §5, the <code>adjudicates</code> link a verdict carries.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; both sides of an exchange each keeping a signed record: the halves a comparison reads.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> signature on each half and on the verdict.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every digest covers.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the comparison, the referee, the verdict record and the rule corpus.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2144">Mesh-LLM/mesh-llm#2144</a> &mdash; the header copied into <code>twin_bracket_id</code> and stripped before forwarding (merged, in v0.78.1).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">Mesh-LLM/mesh-llm#2300</a> &mdash; the <code>twin_bracket</code> capability (merged, not yet released).</li>
+  </ul>
+
+  <h2><span class="n">7</span>What you need before the next step</h2>
+  <ul>
+    <li>A host seam that lets a client mark two requests as one pair and hands the mark to your plugin on both exchanges, without telling the serving nodes.</li>
+    <li>Both halves of each pair held on the comparing node (the counterparties' signed records, pushed or fetched), and a way to get the texts there that you can check against the records' digests.</li>
+    <li>An operator switch for the referee, off by default, because asking one sends the prompt to a third node.</li>
+    <li>Yes/no eligibility rules, one call per pair, and a &ldquo;not adjudicated&rdquo; row with its reason for every case that has no ruling.</li>
+    <li>A record slot for hardware evidence, written empty until you take a quote.</li>
+  </ul>
+
+  <footer class="pn"><a href="b3-local-log.html">&larr; The local evidence log</a><a href="b5-portable.html">Making it portable &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

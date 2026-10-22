@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>b7 · Agent work for someone else · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+  .banner{border:1px solid #E9CF9F;border-left:4px solid var(--warn);background:var(--warn-soft);border-radius:8px;padding:12px 16px;margin:0 0 24px;max-width:780px;font-size:15px}
+  .banner b{color:var(--warn)}
+  ul.status{list-style:none;margin-left:0}
+  ul.status li{padding:9px 0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+  ul.status li:last-child{border-bottom:none}
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:0 6px;margin-right:6px;border:1px solid}
+  .tag.live{color:var(--verify);background:var(--verify-soft);border-color:#9FCDB7}
+  .tag.built{color:var(--accent);background:var(--accent-soft);border-color:#B9C6F2}
+  .tag.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+  .tag.planned{color:var(--muted);background:var(--paper-2);border-color:var(--line)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b6-personal-agents.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b8-checklist.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">b7 / 11</div>
+  <h1>Agent work for someone else</h1>
+  <p class="seam"><b>Seam ② Contract.</b> Build: both sides' records of a deal between a principal's agent and a counterparty. Conform to: <code>draft-mih-agent-evidence-request-00</code> and <code>draft-mih-agent-settlement-records-00</code>.</p>
+  <p class="lede">When an agent acts for a principal and deals with a counterparty, three parties hold records, and the evidence layer has to let each one check the others without trusting them.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+  <div class="banner"><b>Status: next &mdash; designed, not built as a whole.</b> No host on this site's path yet records a principal, an agent and a counterparty end to end. Each side's sealed half of a paid exchange has been sealed on two live nodes in the Mesh-LLM worked example. The parts that exist in code at a pinned commit are the settlement-record legs, the evidence request protocol, and one composition vector set joining a WHAT record to a WHO record; section 5 lists each with its evidence.</div>
+
+  <figure class="anim" data-steps="6"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="A principal asks an agent to act for it. Which accountable person authorized this exact action is its own record (the WHO question), signed on the principal's side, not by the agent."
+    data-cap-2="The agent deals with a counterparty. Each side seals only its own half of the exchange, under its own key, and cites the other side's half by digest."
+    data-cap-3="If money moves, each side seals its own settlement legs: terms, what the payer's wallet reported, what the payee's wallet reported, and a digest of what was delivered. A verifier who trusts neither derives whether they agree."
+    data-cap-4="Either party can ask the other for evidence about the exchange, naming its own half as the subject. The answer is exactly one of three: the artifact, a signed refusal with a reason, or the asker's own record that nothing came."
+    data-cap-5="Four questions, four separate records: was it permitted (CAN), who authorized it (WHO), what was done (WHAT), did the runtime enforce (AUDIT). They join on a digest of the action, or an explicit signed cross-reference, and each is checked with its own verifier."
+    data-cap-6="What exists today: exchange halves have been sealed live; settlement legs and the evidence request are built, with vectors; WHAT joined to WHO has a vector set; CAN and AUDIT, and the whole flow in one host, are designed, not built.">
+    <svg viewBox="0 0 860 480" role="img" aria-labelledby="b7-t b7-d">
+      <title id="b7-t">A principal, an agent and a counterparty, each sealing its own records</title>
+      <desc id="b7-d">Top row: three parties, the principal on the left, the agent in the middle, the counterparty on the right. Step 1: an arrow from the principal to the agent labelled acts for, and under the principal a WHO record: who authorized this action, signed on the principal's side. Step 2: a two-way exchange arrow between the agent and the counterparty, and under each a sealed half of the exchange, key A for the agent and key B for the counterparty, each citing the other's half by digest. Step 3: a row of four settlement legs, terms, payer_observed sealed by the agent, payee_observed sealed by the counterparty, and delivered with a content digest; on the left a verifier that trusts neither derives the state, such as agreed, mismatch or payer_stated, from the legs present. Step 4: an evidence request whose subject is the asker's own exchange half and whose coverage is a pinned anchor, and three possible outcomes: the artifact, identical bytes for the same subject and anchor; a signed refusal with a reason token; or a recorded absence, the asker's own record. Step 5: four slots, CAN, WHO, WHAT and AUDIT, joined by a subject digest whose construction each profile defines (here SHA-256 over the JCS form of the action), each checked on its own. Step 6: status badges: exchange halves live; settlement legs built; evidence request built; WHAT joined to WHO built as a vector set; CAN and AUDIT designed; on the acts-for arrow, the principal-to-agent flow in one host designed, not built.</desc>
+
+      <!-- parties: always visible -->
+      <g font-size="13">
+        <rect x="16" y="12" width="200" height="44" rx="9" fill="#F4F4F0" stroke="#0B0E14"/>
+        <text x="116" y="39" text-anchor="middle" font-weight="600" fill="#0B0E14">Principal</text>
+        <rect x="330" y="12" width="200" height="44" rx="9" fill="#F4F4F0" stroke="#0B0E14"/>
+        <text x="430" y="39" text-anchor="middle" font-weight="600" fill="#0B0E14">Agent</text>
+        <rect x="644" y="12" width="200" height="44" rx="9" fill="#F4F4F0" stroke="#0B0E14"/>
+        <text x="744" y="39" text-anchor="middle" font-weight="600" fill="#0B0E14">Counterparty</text>
+      </g>
+
+      <!-- step 1: principal -> agent, WHO record -->
+      <g class="st" data-step="1">
+        <path d="M216 34 H322" stroke="#3A5BD9" stroke-width="1.6" fill="none"/>
+        <polygon points="322,30 330,34 322,38" fill="#3A5BD9"/>
+        <text x="273" y="27" text-anchor="middle" font-size="12" fill="#3A5BD9">acts for</text>
+        <rect x="16" y="70" width="200" height="56" rx="8" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="28" y="90" font-size="13" font-weight="600" fill="#0B0E14">WHO record</text>
+        <text x="28" y="107" font-size="12" fill="#0B0E14">who authorized this action</text>
+        <text x="28" y="121" font-size="12" fill="#5C6573">signed on the principal's side</text>
+      </g>
+
+      <!-- step 2: exchange halves -->
+      <g class="st" data-step="2">
+        <path d="M538 34 H636" stroke="#127A52" stroke-width="1.6" fill="none"/>
+        <polygon points="636,30 644,34 636,38" fill="#127A52"/>
+        <polygon points="538,30 530,34 538,38" fill="#127A52"/>
+        <text x="587" y="27" text-anchor="middle" font-size="12" fill="#127A52">exchange</text>
+        <rect x="330" y="70" width="200" height="56" rx="8" fill="#fff" stroke="#127A52"/>
+        <text x="342" y="90" font-size="13" font-weight="600" fill="#0B0E14">agent's half · key A</text>
+        <text x="342" y="108" class="mono" font-size="12" fill="#5C6573">cites B's half by digest</text>
+        <rect x="644" y="70" width="200" height="56" rx="8" fill="#fff" stroke="#127A52"/>
+        <text x="656" y="90" font-size="13" font-weight="600" fill="#0B0E14">their half · key B</text>
+        <text x="656" y="108" class="mono" font-size="12" fill="#5C6573">cites A's half by digest</text>
+        <path d="M530 98 H644" stroke="#127A52" stroke-width="1.2" stroke-dasharray="4 3" fill="none"/>
+      </g>
+
+      <!-- step 3: settlement legs -->
+      <g class="st" data-step="3">
+        <text x="330" y="152" font-size="12" fill="#5C6573">settlement legs (each one an Agent Action Capsule)</text>
+        <rect x="330" y="160" width="122" height="52" rx="7" fill="#fff" stroke="#3A5BD9"/>
+        <text x="340" y="180" class="mono" font-size="12" fill="#0B0E14">terms</text>
+        <text x="340" y="198" font-size="12" fill="#5C6573">what, how much</text>
+        <rect x="460" y="160" width="122" height="52" rx="7" fill="#fff" stroke="#3A5BD9"/>
+        <text x="470" y="180" class="mono" font-size="12" fill="#0B0E14">payer_observed</text>
+        <text x="470" y="198" font-size="12" fill="#5C6573">key A: sent</text>
+        <rect x="590" y="160" width="122" height="52" rx="7" fill="#fff" stroke="#3A5BD9"/>
+        <text x="600" y="180" class="mono" font-size="12" fill="#0B0E14">payee_observed</text>
+        <text x="600" y="198" font-size="12" fill="#5C6573">key B: received</text>
+        <rect x="720" y="160" width="124" height="52" rx="7" fill="#fff" stroke="#3A5BD9"/>
+        <text x="730" y="180" class="mono" font-size="12" fill="#0B0E14">delivered</text>
+        <text x="730" y="198" font-size="12" fill="#5C6573">content digest</text>
+        <rect x="16" y="146" width="200" height="72" rx="8" fill="#F4F4F0" stroke="#0B0E14"/>
+        <text x="28" y="166" font-size="13" font-weight="600" fill="#0B0E14">verifier (trusts neither)</text>
+        <text x="28" y="184" font-size="12" fill="#5C6573">derives the state from</text>
+        <text x="28" y="199" font-size="12" fill="#5C6573">the legs present:</text>
+        <text x="28" y="213" class="mono" font-size="12" fill="#127A52">agreed · mismatch · …</text>
+        <path d="M330 186 H224" stroke="#0B0E14" stroke-width="1.2" fill="none"/>
+        <polygon points="224,182 216,186 224,190" fill="#0B0E14"/>
+      </g>
+
+      <!-- step 4: evidence request -->
+      <g class="st" data-step="4">
+        <rect x="16" y="240" width="300" height="70" rx="8" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="28" y="260" font-size="13" font-weight="600" fill="#0B0E14">evidence request</text>
+        <text x="28" y="279" class="mono" font-size="12" fill="#0B0E14">subject {exchange: my half}</text>
+        <text x="28" y="297" class="mono" font-size="12" fill="#0B0E14">coverage {expected_pin}</text>
+        <path d="M316 275 H322" stroke="#3A5BD9" stroke-width="1.6" fill="none"/>
+        <polygon points="322,271 330,275 322,279" fill="#3A5BD9"/>
+        <rect x="330" y="240" width="164" height="70" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="342" y="260" font-size="13" font-weight="600" fill="#0B0E14">artifact</text>
+        <text x="342" y="278" font-size="12" fill="#5C6573">identical bytes per</text>
+        <text x="342" y="294" font-size="12" fill="#5C6573">subject and anchor</text>
+        <rect x="505" y="240" width="164" height="70" rx="8" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="517" y="260" font-size="13" font-weight="600" fill="#0B0E14">signed refusal</text>
+        <text x="517" y="278" class="mono" font-size="12" fill="#5C6573">no_such_subject,</text>
+        <text x="517" y="294" class="mono" font-size="12" fill="#5C6573">policy_declined, …</text>
+        <rect x="680" y="240" width="164" height="70" rx="8" fill="#fff" stroke="#5C6573" stroke-dasharray="4 3"/>
+        <text x="692" y="260" font-size="13" font-weight="600" fill="#0B0E14">recorded absence</text>
+        <text x="692" y="278" font-size="12" fill="#5C6573">the asker's own record</text>
+        <text x="692" y="294" font-size="12" fill="#5C6573">that nothing came</text>
+      </g>
+
+      <!-- step 5: composition -->
+      <g class="st" data-step="5">
+        <rect x="16" y="336" width="196" height="50" rx="8" fill="#fff" stroke="#0B0E14"/>
+        <text x="28" y="356" font-size="13" font-weight="600" fill="#0B0E14">CAN</text>
+        <text x="28" y="374" font-size="12" fill="#5C6573">was it permitted</text>
+        <rect x="226" y="336" width="196" height="50" rx="8" fill="#fff" stroke="#0B0E14"/>
+        <text x="238" y="356" font-size="13" font-weight="600" fill="#0B0E14">WHO</text>
+        <text x="238" y="374" font-size="12" fill="#5C6573">who authorized it</text>
+        <rect x="436" y="336" width="196" height="50" rx="8" fill="#fff" stroke="#0B0E14"/>
+        <text x="448" y="356" font-size="13" font-weight="600" fill="#0B0E14">WHAT</text>
+        <text x="448" y="374" font-size="12" fill="#5C6573">what the agent did</text>
+        <rect x="646" y="336" width="198" height="50" rx="8" fill="#fff" stroke="#0B0E14"/>
+        <text x="658" y="356" font-size="13" font-weight="600" fill="#0B0E14">AUDIT</text>
+        <text x="658" y="374" font-size="12" fill="#5C6573">did the runtime enforce</text>
+        <path d="M114 386 V404 H745 V386 M324 386 V404 M534 386 V404" stroke="#3A5BD9" stroke-width="1.4" fill="none"/>
+        <path d="M430 404 V414" stroke="#3A5BD9" stroke-width="1.4" fill="none"/>
+        <rect x="200" y="414" width="460" height="30" rx="15" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="430" y="434" text-anchor="middle" class="mono" font-size="12" fill="#0B0E14">subject_digest = HASH(subject_preimage), per profile</text>
+        <text x="430" y="466" text-anchor="middle" font-size="12" fill="#5C6573">here SHA-256(JCS(action)); a join key only: each record is checked with its own verifier</text>
+      </g>
+
+      <!-- step 6: status badges -->
+      <g class="st" data-step="6" font-size="12">
+        <rect x="222" y="40" width="102" height="18" rx="9" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="273" y="53" text-anchor="middle" fill="#9A5B00">flow: designed</text>
+        <rect x="551" y="40" width="72" height="18" rx="9" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="587" y="53" text-anchor="middle" fill="#127A52">live</text>
+        <rect x="766" y="142" width="78" height="18" rx="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="805" y="155" text-anchor="middle" fill="#3A5BD9">built</text>
+        <rect x="226" y="246" width="78" height="18" rx="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="265" y="259" text-anchor="middle" fill="#3A5BD9">built</text>
+        <rect x="120" y="342" width="86" height="18" rx="9" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="163" y="355" text-anchor="middle" fill="#9A5B00">designed</text>
+        <rect x="332" y="342" width="84" height="18" rx="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="374" y="355" text-anchor="middle" fill="#3A5BD9">vectors</text>
+        <rect x="542" y="342" width="84" height="18" rx="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="584" y="355" text-anchor="middle" fill="#3A5BD9">vectors</text>
+        <rect x="752" y="342" width="86" height="18" rx="9" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="795" y="355" text-anchor="middle" fill="#9A5B00">designed</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>Agent work for someone else is an exchange with three parties: a principal who authorizes the work, an agent that does it, and a counterparty the agent deals with, often with a payment between them.</p>
+    <p>Each party seals only what its own side observed, under its own key, and asks the others for evidence with a request whose answer is exactly one of three things: the artifact, a signed refusal with a reason, or the asker's own record that nothing came.</p>
+    <p>Separate records answer separate questions (was it permitted, who authorized it, what was done, did the runtime enforce), and they are joined by one digest of the action rather than merged into one format.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> each party seals its own side only, under its own key, and may cite the other side's record as something it holds, never as its own observation.</div>
+      <div class="not"><b>Rejected:</b> the agent, or the platform it runs on, recording both sides; that is one party's account of a two-party event. (settlement-records §3; bilateral-attestation-02)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> whether a payment's two sides agree is derived by a verifier from the legs present.</div>
+      <div class="not"><b>Rejected:</b> a leg that asserts the settlement state (agreed, mismatch); one sealer would then state a fact only both sides' records can establish. (settlement-records §1 item 7, §9)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> an evidence request ends in exactly one of three outcomes, and none is ever recorded as another: a timeout is never written up as a refusal, and a signed refusal is never written up as silence.</div>
+      <div class="not"><b>Rejected:</b> treating silence, a transport error and a stale cache as one "failed" result; they carry different weight, and only a refusal is the responder's signed act. (evidence-request §4.5)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the same subject under the same coverage anchor yields byte-identical evidence for every requester; a responder may refuse someone, but may not answer two askers differently.</div>
+      <div class="not"><b>Rejected:</b> per-audience answers, a fuller history for an auditor and a curated one for a counterparty in a dispute (the draft's "flattering version"). (evidence-request §1.1, §5)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the ask is symmetric: either party to an exchange may ask the other, naming its own sealed half as the subject.</div>
+      <div class="not"><b>Rejected:</b> a one-way audit channel where only the original requester asks; the side holding a signed reply is the one that can show the other side's log left something out. (evidence-request §3.1, §6)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> CAN, WHO, WHAT and AUDIT records join on a shared digest of the action, or an explicit signed cross-reference (§4); digest equality is a join key and nothing more.</div>
+      <div class="not"><b>Rejected:</b> growing one format to contain the others, or letting one slot's verifier vouch for another slot's content. (accountability-composition-01 §4, §5, §6.3.4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen (Mesh-LLM worked example):</b> the provider seals its <code>payee_observed</code> leg only from what its own wallet reported crediting and deducting.</div>
+      <div class="not"><b>Rejected:</b> filling the payee leg from the invoice amount; the invoice is not what the wallet credited, and a missing fee never reconciles. On a host that does not pass those numbers, no payee leg is sealed. (Mesh-LLM/capsules <code>crates/evidence-plugin/src/settlement_legs.rs</code>)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>That two records sealed under two distinct keys report the same payment reference, amount (after the receive fee) and status, or which of those differ.</li>
+      <li>That a responder answered, refused with a stated reason under its signature, or that the asker recorded no answer inside its waiting window.</li>
+      <li>That a responder gave two askers different bytes for the same subject and anchor: they compare artifact digests, without trusting each other (not for exchange subjects, which only one asker holds; there the responder's own recorded ask is the second copy, evidence-request §5).</li>
+      <li>An omission: a party holding the other side's signed reply citing its half, when that side now answers <code>no_such_subject</code> (evidence-request §3.1, §6).</li>
+      <li>That a WHO record and a WHAT record name the same action, by recomputing the digest each one binds.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That either side's observation is true; agreement on a digest attests to the digest, not to what it stands for.</li>
+      <li>Who holds a key in the real world; that is the verifier's own key policy.</li>
+      <li>Why nothing came back: a partition, a crash and a deliberate silence look the same (evidence-request §4.4).</li>
+      <li>That evidence stays available; a responder's signed retention commitment makes a later absence attributable, not impossible (evidence-request §9).</li>
+      <li>That the action was authorized, or that the record set is complete, just because digests match (accountability-composition-01 §6.2).</li>
+      <li>Who is right when the two sides disagree; neither record is preferred.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>Two conformance cases for the symmetric ask. The responder's declared holdings include one record that cites the asker's exchange half <code>e2c78557…</code>. Asking about that half is served; asking about a half no record cites is refused <code>no_such_subject</code>, never matched loosely.</p>
+  <pre class="code"><code>"responder": {
+  "evidence_stream": "stream-a",
+  "log_size": 42,
+  …
+  "exchange_citations": {
+    "e2c78557e239cd93cf344c2e435158367deac1d3b525deb6e09c23d1a8139227": [
+      "ef53392288cd922e52ce6d54c30196a2f33af60ba87885b89cd34ed3d17a35d1"
+    ]
+  },
+  …
+},
+…
+{
+  "id": "res-exchange-cited",
+  "section": ["§3.1 Subject", "§6 The Symmetric Ask"],
+  "request_json": "{\"coverage\":{\"expected_pin\":\"e2c78557e239cd93cf344c2e435158367deac1d3b525deb6e09c23d1a8139227\"},\"nonce\":\"n-0107\",\"subject\":{\"exchange\":\"e2c78557e239cd93cf344c2e435158367deac1d3b525deb6e09c23d1a8139227\"}}",
+  "request_json_digest": "61a78ad010f8eee326f2bd696f21821c4bbf6731bb3e9dbdda257dcb0320ca42",
+  …
+  "expect": { "answer": "artifact" }
+},
+{
+  "id": "res-exchange-not-cited",
+  "section": ["§3.1 Subject", "§6 The Symmetric Ask"],
+  "request_json": "{\"coverage\":{\"expected_pin\":\"a2ad745b1e5290793135b8c1fb20887d6e8de485cccb6c14e63dfc8337038846\"},\"nonce\":\"n-0108\",\"subject\":{\"exchange\":\"a2ad745b1e5290793135b8c1fb20887d6e8de485cccb6c14e63dfc8337038846\"}}",
+  "request_json_digest": "0d60ed530c450e0d3521d9d4bc11aaa76ca3858d471779f30ef9ab280252a580",
+  …
+  "expect": { "answer": "refusal", "reason": "no_such_subject" }
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>responder.exchange_citations</td><td>object</td><td>The responder's holdings for this case: exchange-half digest &rarr; the records that cite it.</td></tr>
+      <tr><td>subject.exchange</td><td>hex</td><td>The asker's own sealed half of the exchange, by digest: what it wants evidence about.</td></tr>
+      <tr><td>coverage.expected_pin</td><td>hex</td><td>The anchor the answer must verify against; a requester's own exchange half is a valid pin for an exchange subject (§3.2).</td></tr>
+      <tr><td>nonce</td><td>string</td><td>Requester-supplied; recommended, so a recorded refusal cannot be replayed against a fresh request.</td></tr>
+      <tr><td>request_json_digest</td><td>hex</td><td>SHA-256 over the request bytes as received (RFC 8785 text); a refusal names the request by this digest.</td></tr>
+      <tr><td>expect.answer</td><td>string</td><td><code>artifact</code> or <code>refusal</code>, written by hand from the draft text.</td></tr>
+      <tr><td>expect.reason</td><td>string</td><td>The most specific registered reason; here the half resolves to no record.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The vectors are derived from the -00 text, not from any implementation; where -00 leaves a wire shape open (here, a subject as a one-member map), the file records the reading it used.</p>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/evidence-request/resolution.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <ul class="status">
+    <li><span class="tag live">live</span> <b>Exchange halves in the Mesh-LLM worked example:</b> four paid exchanges between two nodes built from capsules v0.1.4, each node sealing its own half of each exchange. <code>Mesh-LLM/capsules:CHANGELOG.md</code> (0.1.4, &ldquo;Verified on live hosts, and not&rdquo;) @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>. Settlement legs and evidence requests were not checked in that run.</li>
+    <li><span class="tag designed">designed</span> <b>The whole flow in one host:</b> a principal's authorization, the agent's and the counterparty's halves, settlement legs and evidence requests, recorded together for one piece of delegated work. Not built on any host this site describes.</li>
+    <li><span class="tag built">built-not-live</span> <b>Settlement-record legs, libraries and vectors:</b> Python, Rust and Go code with conformance vectors in <code>action-state-group/agent-action-capsule</code> (<code>vectors/settlement/</code>, <code>python/agent_action_capsule/settlement.py</code>, <code>rust/agent-action-capsule/src/settlement.rs</code>, <code>go/settlement/</code>) @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>; producer and verifier in <code>action-state-group/capsule-emit</code> (<code>python/capsule_emit/settlement.py</code>, <code>rust/capsule-emit/src/settlement.rs</code>) @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code>.</li>
+    <li><span class="tag built">built-not-live</span> <b>Settlement legs in the Mesh-LLM worked example:</b> for each invoice of a paid exchange, the payer seals the terms leg and pushes it to the serving peer, then seals <code>payer_observed</code>; it seals one delivered leg per exchange, citing the output invoice's terms leg; the provider seals <code>payee_observed</code>. <code>Mesh-LLM/capsules:crates/evidence-plugin/src/settlement_legs.rs</code> and <code>CHANGELOG.md</code> (0.1.1, &ldquo;Settlement-record legs for paid exchanges&rdquo;) @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4). The provider's leg needs host settlement events carrying the wallet's credited amount and fee: Mesh-LLM/mesh-llm PR 2169, merged. The v0.1.4 notes record a live two-node run of paid exchanges, not a check of the settlement legs themselves; the provider's own delivered leg is not sealed yet.</li>
+    <li><span class="tag built">built-not-live</span> <b>Evidence request protocol:</b> the <code>evidence-request</code> Rust crate 0.2.0 (published on crates.io), with Python and Go implementations and the -00 conformance vectors, in <code>action-state-group/agent-action-capsule</code> (<code>rust/evidence-request/</code>, <code>python/agent_action_capsule/evidence_request.py</code>, <code>go/evidencerequest/</code>, <code>vectors/evidence-request/</code>) @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>. The Python responder moved there from capsule-emit in action-state-group/agent-action-capsule PR 244 (merged); capsule-emit's older module is deprecated (action-state-group/capsule-emit PR 314, merged).</li>
+    <li><span class="tag built">built-not-live</span> <b>Evidence requests in the Mesh-LLM worked example:</b> the plugin answers <code>evidence-request/1</code> in-process, an artifact or a signed refusal, through the earlier <code>capsule-emit-evidence-request</code> crate pinned at <code>=0.0.3</code>, with a parity corpus that includes the <code>exchange</code> subject. <code>Mesh-LLM/capsules:crates/evidence-plugin/src/mesh_evidence_bridge.rs</code>, <code>src/evidence_request_parity.rs</code>, <code>docs/SHARING-POLICY.md</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>. The v0.1.4 notes record no live run of an evidence request.</li>
+    <li><span class="tag built">built-not-live</span> <b>WHAT joined to WHO:</b> one composition vector set, an accepting case and three rejecting cases, each rejected at one named stage, with a staged verifier. <code>action-state-group/agent-action-capsule:vectors/interop/composition/</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>. The WHO artifact in it is an external format, verified with its own tooling.</li>
+    <li><span class="tag designed">designed</span> <b>CAN and AUDIT slots:</b> specified in accountability-composition-01 §6.1 and §6.4; no CAN or AUDIT cases in <code>vectors/interop/composition/</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>.</li>
+    <li><span class="tag planned">planned</span> <b>A third attestor over the same action digest</b> (for example a measured reading of the outcome): a reserved stub, <code>vectors/interop/composition/pos-composition-third-attestor-STUB/</code> and <code>DESIGN-NOTE.md</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>.</li>
+  </ul>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> &mdash; the request, the three outcomes, caller invariance, the symmetric ask, retention commitments.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a> &mdash; two independent sealers, the four legs, exact amounts, derived payment and delivery states.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">draft-mih-sato-agent-accountability-composition-01</a> &mdash; CAN, WHO, WHAT and AUDIT composed by a shared action digest; assurance tiers; cross-slot conformance.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; each side's attestation of its part of an exchange, refusals across the boundary, and the three asymmetry dispositions (delivery_unconfirmed, counterparty_timeout, countersign_refused).</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record every half and every leg is.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the JSON bytes under the evidence request digest and under the action digest in the WHAT&times;WHO vector set.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8949">RFC 8949</a> &mdash; CBOR: the evidence request's CBOR binding, in deterministic encoding.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: registering a record so a party who trusts neither side can check it.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">action-state-group/agent-action-capsule</a> &mdash; the drafts' vectors, the <code>evidence-request</code> crate, settlement libraries.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-emit">action-state-group/capsule-emit</a> &mdash; settlement producer and verifier; bilateral handshake helpers.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules">Mesh-LLM/capsules</a> &mdash; the worked example: settlement legs and evidence requests in a Mesh-LLM plugin.</li>
+  </ul>
+
+  <h2><span class="n">7</span>What you need before the next step</h2>
+  <ul>
+    <li>A host event for each paid exchange that names both sides and carries what each wallet reported, so each side can seal its own legs.</li>
+    <li>A way for two parties to push sealed records to each other, and a channel to carry evidence requests and their answers.</li>
+    <li>A deterministic artifact for each (subject, anchor), so two askers can compare what they were given.</li>
+    <li>A place for the principal's authorization to live as its own signed record, joined to the agent's record by the action digest, rather than inside it.</li>
+    <li>An honest status per part: which records your host seals today, and which are designed only.</li>
+  </ul>
+
+  <footer class="pn"><a href="b6-personal-agents.html">&larr; Personal agents</a><a href="b8-checklist.html">The builder's checklist &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

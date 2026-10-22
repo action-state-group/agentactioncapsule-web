@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>b10 · Reporting: from a verified bundle to a page · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+/* page-local: keep the Meaning/Evidence column readable at phone width */
+@media (max-width:720px){
+  .tw table.t td:first-child{white-space:normal;overflow-wrap:anywhere;min-width:110px}
+  .tw table.t td:last-child{min-width:230px}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b9-judge.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b11-history-loop.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">b10 / 11</div>
+  <h1>Reporting: from a verified bundle to a page</h1>
+  <p class="seam"><b>Seams ④ Result to ⑤ View.</b> Build: a page drawn only after the bundle verifies. Conform to: <code>draft-mih-zhang-agent-disclosure-bundle-00</code>.</p>
+  <p class="lede">A report is a presentation of an evidence file for one reader. The page is drawn only after the file verifies, by a module the reader's viewer selects from declared manifests, in words that live outside the evidence, so rewording or translating a report never moves an evidence identifier.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+
+  <figure class="anim" data-steps="9"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="The evidence file. An Evidence Bundle (evidence-bundle/v2) holds the records, their signatures, a signed checkpoint, inclusion proofs and any disclosures. The builder verifies it, then scopes it to one audience before the page is built."
+    data-cap-2="Verify core. Each record's identity and signature, graph closure, interval coverage, membership in the checkpoint, every disclosure a match or withheld. A checkpoint whose signature this viewer did not check is listed as not checked, never as passed. The banner shows exactly one result: passed, failed, or unable to verify in this viewer. A failed bundle gets the refusal and the check list, and nothing else: no summary, no headline."
+    data-cap-3="Verified context. One verification run becomes one VerifiedBundleContext, frozen before any module sees it. A module can read it; an attempt to change the verdict or the resolved disclosures fails and changes nothing downstream."
+    data-cap-4="Registry. Each module declares a manifest: bundle kind, profiles, extensions it requires or forbids. Here one module requires composed/v1 and the other forbids it, so exactly one matches. Two specific modules that both match are a hard error, whatever their priority."
+    data-cap-5="Module. The selected module runs canRender, then buildModel (pure: no DOM, no network, no clock), then render into the page. It never verifies anything itself and never reads the raw bundle."
+    data-cap-6="Wording pack. Headings, labels and column names come from a separate JSON pack. The builder refuses a pack whose bytes do not hash to the wording_sha256 it was given, and a renderer that meets one falls back to the core's own labels. Presentation words are never sealed into a record."
+    data-cap-7="Common shell. A per-page Content-Security-Policy with connect-src 'none' and every script pinned by hash, so the page makes no request and runs no unpinned script. Three depth levels are designed, L0 what matters, L1 why, L2 verify; today one region holds all three. Detail opens with native details, which print."
+    data-cap-8="Packaging. Three contract formats: one offline .html file, a link whose data rides in the URL fragment, or embedded in a host page; plus a static rendering of the html page that runs no script and says it is not self-verifying. A packaging too large or not supported is reported, never truncated."
+    data-cap-9="Translate it. Swap the English pack for a French one: the page's words change, its wording_sha256 changes, and the bundle digest and every capsule_id stay exactly the same. Words a reader relies on as what someone said are bound in the record instead, as commitments.">
+    <svg viewBox="0 0 860 560" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">The presentation pipeline: evidence file, verify core, frozen context, registry, module, wording pack, shell, packagings</title>
+      <desc id="anim-d">A vertical pipeline read top to bottom, with notes on the right. Stage 1: the evidence file, an Evidence Bundle with records, signatures, checkpoint, inclusion proofs and disclosures. Stage 2: the verify core checks each record's identity and signature, graph closure, interval coverage, membership and disclosures; a side branch shows that a failed bundle stops at the refusal, and the banner has three states: passed, failed, unable to verify. Stage 3: the verified context, drawn with a lock, read-only for modules. Stage 4: the registry with two manifests; module A requires composed/v1 and matches, module B forbids composed/v1 and does not; a note says two specific matches are an error, never broken by priority. Stage 5: the module runs canRender, buildModel and render, and never verifies. Stage 6: a wording pack, pinned by its SHA-256 and not sealed, feeds the module from the side. Stage 7: the common shell with a no-network content security policy and the three depth levels L0, L1, L2, which are designed. Stage 8: three formats, offline html, fragment link and embedded, plus a static rendering that runs no script. Stage 9: the English wording pack is replaced by a French one; the page words and wording digest change while the bundle digest and capsule ids are unchanged.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+        <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B42318"/></marker>
+      </defs>
+
+      <!-- Step 1: evidence file -->
+      <g class="st" data-step="1">
+        <rect x="20" y="8" width="400" height="50" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="36" y="30" font-size="14" font-weight="600" fill="#0B0E14">1 · Evidence file <tspan class="mono" font-weight="400" font-size="12">evidence-bundle/v2</tspan></text>
+        <text x="36" y="48" font-size="12" fill="#5C6573">records · signatures · checkpoint · proofs · disclosures</text>
+        <text x="440" y="30" font-size="12" fill="#5C6573">scoped to one audience</text>
+        <text x="440" y="46" font-size="12" fill="#5C6573">before anything is drawn</text>
+      </g>
+
+      <!-- Step 2: verify core -->
+      <g class="st" data-step="2">
+        <line x1="220" y1="58" x2="220" y2="70" stroke="#3A5BD9" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="20" y="72" width="400" height="50" rx="10" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="36" y="94" font-size="14" font-weight="600" fill="#0B0E14">2 · Verify core</text>
+        <text x="36" y="112" font-size="12" fill="#5C6573">records · closure · coverage · membership · disclosures</text>
+        <line x1="420" y1="97" x2="456" y2="97" stroke="#B42318" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ahr)"/>
+        <rect x="460" y="76" width="380" height="42" rx="8" fill="#FDECEA" stroke="#B42318"/>
+        <text x="472" y="94" font-size="12" font-weight="600" fill="#B42318">failed → the refusal and the checks, nothing else</text>
+        <text x="472" y="110" font-size="11.5" class="mono" fill="#5C6573">banner: passed | failed | unable to verify</text>
+      </g>
+
+      <!-- Step 3: frozen context -->
+      <g class="st" data-step="3">
+        <line x1="220" y1="122" x2="220" y2="134" stroke="#3A5BD9" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="20" y="136" width="400" height="50" rx="10" fill="#fff" stroke="#127A52" stroke-width="1.5"/>
+        <rect x="36" y="153" width="14" height="11" rx="2" fill="#127A52"/>
+        <path d="M39,153 v-4 a4,4 0 0 1 8,0 v4" fill="none" stroke="#127A52" stroke-width="2"/>
+        <text x="58" y="158" font-size="14" font-weight="600" fill="#0B0E14">3 · Verified context <tspan class="mono" font-weight="400" font-size="12">(frozen)</tspan></text>
+        <text x="36" y="178" font-size="12" class="mono" fill="#5C6573">VerifiedBundleContext: one run, read-only</text>
+        <text x="440" y="158" font-size="12" fill="#127A52">a module cannot change the verdict</text>
+        <text x="440" y="174" font-size="12" fill="#5C6573">or the resolved disclosures</text>
+      </g>
+
+      <!-- Step 4: registry -->
+      <g class="st" data-step="4">
+        <line x1="220" y1="186" x2="220" y2="198" stroke="#3A5BD9" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="20" y="200" width="400" height="50" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="36" y="222" font-size="14" font-weight="600" fill="#0B0E14">4 · Registry: match the manifests</text>
+        <text x="36" y="240" font-size="12" fill="#5C6573">bundle kind · profiles · extensions required / forbidden</text>
+        <text x="440" y="218" font-size="12" class="mono" fill="#127A52">A requires composed/v1  ✓ match</text>
+        <text x="440" y="234" font-size="12" class="mono" fill="#5C6573">B forbids  composed/v1  ✗</text>
+        <text x="440" y="250" font-size="11.5" fill="#B42318">two specific matches = error, never a tie-break</text>
+      </g>
+
+      <!-- Step 5: module -->
+      <g class="st" data-step="5">
+        <line x1="220" y1="250" x2="220" y2="262" stroke="#3A5BD9" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="20" y="264" width="400" height="50" rx="10" fill="#fff" stroke="#3A5BD9"/>
+        <text x="36" y="286" font-size="14" font-weight="600" fill="#0B0E14">5 · Module A</text>
+        <text x="36" y="304" font-size="12" class="mono" fill="#5C6573">canRender → buildModel → render</text>
+        <text x="440" y="286" font-size="12" fill="#5C6573">model: pure, no network, no clock</text>
+        <text x="440" y="302" font-size="12" fill="#5C6573">never verifies, never reads the raw file</text>
+      </g>
+
+      <!-- Step 6: wording pack (EN), replaced at step 9 -->
+      <g class="st" data-step="6" data-until="8">
+        <rect x="460" y="320" width="380" height="46" rx="8" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="472" y="339" font-size="12.5" font-weight="600" fill="#0B0E14">6 · Wording pack <tspan class="mono" font-weight="400">locale "en"</tspan></text>
+        <text x="472" y="356" font-size="11.5" class="mono" fill="#9A5B00">wording_sha256 0a04a729… · never sealed</text>
+      </g>
+      <g class="st" data-step="6">
+        <line x1="460" y1="330" x2="380" y2="312" stroke="#9A5B00" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+      </g>
+
+      <!-- Step 7: shell -->
+      <g class="st" data-step="7">
+        <line x1="220" y1="314" x2="220" y2="326" stroke="#3A5BD9" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="20" y="328" width="400" height="86" rx="10" fill="#fff" stroke="#0B0E14"/>
+        <text x="36" y="350" font-size="14" font-weight="600" fill="#0B0E14">7 · Common shell</text>
+        <text x="36" y="368" font-size="11.5" class="mono" fill="#5C6573">CSP: connect-src 'none'; scripts pinned by hash</text>
+        <rect x="36" y="378" width="116" height="26" rx="5" fill="#EAEEFC"/>
+        <text x="94" y="395" text-anchor="middle" font-size="12" fill="#0B0E14">L0 what matters</text>
+        <rect x="160" y="378" width="104" height="26" rx="5" fill="#F4F4F0"/>
+        <text x="212" y="395" text-anchor="middle" font-size="12" fill="#0B0E14">L1 why</text>
+        <rect x="272" y="378" width="132" height="26" rx="5" fill="#E6F2EC"/>
+        <text x="338" y="395" text-anchor="middle" font-size="12" fill="#0B0E14">L2 verify</text>
+        <text x="440" y="390" font-size="12" fill="#5C6573">no request, no unpinned script;</text>
+        <text x="440" y="406" font-size="12" fill="#9A5B00">three regions: designed (one today)</text>
+      </g>
+
+      <!-- Step 8: packagings -->
+      <g class="st" data-step="8">
+        <line x1="220" y1="414" x2="220" y2="426" stroke="#3A5BD9" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="20" y="428" width="96" height="44" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="68" y="447" text-anchor="middle" font-size="12" font-weight="600" fill="#0B0E14">offline</text>
+        <text x="68" y="463" text-anchor="middle" font-size="11.5" class="mono" fill="#5C6573">.html</text>
+        <rect x="124" y="428" width="96" height="44" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="172" y="447" text-anchor="middle" font-size="12" font-weight="600" fill="#0B0E14">fragment</text>
+        <text x="172" y="463" text-anchor="middle" font-size="11.5" class="mono" fill="#5C6573">#token</text>
+        <rect x="228" y="428" width="96" height="44" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="276" y="447" text-anchor="middle" font-size="12" font-weight="600" fill="#0B0E14">embedded</text>
+        <text x="276" y="463" text-anchor="middle" font-size="11.5" class="mono" fill="#5C6573">mount()</text>
+        <rect x="332" y="428" width="88" height="44" rx="8" fill="#F4F4F0" stroke="#5C6573" stroke-dasharray="5 3"/>
+        <text x="376" y="447" text-anchor="middle" font-size="12" font-weight="600" fill="#0B0E14">static</text>
+        <text x="376" y="463" text-anchor="middle" font-size="11" fill="#5C6573">runs no script</text>
+        <text x="440" y="447" font-size="12" fill="#5C6573">same content, same verify state</text>
+        <text x="440" y="463" font-size="12" fill="#5C6573">for one (file, audience) pair</text>
+      </g>
+
+      <!-- Step 9: translate -->
+      <g class="st" data-step="9">
+        <rect x="460" y="320" width="380" height="46" rx="8" fill="#FBF1E1" stroke="#9A5B00" stroke-width="1.5"/>
+        <text x="472" y="339" font-size="12.5" font-weight="600" fill="#0B0E14">6 · Wording pack <tspan class="mono" font-weight="400">locale "fr"</tspan></text>
+        <text x="472" y="356" font-size="11.5" class="mono" fill="#9A5B00">new wording_sha256 · page words change</text>
+        <rect x="20" y="486" width="820" height="62" rx="10" fill="#fff" stroke="#127A52" stroke-width="1.5"/>
+        <text x="36" y="508" font-size="13" font-weight="600" fill="#127A52">✓ unchanged: bundle digest · every capsule_id · every disclosure digest</text>
+        <text x="36" y="528" font-size="12" fill="#5C6573">Presentation words live in the pack. Words a reader relies on as what someone said are</text>
+        <text x="36" y="543" font-size="12" fill="#5C6573">bound in a record as commitments, and shown only after the commitment recomputes.</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>Reporting turns one verified evidence file into a page for one reader: verification runs once, its result is frozen, and a registry picks the one presentation module whose declared manifest matches the file.</p>
+    <p>The module builds a model from verified content only and draws it into a common shell that makes no network request and prints, as an offline file, a fragment link, an embedded view or a static rendering that runs no script; three separate depth levels are designed.</p>
+    <p>Words split two ways: what someone said, saw or approved is bound in the record as a commitment, while headings and labels live in a hash-pinned wording pack, so the same evidence can be reworded or translated without a single evidence identifier moving.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> verify once, in the core, before any module is chosen; build one frozen <code>VerifiedBundleContext</code> that every module reads.</div>
+      <div class="not"><b>Rejected:</b> each view resolving the disclosures again from the raw file, where a view can read a payload the verifier classified as mismatched. (presentation contract v0 §2, §3.1; <a href="https://github.com/action-state-group/agent-action-capsule/pull/202">agent-action-capsule#202</a>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> modules are selected by declarative manifests; one module wins over another only through <code>forbids</code>; two specific modules that both match are an error, checked at registration and at resolution.</div>
+      <div class="not"><b>Rejected:</b> an if/else chain over payload types in the viewer, where adding a page shape means editing the viewer and precedence is never written down; and breaking ties by priority or registration order. (contract §4.3–§4.5 and Appendix A; <a href="https://github.com/action-state-group/agent-action-capsule/pull/207">#207</a>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> evidentiary words (a request, an approval sentence, displayed terms) are bound by one of three mechanisms: a digest with an out-of-band opening, a <code>sha256-jcs-nonce256</code> commitment, or a separately sealed text record.</div>
+      <div class="not"><b>Rejected:</b> clear-text labels, statuses and reasons inside a sealed payload: changing a heading would change the evidence's identifier, and producer prose would look like a checked result. The cited counter-example is the <code>report/v1</code> row model. (contract §7.1, §7.2)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> presentation words in a wording pack (<code>aac.wording-pack/v0</code>), one locale per pack, referenced by <code>wording_sha256</code> over its exact bytes; the builder refuses a pack that does not hash to it, and a renderer falls back to the core's own labels.</div>
+      <div class="not"><b>Rejected:</b> wording compiled into code, or carried in the manifest: a manifest carries no title, label or description, and an unknown member is an error. (contract §4.1, §7.3, §7.4; presentation builder v0 §2.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a bundle that fails gets the refusal and its check list and nothing else; a viewer that cannot compute SHA-256 says &ldquo;Unable to verify in this viewer&rdquo;, never &ldquo;failed&rdquo;.</div>
+      <div class="not"><b>Rejected:</b> a softened summary over a failed bundle, and drawing a missing browser capability as a failed check. (contract §8 I1; <a href="https://github.com/action-state-group/agent-action-capsule/pull/226">#226</a>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a per-page Content-Security-Policy: no connections, and every script and inserted stylesheet listed by its SHA-256, so a module script the builder did not pin does not run.</div>
+      <div class="not"><b>Rejected:</b> trusting a module because of its name or where it came from. The pin shows which code ran; it does not make the code correct. (contract §5.1, §9.2; <a href="https://github.com/action-state-group/agent-action-capsule/pull/203">#203</a>, <a href="https://github.com/action-state-group/agent-action-capsule/pull/214">#214</a>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a module declares its own <code>presentation_api</code> and <code>runtime_min</code>; a viewer that cannot honour them refuses the module and names it on the page.</div>
+      <div class="not"><b>Rejected:</b> silently rendering a fallback in its place. (contract §3.2, I8)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>Whether the file verified, before anything else is drawn; on failure, which checks failed.</li>
+      <li>Which module drew the page, and that its script is the one the builder pinned (CSP hash).</li>
+      <li>Every extension in the file, each with its integrity and whether this viewer interpreted it; an unknown one reads &ldquo;meaning not interpreted&rdquo;, never hidden.</li>
+      <li>Evidentiary words only after their commitment recomputes; without an opening, that the text is committed and not opened.</li>
+      <li>The same content and verify state in every packaging supported for one file and one audience.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That the records are true, or that an answer was right: that is judgment, kept on its own step (<a href="b9-judge.html">b9</a>).</li>
+      <li>That a module's layout is a fair reading of the evidence: the pin shows which code ran, not that it is correct.</li>
+      <li>Anything from the static page by itself: it runs no script and says it is not self-verifying.</li>
+      <li>Anything from a picture or a text summary of the same model: those are presentation, never something a reader can check.</li>
+      <li>Who holds a signing key in the real world.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>Two example manifests from the spec repository. Both match the same profile; one forbids the composition extension and the other requires it, so no bundle matches both. Neither carries a word of display text.</p>
+  <pre class="code"><code>{
+  "spec_version": "aac.presentation-manifest/v0",
+  "id": "org.example.unilateral/v0",
+  "presentation_api": "aac.presentation-api/v0",
+  "runtime_min": "0.1.0",
+  "trust_class": "trusted-executable",
+  "requires": {
+    "bundle_kind": "evidence-bundle/v2",
+    "profiles": ["spec_version:org.example.exchange/v0"]
+  },
+  "forbids": { "extensions": ["composed/v1"] },
+  "audiences": ["*"],
+  "formats": ["html", "fragment", "embedded"],
+  "fallback": false,
+  "priority": 1,
+  "executable": {
+    "carrier": "module-slot",
+    "script_sha256": "1f0e3dad99908345f7439f8ffabdffc41f0e3dad99908345f7439f8ffabdffc4"
+  }
+}</code></pre>
+  <p class="src">Source: <code>agent-action-capsule:schemas/examples/presentation-manifest-v0/example-unilateral.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>; its pair <code>example-composition-aware.json</code> has the same <code>requires</code> plus <code>"extensions": {"required": ["composed/v1"]}</code>.</p>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Name</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>id</td><td>string</td><td>The module id, <code>&lt;dotted name&gt;/v&lt;major&gt;</code>. The <code>aac.</code> prefix is reserved for modules the spec repository ships; anyone else uses their own name.</td></tr>
+      <tr><td>presentation_api</td><td>string</td><td>The module-to-runtime interface it is written against. A viewer that does not implement it refuses the module out loud.</td></tr>
+      <tr><td>runtime_min</td><td>MAJOR.MINOR.PATCH</td><td>The lowest runtime version it needs; versioned independently of the id and of the interface.</td></tr>
+      <tr><td>trust_class</td><td>enum</td><td><code>trusted-executable</code> (a pinned script) or <code>declarative</code> (fields and a wording pack, no code).</td></tr>
+      <tr><td>requires</td><td>object</td><td>Bundle kind (equality), profile tokens <code>&lt;key&gt;:&lt;value&gt;</code>, and extensions that must be engaged.</td></tr>
+      <tr><td>forbids</td><td>object</td><td>Profiles or extensions that must be absent: the only way one specific module excludes another.</td></tr>
+      <tr><td>audiences / formats</td><td>arrays</td><td>Who the page is for (<code>"*"</code> for all) and which packagings the module supports.</td></tr>
+      <tr><td>fallback / priority</td><td>bool / int</td><td><code>priority</code> only ranks a specific module above a fallback; it never settles a tie between two specific modules.</td></tr>
+      <tr><td>executable</td><td>object</td><td>Where the script lives (<code>module-slot</code>) and its <code>script_sha256</code>; the page's CSP lists that digest.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The words come from a separate pack whose exact bytes hash to the <code>wording_sha256</code> a declarative manifest names (<code>0a04a729bf29caecda23cae6b5faa320f8aabc495458e99180150059e63c3730</code> for this one):</p>
+  <pre class="code"><code>{ "wording_pack_version": "aac.wording-pack/v0",
+  "id": "org.example.rules-table.wording/v0",
+  "locale": "en",
+  "entries": {
+    "module.title": "Rules table",
+    "page.title": "Rules comparison",
+    "heading.l0": "What the comparison found",
+    "state.unknown": "Not established: no finding either way",
+    … } }</code></pre>
+  <p class="src">Source: <code>agent-action-capsule:schemas/examples/presentation-manifest-v0/example-wording-pack.json</code> and <code>example-declarative-rules.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code> (entries trimmed).</p>
+  <h3>The test of an open presentation layer</h3>
+  <p>An outside developer, with only the open pieces, writes a module such as <code>acme.monthly-risk-report/v1</code>: a manifest under their own name, a script pinned by its hash, a wording pack. The builder puts it in a page that verifies offline, and nobody has to add a case to the viewer for it. Today that path exists for a pinned script: capsule-viewer's builder tests build pages from <code>org.example.*</code> module-slot modules, and refuse one whose interface or runtime the page cannot honour. The declarative path (no code at all) is designed, not built.</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Piece</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>Verify core</td><td>live</td><td>agent-action-capsule <code>ts/src/bundle.ts</code>, <code>ts/src/verify.ts</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>; released in <code>@action-state-group/agent-action-capsule</code> 0.3.0 on npm (tag ts/v0.3.0, <code>40f1567fee15f677debdfb56c4c39ba884880dce</code>).</td></tr>
+      <tr><td>Frozen verified context</td><td>live</td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/202">#202</a>; <code>ts/test/verified-bundle-context.test.ts</code>; in ts 0.3.0.</td></tr>
+      <tr><td>&ldquo;Unable to verify&rdquo; distinct from failed</td><td>live</td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/226">#226</a>; <code>UNABLE_TO_VERIFY_LINES</code> in <code>ts/src/evidence-graph-view.ts</code>; in ts 0.3.0.</td></tr>
+      <tr><td>Extension rows: integrity + interpretation</td><td>live</td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/205">#205</a>; in ts 0.3.0. The Go, Python and Rust verifiers render no page and still report every extension uninterpreted (contract Appendix C.6).</td></tr>
+      <tr><td>Registry, ambiguity error, refusal</td><td>live</td><td>TypeScript <a href="https://github.com/action-state-group/agent-action-capsule/pull/207">#207</a> (<code>ts/src/presentation-registry.ts</code>, ts 0.3.0); Go <a href="https://github.com/action-state-group/agent-action-capsule/pull/217">#217</a> (<code>go/presentation/</code>, tag go/v0.10.0 <code>626074f631eb20454aef0b3a0f67320ddaf66119</code>); both run the shared <code>vectors/presentation-resolution/</code>.</td></tr>
+      <tr><td>Generic composition view</td><td>live</td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/208">#208</a> (<code>ts/src/composed-view.ts</code>); in ts 0.3.0.</td></tr>
+      <tr><td>Shell: slots, base CSS, per-page CSP</td><td>live</td><td>Built in <a href="https://github.com/action-state-group/agent-action-capsule/pull/203">#203</a> and <a href="https://github.com/action-state-group/agent-action-capsule/pull/214">#214</a>; moved to capsule-viewer (Apache-2.0 AND BSD-3-Clause) in capsule-viewer#33 and removed from the spec repository in <a href="https://github.com/action-state-group/agent-action-capsule/pull/302">#302</a>; released as <code>@action-state-group/capsule-viewer</code> 0.1.0 on npm (tag ts/v0.1.0, <code>5c9042578de2eccccf4a93b6d820945ce1208e2e</code>).</td></tr>
+      <tr><td>Builder: three formats + static rendering, availability, wording-pack hash check</td><td>live</td><td>Built in <a href="https://github.com/action-state-group/agent-action-capsule/pull/209">#209</a> and <a href="https://github.com/action-state-group/agent-action-capsule/pull/216">#216</a>; now capsule-viewer <code>ts/src/presentation-builder.ts</code> (<code>availablePackagings</code>, <code>checkWordingPack</code>) in capsule-viewer 0.1.0; fragment codec and <code>mount()</code> stay in the spec repository (<code>ts/src/presentation-fragment.ts</code>, <code>ts/src/presentation-mount.ts</code>).</td></tr>
+      <tr><td>Contract, manifest schema, examples</td><td>live (design spec)</td><td><code>spec/presentation-contract-v0.md</code> (<a href="https://github.com/action-state-group/agent-action-capsule/pull/206">#206</a>, revision 1 <a href="https://github.com/action-state-group/agent-action-capsule/pull/215">#215</a>), <code>schemas/presentation-manifest-v0.json</code> and its checker @ <code>2ef8aeb</code>. A design specification in the repository, not an Internet-Draft.</td></tr>
+      <tr><td>Module services</td><td>built: 3 of 8</td><td><code>details</code>, <code>badge</code>, <code>disclosure</code> are built; <code>section</code>, <code>citation</code>, <code>format.*</code>, <code>countersigner</code> and <code>wording</code> are designed, not built (contract Appendix C.9).</td></tr>
+      <tr><td>Separate L0 / L1 / L2 regions</td><td>designed</td><td>The reference runtime hands a module one element for all three today (contract Appendix C.10).</td></tr>
+      <tr><td>Declarative renderer (no-code modules)</td><td>designed</td><td>Not built: no declarative module can be rendered by the reference runtime today (contract Appendix C.9). The example manifests and pack exist as schema fixtures.</td></tr>
+      <tr><td>An outside developer's module</td><td>planned</td><td>The pinned-script path is exercised by capsule-viewer <code>ts/test/presentation-builder.test.ts</code> @ <code>204e07a87cae17886b87f1324a5040a4aec6b8bf</code> with <code>org.example.*</code> modules. No module from outside the repositories' authors was checked.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Design spec</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/presentation-contract-v0.md">Presentation Contract v0</a> &mdash; module interface, manifest, resolution, trust classes, text-binding rule, invariants, depth levels. In the agent-action-capsule repository; not an Internet-Draft.</li>
+    <li><span class="kind">Design spec</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/presentation-builder-v0.md">Presentation Builder v0</a> &mdash; the one builder, its three formats and the static rendering.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-00</a> &mdash; the Evidence Bundle being presented, what &ldquo;verified&rdquo; means for it, and its permalink codec.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the records inside the bundle and their <code>capsule_id</code>.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the form commitments and wording packs are hashed in.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">agent-action-capsule</a> &mdash; verify core, context, registry, built-in views, resolution vectors.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-viewer">capsule-viewer</a> &mdash; the shell and the builder.</li>
+  </ul>
+
+  <h2><span class="n">7</span>What you need before the next step</h2>
+  <ul>
+    <li>Reports that are drawn only from a verified, frozen context, and a failure path that shows the refusal and nothing else.</li>
+    <li>Your report types written as modules with manifests under your own name, selected by the registry, never by your code inspecting the file.</li>
+    <li>Every word a reader may rely on bound in a record; every other word in a hash-pinned wording pack outside the evidence.</li>
+    <li>A page that makes no request and runs only pinned scripts, so a reader can open it offline from an email or a folder.</li>
+    <li>Reports are reads over sealed records, not new evidence. The next step does the same over time: history, read back from the records and fed into the next decision.</li>
+  </ul>
+
+  <footer class="pn"><a href="b9-judge.html">&larr; Judging</a><a href="b11-history-loop.html">History feeds the next act &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

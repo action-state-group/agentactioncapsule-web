@@ -339,6 +339,14 @@ TOC = [
         ("log", "/docs/log.html", "The public log, live", "The public log, live",
          "Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records."),
     ]),
+    ("Explore the stack", "Explore the stack", [
+        ("map", "/map/", "Map of the stack", "The whole picture, from bytes to reports",
+         "One stack, read from the bottom up: how a single agent action becomes signed bytes, a record, a log entry, both sides' evidence, a judgment, a history and a report."),
+        ("explain", "/explain/", "Topic explainers", "Verifiable records for inference on a mesh of strangers",
+         "Sixteen short pages, one per topic: what it is, the design choices, what it shows and what it does not, one real example with its fields, and the specifications behind it."),
+        ("build", "/build/", "Build your own evidence layer", "Build your own evidence layer",
+         "For an agent builder or an agent-economy platform that wants signed records of what its agents did, kept so that any verifier can check them later, on any host."),
+    ]),
     ("Reference", "Reference", [
         ("specifications", "/docs/specifications.html", "Specifications", "Specifications",
          "Every Internet-Draft in the family, its current revision and status from the Datatracker, its test vectors, and the open-source code that implements it."),
@@ -477,6 +485,7 @@ def nav_html(active: str) -> str:
         a("log", ANCHOR_URL, "Transparency Log"),
         a("verify", VERIFY_URL, "Verifier"),
         a("docs", "/docs/", "Docs"),
+        a("map", "/map/", "Map"),
         f'      <a class="nav-ghost" href="{ORG_URL}">Source &#x2197;</a>',
         a("specifications", "/docs/specifications.html", "Specifications"),
         "    </div>",
