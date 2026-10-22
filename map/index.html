@@ -87,13 +87,13 @@
 <rect class="chip id" x="326.0" y="818" width="241.6" height="18" rx="4"/><text class="mono chipt" x="333.0" y="830.5">draft-mih-agent-settlement-records-00</text>
 </a>
 <path class="flow" d="M164 740 L164 706" marker-end="url(#ah)"/><text class="mono fl" x="174" y="724.0">both halves</text>
-<a class="node" href="#L-book" data-layer="book" aria-label="Evidencebook: The library that keeps the book on a node and exports it as an Evidence Bundle.">
+<a class="node" href="#L-book" data-layer="book" aria-label="The local evidence log: a producer's own append-only log of the records it seals, with signed checkpoints and proofs anyone can check offline.">
 <rect class="box" x="44" y="588" width="560" height="110" rx="10"/>
 <text class="mono num" x="60" y="611">07</text>
-<text class="ttl" x="86" y="611">Evidencebook</text>
+<text class="ttl" x="86" y="611">The local evidence log</text>
 <rect class="sc rel" x="481.6" y="598" width="106.4" height="17" rx="8.5"/><text class="sct rel" x="534.8" y="610" text-anchor="middle">library released</text>
-<text class="lab" x="60" y="632">The library that keeps the book on a node and exports it as an Evidence</text>
-<text class="lab" x="60" y="650">Bundle.</text>
+<text class="lab" x="60" y="632">A producer's own append-only log of the records it seals, with signed</text>
+<text class="lab" x="60" y="650">checkpoints and proofs anyone can check offline.</text>
 <rect class="chip id" x="60.0" y="664" width="217.0" height="18" rx="4"/><text class="mono chipt" x="67.0" y="676.5">draft-mih-agent-evidence-layer-00</text>
 </a>
 <path class="flow" d="M164 586 L164 552" marker-end="url(#ah)"/><text class="mono fl" x="174" y="570.0">the book</text>
@@ -295,17 +295,17 @@
 <p class="src">Status from explain/07, Specs; build/b7, section 5 Status: settlement-record legs, libraries and vectors built-not-live.</p>
 </article>
 <article class="layer" id="L-book">
-<h3><span class="mono n">07</span> Evidencebook</h3>
+<h3><span class="mono n">07</span> The local evidence log</h3>
 <p class="stl"><span class="stc rel">library released</span></p>
 <p>Keep every record you seal in an append-only log on your own disk, sign a checkpoint over it every N records or T minutes, and hand out a record with its inclusion proof and checkpoint so anyone can check it offline.</p>
-<p>evidencebook Go v0.5.0 and the Rust crate 0.0.6 are tagged releases; the mesh plugin does not build on it yet (planned).</p>
+<p>The reference implementation is checkpointed-local-log (CLL), in Python, Go, TypeScript and Rust; the latest crate tag is 0.3.1. In the Mesh-LLM plugin v0.1.4, capsule-emit 0.0.6 supplies the log wrapper; capsule-emit's main already builds its checkpoints on CLL directly.</p>
 <p class="lbl">Pages</p><ul class="pl">
-<li><a href="../build/b3-evidencebook.html">build b3 · The local evidence book</a></li>
+<li><a href="../build/b3-local-log.html">build b3 · The local evidence log</a></li>
 </ul>
 <p class="lbl">Specifications</p><ul class="specs">
 <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a></li>
 </ul>
-<p class="src">Status from build/b3, section 5 Status: evidencebook Go v0.5.0 and Rust crate 0.0.6, tagged live; the plugin on the evidencebook crate is planned. The chip is the draft b3 cites for what a book must supply (§8).</p>
+<p class="src">Status from build/b3, sections 1 and 5: CLL in four languages, latest crate tag 0.3.1; the Mesh-LLM plugin seals and checkpoints every exchange, live in v0.1.4. The chip is the draft b3 cites for what a book must supply (§8).</p>
 </article>
 <article class="layer" id="L-judge">
 <h3><span class="mono n">08</span> Judge + grades</h3>
