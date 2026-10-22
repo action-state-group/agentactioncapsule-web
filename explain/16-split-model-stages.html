@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16 · One model split across peers · explain</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+/* Page-local: status banner and status labels. */
+.banner{border:1px solid #E9CF9F;border-left:3px solid var(--warn);background:var(--warn-soft);border-radius:8px;padding:12px 16px;margin:0 0 22px;max-width:860px;font-size:15px}
+.banner b{color:var(--warn)}
+.banner p{margin-bottom:4px;max-width:none}
+.banner p:last-child{margin-bottom:0}
+.lbl{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:0 6px;border:1px solid var(--line);white-space:nowrap}
+.lbl.built{color:var(--accent);background:var(--accent-soft);border-color:#C9D3F5}
+.lbl.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+.lbl.planned{color:var(--muted);background:var(--paper-2)}
+table.t.status td:first-child{white-space:normal;font-family:var(--sans);font-size:13.5px}
+table.t.status td:nth-child(2){white-space:nowrap}
+table.t.status td:nth-child(3){font-family:var(--sans);font-size:13px;color:var(--ink);white-space:normal}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="15-evidence-report.html">&larr; Prev</a><a href="index.html">Contents</a><a href="index.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">16 / 16 · From the September deck</div>
+  <h1>One model split across peers</h1>
+  <p class="lede">When one model is split across several Mesh-LLM nodes, each node runs a slice of its layers. The same record pattern then applies one level down: each stage seals what crossed its hand-offs, and the coordinator's record of the request accounts for every stage.</p>
+
+  <div class="banner" role="note">
+    <p><b>Status: designed and built in the plugin, not running.</b> The <code>capsules</code> plugin (v0.1.4, and <code>main</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>) contains the stage record, the coordinator's receipt naming it and the requester's check, all tested against fixture events. No host emits the per-stage events the plugin would need: upstream Mesh-LLM <code>main</code> @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> broadcasts three host event channels to plugins (<code>openai.exchange.v1</code>, <code>payment.lifecycle.v1</code>, <code>routing.choice.v1</code>) and no stage channel. Nothing on this page has run on a live split.</p>
+  </div>
+
+  <figure class="anim" data-steps="7"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="A requester sends one request to a coordinator node. The coordinator is stage 0 and runs layers 0–15 itself; it assigns layers 16–31 to node B and 32–47 to node D. Layer ranges are the test vector's."
+    data-cap-2="Activations flow forward C → B → D. On each hop, the sender folds the bytes it wrote, and the receiver folds the bytes it read before parsing them, into one running SHA-256 digest per lane."
+    data-cap-3="Replies come back hop by hop (relayed), each hop folding its reply lane the same way. The answer reaches the requester through the coordinator."
+    data-cap-4="B and D each seal a stage record under their own key: their slice, the package id, and frame counts plus digests per hop and lane. No activations, token ids or text; token counts only. Each pushes its record to the coordinator over record-push/1. Neither is told who the requester is."
+    data-cap-5="The coordinator seals its main record: its own slice as stage 0, a receipt listing who was assigned what and whether each stage's record arrived (present, absent, not_requested, conflict), and one split_stage reference per remote stage to its own record of that stage exchange. It carries the stage records to the requester."
+    data-cap-6="The requester checks offline, without contacting any stage: on each hop, both ends' digests for each lane must be equal. Hop 0 forward 557e4f… = 557e4f…, hop 1 forward 292c1d… = 292c1d…, both reply lanes agree. Hand-offs agree; terminal_state completed."
+    data-cap-7="The one_byte_changed vector: one byte differs on hop 1's forward lane, so B's and D's digests differ and the hop reads break. A break says the two ends disagree about what crossed; it does not say which end is wrong, and it is not a finding that a slice was computed wrongly.">
+    <svg viewBox="0 0 860 420" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">A split request: each stage seals its hand-offs, the coordinator accounts for every stage, the requester compares the digests</title>
+      <desc id="anim-d">Four boxes in a row: a requester on the left, then the coordinator C (stage 0, layers 0 to 15), stage 1 on node B (layers 16 to 31) and stage 2 on node D (layers 32 to 47). Step 1: the requester sends one request to C, and C assigns the slices. Step 2: activation frames flow forward from C to B and from B to D; under each hop, both ends keep a running digest of the bytes that crossed it. Step 3: replies flow back hop by hop and the answer returns to the requester. Step 4: B and D each seal a stage record carrying their slice, the package id and per-hop frame counts and digests, with no activations or text, and push it to C over record-push/1; neither learns the requester. Step 5: C seals its main record with its own slice as stage 0, a receipt in which stage 1 and stage 2 are present, and two split_stage references to its own stage-exchange records, and carries the stage records to the requester. Step 6: the requester compares each hop's two digests: hop 0 forward 557e4f equals 557e4f, hop 1 forward 292c1d equals 292c1d, the reply lanes agree, so the hand-offs agree and the request completed. Step 7: in a second vector one byte differs on hop 1's forward lane; the two digests differ and that hop reads break, which shows a disagreement between B and D but not which one is wrong or whether any slice was computed correctly.</desc>
+
+      <!-- nodes: always visible -->
+      <g font-size="12">
+        <rect x="16" y="30" width="140" height="78" rx="9" fill="#fff" stroke="#0B0E14"/>
+        <text x="28" y="52" font-size="13" font-weight="600" fill="#0B0E14">Requester</text>
+        <text x="28" y="70" fill="#5C6573">sends one request,</text>
+        <text x="28" y="86" fill="#5C6573">gets one answer</text>
+
+        <rect x="200" y="30" width="172" height="78" rx="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="212" y="52" font-size="13" font-weight="600" fill="#0B0E14">Coordinator C</text>
+        <text x="212" y="70" fill="#0B0E14">stage 0 · its own slice</text>
+        <text x="212" y="88" class="mono" fill="#5C6573">layers 0–15</text>
+
+        <rect x="450" y="30" width="170" height="78" rx="9" fill="#fff" stroke="#3A5BD9"/>
+        <text x="462" y="52" font-size="13" font-weight="600" fill="#0B0E14">Stage 1 · node B</text>
+        <text x="462" y="70" fill="#5C6573">runs one slice</text>
+        <text x="462" y="88" class="mono" fill="#5C6573">layers 16–31</text>
+
+        <rect x="690" y="30" width="154" height="78" rx="9" fill="#fff" stroke="#3A5BD9"/>
+        <text x="702" y="52" font-size="13" font-weight="600" fill="#0B0E14">Stage 2 · node D</text>
+        <text x="702" y="70" fill="#5C6573">final slice</text>
+        <text x="702" y="88" class="mono" fill="#5C6573">layers 32–47</text>
+      </g>
+
+      <!-- step 1: request in, assignment -->
+      <g class="st" data-step="1">
+        <path d="M156 56 H194" stroke="#0B0E14" stroke-width="1.6" fill="none"/>
+        <polygon points="194,52 200,56 194,60" fill="#0B0E14"/>
+        <text x="200" y="22" font-size="11" fill="#5C6573">assigns slices: C 0–15 · B 16–31 · D 32–47</text>
+      </g>
+
+      <!-- step 2: forward frames with folds -->
+      <g class="st" data-step="2">
+        <path d="M372 56 H444" stroke="#3A5BD9" stroke-width="1.8" fill="none"/>
+        <polygon points="444,52 450,56 444,60" fill="#3A5BD9"/>
+        <path d="M620 56 H684" stroke="#3A5BD9" stroke-width="1.8" fill="none"/>
+        <polygon points="684,52 690,56 684,60" fill="#3A5BD9"/>
+        <text x="411" y="48" text-anchor="middle" font-size="11" fill="#3A5BD9">hop 0</text>
+        <text x="655" y="48" text-anchor="middle" font-size="11" fill="#3A5BD9">hop 1</text>
+        <text x="300" y="134" font-size="11" fill="#5C6573">forward lane: each end folds the frame bytes</text>
+        <text x="300" y="148" font-size="11" fill="#5C6573">as written / as read, before any parse</text>
+      </g>
+
+      <!-- step 3: replies back -->
+      <g class="st" data-step="3">
+        <path d="M450 84 H378" stroke="#127A52" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+        <polygon points="378,80 372,84 378,88" fill="#127A52"/>
+        <path d="M690 84 H626" stroke="#127A52" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+        <polygon points="626,80 620,84 626,88" fill="#127A52"/>
+        <path d="M200 90 H162" stroke="#127A52" stroke-width="1.6" stroke-dasharray="4 3" fill="none"/>
+        <polygon points="162,86 156,90 162,94" fill="#127A52"/>
+        <text x="16" y="124" font-size="11" fill="#127A52">answer</text>
+        <text x="560" y="134" font-size="11" fill="#127A52">reply lane: relayed hop by hop,</text>
+        <text x="560" y="148" font-size="11" fill="#127A52">folded the same way</text>
+      </g>
+
+      <!-- step 4: stage records sealed and pushed -->
+      <g class="st" data-step="4">
+        <rect x="450" y="172" width="170" height="104" rx="9" fill="#fff" stroke="#127A52"/>
+        <text x="462" y="190" font-size="12" font-weight="600" fill="#0B0E14">stage record · B</text>
+        <text x="462" y="207" class="mono" font-size="11" fill="#0B0E14">stage · index 1</text>
+        <text x="462" y="222" class="mono" font-size="11" fill="#0B0E14">up.recv 557e4f… (4)</text>
+        <text x="462" y="237" class="mono" font-size="11" fill="#0B0E14">down.sent 292c1d… (4)</text>
+        <text x="462" y="252" class="mono" font-size="11" fill="#5C6573">+ reply lanes</text>
+        <text x="462" y="268" class="mono" font-size="11" fill="#127A52">key e74b97…</text>
+
+        <rect x="690" y="172" width="154" height="104" rx="9" fill="#fff" stroke="#127A52"/>
+        <text x="702" y="190" font-size="12" font-weight="600" fill="#0B0E14">stage record · D</text>
+        <text x="702" y="207" class="mono" font-size="11" fill="#0B0E14">stage · index 2</text>
+        <text x="702" y="222" class="mono" font-size="11" fill="#0B0E14">up.recv 292c1d… (4)</text>
+        <text x="702" y="237" class="mono" font-size="11" fill="#5C6573">no downstream</text>
+        <text x="702" y="252" class="mono" font-size="11" fill="#5C6573">+ reply lane</text>
+        <text x="702" y="268" class="mono" font-size="11" fill="#127A52">key 57a88d…</text>
+
+        <path d="M450 230 C 425 230, 418 200, 404 196" stroke="#127A52" stroke-width="1.4" fill="none"/>
+        <polygon points="408,191 400,195 408,200" fill="#127A52"/>
+        <path d="M690 280 C 600 292, 440 292, 404 252" stroke="#127A52" stroke-width="1.4" fill="none"/>
+        <polygon points="401,259 402,249 409,255" fill="#127A52"/>
+        <text x="560" y="306" font-size="11" fill="#127A52">record-push/1 to the coordinator</text>
+      </g>
+
+      <!-- step 5: coordinator main record -->
+      <g class="st" data-step="5">
+        <rect x="200" y="172" width="200" height="104" rx="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="212" y="190" font-size="12" font-weight="600" fill="#0B0E14">main record · C</text>
+        <text x="212" y="207" class="mono" font-size="11" fill="#0B0E14">own slice: stage 0</text>
+        <text x="212" y="222" class="mono" font-size="11" fill="#0B0E14">receipt: stage 1 present</text>
+        <text x="268" y="237" class="mono" font-size="11" fill="#0B0E14">stage 2 present</text>
+        <text x="212" y="252" class="mono" font-size="11" fill="#0B0E14">refs: split_stage ×2</text>
+        <text x="212" y="268" class="mono" font-size="11" fill="#5C6573">deadline 2000 ms</text>
+        <path d="M200 236 C 150 236, 110 230, 86 210" stroke="#3A5BD9" stroke-width="1.4" fill="none"/>
+        <polygon points="82,216 84,205 91,212" fill="#3A5BD9"/>
+        <text x="16" y="186" font-size="11" fill="#3A5BD9">main record +</text>
+        <text x="16" y="200" font-size="11" fill="#3A5BD9">stage records</text>
+      </g>
+
+      <!-- step 6 (until 6): offline check, all agree -->
+      <g class="st" data-step="6" data-until="6">
+        <rect x="16" y="318" width="828" height="92" rx="10" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="30" y="338" font-size="12" font-weight="600" fill="#0B0E14">Requester's offline check, per hop, per lane</text>
+        <text x="30" y="358" class="mono" font-size="11.5" fill="#127A52">hop 0 forward  C wrote 557e4f… = B read 557e4f…  agree ✓    reply  dee44c… = dee44c…  agree ✓</text>
+        <text x="30" y="376" class="mono" font-size="11.5" fill="#127A52">hop 1 forward  B wrote 292c1d… = D read 292c1d…  agree ✓    reply  b6eb86… = b6eb86…  agree ✓</text>
+        <text x="30" y="398" font-size="12" fill="#0B0E14">hand-offs agree ✓ · terminal_state completed · C's own slice gets no ✓ (it would compare C with itself)</text>
+      </g>
+
+      <!-- step 7: one byte changed on hop 1 forward -->
+      <g class="st" data-step="7">
+        <rect x="16" y="318" width="828" height="92" rx="10" fill="#FDECEA" stroke="#B42318"/>
+        <text x="30" y="338" font-size="12" font-weight="600" fill="#0B0E14">Vector one_byte_changed: one byte differs on hop 1's forward lane</text>
+        <text x="30" y="358" class="mono" font-size="11.5" fill="#127A52">hop 0 forward  agree ✓    reply  agree ✓</text>
+        <text x="30" y="376" class="mono" font-size="11.5" fill="#B42318">hop 1 forward  B's digest ≠ D's digest  break ✗    reply  agree ✓</text>
+        <text x="30" y="398" font-size="12" fill="#0B0E14">hand-offs do not agree · stage cells B and D still ok · which end is wrong is not shown</text>
+        <path d="M620 64 H684" stroke="#B42318" stroke-width="3" fill="none"/>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>Mesh-LLM can split one model across several nodes: a coordinator runs the opening slice of layers and hands activations on to other nodes, each running the next slice.</p>
+    <p>The stage-record design turns each coordinator-to-stage pair into an exchange of its own: each stage seals a record of its slice and of the exact bytes that crossed its hand-offs, as digests, and the coordinator's record of the request cites its own record of each stage exchange and names each stage's record by digest in its receipt.</p>
+    <p>A requester holding those records can check, offline and without contacting any stage, whether both ends of every hand-off committed to the same bytes, and see a missing record as a gap rather than as agreement.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> nested exchanges: each coordinator-to-stage pair is an ordinary two-sided exchange; the coordinator's main record cites its own record of each stage exchange (<code>split_stage</code>), and its receipt names each stage's record by digest.</div>
+      <div class="not"><b>Rejected:</b> a new composite record kind holding the whole split; sequence numbers, chaining, record push and pairwise citation would all have to be rebuilt. (capsules design, §5 and Q-D1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> hash the frame bytes as the sender wrote them and as the receiver read them off the stream, before any parse.</div>
+      <div class="not"><b>Rejected:</b> hashing the parsed message or the tensors; the host's codec decodes each activation on read and re-encodes it, so the parsed message is not the bytes that crossed the hop. (capsules design, §2.5)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> each lane's running digest starts from the coordinator, run, request, hop index and lane (forward, reply, direct return).</div>
+      <div class="not"><b>Rejected:</b> a plain hash over the frames; a record from one hop could then be replayed as another hop's, and forward and reply frames could be mixed. (capsules design, §4.2; vector <code>replayed_at_other_hop_index</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a stage record that did not arrive, or a required lane empty on both ends, reads <code>gap</code>; the request's <code>terminal_state</code> is always shown beside the hand-offs.</div>
+      <div class="not"><b>Rejected:</b> reading absence or two empty lanes as agreement, or agreement as completion; a request that stopped early can have both neighbours agree on a truncated stream. (capsules design, §7.2; vector <code>stopped_early_agrees_on_truncated_stream</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> stages are never told the end requester, and the record leaves out the session id.</div>
+      <div class="not"><b>Rejected:</b> carrying the session id, which stays stable across a session and would link one party's requests over time in any record shown to others. (capsules design, §4.3 and Q-D4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the host emits one event per stage per request, best-effort, and serving never waits on it; with no plugin declaring the channel, nothing is hashed.</div>
+      <div class="not"><b>Rejected:</b> the plugin tapping the stage stream itself; split serving has no per-request hook, and the digest must sit below the codec's parse, which only the host can reach. (capsules design, §8)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>Which signing key claims which slice of the request: layer range and package id, per request, signed.</li>
+      <li>For each hop and lane, whether both ends committed to the same bytes: <code>agree</code>, <code>break</code>, <code>gap</code>, <code>malformed</code> or <code>not_applicable</code>.</li>
+      <li>One end misreporting, or a hand-off altered in transit, as a <code>break</code> on that hop, without disclosing any activation.</li>
+      <li>A withheld or late stage record as <code>absent</code> and a <code>gap</code>, never as agreement.</li>
+      <li>Whether the coordinator's assignment and the stage's own record name the same slice (<code>disagrees</code> when they do not).</li>
+      <li>Two different records sealed for one stage of one request, as <code>conflict</code>.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That any stage computed its slice correctly; equal digests show both ends saw the same bytes, not that the output is the right function of the input.</li>
+      <li>Collusion: two neighbouring stages can report matching digests for anything, and a stage that alters its own output and reports it consistently is not caught.</li>
+      <li>That the stages are independent: a coordinator can place every stage on keys it controls.</li>
+      <li>That a stage loaded the weights it names; no per-slice weights digest exists, so package id and layer range are a signed claim.</li>
+      <li>Which end is wrong in a <code>break</code>.</li>
+      <li>Who operates a stage's key; the requester's check does not yet link a stage key to the assigned node.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>Stage 1's record from the plugin's split-stage fixture, three stages, replies relayed (other envelope fields, the signature, the nonce and the assurance and disposition blocks trimmed). Its <code>upstream.received</code> digest equals the coordinator's <code>downstream.sent</code>, and its <code>downstream.sent</code> equals stage 2's <code>upstream.received</code>: the two forward hand-offs agree.</p>
+  <pre class="code"><code>{
+  "capsule_id": "ee550164e1c49cf5ba0f91ce1b5acc98d7d41a10c343639d88085ca83243b9cd",
+  "spec_version": "draft-mih-scitt-agent-action-capsule-05",
+  "canonicalization_id": "jcs",
+  "action_id": "mesh-poc/split-stage/stage/node-coordinator-c/mesh-split-1790000000000000000-g2/18446744073709551615/1",
+  "model_attestation": {
+    "model_id": "n/a-split-stage",
+    "provider": "mesh-llm",
+    "compute_attestation": {
+      "x-mesh-poc-v1": { "role": "stage" },
+      "x-mesh-stage-v1": {
+        "v": 1,
+        "side": "stage",
+        "coordinator_node_id": "node-coordinator-c",
+        "run_id": "mesh-split-1790000000000000000-g2",
+        "request_id": "18446744073709551615",
+        "topology_hash": "topology-hash-0001",
+        "stage_index": 1,
+        "stage_count": 3,
+        "layer_start": 16,
+        "layer_end": 32,
+        "package_id": "sha256:abab…abab",
+        "manifest_sha256": "cdcd…cdcd",
+        "source_model_sha256": "efef…efef",
+        "return_mode": "relayed",
+        "upstream": {
+          "received":     { "frames": 4, "digest": "sha256:557e4faf6e4fb73578f5715bb0a7a71b659adb949699d5e0d71702162c3db6d3" },
+          "replies_sent": { "frames": 3, "digest": "sha256:dee44caeb95e4142b5bc09274cd08252bc5025dfde02842eda5af77e93a85c44" }
+        },
+        "downstream": {
+          "sent":             { "frames": 4, "digest": "sha256:292c1d551a824014fbca8353a8ed0dd417286036d3fe7bc27ac97dac81774e51" },
+          "replies_received": { "frames": 3, "digest": "sha256:b6eb868e31e55d57db915c87158b2b86aece54321a0b3cb306a774581d557161" }
+        },
+        "direct_return": null,
+        "tokens": { "prefill_received": 12, "decode": 4 },
+        "terminal_state": "completed"
+      }
+    }
+  },
+  …
+  "key_id": "e74b97f06c437c8056392be8ab7b7da541a89d69d1871d8b4665513ec6f0d231"
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>x-mesh-poc-v1.role</td><td>string</td><td><code>stage</code>: a record of a coordinator-to-stage exchange; a reader that does not know it reads <code>unknown</code>, never <code>served</code>.</td></tr>
+      <tr><td>side</td><td>string</td><td><code>stage</code> for the stage's own record, <code>coordinator</code> for the coordinator's side and its own slice.</td></tr>
+      <tr><td>coordinator_node_id, run_id, request_id</td><td>string</td><td>The split key; the coordinator id is included because the coordinator mints the run id and nobody checks it. request_id is a decimal string so a u64 survives every JSON reader.</td></tr>
+      <tr><td>stage_index, stage_count</td><td>integer</td><td>This slice's place in the chain; stage 0 is always the coordinator.</td></tr>
+      <tr><td>layer_start, layer_end</td><td>integer</td><td>The slice; <code>layer_end</code> is exclusive, so this is layers 16–31.</td></tr>
+      <tr><td>package_id, manifest_sha256, source_model_sha256</td><td>string</td><td>The model package, its manifest and the source model the stage says it loaded; all package-wide, none per slice (fixture values here).</td></tr>
+      <tr><td>return_mode</td><td>string</td><td><code>relayed</code> (replies hop by hop) or <code>direct</code> (the final stage returns to stage 0); decides which lanes must be non-empty.</td></tr>
+      <tr><td>upstream / downstream</td><td>object</td><td>Per hop, per lane: frame count and running digest of the bytes this stage read or wrote. Stage 0 has no upstream; the final stage has no downstream.</td></tr>
+      <tr><td>tokens.prefill_received</td><td>integer</td><td>Tokens received for prefill, including any restored from cache; counts, never content.</td></tr>
+      <tr><td>terminal_state</td><td>string</td><td>How the request ended at this stage; shown beside the hand-offs, since agreement is not completion.</td></tr>
+      <tr><td>key_id</td><td>hex</td><td>The stage's own signing key; stage 2's record is signed by a different key (<code>57a88de9…</code>).</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>Mesh-LLM/capsules:vectors/split-stage/rust-split-bundle.json</code> (key <code>split_stage_records[0]</code>) @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>; the break case: <code>vectors/split-stage/hop-cases.json</code>, case <code>one_byte_changed</code>, same SHA. The fixture is sealed by the plugin's own generator test, not taken from a live run.</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <div class="tw"><table class="t status">
+    <thead><tr><th>Piece</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>Stage record shape and the hop digest</td><td><span class="lbl built">built, not live</span></td><td><code>crates/evidence-plugin/src/producer/stage.rs</code>; byte layout pinned in <code>vectors/split-stage/fold-vectors.json</code>. Mesh-LLM/capsules @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>, also in v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>).</td></tr>
+      <tr><td>Stage seals and pushes to the coordinator; coordinator waits (2000 ms default), seals the receipt and <code>split_stage</code> references, carries the stage records to the requester</td><td><span class="lbl built">built, not live</span></td><td><code>crates/evidence-plugin/src/split_stage.rs</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>, fed by fixture events; its header reads "No host emits <code>skippy.stage.v1</code> yet", and the channel is not declared in the plugin's manifest.</td></tr>
+      <tr><td>The requester's hop check (agree, gap, break, malformed, not_applicable)</td><td><span class="lbl built">built, not live</span></td><td><code>crates/evidence-plugin/src/producer/stage_verify.rs</code> and the 16 cases in <code>vectors/split-stage/hop-cases.json</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>.</td></tr>
+      <tr><td>Console stage strip and the "served you through a split" Peers group</td><td><span class="lbl built">built, not live</span></td><td><code>web-ui/src/features/capsules/components/StageStrip.tsx</code> and <code>LedgerPeersTable.tsx</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>; unit-tested against the split-stage vectors only: no pane serves split rows yet (<code>web-ui/src/features/capsules/api/sidecarTypes.ts</code>, design &sect;12.2).</td></tr>
+      <tr><td>Nesting parent and child rows, role filter chips</td><td><span class="lbl designed">designed, not built</span></td><td><code>docs/DESIGN-split-stage-records.md</code> §12.2 @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>.</td></tr>
+      <tr><td>Host event <code>skippy.stage.v1</code>, one per stage per request</td><td><span class="lbl planned">planned</span></td><td>Listed as "proposed" in the capsules README's host-changes table @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>. Upstream <code>Mesh-LLM/mesh-llm</code> <code>main</code> @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code>: the callers of <code>broadcast_channel_message</code> in <code>mesh/crates/mesh-llm-host-runtime/src/</code> send <code>openai.exchange.v1</code> (<code>plugin/openai_exchange.rs</code>), <code>payment.lifecycle.v1</code> (<code>network/payments/lifecycle.rs</code>) and <code>routing.choice.v1</code> (<code>network/peer_blocks.rs</code>); none sends a stage channel. (Upstream already uses the name <code>skippy.stage.v1</code> for its stage wire protocol's protobuf package; that is not a plugin channel.)</td></tr>
+      <tr><td>Per-request salt for the digests</td><td><span class="lbl designed">designed, not built</span></td><td>Design §4.4 and §8 part B; v0 hashes a zero-length salt (§12), so stage records stay with the coordinator and the requester.</td></tr>
+      <tr><td>A referee re-running one stage's slice as a spot check</td><td><span class="lbl planned">planned</span></td><td>Design §9: would compare decoded tensors within a stated tolerance, not digests.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <p>No Internet-Draft defines stage records yet; the record shape and the hop digest are the plugin's design document. The record itself is an ordinary capsule under these specs.</p>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record each stage seals; <code>references[]</code> with <code>citation_purpose</code> (<code>counterparty_half</code> is defined there; <code>split_stage</code> is the plugin's provisional value); extension points live in the capsule JSON (§Extensibility), where the <code>x-mesh-stage-v1</code> block sits.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; related: each party records only its own side of a cross-party exchange; the coordinator's stage-exchange record cites the stage's own record with <code>counterparty_half</code> (one way; the stage does not cite back), without this draft's acknowledgment step.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the local log each record is appended to, and the checkpoint and inclusion proof a pushed bundle carries.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE; each record's signature is a COSE_Sign1.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme (JCS), the canonical form under each capsule_id.</li>
+    <li><span class="kind">Design</span> <a href="https://github.com/Mesh-LLM/capsules/blob/efcada74026a2e18b9e62d77432888a31bbe9de4/docs/DESIGN-split-stage-records.md">Mesh-LLM/capsules: DESIGN-split-stage-records.md</a> &mdash; the stage record, the hop digest, delivery, the console and the host ask.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules">Mesh-LLM/capsules</a> &mdash; the plugin, its split-stage code and vectors.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm">Mesh-LLM/mesh-llm</a> &mdash; the host and its split runtime; the per-stage event would be added here.</li>
+  </ul>
+
+  <footer class="pn"><a href="15-evidence-report.html">&larr; The evidence report</a><a href="index.html">Contents &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13 · Every capsule type · explain</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+/* Page-local: the status table and its badges. */
+.types{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:6px 0 14px;background:#fff}
+.types table{border-collapse:collapse;width:100%;font-size:13.5px}
+.types th,.types td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.types thead th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--paper-2)}
+.types tr:last-child td{border-bottom:none}
+.types td:first-child{font-weight:600;min-width:150px}
+.types td:first-child code{font-weight:400}
+.types .ev{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.badge{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.03em;border-radius:4px;padding:0 6px;margin:0 4px 3px 0;white-space:nowrap;border:1px solid}
+.badge.live{color:var(--verify);background:var(--verify-soft);border-color:#A9D3BF}
+.badge.opt{color:var(--accent);background:var(--accent-soft);border-color:#C3CEF4}
+.badge.built{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+.badge.notcap{color:var(--muted);background:var(--paper-2);border-color:var(--line)}
+.legend{font-size:13.5px;color:var(--muted);margin-bottom:10px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="12-vantage-points.html">&larr; Prev</a><a href="index.html">Contents</a><a href="14-verdict-and-history.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">13 / 16 · From the September deck</div>
+  <h1>Every capsule type the plugin seals</h1>
+  <p class="lede">The Mesh-LLM <code>capsules</code> plugin (release v0.1.4) seals more than one kind of record. Here is each kind, one line each, with its status read from the plugin source at a fixed commit. One exchange alone accounts for six of them.</p>
+
+  <figure class="anim" data-steps="7"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="Node R asks node P for an answer over the mesh. Each side seals its own exchange half: R's record says requested, P's says served. Both carry the request and response digests, never the text, and each chains onto its own node's previous record."
+    data-cap-2="Before it cuts a checkpoint, P pads its log to a multiple of 32 entries (the default), so two checkpoints reveal its record count only to within 32. Then it signs a checkpoint of its Merkle log: every 5 minutes or 100 records by default, and on demand when a record is about to be pushed. Neither the padding nor the checkpoint is a capsule."
+    data-cap-3="With record push on (off by default), P sends R its served half as a bundle: the record, an inclusion proof, and the checkpoint the record sits under."
+    data-cap-4="R checks the sender's key, the signature, the claims and the proof. It keeps P's half in a separate held store, never in its own chain, and seals record 3: its own capsule citing P's half by digest (counterparty_half)."
+    data-cap-5="R seals record 4, a later capsule citing the inclusion proof and the checkpoint it verified (counterparty_inclusion). Later evidence goes in a later record; record 3 is never edited."
+    data-cap-6="Records 5 and 6 are the same two citations, sealed by P for R's half, once R pushes it and P knows R's key. In v0.1.4 a client node's id is new on every start, so no key can be set for it: P refuses each such push and sends back a signed refusal, and the nightly two-node run on stock mesh-llm 0.78.0 checks that every one was refused."
+    data-cap-7="Six capsules for one exchange when both sides push and each knows the other's key: three in each node's chain. The other kinds in the table below come from other events: stop routing, verdicts, refusals, settlement, split stages, owner cleanup.">
+    <svg viewBox="0 0 860 450" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">One exchange producing six capsules across two nodes</title>
+      <desc id="anim-d">Two Mesh-LLM nodes running the capsules plugin: requester R on the left, provider P on the right, each with its own chain of records. Stage 1: R sends a request and P answers; R seals record 1, its exchange half with role requested, and P seals record 2, its exchange half with role served; both carry digests, not text. Stage 2: P pads its log to a multiple of 32 entries and signs a checkpoint; neither is a capsule. Stage 3: with record push on, which is off by default, P sends R a bundle holding record 2, an inclusion proof and the checkpoint. Stage 4: R checks the bundle, keeps P's half in a separate held store, and seals record 3, a received-half citation that cites record 2 by digest. Stage 5: R seals record 4, an inclusion citation that cites the proof and the checkpoint. Stage 6: R pushes its own half the same way and P would seal records 5 and 6, the same two citations; in v0.1.4 a client node's key cannot be configured, so P sends a signed refusal instead, as the nightly two-node run checks. Stage 7: a summary line: six capsules for one exchange, three in each chain; checkpoints and padding are log entries, not capsules.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+        <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
+        <marker id="ahw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A5B00"/></marker>
+      </defs>
+
+      <!-- Nodes (always visible) -->
+      <rect x="20" y="10" width="280" height="44" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="160" y="30" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node R · requester</text>
+      <text x="160" y="46" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">capsules plugin · its own chain</text>
+      <rect x="560" y="10" width="280" height="44" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="700" y="30" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node P · provider</text>
+      <text x="700" y="46" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">capsules plugin · its own chain</text>
+
+      <!-- Step 1: the exchange, and each side's own half -->
+      <g class="st" data-step="1">
+        <line x1="302" y1="24" x2="556" y2="24" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+        <line x1="558" y1="42" x2="304" y2="42" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+        <text x="430" y="18" text-anchor="middle" font-size="12" fill="#3A5BD9">request (mesh)</text>
+        <text x="430" y="58" text-anchor="middle" font-size="12" fill="#3A5BD9">answer</text>
+        <rect x="30" y="70" width="260" height="44" rx="7" fill="#fff" stroke="#0B0E14"/>
+        <text x="40" y="88" font-size="12" font-weight="600" fill="#0B0E14">1 · exchange half (requested)</text>
+        <text x="40" y="105" font-size="11.5" class="mono" fill="#5C6573">request · response digests</text>
+        <rect x="570" y="70" width="260" height="44" rx="7" fill="#fff" stroke="#0B0E14"/>
+        <text x="580" y="88" font-size="12" font-weight="600" fill="#0B0E14">2 · exchange half (served)</text>
+        <text x="580" y="105" font-size="11.5" class="mono" fill="#5C6573">request · response digests</text>
+      </g>
+
+      <!-- Step 2: padding and a checkpoint on P (not capsules) -->
+      <g class="st" data-step="2">
+        <line x1="700" y1="114" x2="700" y2="124" stroke="#5C6573"/>
+        <rect x="570" y="124" width="260" height="44" rx="7" fill="#F4F4F0" stroke="#5C6573" stroke-dasharray="4 3"/>
+        <text x="580" y="142" font-size="12" fill="#0B0E14">pad to 32, then sign a checkpoint</text>
+        <text x="580" y="159" font-size="11.5" fill="#5C6573">log entries, not capsules</text>
+      </g>
+
+      <!-- Step 3: P pushes its half with proof and checkpoint -->
+      <g class="st" data-step="3">
+        <line x1="558" y1="196" x2="304" y2="196" stroke="#127A52" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ahv)"/>
+        <text x="430" y="188" text-anchor="middle" font-size="12" class="mono" fill="#127A52">record-push/1 (off by default)</text>
+        <text x="430" y="213" text-anchor="middle" font-size="12" fill="#127A52">half 2 + inclusion proof</text>
+        <text x="430" y="228" text-anchor="middle" font-size="12" fill="#127A52">+ checkpoint</text>
+      </g>
+
+      <!-- Step 4: R's received-half citation -->
+      <g class="st" data-step="4">
+        <line x1="160" y1="114" x2="160" y2="178" stroke="#5C6573"/>
+        <text x="168" y="150" font-size="11" class="mono" fill="#5C6573">follows</text>
+        <rect x="30" y="178" width="260" height="44" rx="7" fill="#fff" stroke="#127A52"/>
+        <text x="40" y="196" font-size="12" font-weight="600" fill="#0B0E14">3 · received-half citation</text>
+        <text x="40" y="213" font-size="11.5" class="mono" fill="#5C6573">cites half 2 by digest</text>
+      </g>
+
+      <!-- Step 5: R's inclusion citation -->
+      <g class="st" data-step="5">
+        <line x1="160" y1="222" x2="160" y2="236" stroke="#5C6573"/>
+        <rect x="30" y="236" width="260" height="44" rx="7" fill="#fff" stroke="#127A52"/>
+        <text x="40" y="254" font-size="12" font-weight="600" fill="#0B0E14">4 · inclusion citation</text>
+        <text x="40" y="271" font-size="11.5" class="mono" fill="#5C6573">cites the proof + checkpoint</text>
+      </g>
+
+      <!-- Step 6: the same two citations on P, for R's half -->
+      <g class="st" data-step="6">
+        <line x1="302" y1="300" x2="556" y2="300" stroke="#9A5B00" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ahw)"/>
+        <text x="430" y="292" text-anchor="middle" font-size="12" fill="#9A5B00">half 1, pushed the same way</text>
+        <text x="430" y="317" text-anchor="middle" font-size="12" fill="#9A5B00">P needs R's key</text>
+        <line x1="700" y1="168" x2="700" y2="282" stroke="#5C6573" stroke-dasharray="3 3"/>
+        <rect x="570" y="282" width="260" height="44" rx="7" fill="#fff" stroke="#9A5B00" stroke-dasharray="5 3"/>
+        <text x="580" y="300" font-size="12" font-weight="600" fill="#0B0E14">5 · received-half citation</text>
+        <text x="580" y="317" font-size="11.5" class="mono" fill="#5C6573">cites half 1 by digest</text>
+        <line x1="700" y1="326" x2="700" y2="336" stroke="#5C6573" stroke-dasharray="3 3"/>
+        <rect x="570" y="336" width="260" height="44" rx="7" fill="#fff" stroke="#9A5B00" stroke-dasharray="5 3"/>
+        <text x="580" y="354" font-size="12" font-weight="600" fill="#0B0E14">6 · inclusion citation</text>
+        <text x="580" y="371" font-size="11.5" class="mono" fill="#5C6573">cites the proof + checkpoint</text>
+        <rect x="30" y="336" width="400" height="44" rx="7" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="40" y="354" font-size="12" fill="#0B0E14">v0.1.4: a client node's id is new each start,</text>
+        <text x="40" y="371" font-size="12" fill="#0B0E14">so P signs a refusal instead of 5 and 6</text>
+      </g>
+
+      <!-- Step 7: summary -->
+      <g class="st" data-step="7">
+        <text x="430" y="414" text-anchor="middle" font-size="13" font-weight="600" fill="#0B0E14">Six capsules for one exchange: three in each chain.</text>
+        <text x="430" y="436" text-anchor="middle" font-size="12" fill="#5C6573">Checkpoints and padding are signed log entries, not capsules.</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>Most records the plugin seals are Agent Action Capsules, signed with the node's own plugin key and chained onto that node's previous record; checkpoints, padding and a signed refusal of a pushed record are other shapes, and a referee's verdict is held beside the chain rather than in it.</p>
+    <p>One exchange makes up to six of them: each side's own half, then, on each side, a citation of the other's half and a citation of the proof that the half is in the other's log.</p>
+    <p>The other kinds record things that happen around exchanges: a peer stopped, a verdict, a refusal, a payment, one stage of a split model, and the owner's own cleanup.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> cite, never copy: a received half stays in a separate held store, and the receiver's chain gets its own record citing that half by digest.</div>
+      <div class="not"><b>Rejected:</b> appending the other node's record into this node's chain, or editing this node's own half to add the other side. (capsules <code>crates/evidence-plugin/src/producer/capsule.rs</code>, <code>seal_citing_record</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> later evidence goes in a later record. The inclusion proof arrives as a second citation; the earlier one is never touched.</div>
+      <div class="not"><b>Rejected:</b> rewriting the earlier citation once the proof is checked. (<code>producer/capsule.rs</code>, <code>seal_inclusion_citing_record</code>; draft-mih-scitt-agent-action-capsule-05)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> padding is a record in the store, and the log treats it as an ordinary leaf. Anything that counts or lists records skips it.</div>
+      <div class="not"><b>Rejected:</b> changing the checkpointed log itself, or letting checkpoints show the exact number of records between them. (draft-mih-agent-evidence-layer-00, &ldquo;What a Checkpoint Reveals&rdquo;; capsule-emit 0.0.6 <code>src/padding.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a stop-routing record names the peer only as <code>sha256(salt &#8214; peer id)</code>, with a salt that stays on the node.</div>
+      <div class="not"><b>Rejected:</b> naming the peer in clear: records are answered to peers that ask for them, so it would tell everyone who was stopped. (<code>producer/capsule.rs</code>, <code>peer_commitment</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a referee's signed verdict is held beside the ledger and delivered as it is; each node's chain cites it in a record of its own.</div>
+      <div class="not"><b>Rejected:</b> writing the verdict into any one node's chain. (<code>producer/capsule.rs</code>, <code>seal_verdict_record</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> no single-record delete. The owner can delete stored text, rebuild the index or start a new history, and each cleanup is itself a sealed record.</div>
+      <div class="not"><b>Rejected:</b> deleting a record, which rewrites the chain, and anyone holding a checkpoint would see it. (<code>crates/evidence-plugin/src/owner_maintenance.rs</code>)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>Which kinds of record a node can hold for one exchange, and in whose chain each one sits.</li>
+      <li>That each capsule in a node's chain was signed by that node's plugin key and links to the record before it.</li>
+      <li>For a citation: that the citing node held a copy of the other side's half that passed its checks, and, for an inclusion citation, a checked inclusion proof under the other side's signed checkpoint.</li>
+      <li>For each kind, its status in the plugin source at a named commit, with the reason where it does not run yet.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That what a record claims is true. A record says what its signer observed or asserted.</li>
+      <li>The other side's half inside the citing node's chain: only its digest is there.</li>
+      <li>An exact record count from two checkpoints: padding blurs it to within the bucket.</li>
+      <li>A verdict, a refused verdict delivery or a stage record sealed on a stock mesh-llm release: none has run there yet (see Status).</li>
+      <li>That a missing settlement record means &ldquo;unpaid&rdquo;: it means no payment event was observed.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>What a provider pushes for records 3 and 4 to cite: its served half, an inclusion proof and the covering checkpoint. This bundle was written by the plugin's own generator test as a cross-language fixture, so it has no live host's node ids (<code>served_by_node_id: unknown</code>). Trimmed: &hellip; marks where members are left out; every value shown is verbatim.</p>
+  <pre class="code"><code>{
+  "record_push_bundle": 1,
+  "capsule": {
+    "spec_version": "draft-mih-scitt-agent-action-capsule-05",
+    …
+    "capsule_id": "ddd8685c1b578b39c9163a5c748ac7148108663719227f7636b2a113a1dd34dc",
+    …
+    "action_type": "decide",
+    …
+    "developer": "capsule-emit-mesh/0.1.0",
+    …
+    "model_attestation": {
+      …
+      "compute_attestation": {
+        "agent_input_digest": "6d139f1403cd84518768857efed6c375c0e3fe1af3f250cd3a5c59ea87a0323c",
+        "agent_output_digest": "a8461110d26a1ceb91765128a3f8a648e86238810f4bdf27a330deb8681f9d87",
+        …
+        "epistemic_type": "producer_claim",
+        "x-mesh-poc-v1": {
+          …
+          "serving_provenance": { "served_by_node_id": "unknown", …, "exchange_id": "e-1", …, "seq": 2, "prev_seq": 1, … },
+          "role": "served",
+          …
+        },
+        "store_nonce": "e372af496774c05c301d3185c83a4a98396b355ca87df2dfb07f8754def62dfe"
+      }
+    },
+    "effect": {
+      …
+      "type": "inference_completion",
+      …
+      "request_digest": "6d139f1403cd84518768857efed6c375c0e3fe1af3f250cd3a5c59ea87a0323c",
+      "response_digest": "a8461110d26a1ceb91765128a3f8a648e86238810f4bdf27a330deb8681f9d87",
+      …
+    },
+    "assurance": { "attestation_mode": "self_attested", …, "ledger_mode": "chained" },
+    …
+    "chain": { "parent_capsule_id": "6f1165b4e8f487815ea9bae5674c61ebe50862efa903ba8b0733c227f5303a1e", "relation": "follows" },
+    "signature": "d284584ca3…",
+    "key_id": "9e4480104975505a70ec6fc913efff2884a93af380a657adf39babf91fbe1fe1"
+  },
+  "inclusion": {
+    "leaf_index": 1,
+    "proof": { "v": 1, "kind": "inclusion", "size": 3, "leaf_index": 1,
+               "witness": ["8ec22eba289ccb94b3a7f9504ae4e648f91b4518bee10bb9b0da1e9a38d2af84"],
+               "peaks_left": [], "peaks_right": [] }
+  },
+  "checkpoint": {
+    "v": 1, "kind": "mmr_checkpoint", "log_id": "rust-node", "mmr_size": 3,
+    "root": "f85629f081a79ba7b416e4ea5f1dec66c73bed90fb19e4c2b2af5e4df432f524",
+    "prev_size": 0, "prev_root": "",
+    "key_id": "9e4480104975505a70ec6fc913efff2884a93af380a657adf39babf91fbe1fe1",
+    "timestamp": "2026-09-30T03:38:00.000Z",
+    "signature": "802a4a60a953709b…"
+  }
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>record_push_bundle</td><td>integer</td><td>Bundle format version: one record plus the evidence the receiver checks it against.</td></tr>
+      <tr><td>capsule_id</td><td>hex</td><td>SHA-256 of the record's canonical (JCS) bytes, without its id, signature and key id. A received-half citation cites the half by this digest.</td></tr>
+      <tr><td>developer</td><td>string</td><td>The producer that sealed it: <code>capsule-emit-mesh/</code> plus the plugin crate's version when the record was sealed. Records from v0.1.4 keep this prefix.</td></tr>
+      <tr><td>role</td><td>string</td><td><code>served</code>: this is the provider's half (record 2). The requester's half says <code>requested</code>.</td></tr>
+      <tr><td>agent_input/output_digest</td><td>hex</td><td>Digests of the request and the response; the text itself is not in the record.</td></tr>
+      <tr><td>effect.type</td><td>string</td><td><code>inference_completion</code>: the effect the record is about.</td></tr>
+      <tr><td>request/response_digest</td><td>hex</td><td>The same two digests on the effect, where a receiver compares them with its own half.</td></tr>
+      <tr><td>served_by_node_id</td><td>string</td><td>The node that served. <code>unknown</code> here: a generator, not a host, produced this exchange.</td></tr>
+      <tr><td>store_nonce</td><td>hex</td><td>A fresh 256-bit random value committed into <code>capsule_id</code>, so someone holding an inclusion proof cannot confirm a neighbouring record by guessing its content and recomputing its digest.</td></tr>
+      <tr><td>chain</td><td>object</td><td>The previous record in this node's own chain, with the relation <code>follows</code>.</td></tr>
+      <tr><td>key_id</td><td>hex</td><td>The plugin key that signed the record (and, here, the checkpoint).</td></tr>
+      <tr><td>inclusion.proof</td><td>object</td><td>An inclusion proof for leaf 1 in a log of size 3. <code>witness</code> is the sibling hash on the path, not an outside witness.</td></tr>
+      <tr><td>checkpoint</td><td>object</td><td>A signed checkpoint (<code>mmr_checkpoint</code>) of the sender's log: its size and root. Not a capsule.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>Mesh-LLM/capsules:vectors/record_push_bundle_rust.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4); provenance in <code>vectors/SOURCES.md</code> at the same commit.</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <p class="legend">Read on 2026-10-19 from <code>Mesh-LLM/capsules</code> v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>). Unreleased <code>main</code> (<code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>) seals the same set of kinds. Host releases checked against <code>Mesh-LLM/mesh-llm</code> tags up to v0.78.1 and <code>main</code> at <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code>.<br>
+  <span class="badge live">live</span> the code path runs on a stock mesh-llm release (0.78) with the settings shown; the evidence line says whether any check reads the record itself &middot; <span class="badge opt">off by default</span> the operator turns it on &middot; <span class="badge built">built, not live</span> in the release, but no run on a stock host is recorded, or the host does not yet supply what it needs &middot; <span class="badge notcap">not a capsule</span> a log entry or message of another shape.</p>
+  <div class="types"><table>
+    <thead><tr><th>Kind</th><th>What it is for</th><th>Status today</th></tr></thead>
+    <tbody>
+      <tr><td>Exchange half</td><td>What this node asked for (<code>requested</code>) or answered (<code>served</code>), by digest.</td>
+        <td><span class="badge live">live</span><div class="ev">Sealed for every exchange by default. Nightly run of two stock mesh-llm 0.78.0 nodes (<code>.github/workflows/e2e.yml</code>, <code>src/two_node_e2e.rs</code>); four paid exchanges between two nodes running this release (<code>CHANGELOG.md</code> 0.1.4).</div></td></tr>
+      <tr><td>Received-half citation</td><td>I received the other side's half and it passed my checks; cites it by digest.</td>
+        <td><span class="badge live">live</span><span class="badge opt">off by default</span><div class="ev">Sealed for each pushed half that passes the checks (<code>src/record_push_bridge.rs</code>). The nightly run turns record push on and checks that the requester holds each provider record and shows it as confirmed (<code>two_node_e2e.rs</code>, <code>the_host_names_both_sides_and_the_requester_holds_the_providers_record</code>); no check reads the citing record itself.</div></td></tr>
+      <tr><td>Inclusion citation</td><td>The other side's half is in their signed log; cites the proof and checkpoint.</td>
+        <td><span class="badge live">live</span><span class="badge opt">off by default</span><div class="ev">Sealed when a pushed bundle's proof and checkpoint verify (<code>record_push_bridge.rs</code>, <code>seal_inclusion_citing_record_for_push</code>). The nightly run pushes bundles with checkpoints on; no check reads this record.</div></td></tr>
+      <tr><td>Checkpoint</td><td>Signs the log's size and root at a point in time.</td>
+        <td><span class="badge live">live</span><span class="badge notcap">not a capsule</span><div class="ev">On by default: every 300 s or 100 records, and on demand when a record is pushed (capsule-emit 0.0.6 <code>src/checkpoint.rs</code>; <code>src/checkpoint_cadence.rs</code>). Sent to a witness only if the operator names one; none by default (<code>INSTALL.md</code>). No live-host check reads checkpoints.</div></td></tr>
+      <tr><td>Padding</td><td>Hides how busy the node is between two checkpoints.</td>
+        <td><span class="badge live">live</span><span class="badge notcap">not a capsule</span><div class="ev">On by default, to a multiple of 32 before each checkpoint; <code>CAPSULES_CHECKPOINT_PAD_BUCKET=0</code> turns it off. A padding record carries only a nonce and is never counted or served as a record (capsule-emit 0.0.6 <code>src/padding.rs</code>; <code>src/evidence_routes.rs</code>). No live-host check reads padding.</div></td></tr>
+      <tr><td>Stop routing</td><td>I stopped (or resumed) sending to a peer, and the rule and verdicts behind it.</td>
+        <td><span class="badge opt">off by default</span><span class="badge built">built, not live</span><div class="ev">The rule asks the host to block a peer, which mesh-llm 0.78 supports (#2142) if the operator sets <code>allow_peer_blocks</code>; but the rule counts only referee-signed verdicts, which have not run live (below) (<code>src/routing_rule.rs</code>). A block the operator makes is sealed only when the host calls the plugin's <code>mesh_local_routing_choice</code>, which no mesh-llm release or <code>main</code> at <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> does (<code>src/routing_choice_bridge.rs</code>). The peer is named by salted digest only.</div></td></tr>
+      <tr><td>Verdict (each node's record)</td><td>The referee's record of a verdict it issued, and each judged node's record of a verdict delivered to it.</td>
+        <td><span class="badge opt">off by default</span><span class="badge built">built, not live</span><div class="ev">Pairs exist only when a client marks two requests with <code>x-mesh-twin-bracket</code>, which mesh-llm 0.78 carries (#2144). The plugin's own notes: &ldquo;A referee verdict on live hosts waits on 0.1.5; until then it is covered by tests only&rdquo; (<code>CHANGELOG.md</code> 0.1.4).</div></td></tr>
+      <tr><td>Refusal</td><td>A signed &ldquo;no&rdquo;: a pushed record this node would not hold, or a courier's record that a verdict's receiver refused it.</td>
+        <td><span class="badge live">live</span><span class="badge notcap">not a capsule</span> push refusal<br><span class="badge built">built, not live</span> refused verdict delivery<div class="ev">A push refusal goes back to the sender signed by the node's key; an unsigned line is also logged in <code>rejected-record-pushes.jsonl</code> (<code>src/record_push_receive.rs</code>). The nightly run checks that log: each push from the client node refused, with the reason <code>signature_unverified</code> (<code>two_node_e2e.rs</code>). A refused verdict delivery is a capsule in the courier's chain (<code>src/adjudication_records.rs</code>), waiting on verdicts above.</div></td></tr>
+      <tr><td>Settlement</td><td>Ties a payment event, and each side's settlement leg, to its exchange.</td>
+        <td><span class="badge built">built, not live</span><span class="badge opt">off by default</span><div class="ev">Sealed on paid exchanges from the host's payment events, which ship in mesh-llm 0.78 (#2108, #2109, #2169); payments are the operator's choice. No recorded run shows a settlement record sealed: the 0.1.4 check of paid exchanges names only the exchange halves, and the nightly run has no payments (<code>CHANGELOG.md</code> 0.1.4; <code>src/settlement_legs.rs</code>). No record means no payment event observed, never &ldquo;unpaid&rdquo;.</div></td></tr></td></tr>
+      <tr><td>Stage record</td><td>One slice of a model split across peers, and the coordinator's record citing the slices.</td>
+        <td><span class="badge built">built, not live</span><div class="ev">The plugin listens for <code>skippy.stage.v1</code> events (<code>src/split_stage.rs</code>, <code>src/producer/stage.rs</code>). No mesh-llm release emits them to plugins, nor does <code>main</code> at <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code>; <code>README.md</code> lists the host change as proposed.</div></td></tr>
+      <tr><td>Owner maintenance</td><td>Cleanup the owner did on their own log: stored text deleted, index rebuilt, a history closed or started.</td>
+        <td><span class="badge built">built, not live</span><div class="ev">Sealed when the owner runs a cleanup from the Evidence page (<code>src/owner_maintenance.rs</code>). Never served to peers (<code>docs/SHARING-POLICY.md</code>). No live-host check names this record.</div></td></tr>
+      <tr><td>Referee-signed verdict</td><td>The ruling itself, signed with the referee's own key, held beside the ledger and cited by each chain.</td>
+        <td><span class="badge opt">off by default</span><span class="badge built">built, not live</span><div class="ev">In v0.1.4 the referee signs the verdict with its own key (<code>src/referee/service.rs</code> &rarr; <code>seal_verdict_record</code>). Tests also check a verdict signed by a reference referee (<code>tests/fixtures/referee-verdict.json</code>). Same 0.1.5 note as the verdict row.</div></td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">All plugin paths are under <code>Mesh-LLM/capsules:crates/evidence-plugin/</code> unless they start with <code>docs/</code>, <code>.github/</code> or a top-level file, @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>. capsule-emit 0.0.6 is the crates.io release v0.1.4 depends on.</p>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the capsule format of every kind here except checkpoints, padding and push refusals; citations go in <code>references</code>.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the node's log, its checkpoints and inclusion proofs.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; padding records (&ldquo;What a Checkpoint Reveals&rdquo;).</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> &mdash; asking a peer for a record, and the signed refusal when it declines.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a> &mdash; the settlement legs each side seals.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> signature on each capsule.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every <code>capsule_id</code> covers.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the plugin, its vectors and docs.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2142">Mesh-LLM/mesh-llm#2142</a> &mdash; operator-local peer blocks a plugin can request (in 0.78).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">Mesh-LLM/mesh-llm#2300</a> &mdash; advertises the twin-bracket capability (<code>capabilities.twin_bracket</code>); merged, in no release yet. Stripping the header before forwarding is already in 0.78 (#2144).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2144">Mesh-LLM/mesh-llm#2144</a> &mdash; the client-marked twin pair on exchange events (in 0.78).</li>
+  </ul>
+
+  <footer class="pn"><a href="12-vantage-points.html">&larr; Who can check what: three vantage points</a><a href="14-verdict-and-history.html">Twin verdicts and peer history &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>
