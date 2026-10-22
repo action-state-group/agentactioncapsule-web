@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 · Agent Action Capsule · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="01-problem.html">&larr; Prev</a><a href="index.html">Contents</a><a href="03-cose-deterministic.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">02 / 11</div>
+  <h1>Agent Action Capsule</h1>
+  <p class="lede">A Capsule is a JSON record of one agent action that commits to what went in and what came out by digest, never by content, and whose identity is the SHA-256 of its own canonical bytes.</p>
+
+  <figure class="anim" data-steps="5"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="An inference request arrives and a completion goes back. Both bodies stay with the producer."
+    data-cap-2="Each body is hashed: SHA-256 over its JCS form gives request_digest and response_digest."
+    data-cap-3="The digests go into the Capsule's effect record. The capsule_id is the SHA-256 of the whole Capsule, minus capsule_id itself."
+    data-cap-4="In a chained stream, the chain block names the previous Capsule by its capsule_id. Because chain is hashed too, changing the link changes capsule_id, which shows once a Producer Envelope or receipt over the original id is checked."
+    data-cap-5="When the configuration changes (for example a model swap), an epoch_opens Capsule starts the new epoch and chains to the last Capsule of the old one.">
+    <svg viewBox="0 0 860 340" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">From request and response to a chained Capsule</title>
+      <desc id="anim-d">Stage 1: two boxes on the left, the inference request body and the completion body, held by the producer. Stage 2: each body is hashed with SHA-256 over its JCS form, giving two digest chips, request_digest and response_digest; the bodies are marked as staying local. Stage 3: the two digests flow into a Capsule box whose effect record shows type inference_completion, status confirmed, effect_attestation host_served_observed, and the two digests; below it the capsule_id is computed as SHA-256 over JCS of the Capsule with capsule_id removed, b1f60932 through df90c753. Stage 4: a previous Capsule appears on the right and an arrow labelled chain.parent_capsule_id, relation follows, links the new Capsule to it. Stage 5: a timeline along the bottom shows Capsules of epoch e1, then an epoch_opens Capsule carrying the new epoch_id e2 whose chain parent is the last Capsule of e1, followed by Capsules of e2.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
+        <marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+      </defs>
+
+      <!-- Stage 1: bodies -->
+      <g class="st" data-step="1">
+        <rect x="16" y="34" width="176" height="64" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="104" y="56" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Request body</text>
+        <text x="104" y="74" text-anchor="middle" font-size="12" fill="#5C6573">as received at serving</text><text x="104" y="88" text-anchor="middle" font-size="12" fill="#5C6573">boundary</text>
+        <rect x="16" y="130" width="176" height="64" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="104" y="156" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Completion body</text>
+        <text x="104" y="176" text-anchor="middle" font-size="12" fill="#5C6573">as returned</text>
+      </g>
+
+      <!-- Stage 2: digests -->
+      <g class="st" data-step="2">
+        <path d="M192 66 L232 66" stroke="#5C6573" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <path d="M192 162 L232 162" stroke="#5C6573" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <rect x="236" y="44" width="170" height="44" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="321" y="62" text-anchor="middle" font-size="12" fill="#127A52">request_digest</text>
+        <text x="321" y="79" text-anchor="middle" font-size="12" class="mono" fill="#0B0E14">1111…1111</text>
+        <rect x="236" y="140" width="170" height="44" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="321" y="158" text-anchor="middle" font-size="12" fill="#127A52">response_digest</text>
+        <text x="321" y="175" text-anchor="middle" font-size="12" class="mono" fill="#0B0E14">2222…2222</text>
+        <text x="321" y="114" text-anchor="middle" font-size="12" fill="#5C6573">SHA-256(JCS(body))</text>
+        <text x="104" y="216" text-anchor="middle" font-size="12" fill="#9A5B00">bodies stay local</text>
+      </g>
+
+      <!-- Stage 3: capsule -->
+      <g class="st" data-step="3">
+        <path d="M406 66 L446 80" stroke="#127A52" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <path d="M406 162 L446 140" stroke="#127A52" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <rect x="450" y="14" width="220" height="200" rx="12" fill="#EAEEFC" stroke="#3A5BD9" stroke-width="1.5"/>
+        <text x="560" y="34" text-anchor="middle" font-size="14" font-weight="600" fill="#3A5BD9">Capsule</text>
+        <text x="462" y="54" font-size="12" class="mono" fill="#0B0E14">effect.type:</text>
+        <text x="474" y="70" font-size="12" class="mono" fill="#0B0E14">inference_completion</text>
+        <text x="462" y="88" font-size="12" class="mono" fill="#0B0E14">status: confirmed</text>
+        <text x="462" y="106" font-size="12" class="mono" fill="#0B0E14">effect_attestation:</text>
+        <text x="474" y="122" font-size="12" class="mono" fill="#0B0E14">host_served_observed</text>
+        <text x="462" y="140" font-size="12" class="mono" fill="#127A52">request_digest: 1111…</text>
+        <text x="462" y="158" font-size="12" class="mono" fill="#127A52">response_digest: 2222…</text>
+        <text x="462" y="176" font-size="12" class="mono" fill="#0B0E14">canonicalization_id: jcs</text>
+        <text x="462" y="200" font-size="12" class="mono" fill="#5C6573">… operator, timestamp, …</text>
+        <text x="560" y="234" text-anchor="middle" font-size="12" fill="#5C6573">capsule_id = SHA-256(JCS(Capsule − capsule_id))</text>
+        <text x="560" y="252" text-anchor="middle" font-size="13" class="mono" font-weight="600" fill="#3A5BD9">b1f60932…df90c753</text>
+      </g>
+
+      <!-- Stage 4: chain to previous capsule -->
+      <g class="st" data-step="4">
+        <rect x="712" y="60" width="132" height="86" rx="12" fill="#fff" stroke="#3A5BD9" stroke-dasharray="5 4"/>
+        <text x="778" y="88" text-anchor="middle" font-size="13" font-weight="600" fill="#3A5BD9">previous</text>
+        <text x="778" y="106" text-anchor="middle" font-size="13" font-weight="600" fill="#3A5BD9">Capsule</text>
+        <text x="778" y="128" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">its capsule_id</text>
+        <path d="M670 104 L708 104" stroke="#3A5BD9" stroke-width="1.8" fill="none" marker-end="url(#ahb)"/>
+        <text x="848" y="170" text-anchor="end" font-size="12" class="mono" fill="#0B0E14">chain.parent_capsule_id</text>
+        <text x="848" y="188" text-anchor="end" font-size="12" class="mono" fill="#0B0E14">relation: follows</text>
+        <text x="848" y="210" text-anchor="end" font-size="12" fill="#5C6573">one parent, same stream</text>
+      </g>
+
+      <!-- Stage 5: epochs -->
+      <g class="st" data-step="5">
+        <line x1="16" y1="300" x2="844" y2="300" stroke="#E3E3DC" stroke-width="2"/>
+        <text x="40" y="276" font-size="12" font-weight="600" fill="#5C6573">epoch e1</text>
+        <circle cx="60" cy="300" r="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <circle cx="140" cy="300" r="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <circle cx="220" cy="300" r="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <circle cx="300" cy="300" r="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <path d="M128 300 L74 300" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ahb)"/>
+        <path d="M208 300 L154 300" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ahb)"/>
+        <path d="M288 300 L234 300" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ahb)"/>
+        <line x1="380" y1="262" x2="380" y2="330" stroke="#9A5B00" stroke-dasharray="4 4"/>
+        <rect x="396" y="286" width="118" height="28" rx="8" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="455" y="305" text-anchor="middle" font-size="12" class="mono" fill="#9A5B00">epoch_opens</text>
+        <path d="M396 300 L314 300" stroke="#9A5B00" stroke-width="1.8" marker-end="url(#ah)"/>
+        <text x="420" y="276" font-size="12" font-weight="600" fill="#5C6573">epoch e2 (new model or policy)</text>
+        <circle cx="600" cy="300" r="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <circle cx="680" cy="300" r="9" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <path d="M588 300 L518 300" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ahb)"/>
+        <path d="M668 300 L614 300" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ahb)"/>
+        <text x="844" y="326" text-anchor="end" font-size="12" fill="#5C6573">arrows point from child to parent</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>An Agent Action Capsule is a JSON record of one agent action and its outcome, including actions that were refused, blocked, or timed out.</p>
+    <p>Sensitive content such as prompts, completions, and tool payloads is not carried in the record; it is committed to by SHA-256 digest only.</p>
+    <p>The Capsule's identity, its <code>capsule_id</code>, is the SHA-256 of its own canonical JSON, so any verifier can recompute it; a later edit shows once that id is checked against a Producer Envelope or receipt made over the original.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> commit content by digest; the Capsule carries <code>request_digest</code> and <code>response_digest</code>, not the bodies.</div>
+      <div class="not"><b>Rejected:</b> carrying raw content. A committed Capsule cannot be retracted, so anything admitted is admitted permanently; content that must be checkable later but not disclosed now is committed as a digest. (Draft §5, §14.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a signer-independent identity: <code>capsule_id</code> is SHA-256 over plain JCS of the Capsule with only <code>capsule_id</code> removed, and a COSE_Sign1 Producer Envelope signs those raw 32 bytes.</div>
+      <div class="not"><b>Rejected:</b> making the signature part of the identity. Envelopes are not in the preimage, so adding, removing, or replacing one never changes <code>capsule_id</code>. (Draft §3.1, §5.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> <code>status: "confirmed"</code> requires a <code>response_digest</code> over the response actually observed.</div>
+      <div class="not"><b>Rejected:</b> a status label on its own. Without the bound response a producer could present an attempt as a completion; a verifier treats confirmed-without-digest as a failure. (Draft §5.3, §6 check 3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> for <code>inference_completion</code>, digest the request body as received at the serving boundary and the completion body as returned, and record who vouches in <code>effect_attestation</code>.</div>
+      <div class="not"><b>Rejected:</b> grading a host's report as a direct observation. <code>host_served_observed</code> means the producer saw the host's report, not the effect boundary; it grades equal to <code>runtime_claimed</code>, below <code>gate_executed</code>. (Draft §5.3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a hashed <code>chain</code> block with exactly one parent and a registered relation; an epoch change is an ordinary Capsule with <code>relation: "epoch_opens"</code>.</div>
+      <div class="not"><b>Rejected:</b> multiple parents or a new statement type for epoch boundaries. Citations outside the producer's own stream go in <code>references</code> instead. (Draft §5.2.2, §5.5.4, §5.5.5)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> one declared construction: <code>format_version: "4"</code> and <code>canonicalization_id: "jcs"</code>, checked before any digest is computed.</div>
+      <div class="not"><b>Rejected:</b> accepting other declarations. Any other format, or an absent, empty, unknown, or withdrawn <code>"jcs-n"</code> canonicalization, fails closed. (Draft §2)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>That the carried <code>capsule_id</code> matches the record: the verifier recomputes it and never trusts the carried value (§6 check 2). That the record is unchanged since sealing needs more: a verified Producer Envelope (§3.1) or a receipt over the original id.</li>
+      <li>A <code>confirmed</code> effect carries a digest of the response that was observed.</li>
+      <li>The assurance modes the bytes support: a verifier rederives <code>assurance</code> from the evidence present and reports overclaims (§6 check 7).</li>
+      <li>That <code>effect_attestation</code> is present wherever the effect status requires it (§6 check 5).</li>
+      <li>Which earlier Capsule this one follows, and where a configuration epoch starts.</li>
+          </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That the effect happened in the world. <code>host_served_observed</code> records a runtime's report of completion, not an observation of the effect boundary.</li>
+      <li>What the request or completion said. A digest can be checked only by someone who holds the body.</li>
+      <li>That every action was recorded. A Capsule on every verdict, refusals and blocks included, is a producer obligation (§5.5.3); a Capsule shows this action was recorded, not that none were left out.</li>
+      <li>That the stated <code>effect_attestation</code> is true. Who vouches is the producer's statement; the verifier checks only that it is present where required.</li>
+      <li>That the signing key was authorized for the operator. A valid envelope signature proves which key signed; authorization is the caller's policy (Draft §3.2).</li>
+      <li>Privacy for low-entropy values: a digest of a user or session identifier can be reversed by guessing, so identity must be excluded, not digested (Draft §14.1).</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>A conformance vector for the <code>inference_completion</code> effect, confirmed and attested <code>host_served_observed</code>. Its expected result is <code>ok: true</code> with no findings, and the recomputed <code>capsule_id</code> equals the carried one. The two digests are filler values (all 1s, all 2s); the vector tests the record, not real bodies. It carries no <code>chain</code> block, so its ledger mode is <code>standalone</code>.</p>
+  <pre class="code"><code>{
+  "action_id": "v05-inference",
+  "action_type": "decide",
+  "assurance": {
+    "attestation_mode": "self_attested",
+    "effect_mode": "confirmed",
+    "ledger_mode": "standalone"
+  },
+  "canonicalization_id": "jcs",
+  "capsule_id": "b1f609326c7ba59660b58f813f4fe2ef24e96f7210e3360d62a873b9df90c753",
+  "developer": "agent@v1",
+  "disposition": {
+    "approver": "policy",
+    "decision": "accept",
+    "human_disposed": false,
+    "verdict_class": "executed"
+  },
+  "effect": {
+    "effect_attestation": "host_served_observed",
+    "irreversibility_class": "two_way",
+    "request_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+    "response_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+    "status": "confirmed",
+    "type": "inference_completion"
+  },
+  "format_version": "4",
+  "operator": "ACME-CO",
+  "spec_version": "draft-mih-scitt-agent-action-capsule-05",
+  "timestamp": "2026-09-26T00:00:00Z"
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>action_id</td><td>string</td><td>Stable identifier of the action within one producer ledger.</td></tr>
+      <tr><td>action_type</td><td>string</td><td>"decide": a disposition was required ("fyi" is informational).</td></tr>
+      <tr><td>assurance</td><td>object</td><td>Claimed attestation, effect, and ledger modes; a verifier rederives each and reports overclaims.</td></tr>
+      <tr><td>canonicalization_id</td><td>string</td><td>Must be exactly "jcs": plain RFC 8785 JCS for every digest.</td></tr>
+      <tr><td>capsule_id</td><td>64 hex</td><td>SHA-256 over JCS of the Capsule minus this field; recomputed, never trusted.</td></tr>
+      <tr><td>developer</td><td>string</td><td>The agent identity and version that acted.</td></tr>
+      <tr><td>disposition</td><td>object</td><td>Gate outcome: who disposed it, the human-in-the-loop flag, and the verdict class.</td></tr>
+      <tr><td>effect.type</td><td>string</td><td>Registered effect type; here an inference request whose effect is producing a completion.</td></tr>
+      <tr><td>effect.status</td><td>string</td><td>"confirmed": result observed and bound, so response_digest must be present.</td></tr>
+      <tr><td>effect.effect_attestation</td><td>string</td><td>Producer-stated grade: the serving host's runtime reported the completion.</td></tr>
+      <tr><td>effect.irreversibility_class</td><td>string</td><td>Ordered consequence class; "two_way" is the lowest.</td></tr>
+      <tr><td>effect.request_digest</td><td>64 hex</td><td>SHA-256 of JCS of the request body as received.</td></tr>
+      <tr><td>effect.response_digest</td><td>64 hex</td><td>SHA-256 of JCS of the completion body as returned.</td></tr>
+      <tr><td>format_version</td><td>string</td><td>Serialization suite; must be exactly "4".</td></tr>
+      <tr><td>operator</td><td>string</td><td>The accountable tenant (a placeholder in this vector).</td></tr>
+      <tr><td>spec_version</td><td>string</td><td>The profile text the Capsule conforms to; never selects an algorithm.</td></tr>
+      <tr><td>timestamp</td><td>string</td><td><a href="https://www.rfc-editor.org/rfc/rfc3339">RFC 3339</a> UTC time with "Z".</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/pos-v05-effect-inference-completion-host-served/input.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+
+  <h2><span class="n">5</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the Capsule, its identity, the effect record, chaining, epochs, and Class 1 verification.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-05</a> &mdash; the declared canonicalization the Capsule's digests rely on (page 04).</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme (JCS).</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; CBOR Object Signing and Encryption (COSE): the Producer Envelope is a COSE_Sign1.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: registering the Capsule ID with a Transparency Service.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">action-state-group/agent-action-capsule</a> &mdash; draft source and conformance vectors.</li>
+  </ul>
+
+  <footer class="pn"><a href="01-problem.html">&larr; The problem: a stranger node</a><a href="03-cose-deterministic.html">COSE and deterministic encoding &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11 · Limits · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="10-mesh-llm.html">&larr; Prev</a><a href="index.html">Contents</a><a href="index.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">11 / 11</div>
+  <h1>Limits</h1>
+  <p class="lede">A verified key tells you who signed, not that what they signed is true; a twin and a referee test whether two answers agree under weights both nodes claim, which narrows a misstated model without establishing which model ran; hardware attestation is the direction for that.</p>
+
+  <figure class="anim" data-steps="6"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="Node A's response carries a signature that verifies: the holder of key K signed this record."
+    data-cap-2="Its claim &quot;model = X&quot; stays open. The signature covers the claim's bytes, not whether it is true."
+    data-cap-3="A client marks a pair: the same request also goes to node B, a twin whose own signed record says it serves the same model and weights. That sameness is self-report."
+    data-cap-4="The two answers are compared word by word. Same words: corroborated, which twins serving the same wrong model would also be. Any difference: a referee is asked, only if the operator turned the check on (off by default) and an eligible node exists."
+    data-cap-5="The referee, a third node that says it serves the same weights, re-answers and signs a verdict on this one pair: the twin it disagrees with is contradicted, or the verdict is inconclusive. It does not establish which model ran."
+    data-cap-6="Hardware attestation of what was loaded and ran is the route toward which model ran. It is a direction only, not in this release.">
+    <svg viewBox="0 0 860 330" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">From a verified signature to a twin and a referee</title>
+      <desc id="anim-d">Step 1: a requester on the left sends a request to node A at top; node A's response shows a green badge, signature verified, key K. Step 2: an amber dashed claim next to it reads model = X, open. Step 3: the requester sends the same request, marked as a pair, to node B at bottom, the twin, which returns its own answer. Step 4: both answers go to a compare box in the middle: same words means corroborated; any difference means ask a referee, if the check is on and a node is eligible. Step 5: a referee box at right, a third node that says it serves the same weights, re-answers and signs a verdict with outcomes: agrees with one twin, the other contradicted; or inconclusive. Step 6: a grey dashed path from node A to a box at the bottom right reads hardware attestation of what ran, a direction, not in this release. Twin and referee narrow a misstated model; they do not establish which model ran.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
+      </defs>
+      <!-- requester -->
+      <g><rect x="16" y="136" width="120" height="56" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/><text x="76" y="162" text-anchor="middle" font-size="14" fill="#0B0E14">Requester</text><text x="76" y="180" text-anchor="middle" font-size="12" fill="#5C6573">request Q</text></g>
+      <!-- node A -->
+      <g class="st" data-step="1"><line x1="136" y1="150" x2="196" y2="70" stroke="#5C6573" stroke-width="1.6" marker-end="url(#ah)"/>
+        <rect x="200" y="28" width="180" height="76" rx="10" fill="#FFFFFF" stroke="#0B0E14"/><text x="214" y="50" font-size="14" font-weight="600" fill="#0B0E14">Node A</text><text x="214" y="68" font-size="12" fill="#5C6573">answer A</text>
+        <rect x="214" y="76" width="152" height="22" rx="5" fill="#E6F2EC" stroke="#127A52"/><text x="290" y="91" text-anchor="middle" font-size="12" fill="#127A52">&#10003; signature, key K</text></g>
+      <g class="st" data-step="2"><rect x="200" y="110" width="180" height="26" rx="6" fill="#FBF1E1" stroke="#9A5B00" stroke-dasharray="5 4"/><text x="290" y="128" text-anchor="middle" font-size="12" fill="#9A5B00">model = X ? (open)</text></g>
+      <!-- node B -->
+      <g class="st" data-step="3"><line x1="136" y1="180" x2="196" y2="250" stroke="#3A5BD9" stroke-width="1.6" marker-end="url(#ah)"/><text x="120" y="232" font-size="12" fill="#3A5BD9" text-anchor="end">same Q,</text><text x="120" y="247" font-size="12" fill="#3A5BD9" text-anchor="end">marked pair</text>
+        <rect x="200" y="214" width="180" height="76" rx="10" fill="#FFFFFF" stroke="#0B0E14"/><text x="214" y="236" font-size="14" font-weight="600" fill="#0B0E14">Node B (twin)</text><text x="214" y="254" font-size="12" fill="#5C6573">answer B</text><text x="214" y="276" font-size="12" fill="#5C6573">says: same model, weights</text></g>
+      <!-- compare -->
+      <g class="st" data-step="4"><line x1="382" y1="70" x2="436" y2="140" stroke="#5C6573" stroke-width="1.5" marker-end="url(#ah)"/><line x1="382" y1="250" x2="436" y2="190" stroke="#5C6573" stroke-width="1.5" marker-end="url(#ah)"/>
+        <rect x="440" y="124" width="170" height="82" rx="10" fill="#F4F4F0" stroke="#5C6573"/><text x="525" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="#0B0E14">Compare words</text><text x="525" y="168" text-anchor="middle" font-size="12" fill="#127A52">same: corroborated</text><text x="525" y="188" text-anchor="middle" font-size="12" fill="#9A5B00">differ: referee, if on</text></g>
+      <!-- referee -->
+      <g class="st" data-step="5"><line x1="612" y1="150" x2="650" y2="96" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#ah)"/>
+        <rect x="654" y="20" width="192" height="150" rx="10" fill="#FFFFFF" stroke="#3A5BD9"/><text x="668" y="42" font-size="14" font-weight="600" fill="#3A5BD9">Referee</text><text x="668" y="60" font-size="12" fill="#5C6573">third node, says same</text><text x="668" y="76" font-size="12" fill="#5C6573">weights; re-answers, signs</text>
+        <rect x="668" y="86" width="164" height="36" rx="6" fill="#FDECEA" stroke="#B42318"/><text x="676" y="101" font-size="12" fill="#0B0E14">agrees with one twin;</text><text x="676" y="116" font-size="12" fill="#B42318">other: contradicted</text>
+        <rect x="668" y="128" width="164" height="30" rx="6" fill="#F4F4F0" stroke="#5C6573"/><text x="676" y="148" font-size="12" fill="#0B0E14">or: inconclusive</text></g>
+      <!-- hardware -->
+      <g class="st" data-step="6"><path d="M380,40 L420,40 L420,10 L640,10 L640,250 L650,250" fill="none" stroke="#5C6573" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#ah)"/>
+        <rect x="654" y="222" width="192" height="76" rx="10" fill="#FFFFFF" stroke="#5C6573" stroke-dasharray="6 5"/><text x="668" y="244" font-size="13" font-weight="600" fill="#5C6573">Hardware attestation</text><text x="668" y="262" font-size="12" fill="#5C6573">of what ran: a direction,</text><text x="668" y="280" font-size="12" fill="#5C6573">not in this release</text></g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>A signature that verifies shows that the holder of a key signed a record, and nothing about whether that key may speak for anyone or whether what it signed is true.</p>
+    <p>A node that misstates which model it ran signs that claim as easily as a true one; a twin and a referee can test whether two answers agree under weights both nodes claim, which narrows a misstated model but does not establish which model ran.</p>
+    <p>Hardware attestation, where the machine itself reports what it loaded and ran, is the route beyond self-report, and it is a direction here rather than a released feature.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> verification returns the authenticated key; whether it is authorized for the record's operator or developer is the caller's policy.</div>
+      <div class="not"><b>Rejected:</b> building a key-to-organization binding into the wire format. (AAC -05 &sect;3.2; the <code>kid</code> is a "self-attested signer identifier", &sect;3.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> state plainly that controlling a key is not standing to act for anyone, and that identity is the floor of a record's weight.</div>
+      <div class="not"><b>Rejected:</b> solving organizational identity inside these drafts; they inherit it. (Evidence layer -00 &sect;11; bilateral -02 &sect;12.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a referee only for pairs a client marked, at temperature 0, same model and weights, answers that differ; exact words, no similarity threshold.</div>
+      <div class="not"><b>Rejected:</b> guessing pairs from timing, or scoring answers by similarity. ("pairs are never guessed from timing": <code>Mesh-LLM/capsules</code> docs/TWIN-REFEREE-SELECTION.md at v0.1.4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the record keeps a hardware-attestation slot and writes it empty when no quote was taken.</div>
+      <div class="not"><b>Rejected:</b> presenting a node's hash of its own binary as hardware evidence; at v0.1.4 the slot is "recorded absent, never fabricated". (<code>Mesh-LLM/capsules</code> producer/capsule.rs at v0.1.4; a producer MUST NOT record an assurance it did not achieve, AAC -05 &sect;5.4)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>A verified signature proves the holder of key K signed this record's id.</li>
+      <li>Whether two twins gave the same words to the same request at temperature 0, under weights both their signed records claim are the same.</li>
+      <li>A referee's signed verdict records which twin its own re-answer agreed with at the earliest differing word, and names the other as contradicted.</li>
+      <li>The verdict seals the pair it rules on: both halves, the request digest, the weights digest and the referee's own answer.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>Who holds key K, or that K may speak for the operator the record names.</li>
+      <li>That what was signed is true, including the model name in the record.</li>
+      <li>Which model ran. The twins' matching weights are each node's own claim, and twins serving the same wrong model corroborate each other.</li>
+      <li>Which answer is right. A verdict is a ruling on one pair; it says nothing about a node's future answers.</li>
+      <li>That the referee is independent of either twin; that is a claim about who runs it.</li>
+      <li>Honesty across different hardware: exact replay can differ on different silicon for reasons unrelated to honesty, so such a mismatch is grounds to investigate, not a verdict.</li>
+      <li>What ran inside the machine. At v0.1.4 no hardware quote is taken.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>A referee's signed verdict from the plugin's test fixtures: twins A and B differed, the referee re-answered, agreed with A at the earliest differing word, and named B as contradicted.</p>
+  <pre class="code"><code>{
+  …
+  "referee_key_id": "6a9a93a3af20ca17d85764e3206fd1d0417ea943f53f07157792299ba9b6f033",
+  "verdict_capsule": {
+    …
+    "capsule_id": "1bd4fa92a5ff02c278b3c79e4e0398ede6c62212483c5a9466176bfc45408f62",
+    "action_id": "adjudicate/1bb92507-473a-49b7-96a0-a6752fb42308",
+    …
+    "provenance": "referee",
+    "model_attestation": {
+      "compute_attestation": {
+        "epistemic_type": "adjudication",
+        "adjudication": {
+          "schema": "capsule-emit-mesh/adjudication/v1",
+          "source": "twin_comparison",
+          "capture_method": "deterministic_replay",
+          "verdict": "contradicted:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "status": "CONTRADICTED",
+          "divergence_index": 3,
+          …
+          "prefix_digest": "0ec7db901e57f96f8d195aa69bbdbd858eb13d125021a24c90972a5ce35d587b",
+          "twin_owner_distinct": true,
+          "weights_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "half_a_capsule_id": "7dc9427b6df5ff222617fb721f25d3c54aebe32682329bb7075902336437fb06",
+          "half_b_capsule_id": "b80db10999779aa17c8fcf7006a57aeaecbc81f5e9de3ecea33e9365c2bfd4d9",
+          …
+          "referee_node_id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "half_a_node_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "half_b_node_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "twins_request_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "referee_prompt": "requester_attested",
+          "referee_answer_digest": "0242bc9526adbb014565b8175ff134e2ba8731f4a13cab2d1b4d8aff8727586e",
+          "twin_bracket_id": "bracket-1"
+        }
+      }
+    },
+    "assurance": {
+      "attestation_mode": "self_attested",
+      "effect_mode": "not_applicable",
+      "ledger_mode": "chained"
+    },
+    …
+    "key_id": "6a9a93a3af20ca17d85764e3206fd1d0417ea943f53f07157792299ba9b6f033"
+  }
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>key_id</td><td>hex tstr</td><td>The referee's public key; it shows who signed the verdict, nothing more.</td></tr>
+      <tr><td>epistemic_type</td><td>tstr</td><td><code>adjudication</code>: a ruling, not an observation.</td></tr>
+      <tr><td>verdict</td><td>tstr</td><td><code>contradicted:</code> plus the node id of the twin the referee disagreed with.</td></tr>
+      <tr><td>status</td><td>tstr</td><td><code>CONTRADICTED</code>; corroborated maps to SATISFIED, inconclusive to UNKNOWN.</td></tr>
+      <tr><td>divergence_index</td><td>uint</td><td>The index of the word where the two answers part.</td></tr>
+      <tr><td>prefix_digest</td><td>hex tstr</td><td>Digest of the words both answers share before that point.</td></tr>
+      <tr><td>weights_digest</td><td>hex tstr</td><td>The weights both twins' records say they served.</td></tr>
+      <tr><td>twin_owner_distinct</td><td>bool</td><td>The two twins are different nodes.</td></tr>
+      <tr><td>half_a_capsule_id / half_b_capsule_id</td><td>hex tstr</td><td>The two twins' own signed records.</td></tr>
+      <tr><td>referee_prompt</td><td>tstr</td><td><code>requester_attested</code>: the prompt the referee used is the requester's word.</td></tr>
+      <tr><td>referee_answer_digest</td><td>hex tstr</td><td>Digest of the referee's own re-answer.</td></tr>
+      <tr><td>twin_bracket_id</td><td>tstr</td><td>The pair id a client set; without one, no referee is asked.</td></tr>
+      <tr><td>assurance.attestation_mode</td><td>tstr</td><td><code>self_attested</code>: the verdict itself is the referee's own signed word.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The node ids and some digests are placeholder test values (repeated letters), as in the fixture.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+
+  <h2><span class="n">5</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; issuer binding: what a verified signature does and does not cover.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; controlling a key is not standing or role; the <code>adjudication</code> type.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; identity is the floor of a two-party record's weight.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: structures and process.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules">Mesh-LLM/capsules</a> &mdash; the twin comparison, the referee and the verdict record (v0.1.4).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-emit-mesh">action-state-group/capsule-emit-mesh</a> &mdash; docs/TRUST-MODEL.md: replay agrees exactly only within one hardware class.</li>
+  </ul>
+
+  <footer class="pn"><a href="10-mesh-llm.html">&larr; Mesh-LLM capsules plugin</a><a href="index.html">Contents &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>
