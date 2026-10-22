@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>14 · Twin verdicts and peer history · explain</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+  /* Page-local: the "today vs upstream" table reads as prose, not as mono ids. */
+  table.t.when td:first-child{font-family:var(--sans);font-size:13.5px;white-space:normal;font-weight:600}
+  table.t.when td:nth-child(2){font-family:var(--sans);font-size:13.5px;color:var(--ink);white-space:normal}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="13-capsule-types.html">&larr; Prev</a><a href="index.html">Contents</a><a href="15-evidence-report.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">14 / 16 · From the September deck</div>
+  <h1>Twin verdicts and peer history</h1>
+  <p class="lede">What happens after two nodes answer the same marked pair differently: who may referee, how the signed verdict reaches every node it concerns, how each node counts verdicts about its peers (counts, never a score), and the operator's opt-in rule to stop routing to a peer. Every line is checked against the <code>capsules</code> plugin at release v0.1.4, and the code that is not released yet is marked as such.</p>
+
+  <figure class="anim" data-steps="8"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="A client marks two requests as one pair by sending the same x-mesh-twin-bracket value on both. The host never picks pairs and never sends a second request by itself: there is no sampling rate in the code."
+    data-cap-2="Node R forwards one request to node A and one to node B (header stripped). Each seals its served half; with record push on, both halves reach R and are checked before R holds them."
+    data-cap-3="R compares. A referee is due only if both halves answered the same request at temperature 0, name the same model and the same weights, and their answers differ. Any difference counts. Answers that agree are not adjudicated (twins agree): nobody is asked and nothing counts. In v0.1.4 the host passes no text to plugins, so the client also supplies the request and both answers; R keeps them only if they match the digests its records sealed."
+    data-cap-4="Who may referee: a node that serves the same model and weights, is neither twin, announced a key, is not blocked by R, and has no contradiction for that model in R's own counts within the bar window (30 days by default). Node D fails the last rule. Tier 1 is nodes with a corroboration for that model; the pick is random within the tier."
+    data-cap-5="R asks C to re-answer the request (temperature 0, the seed the first twin's record names, or 0), then sends it both halves and its answer. C signs a verdict naming the twin its answer does not agree with (contradicted:B) and seals its own adjudication_issued record."
+    data-cap-6="R checks C's signature under the key it holds for C (host-announced or operator-set) and seals adjudication_received. With share_adjudications on (off by default), R delivers the verdict to A and B; each checks it and seals its own adjudication_received, or refuses and R seals the refusal."
+    data-cap-7="R's Peers page counts verdicts about each peer, per model, in four buckets, each a list of verdict ids: for B, contradicted 1; for A, corroborated 1. Only verdicts R issued itself as referee, or asked that referee for, count, once per referee and pair. The counts stay on R."
+    data-cap-8="Opt-in rule (off unless the operator sets N): after N referee-signed contradictions within D days (with N of 2 or more, at most N-1 from any one referee), R asks the host to stop routing to that peer. The host does it only if its operator allowed this plugin to; R seals a record citing the verdicts. The operator's unblock undoes it.">
+    <svg viewBox="0 0 860 430" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">A twin pair, a referee's signed verdict, local verdict counts and the opt-in stop-routing rule</title>
+      <desc id="anim-d">Five Mesh-LLM nodes running the capsules plugin: a client at far left, node R the requesting node, nodes A and B the two twins, node C the chosen referee, and node D an ineligible referee. Stage 1: the client sends two requests to R with the same x-mesh-twin-bracket value. Stage 2: R forwards one to A and one to B; each seals its served half and pushes it back to R, which checks it before holding it. Stage 3: R compares: same request, temperature 0, same model and weights, and the answers differ, so a referee is due; if they agreed the pair is not adjudicated, nothing counts and nobody is asked. Stage 4: eligibility: C qualifies; D is crossed out because R counts a contradiction about D for this model within the bar window. Stage 5: R asks C to re-answer and sends it both halves; C signs a verdict, contradicted naming B, and seals adjudication_issued. Stage 6: R verifies the signature and seals adjudication_received; with delivery on, R sends the verdict to A and B, and each seals its own received record or refuses. Stage 7: R's Peers page shows counts per peer and model in four buckets: B contradicted 1, A corroborated 1; the counts stay on R. Stage 8: an opt-in rule: after N contradictions within D days, R asks its host to stop routing to B; the host blocks only if its operator allowed the plugin to, and R seals a record citing the verdicts.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+        <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
+        <marker id="ahw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#9A5B00"/></marker>
+        <marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B42318"/></marker>
+      </defs>
+
+      <!-- Nodes (always visible) -->
+      <rect x="10" y="172" width="80" height="50" rx="8" fill="#fff" stroke="#5C6573"/>
+      <text x="50" y="202" text-anchor="middle" font-size="14" fill="#0B0E14">Client</text>
+
+      <rect x="130" y="150" width="160" height="94" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="210" y="174" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node R</text>
+      <text x="210" y="192" text-anchor="middle" font-size="12" fill="#5C6573">asked for the pair</text>
+
+      <rect x="400" y="14" width="150" height="70" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="475" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node A</text>
+      <text x="475" y="56" text-anchor="middle" font-size="12" fill="#5C6573">twin</text>
+
+      <rect x="400" y="310" width="150" height="70" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="475" y="334" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node B</text>
+      <text x="475" y="352" text-anchor="middle" font-size="12" fill="#5C6573">twin</text>
+
+      <rect x="690" y="150" width="160" height="94" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="770" y="174" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node C</text>
+      <text x="770" y="192" text-anchor="middle" font-size="12" fill="#5C6573">candidate referee</text>
+
+      <rect x="690" y="40" width="160" height="56" rx="10" fill="#fff" stroke="#5C6573"/>
+      <text x="770" y="64" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Node D</text>
+      <text x="770" y="82" text-anchor="middle" font-size="12" fill="#5C6573">candidate referee</text>
+
+      <!-- Step 1: client marks a pair -->
+      <g class="st" data-step="1">
+        <line x1="90" y1="188" x2="128" y2="188" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#ahw)"/>
+        <line x1="90" y1="206" x2="128" y2="206" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#ahw)"/>
+        <text x="10" y="140" font-size="12" class="mono" fill="#9A5B00">x-mesh-twin-bracket: bracket-1</text>
+        <text x="10" y="156" font-size="12" fill="#9A5B00">on both requests</text>
+      </g>
+
+      <!-- Step 2: forward, seal, push back -->
+      <g class="st" data-step="2">
+        <line x1="290" y1="160" x2="398" y2="62" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+        <line x1="290" y1="234" x2="398" y2="334" stroke="#3A5BD9" stroke-width="1.5" marker-end="url(#ah)"/>
+        <line x1="400" y1="78" x2="296" y2="172" stroke="#127A52" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ahv)"/>
+        <line x1="400" y1="318" x2="296" y2="224" stroke="#127A52" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ahv)"/>
+        <text x="408" y="76" font-size="12" fill="#127A52">sealed half A</text>
+        <text x="408" y="372" font-size="12" fill="#127A52">sealed half B</text>
+      </g>
+
+      <!-- Step 3: compare -->
+      <g class="st" data-step="3">
+        <rect x="130" y="256" width="216" height="74" rx="8" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="140" y="274" font-size="12" fill="#0B0E14">same request · temperature 0</text>
+        <text x="140" y="291" font-size="12" fill="#0B0E14">same model · same weights</text>
+        <text x="140" y="308" font-size="12" font-weight="600" fill="#9A5B00">answers differ &#8594; referee due</text>
+        <text x="140" y="324" font-size="11" fill="#5C6573">(agree &#8594; not adjudicated, no call)</text>
+      </g>
+
+      <!-- Step 4: eligibility -->
+      <g class="st" data-step="4">
+        <rect x="698" y="216" width="144" height="22" rx="5" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="770" y="231" text-anchor="middle" font-size="12" fill="#127A52">eligible</text>
+        <line x1="694" y1="44" x2="846" y2="92" stroke="#B42318" stroke-width="2"/>
+        <line x1="694" y1="92" x2="846" y2="44" stroke="#B42318" stroke-width="2"/>
+        <text x="770" y="114" text-anchor="middle" font-size="11" fill="#B42318">contradiction for this model</text>
+        <text x="770" y="128" text-anchor="middle" font-size="11" fill="#B42318">within the bar window</text>
+      </g>
+
+      <!-- Step 5: re-answer, signed verdict -->
+      <g class="st" data-step="5">
+        <line x1="292" y1="180" x2="688" y2="180" stroke="#9A5B00" stroke-width="1.5" marker-end="url(#ahw)"/>
+        <text x="490" y="172" text-anchor="middle" font-size="12" fill="#9A5B00">re-answer, then both halves</text>
+        <line x1="688" y1="204" x2="292" y2="204" stroke="#127A52" stroke-width="1.5" marker-end="url(#ahv)"/>
+        <text x="490" y="222" text-anchor="middle" font-size="12" class="mono" fill="#127A52">signed: contradicted:&lt;B&gt;</text>
+        <rect x="690" y="256" width="160" height="40" rx="6" fill="#fff" stroke="#0B0E14"/>
+        <text x="770" y="274" text-anchor="middle" font-size="11" class="mono" fill="#0B0E14">adjudication_issued</text>
+        <text x="770" y="289" text-anchor="middle" font-size="11" fill="#5C6573">C's own chain</text>
+      </g>
+
+      <!-- Step 6: R seals, delivers to A and B -->
+      <g class="st" data-step="6">
+        <rect x="138" y="208" width="144" height="30" rx="6" fill="#fff" stroke="#0B0E14"/>
+        <text x="210" y="227" text-anchor="middle" font-size="11" class="mono" fill="#0B0E14">adjudication_received</text>
+        <line x1="270" y1="150" x2="410" y2="88" stroke="#127A52" stroke-width="1.5" marker-end="url(#ahv)"/>
+        <line x1="270" y1="244" x2="410" y2="306" stroke="#127A52" stroke-width="1.5" marker-end="url(#ahv)"/>
+        <text x="392" y="26" text-anchor="end" font-size="11" class="mono" fill="#0B0E14">adjudication_received</text>
+        <text x="392" y="41" text-anchor="end" font-size="11" fill="#5C6573">or a signed refusal</text>
+        <text x="392" y="56" text-anchor="end" font-size="11" fill="#9A5B00">delivery: off by default</text>
+        <text x="475" y="396" text-anchor="middle" font-size="11" class="mono" fill="#0B0E14">adjudication_received</text>
+        <text x="475" y="411" text-anchor="middle" font-size="11" fill="#5C6573">or a signed refusal</text>
+      </g>
+
+      <!-- Step 7: local counts -->
+      <g class="st" data-step="7">
+        <rect x="610" y="306" width="240" height="118" rx="8" fill="#fff" stroke="#3A5BD9"/>
+        <text x="620" y="324" font-size="12" font-weight="600" fill="#0B0E14">R's Peers page, this model</text>
+        <text x="620" y="342" font-size="11" class="mono" fill="#0B0E14">B  contradicted 1</text>
+        <text x="620" y="358" font-size="11" class="mono" fill="#0B0E14">A  corroborated 1</text>
+        <text x="620" y="374" font-size="11" class="mono" fill="#5C6573">   inconclusive 0 · not_comparable 0</text>
+        <text x="620" y="394" font-size="11" fill="#5C6573">each count lists its verdict ids</text>
+        <text x="620" y="412" font-size="11" fill="#9A5B00">counts only · never sent to a peer</text>
+      </g>
+
+      <!-- Step 8: opt-in stop routing -->
+      <g class="st" data-step="8">
+        <rect x="10" y="346" width="370" height="78" rx="8" fill="#FDECEA" stroke="#B42318"/>
+        <text x="20" y="364" font-size="12" font-weight="600" fill="#B42318">Opt-in: N contradictions in D days (off by default)</text>
+        <text x="20" y="381" font-size="12" fill="#0B0E14">&#8594; R asks its host to stop routing to B</text>
+        <text x="20" y="398" font-size="12" fill="#0B0E14">host blocks only if allow_peer_blocks = true</text>
+        <text x="20" y="415" font-size="12" fill="#0B0E14">R seals the block, citing the verdicts</text>
+        <line x1="380" y1="380" x2="398" y2="360" stroke="#B42318" stroke-width="1.5" marker-end="url(#ahb)"/>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>When a client marks two requests as one pair and the two nodes that served them give different answers, the node that asked can have a third node re-answer the request and sign a verdict naming the twin it does not agree with.</p>
+    <p>Each node the verdict concerns checks the referee's signature and seals its own record of it, and the node that asked counts verdicts about each peer in four plain counts, kept on its own disk.</p>
+    <p>An operator can opt in to one rule on top of those counts: after N contradictions within D days, ask the host to stop routing to that peer, which the host does only if its own operator allowed it.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a pair exists only when a client marks it (<code>x-mesh-twin-bracket</code>); the host never adds a second request.</div>
+      <div class="not"><b>Rejected:</b> the host sampling a share of requests and sending each to a second node, as the September deck showed (&ldquo;about 1 in 50&rdquo;). No such rate exists in the code. (capsules <code>docs/TWIN-REFEREE-SELECTION.md</code> §1; <code>crates/evidence-plugin/src/referee/live.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> twins that name different weights get no verdict at all (<code>weights_mismatch</code>); that pair is not comparable and nothing counts against either twin.</div>
+      <div class="not"><b>Rejected:</b> marking the node that served other weights as contradicted, as the deck did. A weights claim is the node's own word in its signed record; a verdict rules only on words. (<code>crates/evidence-plugin/src/referee/verdict.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> referee eligibility is five yes/no rules over this node's own verified records, two tiers (with a corroboration for that model, then without), a random pick within the tier, and the tier sealed in the verdict.</div>
+      <div class="not"><b>Rejected:</b> ranking candidates by merit, weighting, or any combined number. (<code>TWIN-REFEREE-SELECTION.md</code> §2, §3, §5)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the verdict is a signed record held beside each node's log, and each node seals its own <code>adjudication_issued</code> or <code>adjudication_received</code> record citing it; a refused delivery is sealed by the node that tried to deliver it.</div>
+      <div class="not"><b>Rejected:</b> one shared copy, or a delivery that leaves no trace when refused. (<code>crates/evidence-plugin/src/adjudication_records.rs</code>, <code>referee/hold.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> four counts per peer and model (corroborated, contradicted, inconclusive, not comparable), each a list of verdict ids the page can open; a received verdict counts only if this node asked that referee about that exact pair, and once per referee and pair.</div>
+      <div class="not"><b>Rejected:</b> a score, a blended number, or counting any verdict that arrives: a signature says who signed, not that anyone asked, so any node with a key could otherwise mint verdicts about a peer. (<code>crates/evidence-plugin/src/verdict_counts.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the stop-routing rule is off unless the operator sets N; with N of 2 or more, one referee alone can add at most N&minus;1 contradictions; the rule asks the host over the plugin protocol, and the host refuses unless its operator set <code>allow_peer_blocks = true</code> for this plugin.</div>
+      <div class="not"><b>Rejected:</b> the plugin routing anything itself, or calling the console's operator route to block a peer (the plugin did that before 0.1.3). (<code>crates/evidence-plugin/src/routing_rule.rs</code>; <code>CHANGELOG.md</code> 0.1.3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> by default the node sends nothing to a peer on its own (it still answers a peer that asks for a record): the referee (<code>adjudicate_differing_twins</code>) and verdict delivery (<code>share_adjudications</code>) are both off until the operator turns them on, and the referee also needs record push (<code>share_record_at_completion</code>, off by default and symmetric) on both twins, since it is asked only once both pushed halves are held.</div>
+      <div class="not"><b>Rejected:</b> the referee on by default, as the deck planned. Asking a referee sends the twins' prompt to a third node, so it needs an explicit switch. (<code>docs/SHARING-POLICY.md</code>; <code>CHANGELOG.md</code> 0.1.3)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>That the referee's key signed a ruling on one named pair of halves, at the tier it was asked from; a verdict with an altered tier fails verification.</li>
+      <li>For a node that seals <code>adjudication_received</code>: that it checked the referee's signature under the key it holds for that referee (announced by the referee's host, or set by the operator in <code>CAPSULES_PEER_KEYS</code>) before recording the verdict.</li>
+      <li>On the asking node: how many verified verdicts about each peer fall in each of four buckets, per model, with every verdict listed by id.</li>
+      <li>For a rule block: the rule's name and a commitment to each verdict it cited, sealed by the node that asked for the block.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That an answer was right. A verdict says which twin's words the referee's own re-answer matched; the referee can be wrong too.</li>
+      <li>That a twin really loaded the model or weights it names: both are the node's own word in its record. Hardware evidence is the route beyond that; v0.1.4's referee flow does not use it.</li>
+      <li>Anything about pairs no client marked, about pairs whose twins named different weights, or about a node's future answers.</li>
+      <li>Anything to other nodes: the counts are this node's own and are never sent. (A peer can ask for <code>history_card/1</code>, a different thing: a derivation of the node's checkpoint history, with consistency proofs.)</li>
+      <li>A live run: v0.1.4 says a referee verdict on live hosts &ldquo;is covered by tests only&rdquo; (CHANGELOG 0.1.4).</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>A case from the plugin's referee parity corpus: node R holds three verdicts about three twin pairs served by node-a and node-b for one model, from three different referees, each one R asked for. The operator set N&nbsp;=&nbsp;3 contradictions within 7 days. One of the three input records, then the answer the rules give.</p>
+  <pre class="code"><code>// corpus/counts.json, case "fires_at_n_within_window": settings and one of three records
+"settings": { "stop_routing_after_contradictions": "3", "stop_routing_window_days": "7" },
+"host": { "blocked": [], "peer_blocks": true },
+{
+  "model_attestation": {
+    "compute_attestation": {
+      "adjudication_received": {
+        "half_node_ids": ["node-a", "node-b"],
+        "halves": ["f47851c19964011b864120be12a7e10aea6e7c5d5076f8b97bd64ae39abcc97e",
+                   "003127801349c5cb9d5cd627fc8ec273bdbcc4f428fa252eae141c6ccfb8b610"],
+        "model_hash": "b2767326b03d5e629546363ebe41714b78065e028709580996d60d2d119192da",
+        "received_at": "2026-09-29T00:00:00Z",
+        "referee_node_id": "node-c",
+        "verdict": "contradicted:node-a",
+        "verdict_capsule_id": "0660df2a44bc180e4a474fd809e3116ebde1a29c5f154260db7c9bca2f288301"
+      }
+    }
+  }
+}
+
+// rule_answers/counts.json: the answer (verdict id lists trimmed)
+"counts": {
+  "node-a": { "b2767326…92da": { "contradicted": { "count": 3, … }, "corroborated": { "count": 0 },
+                                 "inconclusive": { "count": 0 }, "not_comparable": { "count": 0 } } },
+  "node-b": { "b2767326…92da": { "contradicted": { "count": 0 }, "corroborated": { "count": 3, … },
+                                 "inconclusive": { "count": 0 }, "not_comparable": { "count": 0 } } }
+},
+"outcomes": [ { "outcome": "blocked", "peer_id": "node-a", "verdict_capsule_ids": [ … 3 ids … ] } ],
+"rule": { "after": 3, "window_days": 7 }</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>adjudication_received</td><td>object</td><td>The block of R's own record of a verdict it verified: sealed only after the referee's signature checked under the key R holds for that referee.</td></tr>
+      <tr><td>half_node_ids</td><td>[string, string]</td><td>The two twins the verdict judges.</td></tr>
+      <tr><td>halves</td><td>[hex, hex]</td><td>The twins' served records, by <code>capsule_id</code>; with the referee they form the pair key that counts once.</td></tr>
+      <tr><td>model_hash</td><td>hex</td><td>The model the twins named. Counts, the bar window and the referee tiers are all per model.</td></tr>
+      <tr><td>received_at</td><td>RFC 3339</td><td>When R recorded the verdict (to the minute). Windows run from this time, never from a time the referee wrote.</td></tr>
+      <tr><td>referee_node_id</td><td>string</td><td>Who signed. A verdict whose referee is one of the twins counts nowhere.</td></tr>
+      <tr><td>verdict</td><td>string</td><td><code>contradicted:node-a</code>: the referee's answer did not agree with node-a's. It counts as contradicted for node-a and corroborated for node-b.</td></tr>
+      <tr><td>verdict_capsule_id</td><td>hex</td><td>The signed verdict this record cites; each count lists these ids.</td></tr>
+      <tr><td>counts</td><td>object</td><td>Per peer, per model, the four buckets, zeros included. Never sent to anyone.</td></tr>
+      <tr><td>outcomes</td><td>array</td><td><code>blocked</code>: the host took the block of node-a; the three cited verdicts never count toward the rule again.</td></tr>
+      <tr><td>host.peer_blocks</td><td>bool</td><td>The host offers the stop-routing path. Without it the outcome is <code>no_host_hook</code> and no verdict is spent.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The same corpus pins the edges: N&minus;1 contradictions do not fire; four contradictions from one referee never reach three; a contradiction seven days and one second old is outside a seven-day window; after the operator undoes a block, only new contradictions fire it again.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:vectors/parity/referee/corpus/counts.json</code> and <code>vectors/parity/referee/rule_answers/counts.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4). Node ids are the corpus's placeholders.</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <p>The September deck split this into a &ldquo;demo build today&rdquo; and a later upstream plugin release. The code differs from both columns. Today means the latest tagged release; the upstream column is the plugin's move into the mesh-llm repository, which is not merged.</p>
+  <div class="tw"><table class="t when">
+    <thead><tr><th>Piece</th><th>Today: capsules v0.1.4</th><th>Not released yet</th></tr></thead>
+    <tbody>
+      <tr><td>Client-marked twin pairs</td><td>Built. Host side in mesh-llm v0.78.1 (PR 2144): the client's <code>x-mesh-twin-bracket</code> value reaches the plugin and is stripped before forwarding.</td><td>mesh-llm PR 2300 (merged, in no release yet) advertises it as the <code>twin_bracket</code> capability; no change in behaviour.</td></tr>
+      <tr><td>Referee verdict, signed by the referee</td><td>Built, off by default; on live hosts covered by tests only (CHANGELOG 0.1.4). The deck's &ldquo;sealed by the requester, not yet signed by the referee&rdquo; no longer holds: the referee signs.</td><td>capsules <code>main</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>: the referee checks the signature on a signed adjudicate request before reading it; an unsigned one is still answered (PR 31, PR 33).</td></tr>
+      <tr><td>Verdict sealed by every node it concerns</td><td>Built: <code>adjudication_issued</code> on the referee, <code>adjudication_received</code> on the asking node and, with <code>share_adjudications</code> on (off by default), on each twin.</td><td>&mdash;</td></tr>
+      <tr><td>Verdict counts per peer</td><td>Built: the Peers page's four counts, local only (<code>verdict_counts.rs</code>).</td><td>&mdash;</td></tr>
+      <tr><td>Opt-in stop-routing rule</td><td>Built, off by default (<code>routing_rule.rs</code>). The host path it needs, <code>allow_peer_blocks</code>, is in mesh-llm release v0.78.1 (<code>crates/mesh-llm-config/src/model.rs</code>). The deck's &ldquo;stop routing is manual&rdquo; no longer holds.</td><td>&mdash;</td></tr>
+      <tr><td>The plugin inside mesh-llm</td><td>A separate repository and release.</td><td>mesh-llm PR 2459 (open) moves it into the mesh-llm workspace; PR 2337 (merged) lets a node install default plugins from a release bundle, and is inert until a release carries one. mesh-llm v0.78.1, its latest release, carries none.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Evidence: <code>Mesh-LLM/capsules</code> tag v0.1.4 @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (<code>CHANGELOG.md</code>, <code>docs/TWIN-REFEREE-SELECTION.md</code>, <code>docs/SHARING-POLICY.md</code>, <code>crates/evidence-plugin/src/verdict_counts.rs</code>, <code>routing_rule.rs</code>, <code>referee/</code>); capsules <code>main</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>; <code>Mesh-LLM/mesh-llm</code> tag v0.78.1 @ <code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>; mesh-llm PRs 2144, 2300, 2337, 2459 (checked 2026-10-19).</p>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record envelope each half, verdict and node's record of it is sealed in; the adjudication fields inside it are the plugin's own.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> &mdash; how a peer asks a node for records or its <code>history_card/1</code>; the verdict counts are not among the answers.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the node's own log that each sealed record joins.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> signature on each record and verdict.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc3339">RFC 3339</a> &mdash; the timestamps the windows are measured from.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the plugin, the referee parity corpus and the docs cited above.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">Mesh-LLM/mesh-llm#2459</a> &mdash; the plugin moving into the mesh-llm workspace (open).</li>
+  </ul>
+
+  <footer class="pn"><a href="13-capsule-types.html">&larr; Every capsule type</a><a href="15-evidence-report.html">The evidence report &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

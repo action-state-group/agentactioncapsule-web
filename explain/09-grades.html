@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09 · Evidence grades · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="08-bundles-disclosure.html">&larr; Prev</a><a href="index.html">Contents</a><a href="10-mesh-llm.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">09 / 11</div>
+  <h1>Evidence grades</h1>
+  <p class="lede">A record may say how much evidence stands behind it; a verifier works that out again from the record's own bytes and the proofs it can check, and reports any claim they do not support.</p>
+
+  <figure class="anim" data-steps="5"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="A record arrives with assurance.cross_party_rung set to full_bilateral: the producer says both parties' evidence is bound in."
+    data-cap-2="The verifier reads the record's own cross_party block: initiator_ref is there; counterparty_ref, correlator and substantive are not. It does not open the digests or check the other side's signature."
+    data-cap-3="With no counterparty_ref, the rung the block supports is unilateral_fallback."
+    data-cap-4="The claimed rung is demoted to the derived one. The derived value is the one reported."
+    data-cap-5="The verifier emits assurance_overclaim (check 7, informational): what was claimed, what was derived. ok stays true. No score is computed.">
+    <svg viewBox="0 0 860 340" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">A verifier re-derives cross_party_rung and reports an overclaim</title>
+      <desc id="anim-d">Step 1: a record box on the left carries the claim cross_party_rung: full_bilateral. Step 2: in the middle, a verifier box reads the record's own cross_party block: initiator_ref present, marked green; counterparty_ref absent, marked grey; correlator and substantive absent, marked grey; a note says the digests are not opened and the other side's signature is not checked. Step 3: on the right, a box reads derived from the block's bytes: unilateral_fallback, only the initiator's half is referenced. Step 4: the record's claim full_bilateral is struck through and replaced by unilateral_fallback. Step 5: a red finding box at the bottom reads check 7, assurance_overclaim, severity info, ok true; claimed full_bilateral, derived unilateral_fallback; no score, no rating.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
+      </defs>
+      <!-- record -->
+      <g class="st" data-step="1">
+        <rect x="20" y="70" width="190" height="130" rx="10" fill="#FFFFFF" stroke="#0B0E14"/>
+        <text x="36" y="96" font-size="14" font-weight="600" fill="#0B0E14">Record</text>
+        <text x="36" y="118" font-size="12" fill="#5C6573">payload + producer</text><text x="36" y="133" font-size="12" fill="#5C6573">signature</text>
+        <text x="36" y="150" font-size="12" fill="#5C6573">claims cross_party_rung:</text>
+      </g>
+      <g class="st" data-step="1" data-until="3"><rect x="36" y="158" width="160" height="28" rx="6" fill="#FBF1E1" stroke="#9A5B00"/><text x="116" y="177" text-anchor="middle" font-size="13" class="mono" fill="#9A5B00">full_bilateral</text></g>
+      <g class="st" data-step="4"><rect x="36" y="158" width="160" height="28" rx="6" fill="#FBF1E1" stroke="#9A5B00" opacity=".5"/><text x="116" y="177" text-anchor="middle" font-size="13" class="mono" fill="#9A5B00" opacity=".6">full_bilateral</text><line x1="46" y1="172" x2="186" y2="172" stroke="#B42318" stroke-width="2"/>
+        <rect x="26" y="212" width="180" height="28" rx="6" fill="#E6F2EC" stroke="#127A52"/><text x="116" y="231" text-anchor="middle" font-size="13" class="mono" fill="#127A52">unilateral_fallback</text>
+        <line x1="116" y1="188" x2="116" y2="208" stroke="#B42318" stroke-width="1.5" marker-end="url(#ah)"/></g>
+      <g class="st" data-step="2"><line x1="214" y1="135" x2="262" y2="135" stroke="#5C6573" stroke-width="1.6" marker-end="url(#ah)"/></g>
+      <!-- verifier -->
+      <g class="st" data-step="2">
+        <rect x="268" y="20" width="300" height="212" rx="10" fill="#F4F4F0" stroke="#E3E3DC"/>
+        <text x="284" y="44" font-size="14" font-weight="600" fill="#0B0E14">Verifier reads the cross_party block</text>
+        <rect x="284" y="56" width="268" height="36" rx="7" fill="#E6F2EC" stroke="#127A52"/><text x="298" y="79" font-size="13" fill="#0B0E14">&#10003; initiator_ref: present</text>
+        <rect x="284" y="100" width="268" height="36" rx="7" fill="#FFFFFF" stroke="#5C6573" stroke-dasharray="5 4"/><text x="298" y="123" font-size="13" fill="#5C6573">&#8212; counterparty_ref: absent</text>
+        <rect x="284" y="144" width="268" height="36" rx="7" fill="#FFFFFF" stroke="#5C6573" stroke-dasharray="5 4"/><text x="298" y="167" font-size="13" fill="#5C6573">&#8212; correlator, substantive: absent</text>
+        <text x="284" y="200" font-size="12" fill="#5C6573">Digests are not opened; the other</text>
+        <text x="284" y="217" font-size="12" fill="#5C6573">side's signature is not checked here.</text>
+      </g>
+      <!-- derived -->
+      <g class="st" data-step="3"><line x1="572" y1="125" x2="610" y2="125" stroke="#5C6573" stroke-width="1.6" marker-end="url(#ah)"/>
+        <rect x="616" y="80" width="230" height="90" rx="10" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="630" y="106" font-size="12" fill="#5C6573">derived from the block's bytes</text>
+        <text x="630" y="130" font-size="15" font-weight="600" class="mono" fill="#127A52">unilateral_fallback</text>
+        <text x="630" y="153" font-size="12" fill="#0B0E14">no counterparty_ref present</text></g>
+      <!-- report -->
+      <g class="st" data-step="5">
+        <line x1="728" y1="172" x2="728" y2="236" stroke="#B42318" stroke-width="1.6" marker-end="url(#ah)"/>
+        <rect x="268" y="240" width="578" height="84" rx="10" fill="#FDECEA" stroke="#B42318"/>
+        <text x="284" y="264" font-size="14" font-weight="600" fill="#B42318">Finding: assurance_overclaim (check 7, info; ok stays true)</text>
+        <text x="284" y="288" font-size="12" class="mono" fill="#0B0E14">claimed: full_bilateral · derived: unilateral_fallback</text>
+        <text x="284" y="310" font-size="12" fill="#5C6573">The report names the claim and the derived value. No score, no rating.</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>The evidence layer names three levels of assurance a record can reach, self-attested (signed only by its producer, with neither a witness nor a countersignature), witnessed and countersigned, but defines no rule for a verifier to re-derive them.</p>
+    <p>The Agent Action Capsule draft does define such a rule for its own <code>assurance</code> fields: a verifier re-derives each one from what it can check, for <code>cross_party_rung</code> from the record's own <code>cross_party</code> block, and reports the derived value.</p>
+    <p>When a record claims more than that, the verifier reports the claim as an overclaim beside the derived value, and no draft turns any of this into a reputation number.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a verifier re-derives each assurance mode from the evidence present and reports any overclaim.</div>
+      <div class="not"><b>Rejected:</b> accepting the producer's label; a producer MUST NOT record a mode it did not achieve, and the verifier does not take its word for it. (AAC -05 &sect;5.4, &sect;6 check 7)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> how much of the other side's signed evidence is bound in is its own axis, <code>cross_party_rung</code>.</div>
+      <div class="not"><b>Rejected:</b> folding a <code>countersigned</code> value into <code>attestation_mode</code>, which would make "both sides signed, not yet anchored" impossible to express. (AAC -05 &sect;5.4.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> an overclaimed custody or cross-party grade is an informational finding, and the derived value replaces the claim.</div>
+      <div class="not"><b>Rejected:</b> treating every overclaim alike; an unsupported <code>time_rung: "witnessed"</code> on a backfilled record fails verification, because the claim is unsupported and "falsifiable from the record's own bytes". (AAC -05 &sect;6 checks 7 and 9)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a record's <code>epistemic_type</code> (how its content came to be known) is fixed at commit and never upgraded.</div>
+      <div class="not"><b>Rejected:</b> letting a later signature, receipt or countersignature change what kind of statement a record was. (Evidence layer -00 &sect;4.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> report per record what the evidence supports, and leave weighing it to the relying party.</div>
+      <div class="not"><b>Rejected:</b> a score for parties; the settlement draft "does not rank, rate, or otherwise grade the parties", and the bilateral draft "neither scores counterparties nor defines a vocabulary for doing so". (Settlement -00 &sect;1.1; bilateral -02 &sect;12.2)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>For each <code>assurance</code> field, the value the verifier can support: <code>chained</code> from an intact chain block, <code>anchored</code> only after it verifies an inclusion proof against a trusted log key.</li>
+      <li>For <code>cross_party_rung</code>, what the record's own <code>cross_party</code> block contains: an <code>initiator_ref</code> digest, a <code>counterparty_ref</code> digest and <code>correlator</code>, and a <code>substantive</code> flag.</li>
+      <li>Where a record claimed more than that, as a named finding with the claimed and the derived value.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That the record's content is true; a grade says who signed and how it was committed, not how its content was known.</li>
+      <li>More than inclusion, from a Receipt: it shows a statement is in a log. Checking that each checkpoint extends the one before is a witness's job, a separate party (evidence layer -00 &sect;3).</li>
+      <li>That a witness or countersigner is independent of the producer; that is a claim about who runs it.</li>
+      <li>That the other side signed anything: <code>cross_party_rung</code> is derived from the block's own bytes, without opening the digests it cites or checking the counterparty's signature; <code>substantive: true</code> is the producer's word.</li>
+      <li>Anything about a party's other records. There is no reputation number anywhere in these drafts.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>A test vector for exactly this case: a record claims <code>full_bilateral</code> (both parties' evidence bound in) but its <code>cross_party</code> block holds only <code>initiator_ref</code>, a digest of the initiator's own signed half, and no <code>counterparty_ref</code>. The input, then the verifier's expected result.</p>
+  <pre class="code"><code>// input.json
+{
+  "action_id": "cp-overclaim",
+  "action_type": "decide",
+  "assurance": {
+    "attestation_mode": "self_attested",
+    "cross_party_rung": "full_bilateral",
+    "effect_mode": "not_applicable",
+    "ledger_mode": "standalone"
+  },
+  "capsule_id": "6bddc7510b73ee2b0a3b3d4cea9e8aceb3c6786fa6f5a58d56b11723d14bb1e4",
+  "cross_party": {
+    "initiator_ref": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  …
+}
+
+// expected.json
+{
+  "capsule_id_recomputed": "6bddc7510b73ee2b0a3b3d4cea9e8aceb3c6786fa6f5a58d56b11723d14bb1e4",
+  "derived": {
+    "attestation_mode": "self_attested",
+    "cross_party_rung": "unilateral_fallback",
+    "effect_mode": "not_applicable",
+    "ledger_mode": "standalone"
+  },
+  …
+  "findings": [
+    {
+      "check": 7,
+      "code": "assurance_overclaim",
+      "detail": "claimed cross_party_rung 'full_bilateral' but verifier derived 'unilateral_fallback' (§5.3 Cross-party assurance)",
+      "severity": "info"
+    }
+  ],
+  "kind": "overclaim",
+  "ok": true,
+  …
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>assurance.cross_party_rung</td><td>tstr</td><td>The producer's claim: <code>full_bilateral</code>, both sides' evidence bound in.</td></tr>
+      <tr><td>cross_party.initiator_ref</td><td>hex tstr</td><td>Digest of the initiator's own signed half; the only half present.</td></tr>
+      <tr><td>cross_party.counterparty_ref</td><td>(absent)</td><td>No other-side half is referenced, so the claim cannot hold.</td></tr>
+      <tr><td>derived.cross_party_rung</td><td>tstr</td><td>What the verifier derives: <code>unilateral_fallback</code>.</td></tr>
+      <tr><td>findings[].code</td><td>tstr</td><td><code>assurance_overclaim</code>: claimed above derived.</td></tr>
+      <tr><td>findings[].severity</td><td>tstr</td><td><code>info</code>: reported, does not fail the record.</td></tr>
+      <tr><td>ok</td><td>bool</td><td>True: no failing check; the overclaim is reported and the derived value stands.</td></tr>
+    </tbody>
+  </table></div>
+  <p>The section number inside <code>detail</code> is the vector's own text; in the -05 draft the subsection is &sect;5.4.1.</p>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/neg-cross-party-overclaim/input.json</code> and <code>expected.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+
+  <h2><span class="n">5</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; defines self-attested, witness and countersignature, and fixes <code>epistemic_type</code> at commit.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the <code>assurance</code> modes, <code>cross_party_rung</code>, <code>time_rung</code>, and the verifier's re-derivation.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; the two signed halves a cross-party grade summarizes; degraded records are always marked.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a> &mdash; records both sides of a payment; does not rank or rate the parties.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: Transparency Service, Receipt, Auditor.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts.</li>
+  </ul>
+
+  <footer class="pn"><a href="08-bundles-disclosure.html">&larr; Bundles and selective disclosure</a><a href="10-mesh-llm.html">Mesh-LLM capsules plugin &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 · Bundles and selective disclosure · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="07-bilateral-settlement.html">&larr; Prev</a><a href="index.html">Contents</a><a href="09-grades.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">08 / 11</div>
+  <h1>Bundles and selective disclosure</h1>
+  <p class="lede">A bundle packages a record with what makes it checkable and says exactly what it left out; selective disclosure withholds single fields without breaking the signature over the record.</p>
+
+  <figure class="anim" data-steps="6"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="A plain record with two eligible fields: operator, and one constraint record."
+    data-cap-2="For each field to conceal, the producer builds a disclosure [salt, name, value] and hashes its JCS form with SHA-256."
+    data-cap-3="The fields are replaced by their digests (_sd and a {&quot;...&quot;: digest} placeholder), and capsule_id and the signature are computed over this form."
+    data-cap-4="The holder sends the signed record and only one disclosure, for operator; the constraint disclosure is kept back."
+    data-cap-5="The verifier rehashes the revealed disclosure, finds it in the signed _sd array, and re-inserts operator. The signature still verifies."
+    data-cap-6="The decoy digest is ignored; the unrevealed constraint stays concealed and is reported as a count, sd_undisclosed_constraints: 1.">
+    <svg viewBox="0 0 860 352" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">Withholding a field without breaking the signature</title>
+      <desc id="anim-d">Left: a record. Step 1: the plain record shows action_id act-001, action_type decide, a timestamp, operator acme-corp, and a constraints array holding one constraint record, spend_limit, result pass. Step 2: in the middle, the producer builds two disclosures, the array ["rIdm2xVvGT-yKjLWOXXJfg", "operator", "acme-corp"] and ["aBcDeFgHiJkLmNoPqRsTuV", the constraint record], and hashes the JCS form of each with SHA-256, giving digests beginning nqN82i0T and NLyJfzzG. Step 3: the record now carries _sd_alg sha-256, an _sd array holding nqN82i0T and a decoy digest, and a constraints array holding the placeholder {"...": NLyJfzzG}; the operator member and the constraint record are gone. A badge shows capsule_id computed over this form and the Producer Envelope signature over capsule_id. Step 4: the holder sends the signed record and the operator disclosure only; the constraint disclosure is kept back. Step 5: on the right, the verifier rehashes the operator disclosure, gets nqN82i0T, finds it in the signed _sd array, and re-inserts operator: acme-corp; capsule_id is recomputed over the form as received and the signature verifies. Step 6: the decoy digest is ignored, and the constraint placeholder stays concealed and is reported as sd_undisclosed_constraints: 1. The final picture shows the concealed record with the intact signature badge and the verifier's results.</desc>
+
+      <!-- record panel -->
+      <rect x="16" y="14" width="300" height="270" rx="10" fill="#fff" stroke="#3A5BD9"/>
+      <text x="28" y="34" font-size="13" font-weight="600" fill="#0B0E14">record (payload)</text>
+      <g class="mono" font-size="12" fill="#0B0E14">
+        <text x="28" y="58">"action_id": "act-001"</text>
+        <text x="28" y="78">"action_type": "decide"</text>
+        <text x="28" y="98">"timestamp": "2026-06-18T00:00:00Z"</text>
+      </g>
+      <g class="st" data-step="1" data-until="2">
+        <rect x="24" y="106" width="200" height="22" rx="4" fill="#FBF1E1"/>
+        <text x="28" y="122" class="mono" font-size="12" fill="#0B0E14">"operator": "acme-corp"</text>
+        <rect x="24" y="134" width="284" height="40" rx="4" fill="#FBF1E1"/>
+        <text x="28" y="150" class="mono" font-size="12" fill="#0B0E14">"constraints": [{"id": "spend_limit",</text>
+        <text x="28" y="166" class="mono" font-size="12" fill="#0B0E14">  "result": "pass", …}]</text>
+      </g>
+      <g class="st" data-step="3">
+        <text x="28" y="122" class="mono" font-size="12" fill="#3A5BD9">"_sd_alg": "sha-256"</text>
+        <text x="28" y="142" class="mono" font-size="12" fill="#3A5BD9">"_sd": ["nqN82i0T…", "&lt;decoy&gt;"]</text>
+        <text x="28" y="162" class="mono" font-size="12" fill="#3A5BD9">"constraints": [{"...": "NLyJfzzG…"}]</text>
+        <rect x="28" y="196" width="276" height="76" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="40" y="216" font-size="12" fill="#127A52" font-weight="600">capsule_id = SHA-256(JCS(this form))</text>
+        <text x="40" y="236" font-size="12" fill="#127A52">Producer Envelope (COSE_Sign1)</text>
+        <text x="40" y="254" font-size="12" fill="#127A52">signs capsule_id ✓</text>
+      </g>
+
+      <!-- producer hashing panel -->
+      <g class="st" data-step="2">
+        <text x="336" y="34" font-size="13" font-weight="600" fill="#0B0E14">producer: salt, then hash</text>
+        <rect x="336" y="46" width="240" height="68" rx="8" fill="#F4F4F0" stroke="#E3E3DC"/>
+        <text x="346" y="64" class="mono" font-size="12" fill="#0B0E14">["rIdm2xVvGT-yKjLWOXXJfg",</text>
+        <text x="346" y="80" class="mono" font-size="12" fill="#0B0E14"> "operator","acme-corp"]</text>
+        <text x="346" y="104" class="mono" font-size="12" fill="#3A5BD9">SHA-256 → nqN82i0TEZF3…</text>
+        <rect x="336" y="124" width="240" height="68" rx="8" fill="#F4F4F0" stroke="#E3E3DC"/>
+        <text x="346" y="142" class="mono" font-size="12" fill="#0B0E14">["aBcDeFgHiJkLmNoPqRsTuV",</text>
+        <text x="346" y="158" class="mono" font-size="12" fill="#0B0E14"> {…"spend_limit"…}]</text>
+        <text x="346" y="182" class="mono" font-size="12" fill="#3A5BD9">SHA-256 → NLyJfzzGc-kl…</text>
+        <path d="M336 104 C 322 104, 322 140, 316 140" stroke="#3A5BD9" stroke-width="1.4" fill="none" stroke-dasharray="3 3"/>
+        <path d="M336 182 C 322 182, 322 160, 316 160" stroke="#3A5BD9" stroke-width="1.4" fill="none" stroke-dasharray="3 3"/>
+      </g>
+
+      <!-- step 4: what the holder sends -->
+      <g class="st" data-step="4">
+        <rect x="336" y="208" width="240" height="76" rx="8" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="346" y="228" font-size="12" font-weight="600" fill="#0B0E14">holder sends to verifier</text>
+        <text x="346" y="246" font-size="12" fill="#0B0E14">signed record + operator disclosure</text>
+        <text x="346" y="264" font-size="12" fill="#9A5B00">constraint disclosure: kept back</text>
+        <path d="M576 246 H 592" stroke="#3A5BD9" stroke-width="1.6"/>
+        <polygon points="592,242 600,246 592,250" fill="#3A5BD9"/>
+        <rect x="602" y="14" width="242" height="270" rx="10" fill="#F4F4F0" stroke="#0B0E14"/>
+        <text x="614" y="34" font-size="13" font-weight="600" fill="#0B0E14">verifier</text>
+      </g>
+
+      <!-- step 5: rehash and match -->
+      <g class="st" data-step="5">
+        <text x="614" y="58" font-size="12" fill="#0B0E14">rehash revealed disclosure:</text>
+        <text x="614" y="76" class="mono" font-size="12" fill="#3A5BD9">SHA-256 → nqN82i0TEZF3…</text>
+        <text x="614" y="96" font-size="12" fill="#127A52">✓ found in signed _sd</text>
+        <text x="614" y="114" class="mono" font-size="12" fill="#127A52">→ "operator": "acme-corp"</text>
+        <text x="614" y="138" font-size="12" fill="#127A52">✓ capsule_id over form received</text>
+        <text x="614" y="156" font-size="12" fill="#127A52">✓ signature over capsule_id</text>
+      </g>
+
+      <!-- step 6: leftovers -->
+      <g class="st" data-step="6">
+        <text x="614" y="186" font-size="12" fill="#5C6573">&lt;decoy&gt;: no disclosure, ignored</text>
+        <text x="614" y="206" font-size="12" fill="#9A5B00">constraint: still concealed</text>
+        <rect x="610" y="218" width="226" height="26" rx="6" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="618" y="236" class="mono" font-size="12" fill="#9A5B00">sd_undisclosed_constraints: 1</text>
+        <text x="614" y="268" font-size="12" fill="#5C6573">reported, never filled in</text>
+      </g>
+      <text x="16" y="312" font-size="12" fill="#5C6573">Values from the selective-disclosure draft examples (§7.1, §7.2); the digests are SHA-256 of the JCS form</text><text x="16" y="327" font-size="12" fill="#5C6573">of each array, computed for this page.</text>
+      <text x="16" y="344" font-size="12" fill="#5C6573">The salts are the draft's own example salts, so these digests are illustrative, not from a production record.</text>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>An Evidence Bundle is one JSON object that carries a root record, the records it cites, any revealed preimages, and log evidence, without changing any record inside it.</p>
+    <p>It states its completeness as three separate claims, graph closure, interval coverage and per-record membership, and a verifier reports each one on its own.</p>
+    <p>Selective disclosure lets a producer replace single eligible fields with salted digests before signing, so a holder can later reveal some fields to a verifier and keep others back while the signature still verifies.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> citation closure is declared: every citation reached within <code>closure_depth</code> is either supplied or listed once in <code>completeness.missing</code>.</div>
+      <div class="not"><b>Rejected:</b> assuming closure from what is present; a short chain would look complete. A verifier reports the depth it applied. (disclosure-bundle §4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> three completeness claims, each verified and reported independently.</div>
+      <div class="not"><b>Rejected:</b> one "complete" flag; an endpoint-only range proof still passes when an interior record is deleted or replaced, so per-record membership needs its own proof. (disclosure-bundle §6)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> without a verified checkpoint signature or witness receipt, coverage and membership are labelled <code>checkpoint_unverified</code>.</div>
+      <div class="not"><b>Rejected:</b> reporting them as independently verified; they are then only relative to a checkpoint the producer asserted. (disclosure-bundle §6)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a bundle-level disclosure overlay, keyed by capsule_id; a member not revealed is WITHHELD, never blank and never failed.</div>
+      <div class="not"><b>Rejected:</b> wrapping each record with its disclosures; the overlay leaves each record and its capsule_id untouched. (disclosure-bundle §5)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> salted per-field digests with decoys, and capsule_id computed over the concealed form, so one signature serves every view.</div>
+      <div class="not"><b>Rejected:</b> recomputing capsule_id over the revealed form; identity would then depend on which fields a verifier was shown, not on the event. (sel-disc §5.2, §8.4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the JSON form of the selective-disclosure model (SD-JWT, <a href="https://www.rfc-editor.org/rfc/rfc9901">RFC 9901</a>), hashing the JCS form, since the record payload is JSON.</div>
+      <div class="not"><b>Rejected:</b> using SD-CWT directly; it is the CBOR/dCBOR sibling, cited for alignment, and hashes dCBOR rather than JCS. (sel-disc §3, Appendix)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a closed list of eligible fields (operator, developer, some disposition and effect members, constraint records, framework_tags).</div>
+      <div class="not"><b>Rejected:</b> concealing anything; hiding <code>effect.status</code> or a response digest would make base checks impossible, so that is a structural failure. (sel-disc §4.4, §8.6)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>That every citation reached within the stated depth is supplied with a matching identity, or openly declared missing.</li>
+      <li>That each supplied record sits at its claimed log position, by its own inclusion proof to the range root.</li>
+      <li>That a revealed preimage hashes to the digest the record committed to (REVEALED-match), or does not (REVEALED-mismatch).</li>
+      <li>That a revealed selective disclosure matches a digest under the signature; a mismatch is reported as <code>sd_commitment_mismatch</code>.</li>
+      <li>How many constraint records are still concealed, so a reader knows the visible list may be incomplete.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>Anything about records beyond <code>closure_depth</code>.</li>
+      <li>Interval coverage or membership as independent results while the checkpoint is unverified.</li>
+      <li>What a withheld field contains, or how many fields are concealed (decoys blur the count).</li>
+      <li>A full verification when a REQUIRED field such as <code>operator</code> stays concealed: <code>ok</code> is false, with <code>sd_required_field_not_disclosed</code> (sel-disc §8.5).</li>
+      <li>Anything from the <code>verification</code> member, which is producer self-report.</li>
+      <li>A valid countersignature: the slot is reserved and every entry is surfaced as <code>unverified</code> in this revision.</li>
+    </ul></div>
+  </div>
+  <p>Two digest checks appear on this page. The bundle overlay compares the plain JSON digest of a revealed preimage (for example <code>agent_input</code>) with the digest the record carries. Selective disclosure compares the digest of a salted <code>[salt, name, value]</code> array with an entry in a signed <code>_sd</code> array.</p>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>A single-record bundle from the conformance vectors: one root record, depth 0, nothing missing, the <code>agent_input</code> preimage revealed in the overlay, and a one-leaf log certificate with an unsigned checkpoint. Recomputing the JSON digest of the full revealed <code>agent_input</code> gives the record's <code>agent_input_digest</code>. One member of that preimage is elided below.</p>
+  <pre class="code"><code>"name": "pos-single-record-report",
+…
+"bundle": {
+  "bundle_version": "2",
+  "bundle_kind": "evidence-bundle/v2",
+  "root": "01011c5da0a88805492b97c4ddd8f50f63839757de8cbf4608bfb51098bfd6fe",
+  "records": [
+    {
+      …
+      "action_id": "report-single-record-1",
+      "action_type": "fyi",
+      …
+      "model_attestation": {
+        "compute_attestation": {
+          "agent_input_digest": "1fadc146114450fe2e22def4f2a57832d68e8ecfd3dca792d93fd68e505e2798"
+        }
+      },
+      "countersignatures": [],
+      "capsule_id": "01011c5da0a88805492b97c4ddd8f50f63839757de8cbf4608bfb51098bfd6fe"
+    }
+  ],
+  "completeness": {
+    "closure_depth": 0,
+    "records_mode": "complete",
+    "payloads_mode": "selected",
+    "suppressed_fields": [],
+    "missing": []
+  },
+  "disclosures": {
+    "01011c5da0a88805492b97c4ddd8f50f63839757de8cbf4608bfb51098bfd6fe": {
+      "agent_input": {
+        …
+        "rows": [
+          {
+            "id": "r1",
+            "result": "pass"
+          },
+          {
+            "id": "r2",
+            "result": "withheld"
+          }
+        ]
+      }
+    }
+  },
+  "completeness_certificate": {
+    "log_id": "vector-log",
+    "range_root": "3d8f59c9a33a55f63256b75bf2710e696d8f397fbc10766b95b0e803d0a4800e",
+    …
+    "memberships": {
+      "01011c5da0a88805492b97c4ddd8f50f63839757de8cbf4608bfb51098bfd6fe": {
+        "log_coordinates": {
+          "log_id": "vector-log",
+          "seq": 1,
+          "leaf_index": 0
+        },
+        …
+  "checkpoint": {
+    "root": "3d8f59c9a33a55f63256b75bf2710e696d8f397fbc10766b95b0e803d0a4800e",
+    "mmr_size": 1
+  }
+},
+"expected": {
+  "graph_closure": "pass",
+  "interval_coverage": "pass",
+  "interval_findings": [
+    "checkpoint_unverified"
+  ],
+  "per_record_membership": "pass",
+  "membership_findings": [
+    "checkpoint_unverified"
+  ]
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>root</td><td>hex</td><td>capsule_id of the record the bundle's claim starts from.</td></tr>
+      <tr><td>records</td><td>array</td><td>Unmodified records; here only the root.</td></tr>
+      <tr><td>completeness.closure_depth</td><td>integer</td><td>How many citation edges were followed; 0 means the root alone.</td></tr>
+      <tr><td>completeness.missing</td><td>array</td><td>Cited digests declared absent; empty, so <code>records_mode</code> is <code>complete</code>.</td></tr>
+      <tr><td>disclosures</td><td>object</td><td>Overlay of revealed preimages keyed by capsule_id; checked against the record's committed digest.</td></tr>
+      <tr><td>completeness_certificate</td><td>object</td><td>Log id, range root, and a per-record membership proof at <code>leaf_index = seq - 1</code>.</td></tr>
+      <tr><td>checkpoint</td><td>object</td><td>Root and MMR size; no signature here, hence <code>checkpoint_unverified</code>.</td></tr>
+      <tr><td>expected</td><td>object</td><td>The three completeness results, each reported on its own.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/bundle/report-single-record.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+
+  <h2><span class="n">5</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-00</a> &mdash; the Evidence Bundle: closure, overlay, the three completeness claims, bundle digest.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">draft-mih-scitt-agent-action-capsule-sel-disc-00</a> &mdash; per-field salted commitments, decoys, eligible fields, verifier checks.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-ietf-spice-sd-cwt/">draft-ietf-spice-sd-cwt-08</a> &mdash; SD-CWT, the CBOR sibling of the same selective-disclosure model.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record, its capsule_id and Producer Envelope.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; related reading on checkpointed logs and MMR proofs; the bundle draft defines its own log-evidence shape and cites no revision of it.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme (JCS), hashed by both digest checks.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE; the Producer Envelope is a COSE_Sign1.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/bundle">action-state-group/agent-action-capsule</a> &mdash; Evidence Bundle vectors, and <code>selective_disclosure.py</code> in the Python package.</li>
+  </ul>
+
+  <footer class="pn"><a href="07-bilateral-settlement.html">&larr; Bilateral attestation and settlement</a><a href="09-grades.html">Evidence grades &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>b9 · Judging: a separate step from evidence · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+  table.t td.tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+  table.t td.tag.built{color:var(--verify)}
+  table.t td.tag.notlive{color:var(--warn)}
+  table.t td.tag.designed{color:var(--muted)}
+  table.t td.tag.none{color:var(--bad)}
+  table.t.status td:first-child{white-space:normal;font-family:var(--sans);font-size:13.5px}
+  table.t.status td:nth-child(3){white-space:normal;font-family:var(--sans);font-size:13px;color:var(--ink)}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b8-checklist.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b10-report.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">b9 / 11 · the loop: judge</div>
+  <h1>Judging: a separate step from evidence</h1>
+  <p class="seam"><b>Seam ③ Check/judge.</b> Build: judgment records kept apart from evidence records. Conform to: <code>draft-mih-agent-evidence-layer-00</code> &sect;4.1, &sect;5.</p>
+  <p class="lede">Evidence says what was done, by whom, and that the record has not changed since. A judgment says whether it was right. Keep the two as separate records: a verifier can recompute what the evidence supports from its bytes, while the judgment stays labelled as one, naming who made it and on what basis.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+
+  <figure class="anim" data-steps="9"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="An agent acts, and its record is sealed: what was done, the agent's own half of the exchange, and the record's own statement of the assurance it reached."
+    data-cap-2="The record claims more than it carries. Its assurance block says full_bilateral, both sides' signed halves, but only the agent's own half is present."
+    data-cap-3="A verifier works out each assurance value again from the bytes. It derives unilateral_fallback, reports assurance_overclaim, and reports the derived value. The claim stays in the record, unchanged and readable for what it was."
+    data-cap-4="Judging is a separate step. A judgment is a new record that cites the act by digest. The act itself is never edited."
+    data-cap-5="Who judges, route 1: rules. If the result is a fixed function of the cited inputs, with no model or human in the loop, its tier is recomputed: anyone holding the inputs can run it again. Designed: a tier value in a design spec, with no open-source implementation yet."
+    data-cap-6="Route 2: a judge model, pinned by model id, prompt digest and sampling settings. Each case reads met, not_met or not_evaluable, and cites the rubric used. Humans rate cases blind, and a judge's calibration agreement is stored as k of n, never as a rate. Designed: schemas and vectors, no open-source producer yet."
+    data-cap-7="Route 3, the mesh case: twins and a referee. The referee re-answers one differing pair and signs a verdict record with epistemic type adjudication, citing both twins' halves by id. Built, not yet live."
+    data-cap-8="Each route ends in a record whose epistemic type says how it was known: derived_metric for rules, semantic_judgment for a judge model, adjudication for a referee's ruling. The type is set at commit and never upgraded. The record cites what it judges by digest and names its judge and its basis."
+    data-cap-9="A verifier checks the judgment's signature and what it cites. It cannot check that the judgment is right. &quot;Was the answer right?&quot; stays a judgment, marked as one, and is never folded into the evidence.">
+    <svg viewBox="0 0 860 480" role="img" aria-labelledby="b9-t b9-d">
+      <title id="b9-t">An act record, a verifier that recomputes its assurance, three ways of judging, and the judgment record they produce</title>
+      <desc id="b9-d">Top left: an act record. Step 1: it is sealed with what was done, its own half of the exchange and its own assurance block. Step 2: the assurance block claims full_bilateral, but only one half is present. Step 3: a verifier recomputes from the bytes: derived unilateral_fallback, finding assurance_overclaim; the claim is left in the record. Step 4: judging is a new record citing the act by digest; the act is not edited. Middle row, three ways of judging. Step 5: rules, tier recomputed, anyone with the inputs re-runs it; designed. Step 6: a judge model, pinned by model id, prompt digest and sampling; each case met, not_met or not_evaluable, with its rubric cited; blind human ratings and calibration agreement as k of n; designed. Step 7: twins and a referee; a verdict record with epistemic type adjudication citing both halves, signed by the referee's key; built, not live. Step 8: each route ends in a judgment record whose epistemic type says how it was known (derived_metric, semantic_judgment or adjudication), fixed at commit and never upgraded, citing what it judges, with its judge and basis. Step 9: a verifier checks the signature and what it cites, not whether the judgment is right; was the answer right stays a judgment, never folded into evidence.</desc>
+      <defs>
+        <marker id="b9a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+        <marker id="b9g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
+        <marker id="b9v" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
+      </defs>
+
+      <!-- Row labels: always visible -->
+      <text x="10" y="18" font-size="11" class="mono" fill="#5C6573">EVIDENCE</text>
+      <text x="10" y="186" font-size="11" class="mono" fill="#5C6573">WHO JUDGES</text>
+      <text x="10" y="354" font-size="11" class="mono" fill="#5C6573">JUDGMENT</text>
+
+      <!-- Act record: always visible frame -->
+      <rect x="10" y="28" width="220" height="130" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+      <text x="24" y="52" font-size="14" font-weight="600" fill="#0B0E14">Act record</text>
+      <text x="24" y="70" font-size="12" fill="#5C6573">what the agent did</text>
+
+      <!-- Step 1: sealed -->
+      <g class="st" data-step="1">
+        <text x="24" y="92" font-size="12" class="mono" fill="#0B0E14">action_id · timestamp</text>
+        <text x="24" y="110" font-size="12" class="mono" fill="#0B0E14">cross_party: own half</text>
+        <text x="24" y="128" font-size="12" class="mono" fill="#0B0E14">assurance: { &#8230; }</text>
+      </g>
+
+      <!-- Step 2: overclaim -->
+      <g class="st" data-step="2">
+        <text x="24" y="148" font-size="12" class="mono" fill="#B42318">claims: full_bilateral</text>
+        <text x="244" y="150" font-size="11" fill="#B42318">only its own half present</text>
+      </g>
+
+      <!-- Step 3: verifier recomputes -->
+      <g class="st" data-step="3">
+        <line x1="230" y1="80" x2="276" y2="80" stroke="#127A52" stroke-width="1.5" marker-end="url(#b9v)"/>
+        <rect x="280" y="28" width="270" height="108" rx="10" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="294" y="50" font-size="13" font-weight="600" fill="#0B0E14">Verifier recomputes from bytes</text>
+        <text x="294" y="70" font-size="12" class="mono" fill="#5C6573">claimed: full_bilateral</text>
+        <text x="294" y="88" font-size="12" class="mono" fill="#127A52">derived: unilateral_fallback</text>
+        <text x="294" y="106" font-size="12" class="mono" fill="#B42318">finding: assurance_overclaim</text>
+        <text x="294" y="126" font-size="11" fill="#5C6573">the claim stays in the record</text>
+      </g>
+
+      <!-- Step 4: judging is a separate record -->
+      <g class="st" data-step="4">
+        <rect x="580" y="28" width="270" height="108" rx="10" fill="#fff" stroke="#3A5BD9" stroke-dasharray="6 4"/>
+        <text x="594" y="50" font-size="13" font-weight="600" fill="#0B0E14">Judging: a new record</text>
+        <text x="594" y="72" font-size="12" fill="#0B0E14">cites the act by digest</text>
+        <text x="594" y="92" font-size="12" fill="#0B0E14">the act is never edited</text>
+        <text x="594" y="118" font-size="12" class="mono" fill="#3A5BD9">act &#8592; judgment</text>
+        <path d="M120,158 L120,166 L715,166 L715,140" fill="none" stroke="#3A5BD9" stroke-width="1.3" marker-end="url(#b9a)"/>
+      </g>
+
+      <!-- Middle row frames -->
+      <rect x="10" y="194" width="270" height="140" rx="10" fill="#F4F4F0" stroke="#E3E3DC"/>
+      <text x="24" y="216" font-size="13" font-weight="600" fill="#0B0E14">1 · Rules</text>
+      <rect x="295" y="194" width="270" height="140" rx="10" fill="#F4F4F0" stroke="#E3E3DC"/>
+      <text x="309" y="216" font-size="13" font-weight="600" fill="#0B0E14">2 · A judge model</text>
+      <rect x="580" y="194" width="270" height="140" rx="10" fill="#F4F4F0" stroke="#E3E3DC"/>
+      <text x="594" y="216" font-size="13" font-weight="600" fill="#0B0E14">3 · Twins + referee (mesh)</text>
+
+      <!-- Step 5: rules -->
+      <g class="st" data-step="5">
+        <text x="24" y="240" font-size="12" class="mono" fill="#127A52">tier: recomputed</text>
+        <text x="270" y="240" text-anchor="end" font-size="10" class="mono" fill="#5C6573">DESIGNED</text>
+        <text x="24" y="262" font-size="12" fill="#0B0E14">a fixed function of the</text>
+        <text x="24" y="280" font-size="12" fill="#0B0E14">cited inputs; no model,</text>
+        <text x="24" y="298" font-size="12" fill="#0B0E14">no human in the loop</text>
+        <text x="24" y="320" font-size="12" fill="#5C6573">anyone with the inputs re-runs it</text>
+      </g>
+
+      <!-- Step 6: judge model -->
+      <g class="st" data-step="6">
+        <text x="309" y="240" font-size="12" class="mono" fill="#9A5B00">tier: judged</text>
+        <text x="555" y="240" text-anchor="end" font-size="10" class="mono" fill="#5C6573">DESIGNED</text>
+        <text x="309" y="260" font-size="12" class="mono" fill="#0B0E14">evaluation-report/v1</text>
+        <text x="309" y="278" font-size="12" fill="#0B0E14">pinned: model, prompt, sampling</text>
+        <text x="309" y="296" font-size="12" class="mono" fill="#0B0E14">met | not_met | not_evaluable</text>
+        <text x="309" y="320" font-size="12" fill="#5C6573">blind human ratings · k of n</text>
+      </g>
+
+      <!-- Step 7: twins + referee -->
+      <g class="st" data-step="7">
+        <text x="594" y="240" font-size="12" class="mono" fill="#9A5B00">tier: judged</text>
+        <text x="840" y="240" text-anchor="end" font-size="10" class="mono" fill="#9A5B00">BUILT, NOT LIVE</text>
+        <text x="594" y="260" font-size="12" fill="#0B0E14">referee re-answers one pair</text>
+        <text x="594" y="278" font-size="12" class="mono" fill="#0B0E14">type: adjudication</text>
+        <text x="594" y="296" font-size="12" class="mono" fill="#B42318">verdict: contradicted:B</text>
+        <text x="594" y="320" font-size="12" fill="#5C6573">signed by the referee's key</text>
+      </g>
+
+      <!-- Step 8: one judgment record -->
+      <g class="st" data-step="8">
+        <line x1="145" y1="334" x2="250" y2="362" stroke="#5C6573" stroke-width="1.3" marker-end="url(#b9g)"/>
+        <line x1="430" y1="334" x2="370" y2="360" stroke="#5C6573" stroke-width="1.3" marker-end="url(#b9g)"/>
+        <line x1="715" y1="334" x2="470" y2="372" stroke="#5C6573" stroke-width="1.3" marker-end="url(#b9g)"/>
+        <rect x="10" y="364" width="460" height="108" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="24" y="386" font-size="13" font-weight="600" fill="#0B0E14">Judgment record</text>
+        <text x="24" y="406" font-size="12" class="mono" fill="#0B0E14">epistemic_type: derived_metric | semantic_judgment</text>
+        <text x="139" y="424" font-size="12" class="mono" fill="#0B0E14">| adjudication</text>
+        <text x="24" y="442" font-size="12" fill="#0B0E14">set at commit, never upgraded; cites its target by digest</text>
+        <text x="24" y="460" font-size="11" fill="#5C6573">names its judge and its basis</text>
+      </g>
+
+      <!-- Step 9: what a verifier can and cannot check -->
+      <g class="st" data-step="9">
+        <rect x="490" y="364" width="360" height="108" rx="10" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="504" y="386" font-size="13" font-weight="600" fill="#0B0E14">A verifier checks</text>
+        <text x="504" y="406" font-size="12" fill="#127A52">the signature, what it cites, its type</text>
+        <text x="504" y="424" font-size="12" fill="#9A5B00">not that the judgment is right</text>
+        <text x="504" y="444" font-size="12" font-weight="600" fill="#0B0E14">&#8220;Was the answer right?&#8221; = judgment,</text>
+        <text x="504" y="462" font-size="12" font-weight="600" fill="#0B0E14">never folded into evidence</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>Judging is the step after recording: something decides whether an act was right, and that decision becomes a record of its own, linked to the act by digest instead of written into it.</p>
+    <p>The judge depends on the work: rules a program can re-run, a judge model pinned to its model, prompt and sampling settings, with blind human ratings beside it, or, on a mesh, twins and a referee that signs a ruling on one pair.</p>
+    <p>A verifier recomputes what the evidence itself supports, reporting any assurance a record claims above that, and treats a judgment as what it is: a signed statement by a named judge, which it can check for integrity but not for correctness.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a judgment is a new record carrying an <code>adjudicates</code> link to the act's digest; the act is never touched.</div>
+      <div class="not"><b>Rejected:</b> writing a verdict field into the act record after the fact. &ldquo;A link is itself part of a committed record and MUST NOT mutate its target.&rdquo; (draft-mih-agent-evidence-layer-00 §5 Typed Links)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the kind of statement a record is (<code>epistemic_type</code>) is set once, at commit, and never upgraded; a record with an <code>adjudicates</code> link MUST be of type <code>adjudication</code>.</div>
+      <div class="not"><b>Rejected:</b> letting a later signature or checkpoint turn a judgment into something that reads like an observation. &ldquo;<code>epistemic_type</code> is assigned once, at commit, and is never upgraded.&rdquo; (draft-mih-agent-evidence-layer-00 §4.1, §5)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the verifier recomputes each assurance value from the bytes and reports any claim above it. An overclaimed <code>effect_mode</code> fails verification; an overclaimed <code>attestation_mode</code>, <code>ledger_mode</code> or <code>cross_party_rung</code> is reported as a finding next to the derived value.</div>
+      <div class="not"><b>Rejected:</b> trusting the record's own assurance block. &ldquo;A producer MUST NOT record an assurance mode it did not achieve; a verifier rederives each mode from the evidence present and reports any overclaim.&rdquo; (draft-mih-scitt-agent-action-capsule-05 §5.4, §5.4.1, §6; <code>verify.py</code> check 7)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> two answers kept apart on every claim: whether enough evidence existed to judge (<code>SATISFIED / GAP / INSUFFICIENT / UNKNOWN</code>), and only then the judgment (<code>met / not_met / not_evaluable</code>).</div>
+      <div class="not"><b>Rejected:</b> one pass/fail figure, and using <code>not_evaluable</code> for missing evidence. &ldquo;Every claim carries two answers that are never merged.&rdquo; (agent-action-capsule <code>spec/evidence-result-v0.md</code> §1, design specification)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> say how a result was produced: <code>recomputed</code> (a fixed function of cited inputs, no model or human) or <code>judged</code> (a model or a human applying judgment, pinned).</div>
+      <div class="not"><b>Rejected:</b> presenting a model's reading with the same standing as a recomputation anyone can repeat. (<code>spec/evidence-plan-ir-v0.md</code> §4.2)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a judge model is pinned in the record: <code>model_id</code>, <code>prompt_digest</code>, optionally <code>axes_digest</code>, and sampling settings as integers, strings or booleans; each case cites the acts it rests on and the rubric (<code>method</code>), which is required.</div>
+      <div class="not"><b>Rejected:</b> an unpinned judge, sampling settings as floats that can drift in serialization, and a confidence figure: that field has no counterpart in the family. (<code>spec/judge-record-family-v1.md</code> §2, §6, §9)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> humans rate cases blind (<code>blind</code> is fixed <code>true</code>), and a judge's calibration agreement is stored per clause as <code>k</code> of <code>n</code>.</div>
+      <div class="not"><b>Rejected:</b> a <code>blind: false</code> rating in the same shape, and a stored rate: a reader divides <code>k</code> by <code>n</code> when reading. (<code>spec/judge-record-family-v1.md</code> §5, §8; vectors <code>neg-blind-false</code>, <code>neg-clause-with-rate-field</code>)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>Which assurance a record's own bytes support, and any claim above it, with the claimed and derived values side by side.</li>
+      <li>That a judgment exists, who signed it, what it cites by digest, and that it has not changed since it was signed.</li>
+      <li>What kind of statement it is (<code>semantic_judgment</code>, <code>adjudication</code>), fixed when it was committed.</li>
+      <li>For a pinned judge model: which model, prompt and sampling settings produced it, and which rubric each case used.</li>
+      <li>For a calibration summary: the judge's agreement per clause, as <code>k</code> of <code>n</code>.</li>
+      <li>For a referee's verdict: which twin its re-answer did not agree with, under the referee's signature.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>That the judgment is correct. A verifier can recompute a <code>recomputed</code> result; a <code>judged</code> one stays the judge's statement.</li>
+      <li>That the judge is independent of the party judged; that is a claim about who runs it.</li>
+      <li>That an act was right because its record verifies. The record shows what was done, not whether it was the right thing.</li>
+      <li>Anything about cases the judge did not see, or that a sample was not chosen to flatter.</li>
+      <li>A single figure for the agent. Judgments stay per case, and agreement stays <code>k</code> of <code>n</code>.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <h3>The verifier reports an overclaim</h3>
+  <p>A conformance vector: the record claims <code>full_bilateral</code>, but its <code>cross_party</code> block has only the initiator's half, with no <code>counterparty_ref</code>. Trimmed input, then the verifier's expected answer:</p>
+  <pre class="code"><code>"assurance": { "attestation_mode": "self_attested", "cross_party_rung": "full_bilateral",
+               "effect_mode": "not_applicable", "ledger_mode": "standalone" },
+"cross_party": { "initiator_ref": "1111111111111111111111111111111111111111111111111111111111111111" }
+
+"derived":  { "cross_party_rung": "unilateral_fallback", ... },
+"findings": [{ "check": 7, "code": "assurance_overclaim", "severity": "info",
+  "detail": "claimed cross_party_rung 'full_bilateral' but verifier derived 'unilateral_fallback' (§5.3 Cross-party assurance)" }],
+"ok": true</code></pre>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/neg-cross-party-overclaim/{input,expected}.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code> (also in tag <code>python/v0.10.0</code>). The detail string's §5.3 is a stale section number; the text is §5.4.1 in both -04 and -05.</p>
+
+  <h3>A judgment record: the referee's signed verdict</h3>
+  <p>The verdict a referee seals on a mesh twin pair, from the plugin's test fixture (placeholder node ids), trimmed:</p>
+  <pre class="code"><code>"provenance": "referee",
+"model_attestation": { "compute_attestation": {
+  "epistemic_type": "adjudication",
+  "adjudication": {
+    "schema": "capsule-emit-mesh/adjudication/v1",
+    "source": "twin_comparison", "capture_method": "deterministic_replay",
+    "verdict": "contradicted:bbbb&hellip;bbbb", "divergence_index": 3,
+    "half_a_capsule_id": "7dc9427b6df5ff222617fb721f25d3c54aebe32682329bb7075902336437fb06",
+    "half_b_capsule_id": "b80db10999779aa17c8fcf7006a57aeaecbc81f5e9de3ecea33e9365c2bfd4d9",
+    "referee_answer_digest": "0242bc9526adbb014565b8175ff134e2ba8731f4a13cab2d1b4d8aff8727586e",
+    "twin_bracket_id": "bracket-1" } } },
+"assurance": { "attestation_mode": "self_attested", "effect_mode": "not_applicable", "ledger_mode": "chained" },
+"disposition": { "decision": "accept", "approver": "policy", "human_disposed": false, "verdict_class": "assessed" },
+"chain": { "parent_capsule_id": "7dc9427b&hellip;fb06", "relation": "adjudicates" },
+"key_id": "6a9a93a3af20ca17d85764e3206fd1d0417ea943f53f07157792299ba9b6f033"</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>epistemic_type</td><td>string</td><td><code>adjudication</code>: a ruling, not an observation. Set when sealed; nothing later changes it.</td></tr>
+      <tr><td>source / capture_method</td><td>string</td><td>How the ruling was reached: a twin comparison, re-answered by deterministic replay.</td></tr>
+      <tr><td>verdict</td><td>string</td><td><code>contradicted:</code> plus the node the referee did not agree with, or <code>corroborated</code>, <code>inconclusive</code>, <code>not_comparable</code>.</td></tr>
+      <tr><td>divergence_index</td><td>int</td><td>The position of the earliest word where the twins' answers split.</td></tr>
+      <tr><td>half_a / half_b_capsule_id</td><td>hex</td><td>The two twins' own signed records the ruling covers, by id.</td></tr>
+      <tr><td>referee_answer_digest</td><td>hex</td><td>Digest of the referee's own re-answer, the basis of the ruling.</td></tr>
+      <tr><td>effect_mode</td><td>string</td><td><code>not_applicable</code>: a verdict changes nothing in the world.</td></tr>
+      <tr><td>verdict_class</td><td>string</td><td><code>assessed</code>: the plugin's own value for a judging record. It is not in the registry, so a verifier reports it as an unknown value, informationally.</td></tr>
+      <tr><td>chain.relation</td><td>string</td><td><code>adjudicates</code>, chaining to half A. A legacy spelling, not registered: the registry reads it as <code>confirms</code> and states it is unrelated to the evidence layer's <code>adjudicates</code> link.</td></tr>
+      <tr><td>key_id</td><td>hex</td><td>The referee's signing key. A holder checks the signature against it; the signature shows who ruled, not that the ruling is right.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Outside the mesh, the same ruling has a published shape, <code>adjudication/v1</code>, and a judge model's per-case result has <code>evaluation-report/v1</code>; <code>spec/judge-record-family-v1.md</code> §9 maps the mesh block's verdict, halves, referee, margin and divergence fields onto it; pipeline bookkeeping such as <code>schema</code>, <code>source</code> and <code>capture_method</code> has no counterpart. The plugin still seals its own block.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <div class="tw"><table class="t status">
+    <thead><tr><th>Item</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>The verifier recomputes assurance and reports overclaims (check 7: <code>effect_mode</code> fails verification; <code>attestation_mode</code>, <code>ledger_mode</code>, <code>cross_party_rung</code> are reported as findings)</td><td class="tag built">built, released</td><td>agent-action-capsule <code>python/agent_action_capsule/verify.py</code> in tag <code>python/v0.10.0</code> (<code>f3dcc32213396f71218e0e33539869f99cff9c9e</code>); Go <code>go/verify/verify.go</code> and TypeScript <code>ts/src/verify.ts</code> on main <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>; vector <code>neg-cross-party-overclaim</code>.</td></tr>
+      <tr><td>A claimed time rung above what the record's references support fails verification (check 9, <code>provenance_time_rung_overclaim</code>)</td><td class="tag built">built, released</td><td>Same <code>verify.py</code> in <code>python/v0.10.0</code>; <code>provenance-mode-vectors/neg-provenance-mode-time-rung-overclaim</code> @ <code>2ef8aeb4</code>.</td></tr>
+      <tr><td><code>epistemic_type</code> fixed at commit; an <code>adjudicates</code> link only on an <code>adjudication</code> record</td><td class="tag designed">designed</td><td>Specified in draft-mih-agent-evidence-layer-00 §4.1, §5. A conforming book refuses the mismatch.</td></tr>
+      <tr><td>Referee-signed verdict on a mesh twin pair</td><td class="tag notlive">built, not live</td><td>capsules v0.1.4 (<code>b4e24453</code>): <code>crates/evidence-plugin/src/referee/</code>, <code>crates/evidence-plugin/src/adjudication_records.rs</code>. <code>CHANGELOG.md</code> 0.1.4: &ldquo;A referee verdict on live hosts waits on 0.1.5; until then it is covered by tests only.&rdquo; See <a href="b4-use-case-evidence.html">b4</a>.</td></tr>
+      <tr><td>Judge record family: <code>evaluation-report/v1</code>, <code>adjudication/v1</code>, <code>human-rating/v1</code>, <code>calibration-summary/v1</code> and four more shapes</td><td class="tag designed">designed</td><td>agent-action-capsule <code>spec/judge-record-family-v1.md</code> (&ldquo;Design specification, pre-Internet-Draft&rdquo;), <code>schemas/judge/*.json</code>, <code>vectors/judge/</code> (one positive, one negative per shape) @ <code>2ef8aeb4</code>. Schemas and vectors are published; no open-source producer emits these shapes yet.</td></tr>
+      <tr><td>Evidence Result: sufficiency and verdict kept apart, tier <code>recomputed</code> / <code>judged</code></td><td class="tag designed">designed</td><td><code>spec/evidence-result-v0.md</code>, <code>schemas/evidence-result-v0.json</code>, <code>spec/evidence-plan-ir-v0.md</code> §4.2 @ <code>2ef8aeb4</code>; design specifications, pre-Internet-Draft.</td></tr>
+      <tr><td>A rules judge emitting <code>tier: recomputed</code> results</td><td class="tag designed">designed</td><td><code>spec/evidence-plan-ir-v0.md</code> §4.2 @ <code>2ef8aeb4</code> defines the tier; no open-source implementation.</td></tr>
+      <tr><td>The mesh plugin sealing <code>adjudication/v1</code> instead of its own block</td><td class="tag none">not built</td><td>The v0.1.4 fixture above carries <code>"schema": "capsule-emit-mesh/adjudication/v1"</code> and the legacy <code>chain.relation</code> spelling <code>adjudicates</code> (<code>spec/REGISTRY.md</code>, deployed legacy aliases); <code>judge-record-family-v1.md</code> §9 is the field map for the port.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; §4.1, the closed eight-value <code>epistemic_type</code> set, including <code>derived_metric</code>, <code>semantic_judgment</code> and <code>adjudication</code>, never upgraded; §5, the <code>adjudicates</code> link, which never mutates its target.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; §5.4 Assurance and §5.4.1 Cross-party assurance, where the verifier recomputes and reports overclaims; §6, Class 1 verification.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> signature on the act and on the judgment.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every digest a judgment cites covers.</li>
+    <li><span class="kind">Design spec</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/2ef8aeb49e2334e24c404bd62d3fdb161770873c/spec/judge-record-family-v1.md">judge-record-family-v1</a> &mdash; the shapes of a judgment record; not an Internet-Draft.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">action-state-group/agent-action-capsule</a> &mdash; the verifiers (Python, Go, TypeScript) and the overclaim vectors.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the referee and its signed verdict record.</li>
+  </ul>
+
+  <h2><span class="n">7</span>What you need before the next step</h2>
+  <ul>
+    <li>A verifier that recomputes every assurance value from the record's bytes and reports any claim above it, instead of reading the claim.</li>
+    <li>A judgment record of its own: a fixed <code>epistemic_type</code>, an <code>adjudicates</code> link (or citations) to what it judges by digest, and the judge's basis (a rule, a pinned model plus rubric, or a referee's re-answer).</li>
+    <li>A way to tell <code>recomputed</code> results from <code>judged</code> ones, blind human ratings of a judge model's cases, and its calibration agreement kept as <code>k</code> of <code>n</code>.</li>
+    <li>&ldquo;Was there enough evidence?&rdquo; and &ldquo;was it right?&rdquo; as two answers, never one, so the report in the next step can show both.</li>
+  </ul>
+
+  <footer class="pn"><a href="b8-checklist.html">&larr; The builder's checklist</a><a href="b10-report.html">Reporting it &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

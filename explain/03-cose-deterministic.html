@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>03 · COSE and deterministic encoding · explain</title>
+<link rel="stylesheet" href="explain.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · explain</a>
+  <nav><a href="02-aac.html">&larr; Prev</a><a href="index.html">Contents</a><a href="04-cpb.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">03 / 11</div>
+  <h1>COSE and deterministic encoding</h1>
+  <p class="lede">A signature over a digest checks only if the verifier hashes the same bytes the signer hashed, so a structured record must turn into exactly one byte string.</p>
+
+  <figure class="anim" data-steps="4"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="Two implementations hold the same logical record: an object with the keys 😀 and Ｚ."
+    data-cap-2="Implementation A applies JCS, which sorts keys by UTF-16 code units, so 😀 (D83D…) sorts ahead of Ｚ (FF3A). Implementation B sorts by code point, so Ｚ (U+FF3A) sorts ahead of 😀 (U+1F600). The bytes differ."
+    data-cap-3="Different bytes give a different SHA-256. A's Producer Envelope signs A's 32-byte capsule_id; B's recomputed id does not match it, so verification fails."
+    data-cap-4="When both apply the declared encoding (plain JCS), they produce identical bytes, the same capsule_id, and the envelope verifies for both.">
+    <svg viewBox="0 0 860 330" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">Same record, two encoders</title>
+      <desc id="anim-d">Stage 1: on the left a box holds one logical record, an object with the keys 😀 (U+1F600) and Ｚ (U+FF3A); two lanes lead right, Implementation A on top and Implementation B below. Stage 2: Implementation A applies JCS, sorting keys by UTF-16 code units, and emits the bytes with 😀 ahead of Ｚ, because its leading code unit D83D is lower than FF3A; Implementation B sorts by code point and emits the bytes with Ｚ ahead of 😀. Stage 3: A hashes its bytes to capsule_id 9d07be6c through d2cf5dde, and its Producer Envelope signs those 32 bytes; B hashes its different bytes to a different digest; the comparison shows not equal, and B's check against A's envelope fails, marked with a red cross. Stage 4: B switches to the declared encoding, plain JCS; its bytes are now identical to A's, its digest is the same 9d07be6c through d2cf5dde, the comparison shows equal, and the envelope verifies for both, marked with a green check. A note records that the code-point sort in stages 2 and 3 gave different bytes and failed.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
+      </defs>
+
+      <!-- Stage 1: record and lanes -->
+      <g class="st" data-step="1">
+        <rect x="16" y="118" width="150" height="86" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="91" y="142" text-anchor="middle" font-size="13" font-weight="600" fill="#0B0E14">one logical record</text>
+        <text x="91" y="166" text-anchor="middle" font-size="13" class="mono" fill="#0B0E14">😀 → "hi"</text>
+        <text x="91" y="188" text-anchor="middle" font-size="13" class="mono" fill="#0B0E14">Ｚ → "wide"</text>
+        <path d="M166 140 L196 80" stroke="#5C6573" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <path d="M166 182 L196 242" stroke="#5C6573" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <text x="200" y="40" font-size="13" font-weight="600" fill="#0B0E14">Implementation A</text>
+        <text x="200" y="306" font-size="13" font-weight="600" fill="#0B0E14">Implementation B</text>
+      </g>
+
+      <!-- Stage 2: encodings -->
+      <g class="st" data-step="2">
+        <rect x="200" y="54" width="170" height="52" rx="8" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="285" y="76" text-anchor="middle" font-size="12" fill="#3A5BD9">JCS (RFC 8785)</text>
+        <text x="285" y="94" text-anchor="middle" font-size="12" fill="#0B0E14">sort by UTF-16 code unit</text>
+        <rect x="390" y="54" width="220" height="52" rx="8" fill="#fff" stroke="#3A5BD9"/>
+        <text x="500" y="78" text-anchor="middle" font-size="13" class="mono" fill="#0B0E14">{"😀":"hi","Ｚ":"wide"}</text>
+        <text x="500" y="97" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">D83D… &lt; FF3A</text>
+        <path d="M370 80 L388 80" stroke="#5C6573" stroke-width="1.5" marker-end="url(#ah)"/>
+      </g>
+      <g class="st" data-step="2" data-until="3">
+        <rect x="200" y="216" width="170" height="52" rx="8" fill="#FBF1E1" stroke="#9A5B00"/>
+        <text x="285" y="238" text-anchor="middle" font-size="12" fill="#9A5B00">own rule</text>
+        <text x="285" y="256" text-anchor="middle" font-size="12" fill="#0B0E14">sort by code point</text>
+        <rect x="390" y="216" width="220" height="52" rx="8" fill="#FDECEA" stroke="#B42318"/>
+        <text x="500" y="240" text-anchor="middle" font-size="13" class="mono" fill="#0B0E14">{"Ｚ":"wide","😀":"hi"}</text>
+        <text x="500" y="259" text-anchor="middle" font-size="12" class="mono" fill="#B42318">U+FF3A &lt; U+1F600</text>
+        <path d="M370 242 L388 242" stroke="#5C6573" stroke-width="1.5" marker-end="url(#ah)"/>
+      </g>
+
+      <!-- Stage 3: digests, mismatch -->
+      <g class="st" data-step="3">
+        <path d="M610 80 L628 80" stroke="#5C6573" stroke-width="1.5" marker-end="url(#ah)"/>
+        <rect x="632" y="54" width="160" height="52" rx="8" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="712" y="76" text-anchor="middle" font-size="12" fill="#3A5BD9">SHA-256 = capsule_id</text>
+        <text x="712" y="95" text-anchor="middle" font-size="12" class="mono" fill="#0B0E14">9d07be6c…d2cf5dde</text>
+        <text x="712" y="124" text-anchor="middle" font-size="12" fill="#5C6573">Producer Envelope (COSE_Sign1)</text>
+        <text x="712" y="140" text-anchor="middle" font-size="12" fill="#5C6573">signs these 32 bytes</text>
+        <path d="M610 242 L628 242" stroke="#5C6573" stroke-width="1.5" marker-end="url(#ah)"/>
+      </g>
+      <g class="st" data-step="3" data-until="3">
+        <rect x="632" y="216" width="160" height="52" rx="8" fill="#FDECEA" stroke="#B42318"/>
+        <text x="712" y="238" text-anchor="middle" font-size="12" fill="#B42318">SHA-256</text>
+        <text x="712" y="257" text-anchor="middle" font-size="12" fill="#0B0E14">a different digest</text>
+        <text x="712" y="184" text-anchor="middle" font-size="22" font-weight="700" fill="#B42318">≠</text>
+        <circle cx="822" cy="242" r="16" fill="#FDECEA" stroke="#B42318"/>
+        <text x="822" y="248" text-anchor="middle" font-size="16" font-weight="700" fill="#B42318">✗</text>
+        <text x="822" y="282" text-anchor="middle" font-size="12" fill="#B42318">fails</text>
+      </g>
+
+      <!-- Stage 4: deterministic, match -->
+      <g class="st" data-step="4">
+        <rect x="200" y="216" width="170" height="52" rx="8" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="285" y="238" text-anchor="middle" font-size="12" fill="#3A5BD9">JCS (RFC 8785)</text>
+        <text x="285" y="256" text-anchor="middle" font-size="12" fill="#0B0E14">sort by UTF-16 code unit</text>
+        <rect x="390" y="216" width="220" height="52" rx="8" fill="#fff" stroke="#3A5BD9"/>
+        <text x="500" y="240" text-anchor="middle" font-size="13" class="mono" fill="#0B0E14">{"😀":"hi","Ｚ":"wide"}</text>
+        <text x="500" y="259" text-anchor="middle" font-size="12" fill="#127A52">identical bytes</text>
+        <path d="M370 242 L388 242" stroke="#5C6573" stroke-width="1.5" marker-end="url(#ah)"/>
+        <rect x="632" y="216" width="160" height="52" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="712" y="238" text-anchor="middle" font-size="12" fill="#127A52">SHA-256 = capsule_id</text>
+        <text x="712" y="257" text-anchor="middle" font-size="12" class="mono" fill="#0B0E14">9d07be6c…d2cf5dde</text>
+        <text x="712" y="184" text-anchor="middle" font-size="22" font-weight="700" fill="#127A52">=</text>
+        <circle cx="822" cy="242" r="16" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="822" y="248" text-anchor="middle" font-size="16" font-weight="700" fill="#127A52">✓</text>
+        <text x="822" y="282" text-anchor="middle" font-size="12" fill="#127A52">verifies</text>
+        <text x="500" y="320" text-anchor="middle" font-size="12" fill="#9A5B00">earlier: a code-point sort gave different bytes and failed</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>A COSE_Sign1 (RFC 9052) is a CBOR structure holding a protected header, an unprotected header, a payload, and one signature computed over the encoded protected header and the payload.</p>
+    <p>A signature over a digest can be checked only by hashing exactly the bytes the signer hashed, so two implementations that rebuild those bytes from the same structured record must encode it the same way.</p>
+    <p>JSON records here use the JSON Canonicalization Scheme (JCS, RFC 8785), and for CBOR content the COSE deterministic encodings Internet-Draft in preparation lets a COSE Hash Envelope name the deterministic encoding that was applied.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the Producer Envelope's payload is the raw 32 bytes of <code>capsule_id</code>; the protected header holds exactly <code>alg</code> -8 (Ed25519), content type <code>application/agent-action-capsule-id</code>, and <code>kid</code> (the raw 32-byte public key); the unprotected header is empty.</div>
+      <div class="not"><b>Rejected:</b> signing hex text or the Capsule JSON. The envelope signs the stable identity, so the Capsule needs no re-serialization at verify time. (draft-mih-scitt-agent-action-capsule-05 §3.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> registration in a transparency log uses a separate SCITT Signed Statement over the same raw <code>capsule_id</code>, with CWT <code>iss</code> and <code>sub</code> in the protected header.</div>
+      <div class="not"><b>Rejected:</b> treating the bare envelope as a SCITT Signed Statement, which <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> requires to carry CWT <code>iss</code> and <code>sub</code>; the three-entry envelope header has neither. (draft-mih-scitt-agent-action-capsule-05 §3.3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> plain JCS, declared in the record (<code>canonicalization_id: "jcs"</code>) and checked before any digest is computed; null, empty arrays, and empty objects take part.</div>
+      <div class="not"><b>Rejected:</b> a normalization pass that drops null or empty members (the withdrawn <code>jcs-n</code>), and any undeclared or unknown construction; these fail closed. (draft-mih-scitt-agent-action-capsule-05 §2)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> no floating-point values in digest-bearing material; integers outside the IEEE-754 safe range are decimal strings.</div>
+      <div class="not"><b>Rejected:</b> JSON floats. JCS fixes one output per double, but two parsers can round the same literal to different doubles, and then no canonicalization helps. (draft-mih-scitt-agent-action-capsule-05 §2; draft-mih-sokolov-scitt-payload-binding-05 §12.3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> for CBOR, a protected Hash Envelope header parameter, <code>payload-preimage-encoding</code>, whose value comes from a small registry; its initial entry is <code>core-deterministic</code> (<a href="https://www.rfc-editor.org/rfc/rfc8949">RFC 8949</a> §4.2.1).</div>
+      <div class="not"><b>Rejected:</b> a media-type parameter on <code>preimage-content-type</code> (259). <code>application/cbor</code> defines no parameters, so one would be needed per media type, and a CoAP Content-Format number per pairing. (COSE deterministic encodings, Introduction)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> a verifier that holds only the decoded value encodes it with the named encoding; if the parameter is absent or unknown, it reports the content binding as unverified.</div>
+      <div class="not"><b>Rejected:</b> guessing the encoding from the content type or the shape of the value. A guess cannot tell a modified value from one encoded under a different rule. (COSE deterministic encodings, Verifying the Content Binding)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>That two independent implementations derive the same bytes, and so the same digest, from the same record when both apply the declared encoding.</li>
+      <li>Which key signed the 32-byte identity: the envelope signature verifies under the public key in <code>kid</code>.</li>
+      <li>Which encoding produced a Hash Envelope preimage, when <code>payload-preimage-encoding</code> is present.</li>
+      <li>That a digest mismatch under a declared encoding is not an encoder disagreement: the value differs, whether by edit or by a parser that read it differently (see the next column).</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>Unicode equivalence. JCS does not normalize Unicode, so an NFC key and its NFD spelling are different records with different digests.</li>
+      <li>That a parser kept the value exactly. Decoding into native types can lose distinctions such as integer versus float, and then re-encoding cannot reproduce the preimage.</li>
+      <li>That the signing key is authorized for the operator; that is the caller's policy.</li>
+      <li>Anything when the verifier has neither the preimage nor the encoding: that case is unverified, never verified and never failed.</li>
+      <li>Secrecy. A deterministic digest is stable, so it is linkable wherever the content recurs, and low-entropy content can be guessed.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>A conformance vector whose object keys sort differently under UTF-16 code units (what JCS requires) and under code points. The input carries the keys in JCS order; the expected result gives the canonical preimage and a recomputed <code>capsule_id</code> equal to the carried one.</p>
+  <pre class="code"><code>input.json
+{
+  "action_id": "canonical-key-sort-utf16-vs-codepoint",
+  …
+  "canonicalization_id": "jcs",
+  "capsule_id": "9d07be6c8b0cb9efafd089ee02a2e06846854ee70c3c0f56e88925c1d2cf5dde",
+  …
+  "extension": {
+    "canonical_test_value": {
+      "😀": "hi",
+      "Ｚ": "wide"
+    }
+  },
+  "format_version": "4",
+  …
+}
+
+expected.json
+{
+  "canonical_preimages": {
+    "capsule_id": "{\"action_id\":\"canonical-key-sort-utf16-vs-codepoint\",…,\"extension\":{\"canonical_test_value\":{\"😀\":\"hi\",\"Ｚ\":\"wide\"}},\"format_version\":\"4\",…}"
+  },
+  "capsule_id_recomputed": "9d07be6c8b0cb9efafd089ee02a2e06846854ee70c3c0f56e88925c1d2cf5dde",
+  …
+  "findings": [],
+  "kind": "positive",
+  "ok": true,
+  "provenance": "spec-derived"
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>canonicalization_id</td><td>string</td><td>The declared construction: plain RFC 8785 JCS.</td></tr>
+      <tr><td>capsule_id</td><td>64 hex</td><td>SHA-256 over the JCS bytes of the Capsule minus this field.</td></tr>
+      <tr><td>extension.canonical_test_value</td><td>object</td><td>Keys U+1F600 (UTF-16 D83D DE00) and U+FF3A (FF3A); JCS puts the emoji ahead of Ｚ.</td></tr>
+      <tr><td>format_version</td><td>string</td><td>Serialization suite "4", the only one supported.</td></tr>
+      <tr><td>canonical_preimages.capsule_id</td><td>string</td><td>The exact JCS string that was hashed (trimmed here).</td></tr>
+      <tr><td>capsule_id_recomputed</td><td>64 hex</td><td>The verifier's own SHA-256 of that preimage; equals the carried value.</td></tr>
+      <tr><td>ok / findings</td><td>bool / array</td><td>Class 1 verification passes with no findings.</td></tr>
+      <tr><td>provenance</td><td>string</td><td>"spec-derived": "derived from the draft and RFC 8785 without running any repository implementation" (vectors/README.md).</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/canonical-key-sort-utf16-vs-codepoint/input.json</code> and <code>…/expected.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+
+  <h2><span class="n">5</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; CBOR Object Signing and Encryption (COSE): COSE_Sign1.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme (JCS).</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9995">RFC 9995</a> &mdash; COSE Hash Envelope: signs the digest of a preimage held elsewhere.</li>
+    <li><span class="kind">In preparation</span> <a href="https://github.com/action-state-group/cose-deterministic-encodings">COSE deterministic encodings (Internet-Draft in preparation)</a> &mdash; the <code>payload-preimage-encoding</code> parameter and a registry of deterministic encodings.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the Producer Envelope wire profile and the format-4 JCS rules.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-05</a> &mdash; how a Signed Statement declares its canonicalization (page 04).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">action-state-group/agent-action-capsule</a> &mdash; canonicalization edge-case vectors under <code>vectors/capsule/</code>.</li>
+  </ul>
+
+  <footer class="pn"><a href="02-aac.html">&larr; Agent Action Capsule</a><a href="04-cpb.html">Canonicalization-declared payload binding &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>

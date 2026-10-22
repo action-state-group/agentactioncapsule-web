@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>b5 · Making it portable · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+/* page-local: keep the Meaning/Evidence column readable at phone width */
+@media (max-width:720px){
+  .tw table.t td:first-child{white-space:normal;overflow-wrap:anywhere;min-width:110px}
+  .tw table.t td:last-child{min-width:230px}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b4-use-case-evidence.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b6-personal-agents.html">Next &rarr;</a></nav>
+</div></header>
+<main><div class="wrap">
+  <div class="crumb">b5 / 11</div>
+  <h1>Making it portable</h1>
+  <p class="seam"><b>Seams ① Record to ④ Result.</b> Build: an evidence file a stranger's verifier checks offline. Conform to: <code>draft-mih-zhang-agent-disclosure-bundle-00</code> and the conformance vectors.</p>
+  <p class="lede">Evidence is portable when the format is an open spec with vectors, the code is libraries any host can link by version, and the saved file can be checked offline by a verifier that never talks to the host, an account or an operator.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+
+  <figure class="anim" data-steps="6"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="Specs and vectors. The record format, the log and the evidence file are written down as Internet-Drafts, and the spec repository ships conformance vectors next to them. The libraries above are tested against these vectors: the plugin's tests require the sealing crate's capsule_id to match every canonical vector."
+    data-cap-2="Libraries. The sealing, the log and the checks are crates published on their own: capsule-emit, checkpointed-local-log, the evidence-request crate, and a receipt verifier (on crates.io since 2026-10-15; the plugin v0.1.4 pins it to a git commit). The plugin's test runs the spec's canonical vectors through the sealing crate and requires every capsule_id to match the reference byte for byte."
+    data-cap-3="Host plugin. The Mesh-LLM capsules plugin (v0.1.4) holds the host-specific parts: the exchange events, the page, the referee. It names each library by version in Cargo.toml, and Cargo.lock records the exact release and checksum it built against (scitt-cose-receipt, not yet on crates.io then, is pinned to a git commit). A newer library release changes nothing until the plugin chooses to move."
+    data-cap-4="Evidence file. The open format is evidence-bundle/v2 (draft-mih-zhang-agent-disclosure-bundle-00): the records, their signatures, a signed checkpoint and one inclusion proof per record. The capsules plugin v0.1.4 does not write it yet: its &quot;Save evidence file&quot; buttons write the plugin's own schemas (mesh-ledger-exchanges-evidence/1, -integrity-, -peers-), which no verifier reads today."
+    data-cap-5="Any verifier. Open tools read an evidence-bundle/v2 file with no account: two verifiers, capsule-emit verify --bundle (Python, released) and capsulectl verify --bundle (Go, no profile and no network, in a pre-release), and capsule-viewer's offline report page, which does not check: it is drawn from capsule-emit's check."
+    data-cap-6="Swap the host. Take the host away and put a different agent runtime in its place, linking the same libraries. The verifier's checks do not change: it reads only the file and the signer's key, and never contacts the host. That is the whole test of portability. Today this is the design: the capsules plugin does not yet write the open file.">
+    <svg viewBox="0 0 860 440" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">The portability stack: specs and vectors, libraries, host plugin, evidence file, any verifier</title>
+      <desc id="anim-d">Five layers stacked from the bottom up. Stage 1, bottom: specs and vectors, the Internet-Drafts and the conformance vectors in the agent-action-capsule repository, pinned by the plugin at tag v0.6.0. Stage 2: the libraries, capsule-emit 0.0.6, checkpointed-local-log 0.2.1, capsule-emit-evidence-request pinned exactly at 0.0.3, and scitt-cose-receipt pinned to a git commit at v0.1.4; a note says the sealing crate's capsule_id matches the spec's canonical vectors in the plugin's test. Stage 3: the host layer, the mesh-llm host and the capsules plugin v0.1.4, which depends on the libraries by version in Cargo.toml and Cargo.lock. Stage 4: the evidence file, evidence-bundle/v2, holding records, signatures, a signed checkpoint and inclusion proofs; a warning says capsules v0.1.4 saves its own schemas, such as mesh-ledger-exchanges-evidence/1, that no verifier reads yet. Stage 5, top: verifiers, offline, no account: capsule-emit verify --bundle and capsulectl verify --bundle, plus the capsule-viewer report page drawn from capsule-emit's check. Stage 6: the mesh-llm host is replaced by another agent runtime linking the same libraries; the evidence file and the verifier layer are unchanged, and a note says the verifier reads only the file and the signer's key.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
+        <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
+      </defs>
+
+      <!-- Step 1: specs + vectors (bottom) -->
+      <g class="st" data-step="1">
+        <rect x="20" y="360" width="560" height="72" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="36" y="384" font-size="14" font-weight="600" fill="#0B0E14">1 · Specs + vectors</text>
+        <text x="36" y="402" font-size="12" fill="#5C6573">Internet-Drafts: capsule, local log, evidence file, evidence request</text>
+        <text x="36" y="420" font-size="12" class="mono" fill="#5C6573">agent-action-capsule · vectors/capsule/ @ v0.6.0</text>
+        <text x="600" y="384" font-size="12" fill="#5C6573">the format, written down;</text>
+        <text x="600" y="400" font-size="12" fill="#5C6573">vectors pin it byte for byte</text>
+      </g>
+
+      <!-- Step 2: libraries -->
+      <g class="st" data-step="2">
+        <rect x="20" y="272" width="560" height="72" rx="10" fill="#EAEEFC" stroke="#3A5BD9"/>
+        <text x="36" y="296" font-size="14" font-weight="600" fill="#0B0E14">2 · Libraries any host can link</text>
+        <text x="36" y="314" font-size="12" class="mono" fill="#5C6573">capsule-emit 0.0.6 · checkpointed-local-log 0.2.1</text>
+        <text x="36" y="332" font-size="12" class="mono" fill="#5C6573">capsule-emit-evidence-request =0.0.3 · scitt-cose-receipt (git rev)</text>
+        <line x1="300" y1="360" x2="300" y2="346" stroke="#127A52" stroke-width="2" marker-end="url(#ahv)"/>
+        <text x="600" y="302" font-size="12" fill="#127A52">sealing crate's capsule_id matches</text>
+        <text x="600" y="318" font-size="12" fill="#127A52">the spec's canonical vectors</text>
+        <text x="600" y="334" font-size="12" fill="#5C6573">(run in the plugin's tests)</text>
+      </g>
+
+      <!-- Step 3: host + plugin (host box swapped at step 6) -->
+      <g class="st" data-step="3" data-until="5">
+        <rect x="20" y="184" width="200" height="72" rx="10" fill="#fff" stroke="#0B0E14"/>
+        <text x="120" y="214" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">mesh-llm host</text>
+        <text x="120" y="234" text-anchor="middle" font-size="12" fill="#5C6573">exchange events, keys</text>
+      </g>
+      <g class="st" data-step="3">
+        <rect x="236" y="184" width="344" height="72" rx="10" fill="#fff" stroke="#3A5BD9"/>
+        <text x="252" y="208" font-size="14" font-weight="600" fill="#0B0E14">3 · Host plugin</text>
+        <text x="252" y="226" font-size="12" class="mono" fill="#5C6573">Mesh-LLM/capsules v0.1.4</text>
+        <text x="252" y="244" font-size="12" fill="#5C6573">host-specific: events, page, referee</text>
+        <line x1="300" y1="272" x2="300" y2="258" stroke="#3A5BD9" stroke-width="2" marker-end="url(#ah)"/>
+        <text x="600" y="208" font-size="12" fill="#3A5BD9">depends by version:</text>
+        <text x="600" y="224" font-size="12" class="mono" fill="#3A5BD9">Cargo.toml + Cargo.lock</text>
+        <text x="600" y="240" font-size="12" fill="#5C6573">moves only when it chooses</text>
+      </g>
+
+      <!-- Step 4: evidence file -->
+      <g class="st" data-step="4">
+        <rect x="20" y="96" width="560" height="72" rx="10" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="36" y="120" font-size="14" font-weight="600" fill="#0B0E14">4 · Evidence file <tspan class="mono" font-weight="400" font-size="12">evidence-bundle/v2</tspan></text>
+        <text x="36" y="138" font-size="12" fill="#5C6573">records · signatures · signed checkpoint · inclusion proofs</text>
+        <text x="36" y="156" font-size="12" fill="#9A5B00">v0.1.4 saves its own mesh-ledger-*-evidence/1: no verifier reads it</text>
+        <line x1="300" y1="184" x2="300" y2="170" stroke="#9A5B00" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+        <text x="600" y="120" font-size="12" fill="#5C6573">the open file format</text>
+        <text x="600" y="136" font-size="12" fill="#9A5B00">plugin &#8594; open file:</text>
+        <text x="600" y="152" font-size="12" fill="#9A5B00">designed, not built</text>
+      </g>
+
+      <!-- Step 5: any verifier -->
+      <g class="st" data-step="5">
+        <rect x="20" y="8" width="560" height="72" rx="10" fill="#fff" stroke="#127A52" stroke-width="1.5"/>
+        <text x="36" y="32" font-size="14" font-weight="600" fill="#0B0E14">5 · Verifiers, offline, no account</text>
+        <text x="36" y="50" font-size="12" class="mono" fill="#5C6573">capsule-emit verify --bundle · capsulectl verify --bundle</text>
+        <text x="36" y="68" font-size="12" class="mono" fill="#5C6573">+ capsule-viewer report page (draws capsule-emit's check)</text>
+        <line x1="300" y1="96" x2="300" y2="82" stroke="#127A52" stroke-width="2" marker-end="url(#ahv)"/>
+        <text x="600" y="32" font-size="12" fill="#127A52">reads the file and a key;</text>
+        <text x="600" y="48" font-size="12" fill="#127A52">never contacts the host</text>
+      </g>
+
+      <!-- Step 6: host swapped, file still checks -->
+      <g class="st" data-step="6">
+        <rect x="20" y="184" width="200" height="72" rx="10" fill="#FBF1E1" stroke="#9A5B00" stroke-dasharray="6 4"/>
+        <text x="120" y="210" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">another host</text>
+        <text x="120" y="228" text-anchor="middle" font-size="12" fill="#5C6573">your agent runtime,</text>
+        <text x="120" y="244" text-anchor="middle" font-size="12" fill="#5C6573">same libraries</text>
+        <text x="600" y="68" font-size="12" font-weight="600" fill="#127A52">&#10003; same checks, same file</text>
+        <line x1="120" y1="272" x2="120" y2="258" stroke="#3A5BD9" stroke-width="2" marker-end="url(#ah)"/>
+        <text x="600" y="262" font-size="12" font-weight="600" fill="#9A5B00">host swapped; layers 4-5 unchanged</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>Portability is a layering rule: open specs and vectors at the bottom, libraries that pass those vectors above them, and the host-specific plugin on top, depending on the libraries by version.</p>
+    <p>What leaves the host is one file in an open format, holding the records, their signatures, a signed checkpoint and an inclusion proof for each record.</p>
+    <p>Any verifier that implements the spec checks that file offline from the file and the signer's key alone, so the evidence still checks if the host, its operator or the plugin's author goes away.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the plugin links the sealing, log and check code as published crates, named by version; those crates are developed and tested in their own repositories.</div>
+      <div class="not"><b>Rejected:</b> copying the library code into the plugin. (capsules <code>README.md</code> &ldquo;Repository layout&rdquo; and <code>crates/evidence-plugin/Cargo.toml</code> @ v0.1.4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the evidence-request crate is pinned exactly (<code>=0.0.3</code>), because &ldquo;a new release may change what verifies&rdquo;.</div>
+      <div class="not"><b>Rejected:</b> a caret range for a crate whose new release can change a verification result. (capsules <code>crates/evidence-plugin/Cargo.toml</code> @ v0.1.4, comment on <code>capsule-emit-evidence-request</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the spec's vectors are copied into the plugin unchanged, pinned to a spec tag and its commit, listed in <code>SHA256SUMS</code>, and run in the plugin's tests.</div>
+      <div class="not"><b>Rejected:</b> vectors generated by the implementation under test. (capsules <code>vectors/SOURCES.md</code>; <code>tests/aac_canonical_vectors.rs</code> @ v0.1.4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> no default witness. A checkpoint is registered only with a service the operator names, and each witness is dialled at the URL given.</div>
+      <div class="not"><b>Rejected:</b> a built-in service every node reports to, which would make one operator part of every check. (capsules <code>docs/VERIFICATION-CHAIN.md</code> Link 7; <code>Cargo.toml</code> comment on <code>capsule-emit</code> 0.0.6 @ v0.1.4)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> the evidence file is checked &ldquo;offline, from the file alone. No profile and no network are used.&rdquo;</div>
+      <div class="not"><b>Rejected:</b> checking by asking the producer's node or a hosted service, which needs the producer to still exist. (draft-mih-zhang-agent-disclosure-bundle-00; capsule-cli <code>README.md</code>, <code>verify --bundle</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Proposed (open PR):</b> when the plugin moves into the host's own repository, the host's plugin API becomes a path dependency, and the evidence libraries stay versioned registry crates.</div>
+      <div class="not"><b>Rejected:</b> git dependencies or <code>[patch]</code> overrides. (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">Mesh-LLM/mesh-llm#2459</a>, open: &ldquo;no <code>[patch]</code> and no git dependencies&rdquo;)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>From an evidence file alone: each record's identity (its <code>capsule_id</code> recomputes), its producer signature, the signed checkpoint, and each record's inclusion under that checkpoint.</li>
+      <li>That the sealing crate computes the same <code>capsule_id</code> as the spec's reference for every <code>canonical-*</code> vector at the pinned tag.</li>
+      <li>Exactly which library release the plugin was built against: <code>Cargo.lock</code> records the version and its registry checksum.</li>
+      <li>That no verifier step depends on the host, the plugin's author or a hosted service still existing.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>Who holds the signing key in the real world: the key is node-generated and self-attested (capsules <code>docs/VERIFICATION-CHAIN.md</code> Link 3).</li>
+      <li>That an answer was right, or that every event was logged.</li>
+      <li>Anything from the capsules plugin's own saved files today: v0.1.4 writes <code>mesh-ledger-exchanges-evidence/1</code>, <code>mesh-ledger-integrity-evidence/1</code> and <code>mesh-ledger-peers-evidence/1</code>, schemas no verifier reads.</li>
+      <li>Outside time: with no witness named, nothing outside the node saw the checkpoint.</li>
+      <li>Full coverage for the two live-run evidence-file vectors on every verifier version: records, signatures, closure and checkpoint pass, while coverage and membership depend on the agent-action-capsule version (capsule-emit <code>test-vectors/evidence-file/README.md</code>).</li>
+      <li>That two hosts write byte-identical records: only that both follow the same format and pass the same vectors.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>The plugin's library dependencies as its manifest names them at v0.1.4 (comments and the non-evidence dependencies trimmed). The &ldquo;Resolved&rdquo; column is what <code>Cargo.lock</code> at the same tag records.</p>
+  <pre class="code"><code>[dependencies]
+mesh-llm-plugin = "0.78"
+…
+capsule-emit-lib = { package = "capsule-emit", version = "0.0.6" }
+cll = { package = "checkpointed-local-log", version = "0.2.1" }
+…
+capsule-emit-evidence-request = "=0.0.3"
+…
+scitt-cose-receipt = { git = "https://github.com/action-state-group/scitt-cose", rev = "8833281c11d33e3c1e289cf74f11d25ee7f3c6dc" }</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Name</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>mesh-llm-plugin</td><td>"0.78"</td><td>The host's plugin API: the only host-specific library. Resolved 0.78.0 from crates.io.</td></tr>
+      <tr><td>capsule-emit</td><td>"0.0.6"</td><td>Seals every record, keeps the ledger and checkpoints, verifies offline; renamed <code>capsule-emit-lib</code> because the plugin has its own <code>capsule_emit</code> module. Resolved 0.0.6 from crates.io.</td></tr>
+      <tr><td>checkpointed-local-log</td><td>"0.2.1"</td><td>The local Merkle log; checks a pushed bundle's inclusion proof. Resolved 0.2.1 from crates.io.</td></tr>
+      <tr><td>capsule-emit-evidence-request</td><td>"=0.0.3"</td><td>Parses evidence requests, signs refusals, builds answers; pinned exactly. Resolved 0.0.3 from crates.io.</td></tr>
+      <tr><td>scitt-cose-receipt</td><td>git rev</td><td>Checks a witness's receipt offline. Not on crates.io at v0.1.4, so pinned to a public commit; <code>Cargo.lock</code> records the commit, not a registry checksum. On crates.io since 2026-10-15 (0.1.1).</td></tr>
+    </tbody>
+  </table></div>
+  <p>In the open move into the host's repository (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">#2459</a>, head <code>c645c9638d0f7f61f5d004f9a79137f9aae2d715</code>), <code>mesh-llm-plugin</code> becomes a path dependency, <code>capsule-emit-evidence-request</code> moves to <code>=0.0.4</code>, and <code>scitt-cose-receipt</code> becomes the registry crate <code>"0.1"</code>.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/Cargo.toml</code> and <code>Cargo.lock</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Item</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>Spec vectors</td><td>live</td><td>agent-action-capsule <code>vectors/</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>; the plugin pins <code>vectors/capsule/</code> at tag v0.6.0 (<code>13a1f4534c31369e927db73af6298e8b9ffdc36a</code>), capsules <code>vectors/SOURCES.md</code> @ v0.1.4.</td></tr>
+      <tr><td>Libraries on crates.io</td><td>live</td><td>capsule-emit 0.0.6, checkpointed-local-log 0.2.1, capsule-emit-evidence-request 0.0.3: registry source and checksum in capsules <code>Cargo.lock</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>. Their repositories have moved on (capsule-emit <code>rust/capsule-emit/Cargo.toml</code> reads 0.0.8 @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code>); the plugin has not. scitt-cose-receipt reached crates.io on 2026-10-15 (0.1.1), after v0.1.4.</td></tr>
+      <tr><td>Host plugin, by version</td><td>live</td><td>Mesh-LLM/capsules release v0.1.4 (published 2026-10-12, three platform packages + <code>SHA256SUMS</code>), tag <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>.</td></tr>
+      <tr><td>Plugin moving into the host repo</td><td>planned</td><td><a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">mesh-llm#2459</a> open, changes requested; stacked on <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2449">#2449</a> (open, changes requested); carries <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2474">#2474</a>'s catalog rows until #2474 (open) merges. Not merged: upstream <code>Mesh-LLM/mesh-llm</code> main @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> has no <code>mesh/crates/mesh-llm-capsules-plugin/</code>.</td></tr>
+      <tr><td>Open evidence file verified offline (Python)</td><td>live</td><td><code>capsule-emit verify --bundle</code>: capsule-emit <code>python/capsule_emit/cli.py</code> in release <code>python/v0.11.0</code> = <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code> (capsule-emit 0.11.0).</td></tr>
+      <tr><td>Open evidence file verified offline (Go)</td><td>built-not-live (pre-release)</td><td><code>capsulectl verify --bundle</code>: in pre-release <code>v0.1.0-rc16</code> (tag object <code>f92be6497efdfb606437d3679a53bc75b0104101</code>, published 2026-10-14); capsule-cli <code>README.md</code> @ <code>551b5c616641d15089eb0aac747f5c90aa29bf69</code>.</td></tr>
+      <tr><td>Offline report page (not a verifier)</td><td>built-not-live</td><td>capsule-viewer <code>README.md</code> &ldquo;Evidence report page&rdquo; @ <code>32e32e9bd1341edcbcf3af3b073a72e801a928f2</code> (on main): drawn from capsule-emit's <code>check_evidence_file</code>; it never checks.</td></tr>
+      <tr><td>Plugin writes the open file</td><td>designed</td><td>Not built, and no design document for it in the capsules repository (no mention of <code>evidence-bundle</code> @ v0.1.4 or <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>): <code>web-ui/src/features/capsules/lib/exchange-export.ts</code> writes <code>mesh-ledger-exchanges-evidence/1</code> and <code>mesh-ledger-integrity-evidence/1</code> (and <code>peer-export.ts</code> <code>mesh-ledger-peers-evidence/1</code>) at v0.1.4; the exchanges schema is unchanged at #2459's head; no repository on main reads these schemas.</td></tr>
+      <tr><td>Swapping the host</td><td>designed</td><td>The principle the layers are built for. No second host was checked writing a file the same verifiers accept.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record format, and the vectors that pin it.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-00</a> &mdash; the evidence file (<code>evidence-bundle/v2</code>).</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the signed checkpoint and the inclusion and consistency proofs the file carries.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> &mdash; the protocol the pinned evidence-request crate implements.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> on records and checkpoints.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every <code>capsule_id</code> covers.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: a witness the operator may name.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts: what a witness returns, checked offline.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">agent-action-capsule</a> &mdash; drafts and conformance vectors.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-emit">capsule-emit</a> · <a href="https://github.com/action-state-group/checkpointed-local-log">checkpointed-local-log</a> · <a href="https://github.com/action-state-group/scitt-cose">scitt-cose</a> &mdash; the libraries.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-cli">capsule-cli</a> · <a href="https://github.com/action-state-group/capsule-viewer">capsule-viewer</a> &mdash; capsule-cli is a verifier; capsule-viewer draws an offline report page from capsule-emit's check. Both read the file offline.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the worked example's host plugin.</li>
+  </ul>
+
+  <h2><span class="n">7</span>What you need before the next step</h2>
+  <ul>
+    <li>Your sealing, log and check code published as libraries, and your host plugin naming them by version, with an exact pin wherever a new release could change what verifies.</li>
+    <li>The spec's vectors copied in unchanged, pinned to a tag, and run in your tests.</li>
+    <li>An export that writes the open evidence-file format, not a schema of your own, checked by at least one verifier you did not write.</li>
+    <li>No default service in the path: a witness only when the operator names one, and a verifier that needs nothing but the file and the signer's key.</li>
+    <li>A clear split between what the host must provide and what the libraries provide, so the same layers can be laid on a different host: next, a personal agent.</li>
+  </ul>
+
+  <footer class="pn"><a href="b4-use-case-evidence.html">&larr; Use-case evidence: twins and a referee</a><a href="b6-personal-agents.html">Personal agents &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>
