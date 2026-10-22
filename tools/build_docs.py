@@ -186,9 +186,6 @@ def impl_rows_html() -> str:
                             for label, u in i["links"])
         rows.append(f'<tr id="impl-{i["id"]}"><th>{i["id"]}</th><td>{i["language"]}</td><td>{i["what"]}</td>'
                     f'<td>{", ".join(drafts) or "&mdash;"}</td><td>{links}</td></tr>')
-    # EvidenceBook: its repository is public but holds only a README title and a LICENSE, so there is
-    # nothing yet to link a claim to. Uncomment (and add it to data/specifications.json) once it has content.
-    # rows.append('<tr id="impl-evidencebook"><th>evidencebook</th>...</tr>')
     return "\n    ".join(rows)
 
 

@@ -3,7 +3,7 @@
   "drafts": [
     {"name": "draft-mih-scitt-agent-action-capsule", "short": "AAC", "role": "family",
      "vectors": [["agent-action-capsule/vectors", "https://github.com/action-state-group/agent-action-capsule/tree/main/vectors"]],
-     "impls": ["agent-action-capsule", "capsule-emit", "capsule-emit-go", "capsule-emit-ts"]},
+     "impls": ["agent-action-capsule", "capsule-emit", "capsule-emit-go", "capsule-emit-ts", "evidencebook", "cigar-aac-demo"]},
     {"name": "draft-mih-scitt-agent-action-capsule-sel-disc", "short": "Selective disclosure", "role": "family",
      "vectors": [],
      "impls": ["agent-action-capsule"]},
@@ -12,12 +12,12 @@
      "impls": ["agent-action-capsule"]},
     {"name": "draft-mih-zhang-agent-disclosure-bundle", "short": "Evidence Bundle", "role": "family",
      "vectors": [["agent-action-capsule/vectors/bundle", "https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/bundle"]],
-     "impls": ["agent-action-capsule", "capsule-emit", "capsule-cli"]},
+     "impls": ["agent-action-capsule", "capsule-emit", "capsule-cli", "evidencebook"]},
     {"name": "draft-mih-agent-evidence-request", "short": "Evidence Request", "role": "family",
      "vectors": [["agent-action-capsule/vectors/evidence-request", "https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/evidence-request"]],
-     "impls": ["capsule-emit"]},
+     "impls": ["capsule-emit", "evidencebook"]},
     {"name": null, "short": "Evidence layer", "role": "family", "search": "evidence-layer",
-     "vectors": [], "impls": []},
+     "vectors": [], "impls": ["evidencebook"]},
     {"name": "draft-mih-sokolov-scitt-payload-binding", "short": "CPB", "role": "family",
      "vectors": [["scitt-payload-binding/vectors", "https://github.com/action-state-group/scitt-payload-binding/tree/main/vectors"]],
      "impls": ["scitt-payload-binding"]},
@@ -77,8 +77,13 @@
      "what": "Witness: a SCITT Transparency Service that registers a digest or checkpoint and returns an RFC 9162 COSE Receipt; one row in the witness directory.",
      "links": [["Repository", "https://github.com/action-state-group/capsule-anchor"], ["Live log", "https://witness.agentactioncapsule.org"], ["Witness directory", "/docs/witnesses.html"]]},
     {"id": "capsules", "language": "Rust",
-     "what": "Mesh-LLM plugin: seals a capsule for every exchange a node serves or asks for, including both sides' payment lifecycle events. Latest release <code>v0.1.2</code> (4 Oct 2026). <code>v0.1.0</code> (3 Oct) was the first release. <code>v0.1.1</code> (4 Oct) added the settlement-records legs for paid exchanges: both sides seal their own legs for each invoice (PR #8, merged 3 Oct). <code>v0.1.2</code> registers no inference provider and serves no models unless blocked models are configured. It runs on mesh-llm 0.77 or newer. mesh-llm <code>v0.77.0</code> (28 Sep) carries the payer's payment events (mesh-llm PR #2035). mesh-llm <code>v0.78.0</code> (4 Oct) adds the provider's (mesh-llm PR #2108, closing issue #2017) and the credited amount and fee that the provider's settlement leg needs (mesh-llm PR #2169); on an older host the provider seals no settlement leg.",
-     "links": [["Repository", "https://github.com/Mesh-LLM/capsules"], ["Release v0.1.2", "https://github.com/Mesh-LLM/capsules/releases/tag/v0.1.2"], ["Changelog", "https://github.com/Mesh-LLM/capsules/blob/main/CHANGELOG.md"], ["Payment events (PR #4, merged)", "https://github.com/Mesh-LLM/capsules/pull/4"], ["Settlement legs (PR #8, merged)", "https://github.com/Mesh-LLM/capsules/pull/8"], ["mesh-llm v0.77.0", "https://github.com/Mesh-LLM/mesh-llm/releases/tag/v0.77.0"], ["mesh-llm v0.78.0", "https://github.com/Mesh-LLM/mesh-llm/releases/tag/v0.78.0"], ["mesh-llm PR #2035", "https://github.com/Mesh-LLM/mesh-llm/pull/2035"], ["mesh-llm PR #2108", "https://github.com/Mesh-LLM/mesh-llm/pull/2108"], ["mesh-llm PR #2169", "https://github.com/Mesh-LLM/mesh-llm/pull/2169"], ["mesh-llm issue #2017", "https://github.com/Mesh-LLM/mesh-llm/issues/2017"], ["Case study", "/docs/case-study-mesh-llm.html"]]}
-  ],
-  "_evidencebook": "action-state-group/evidencebook was PUBLIC at the 2026-10-02 build but holds only a README title and a LICENSE, so there is nothing to link a claim to. Row kept commented out in tools/build_docs.py until the repo has content."
+     "what": "Mesh-LLM plugin: seals a capsule for every exchange a node serves or asks for, including both sides' payment lifecycle events and settlement legs, and adds an Evidence page to the node's console. Latest release <code>v0.1.4</code> (12 Oct 2026), which shows paid exchanges on that page. It runs on an unmodified mesh-llm 0.77 or newer; on a host older than mesh-llm <code>v0.78.0</code> the provider seals no settlement leg.",
+     "links": [["Repository", "https://github.com/Mesh-LLM/capsules"], ["Release v0.1.4", "https://github.com/Mesh-LLM/capsules/releases/tag/v0.1.4"], ["Changelog", "https://github.com/Mesh-LLM/capsules/blob/main/CHANGELOG.md"], ["mesh-llm v0.78.0", "https://github.com/Mesh-LLM/mesh-llm/releases/tag/v0.78.0"], ["Case study", "/docs/case-study-mesh-llm.html"]]},
+    {"id": "evidencebook", "language": "Go, Rust",
+     "what": "Evidence layer: a local evidence store that seals every record as a capsule, keeps typed links between records, answers Evidence Requests and returns Evidence Bundles that the neutral bundle verifier checks on its own. The Checkpointed Local Log is its reference substrate. Used by the Mesh-LLM <code>capsules</code> plugin (Rust crate), the Muse integration, and the Outcomes and Obligations terms packs. Latest release <code>v0.6.0</code> (19 Oct 2026).",
+     "links": [["Repository", "https://github.com/action-state-group/evidencebook"], ["Design and spec mapping", "https://github.com/action-state-group/evidencebook/blob/main/docs/design.md"], ["Releases", "https://github.com/action-state-group/evidencebook/releases"]]},
+    {"id": "cigar-aac-demo", "language": "JavaScript, Python",
+     "what": "Independent demo by Ty (Patches) Smith at HOL: compiles governed context with CIGAR, then records the action as an AAC <code>-05</code> capsule with a local checkpoint witness and optional Hedera testnet publication; an in-page verifier names the failures when the evidence is edited.",
+     "links": [["Repository", "https://github.com/hashgraph-online/cigar-aac-demo"]]}
+  ]
 }
