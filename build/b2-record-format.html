@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>b2 · The record format · build</title>
+<link rel="stylesheet" href="explain.css">
+<style>
+  .stag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:0 6px;border:1px solid var(--line);white-space:nowrap}
+  .stag.live{color:var(--verify);background:var(--verify-soft);border-color:#B5D9C6}
+  .stag.built{color:var(--accent);background:var(--accent-soft);border-color:#C4CEF3}
+  .stag.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+  ul.next{max-width:780px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><a href="index.html">Agent Action Capsule · build your own evidence layer</a>
+  <nav><a href="b1-seams.html">&larr; Prev</a><a href="index.html">Contents</a><a href="b3-evidencebook.html">Next &rarr;</a></nav></div></header>
+<main><div class="wrap">
+  <div class="crumb">b2 / 11</div>
+  <h1>The record format</h1>
+  <p class="lede">Before you keep a book of records, decide what one record carries: digests of what went in and what came out, the effect it names and who vouches for it, a nonce the store draws itself, and the key that signs the record's identity.</p>
+
+  <figure class="anim" data-steps="7"
+    data-cap-0="Press Play, or Step to walk through it."
+    data-cap-1="One exchange: a request arrives and a completion goes back. Both bodies stay on the node that saw them."
+    data-cap-2="Each body is hashed: SHA-256 over its JCS (RFC 8785) form, with any floats first written as decimal strings (draft -05 §2). Only the two 64-hex digests move on; the bodies never enter the record."
+    data-cap-3="The digests fill the effect record. effect.type is inference_completion; status confirmed requires a response_digest over the completion actually returned; effect_attestation says who vouches (here host_served_observed: the node saw the host's report)."
+    data-cap-4="Serving facts go in by value or by digest: the model's name and a hash of that name, the hash of the served model file when the host reports one, the exchange id, the serving node and the token counts. No prompt or answer text."
+    data-cap-5="Two nonces. store_nonce is 256 random bits the store draws for this record alone, so no one can confirm a guess at the record from its digest. client_nonce, when the client supplies one or the host forwards one, is a join key both halves of one exchange share; it is not secret. A references entry with citation_purpose ran_under can cite a hardware-evidence record by digest: specified in draft -05, not sealed by the capsules plugin v0.1.4."
+    data-cap-6="capsule_id is SHA-256 over the JCS of the whole record minus capsule_id (and minus the local signature and key_id). Any verifier recomputes it and never trusts the carried value."
+    data-cap-7="A COSE_Sign1 Producer Envelope signs the 32 raw bytes of capsule_id. Its protected header holds exactly alg EdDSA, the content type and kid, the signer's raw Ed25519 public key; the unprotected header is empty. Adding or replacing an envelope never changes capsule_id.">
+    <svg viewBox="0 0 860 430" role="img" aria-labelledby="anim-t anim-d">
+      <title id="anim-t">One exchange becomes a signed capsule: bodies hashed, fields filled, identity computed, envelope signed</title>
+      <desc id="anim-d">Step 1: two boxes on the left, the request body and the completion body, held by the node. Step 2: each body is hashed with SHA-256 over its JCS form into a digest chip, request_digest and response_digest; a note says the bodies stay on the node. Step 3: the digests flow into a capsule box on the right whose effect record reads type inference_completion, status confirmed, effect_attestation host_served_observed, and the two digests. Step 4: serving facts are added: model_id and model_name_digest, a hash of the model's name; weights_digest, the SHA-256 of the served model file when the host reports it; exchange_id, served_by_node_id and token usage. Step 5: two nonces are added, store_nonce, 256 random bits the store draws for this record alone, and client_nonce, a join key shared by both halves of the exchange; a dashed slot shows a references entry with citation_purpose ran_under citing a hardware-evidence record by digest, marked as specified in the draft with vectors but not sealed by the capsules plugin v0.1.4. Step 6: under the fields, capsule_id is computed as SHA-256 over JCS of the capsule with capsule_id removed. Step 7: a green frame wraps the capsule: a COSE_Sign1 Producer Envelope whose protected header holds alg EdDSA, the content type and kid, the signer's public key, whose payload is the 32 raw bytes of capsule_id, and whose unprotected header is empty; a note on the left says the envelope is stored beside the record as signature and key_id, outside the capsule_id preimage.</desc>
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
+        <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
+      </defs>
+
+      <!-- Step 1: the exchange's two bodies -->
+      <g class="st" data-step="1">
+        <rect x="16" y="44" width="176" height="62" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="104" y="68" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Request body</text>
+        <text x="104" y="88" text-anchor="middle" font-size="12" fill="#5C6573">as received</text>
+        <rect x="16" y="144" width="176" height="62" rx="10" fill="#F4F4F0" stroke="#5C6573"/>
+        <text x="104" y="168" text-anchor="middle" font-size="14" font-weight="600" fill="#0B0E14">Completion body</text>
+        <text x="104" y="188" text-anchor="middle" font-size="12" fill="#5C6573">as returned</text>
+      </g>
+
+      <!-- Step 2: hashed to digests -->
+      <g class="st" data-step="2">
+        <path d="M192 75 L218 75" stroke="#5C6573" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <path d="M192 175 L218 175" stroke="#5C6573" stroke-width="1.5" fill="none" marker-end="url(#ah)"/>
+        <rect x="222" y="53" width="160" height="44" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="302" y="71" text-anchor="middle" font-size="12" class="mono" fill="#127A52">request_digest</text>
+        <text x="302" y="88" text-anchor="middle" font-size="12" class="mono" fill="#0B0E14">64 hex</text>
+        <rect x="222" y="153" width="160" height="44" rx="8" fill="#E6F2EC" stroke="#127A52"/>
+        <text x="302" y="171" text-anchor="middle" font-size="12" class="mono" fill="#127A52">response_digest</text>
+        <text x="302" y="188" text-anchor="middle" font-size="12" class="mono" fill="#0B0E14">64 hex</text>
+        <text x="302" y="128" text-anchor="middle" font-size="12" class="mono" fill="#5C6573">SHA-256(JCS(body))</text>
+        <text x="104" y="232" text-anchor="middle" font-size="12" fill="#9A5B00">bodies stay on the node,</text>
+        <text x="104" y="248" text-anchor="middle" font-size="12" fill="#9A5B00">never in the record</text>
+      </g>
+
+      <!-- Step 3: capsule box and effect record -->
+      <g class="st" data-step="3">
+        <path d="M382 75 L408 98" stroke="#127A52" stroke-width="1.5" fill="none" marker-end="url(#ahv)"/>
+        <path d="M382 175 L408 152" stroke="#127A52" stroke-width="1.5" fill="none" marker-end="url(#ahv)"/>
+        <rect x="412" y="44" width="428" height="318" rx="12" fill="#EAEEFC" stroke="#3A5BD9" stroke-width="1.5"/>
+        <text x="626" y="64" text-anchor="middle" font-size="14" font-weight="600" fill="#3A5BD9">Capsule (JSON payload)</text>
+        <text x="424" y="86" font-size="12" class="mono" fill="#0B0E14">effect.type: inference_completion</text>
+        <text x="424" y="104" font-size="12" class="mono" fill="#0B0E14">effect.status: confirmed</text>
+        <text x="424" y="122" font-size="12" class="mono" fill="#0B0E14">effect_attestation: host_served_observed</text>
+        <text x="424" y="140" font-size="12" class="mono" fill="#127A52">effect.request_digest: 64 hex</text>
+        <text x="424" y="158" font-size="12" class="mono" fill="#127A52">effect.response_digest: 64 hex</text>
+      </g>
+
+      <!-- Step 4: serving facts -->
+      <g class="st" data-step="4">
+        <line x1="424" y1="168" x2="828" y2="168" stroke="#C4CEF3"/>
+        <text x="424" y="186" font-size="12" class="mono" fill="#0B0E14">model_id · model_name_digest (of the name)</text>
+        <text x="424" y="204" font-size="12" class="mono" fill="#0B0E14">weights_digest: the file, if host reports</text>
+        <text x="424" y="222" font-size="12" class="mono" fill="#0B0E14">exchange_id · served_by_node_id · usage</text>
+      </g>
+
+      <!-- Step 5: nonces and the optional hardware citation -->
+      <g class="st" data-step="5">
+        <line x1="424" y1="232" x2="828" y2="232" stroke="#C4CEF3"/>
+        <text x="424" y="250" font-size="12" class="mono" fill="#0B0E14">store_nonce: 256 bits, the store's own</text>
+        <text x="424" y="268" font-size="12" class="mono" fill="#0B0E14">client_nonce: join key of both halves</text>
+        <rect x="420" y="278" width="412" height="42" rx="6" fill="#FBF1E1" stroke="#9A5B00" stroke-dasharray="5 4"/>
+        <text x="430" y="295" font-size="12" class="mono" fill="#9A5B00">references[]: ran_under, hardware record by digest</text>
+        <text x="430" y="312" font-size="12" fill="#9A5B00">in draft -05 with vectors; v0.1.4 seals none</text>
+        <text x="16" y="292" font-size="12" fill="#5C6573">store_nonce: a guess at a record</text>
+        <text x="16" y="308" font-size="12" fill="#5C6573">cannot be checked against its digest</text>
+      </g>
+
+      <!-- Step 6: identity -->
+      <g class="st" data-step="6">
+        <text x="626" y="340" text-anchor="middle" font-size="12" class="mono" fill="#3A5BD9">capsule_id = SHA-256(JCS(capsule &#8722; capsule_id))</text>
+        <text x="626" y="356" text-anchor="middle" font-size="12" fill="#5C6573">recomputed by every verifier</text>
+      </g>
+
+      <!-- Step 7: the Producer Envelope wraps it -->
+      <g class="st" data-step="7">
+        <rect x="402" y="34" width="448" height="390" rx="14" fill="none" stroke="#127A52" stroke-width="2.5"/>
+        <text x="626" y="380" text-anchor="middle" font-size="13" font-weight="600" fill="#127A52">COSE_Sign1 Producer Envelope</text>
+        <text x="626" y="397" text-anchor="middle" font-size="12" fill="#127A52">protected: alg EdDSA · content type · kid (public key)</text>
+        <text x="626" y="414" text-anchor="middle" font-size="12" fill="#127A52">payload: capsule_id's 32 raw bytes · unprotected: empty</text>
+        <text x="16" y="360" font-size="12" fill="#127A52">kept beside the record as</text>
+        <text x="16" y="376" font-size="12" class="mono" fill="#127A52">signature + key_id,</text>
+        <text x="16" y="392" font-size="12" fill="#127A52">outside the capsule_id preimage</text>
+      </g>
+    </svg>
+    <figcaption><span class="cap" aria-live="polite"></span>
+      <button type="button" data-act="play">Play</button>
+      <button type="button" data-act="step">Step</button>
+      <button type="button" data-act="replay">Replay</button>
+    </figcaption>
+  </figure>
+
+  <h2><span class="n">1</span>What it is</h2>
+  <div class="what">
+    <p>The record format is the choice of what one record commits to for one action: which facts go in as digests, which go in as plain values, and which never go in at all.</p>
+    <p>For a model exchange, the Agent Action Capsule Internet-Draft gives the effect type <code>inference_completion</code>, which binds the request and the completion by digest, and a COSE_Sign1 Producer Envelope that signs the record's identity under a key named in its <code>kid</code>.</p>
+    <p>Mesh-LLM's <code>capsules</code> plugin (release v0.1.4) is the worked example: it fills those fields from the host's exchange event, adds a store nonce, a join nonce and the serving facts, and leaves its hardware-evidence slot empty.</p>
+  </div>
+
+  <h2><span class="n">2</span>Design choices</h2>
+  <div class="choices">
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> commit the request and the completion by digest, SHA-256 over the JCS form of each body, with any floats first written as decimal strings (Draft -05 §2); the bodies stay with the node that saw them.</div>
+      <div class="not"><b>Rejected:</b> carrying content. A sealed record cannot be retracted, so content that must be checkable later but not disclosed now goes in as a digest only; and a user or session identifier is excluded, not digested, because a digest of a low-entropy value can be reversed by guessing. (Draft -05 §2, §5, §14, §14.1)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> name the effect. For <code>inference_completion</code>, <code>request_digest</code> covers the request body as received at the serving boundary and <code>response_digest</code> the completion body as returned; <code>status: "confirmed"</code> requires the response digest.</div>
+      <div class="not"><b>Rejected:</b> a status label with nothing bound to it. When the host forwards no response digest, v0.1.4 seals <code>status: "dispatched"</code> with no response digest rather than claim a completion. (Draft -05 §5.3; capsules <code>crates/evidence-plugin/src/capsule_emit.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> say who vouches for the effect in <code>effect_attestation</code>: <code>host_served_observed</code> when the plugin only saw the host's report of the exchange, <code>gate_executed</code> when the plugin admitted and served the request itself.</div>
+      <div class="not"><b>Rejected:</b> grading a host's report as a direct observation. <code>host_served_observed</code> grades equal to <code>runtime_claimed</code>, below <code>gate_executed</code>. (Draft -05 §5.3; both seal paths in <code>capsule_emit.rs</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> sign the identity, not the JSON: a COSE_Sign1 Producer Envelope over the 32 raw bytes of <code>capsule_id</code>, protected header exactly <code>alg</code> EdDSA, content type <code>application/agent-action-capsule-id</code> and <code>kid</code> (the raw Ed25519 public key); unprotected header empty.</div>
+      <div class="not"><b>Rejected:</b> making the signature part of the identity, and putting anything in the unprotected header: a witness receipt belongs to a separate registration statement, not the Producer Envelope. Whether the key is authorized for the operator is the caller's policy. (Draft -05 §3.1, §3.2, §3.3)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> every record carries <code>store_nonce</code>, 256 bits the store draws from a secure random source for that record alone, committed into <code>capsule_id</code>.</div>
+      <div class="not"><b>Rejected:</b> relying on the client's nonce, a time or a sequence number. Another party knows or can guess those, so the sibling digests in an inclusion proof could be checked against guessed content. (draft-mih-agent-evidence-layer-00 §12.1; capsule-emit 0.0.6 <code>rust/capsule-emit/src/capsule.rs</code> @ <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code>, tag <code>crates/capsule-emit-v0.0.6</code>)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> cite hardware evidence by digest: a <code>references</code> entry <code>{type, digest_alg, digest}</code> with <code>citation_purpose: "ran_under"</code>. The cited record's grade covers only what that record measured.</div>
+      <div class="not"><b>Rejected:</b> citing by name or URL, which can later resolve to different bytes; and letting a hardware-measured value lift a self-reported claim inside the same cited record. (Draft -05 §5.5.5; the <code>citation_purpose</code> table and grade rule are printed under §5.5.6)</div>
+    </div>
+    <div class="choice">
+      <div class="pick"><b>Chosen:</b> name model facts for what they are: <code>model_name_digest</code> is a hash of the model's name; <code>weights_digest</code>, the SHA-256 of the served file's bytes, is sealed only when the host reports it, with <code>scope: "file"</code>. The serving host's name is left out unless the operator opts in.</div>
+      <div class="not"><b>Rejected:</b> a name hash presented as a model identity, and a default value for any fact the host did not report. (capsules <code>crates/evidence-plugin/src/producer/capsule.rs</code>)</div>
+    </div>
+  </div>
+
+  <h2><span class="n">3</span>What it shows / what it does not</h2>
+  <div class="cols">
+    <div class="col yes"><h3>Shows</h3><ul>
+      <li>That the holder of the key in <code>kid</code> signed this <code>capsule_id</code>, and, once the verifier recomputes the id, that the record's bytes are the ones signed.</li>
+      <li>To anyone who holds the request or completion body: whether it is the body this record committed to.</li>
+      <li>That a <code>confirmed</code> effect carries a digest of the response that was observed, and which grade of voucher the producer states.</li>
+      <li>When the client supplied a nonce or the host forwarded one: which records are the two halves of one exchange, through the shared <code>client_nonce</code>. The marker <code>host-served-no-nonce</code> joins nothing.</li>
+      <li>With <code>store_nonce</code> in every record: the siblings in an inclusion proof cannot be confirmed by guessing a record's content.</li>
+    </ul></div>
+    <div class="col no"><h3>Does not show</h3><ul>
+      <li>What the request or the completion said.</li>
+      <li>Who holds the key in the real world, or that it was authorized to sign for the operator (Draft -05 §3.2).</li>
+      <li>That the named model ran. <code>model_name_digest</code> hashes a name; <code>weights_digest</code> is the host's report of the file it opened.</li>
+      <li>Anything rooted in hardware. In v0.1.4 the <code>tee_attestation</code> slot is always empty, and <code>binary_attestation</code> is the plugin measuring its own executable (self- or OS-measured); on the host-served path that is not the runtime that served the model.</li>
+      <li>That every exchange was recorded: a record shows this exchange was recorded, not that none was left out.</li>
+      <li>Privacy from <code>client_nonce</code>: it is a join key both sides know, not a secret.</li>
+    </ul></div>
+  </div>
+
+  <h2><span class="n">4</span>Example</h2>
+  <p>The format's own conformance vector for an <code>inference_completion</code> exchange, confirmed and attested <code>host_served_observed</code>. A verifier returns <code>ok: true</code> with no findings, and the recomputed <code>capsule_id</code> equals the carried one. The digests are filler values (all 1s, all 2s): the vector tests the record, not real bodies.</p>
+  <pre class="code"><code>{
+  "action_id": "v05-inference",
+  "action_type": "decide",
+  "assurance": {
+    "attestation_mode": "self_attested",
+    "effect_mode": "confirmed",
+    "ledger_mode": "standalone"
+  },
+  "canonicalization_id": "jcs",
+  "capsule_id": "b1f609326c7ba59660b58f813f4fe2ef24e96f7210e3360d62a873b9df90c753",
+  …
+  "effect": {
+    "effect_attestation": "host_served_observed",
+    "irreversibility_class": "two_way",
+    "request_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+    "response_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+    "status": "confirmed",
+    "type": "inference_completion"
+  },
+  "format_version": "4",
+  …
+  "spec_version": "draft-mih-scitt-agent-action-capsule-05",
+  "timestamp": "2026-09-26T00:00:00Z"
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>capsule_id</td><td>64 hex</td><td>SHA-256 over JCS of the record minus this field; recomputed, never trusted.</td></tr>
+      <tr><td>canonicalization_id</td><td>string</td><td>Must be exactly <code>jcs</code>; checked before any digest is computed.</td></tr>
+      <tr><td>format_version</td><td>string</td><td>Must be exactly <code>4</code>.</td></tr>
+      <tr><td>effect.type</td><td>string</td><td>Registered effect type: an inference request whose effect is producing a completion.</td></tr>
+      <tr><td>effect.status</td><td>string</td><td><code>confirmed</code>: result observed and bound, so <code>response_digest</code> must be present.</td></tr>
+      <tr><td>effect.effect_attestation</td><td>string</td><td>Who vouches: the serving host's runtime reported the completion.</td></tr>
+      <tr><td>effect.request_digest</td><td>64 hex</td><td>SHA-256 of JCS of the request body as received at the serving boundary, floats first written as decimal strings.</td></tr>
+      <tr><td>effect.response_digest</td><td>64 hex</td><td>SHA-256 of JCS of the completion body as returned.</td></tr>
+      <tr><td>assurance</td><td>object</td><td>Claimed modes; a verifier rederives each from the bytes and reports overclaims.</td></tr>
+      <tr><td>spec_version</td><td>string</td><td>The profile text the record conforms to; never selects an algorithm.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/pos-v05-effect-inference-completion-host-served/input.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+
+  <p>The hardware citation, from the same repository's vector for <code>ran_under</code>: one <code>references</code> entry, identified by its digest alone (the digest is a filler value).</p>
+  <pre class="code"><code>"references": [
+  {
+    "citation_purpose": "ran_under",
+    "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+    "digest_alg": "SHA-256",
+    "type": "agent-action-capsule"
+  }
+]</code></pre>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/pos-v05-reference-ran-under/input.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+
+  <p>What the Mesh-LLM producer adds, from a record the plugin sealed with its own fixture generator. This record comes from the path where the plugin admitted and served the request itself, so it reads <code>gate_executed</code>; its <code>developer</code> header (trimmed) names an earlier plugin version. For this page its <code>capsule_id</code> was recomputed and its envelope checked against <code>key_id</code>: both hold.</p>
+  <pre class="code"><code>{
+  "spec_version": "draft-mih-scitt-agent-action-capsule-05",
+  "format_version": "4",
+  "capsule_id": "ddd8685c1b578b39c9163a5c748ac7148108663719227f7636b2a113a1dd34dc",
+  …
+  "model_attestation": {
+    "model_id": "m",
+    "provider": "mesh-llm",
+    "compute_attestation": {
+      "agent_input_digest": "6d139f1403cd84518768857efed6c375c0e3fe1af3f250cd3a5c59ea87a0323c",
+      "agent_output_digest": "a8461110d26a1ceb91765128a3f8a648e86238810f4bdf27a330deb8681f9d87",
+      …
+      "x-mesh-poc-v1": {
+        "client_nonce": "n",
+        "client_nonce_source": "client_supplied",
+        "model_name_digest": "62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a",
+        "serving_provenance": {
+          …
+          "exchange_id": "e-1",
+          …
+        },
+        "role": "served",
+        …
+        "evidence_refs": {
+          …
+          "tee_attestation": {
+            "type": "tee_attestation",
+            "measurement_class": null,
+            "digest": null,
+            "context": "no TEE quote measured (…); recorded absent, never fabricated"
+          },
+          …
+        }
+      },
+      "store_nonce": "e372af496774c05c301d3185c83a4a98396b355ca87df2dfb07f8754def62dfe"
+    }
+  },
+  "effect": {
+    "status": "confirmed",
+    "type": "inference_completion",
+    "effect_attestation": "gate_executed",
+    "request_digest": "6d139f1403cd84518768857efed6c375c0e3fe1af3f250cd3a5c59ea87a0323c",
+    "response_digest": "a8461110d26a1ceb91765128a3f8a648e86238810f4bdf27a330deb8681f9d87"
+  },
+  …
+  "signature": "d284584ca301270378236170706c69636174696f6e2f6167656e742d616374696f6e2d63617073756c652d6964045820…",
+  "key_id": "9e4480104975505a70ec6fc913efff2884a93af380a657adf39babf91fbe1fe1"
+}</code></pre>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>agent_input_digest / agent_output_digest</td><td>64 hex</td><td>The same request and completion digests, also kept in the producer's attestation block.</td></tr>
+      <tr><td>client_nonce</td><td>string</td><td>Join key between the two halves of one exchange. A fixture value here; on the host-observed path it is the nonce the host forwarded, else the marker <code>host-served-no-nonce</code>.</td></tr>
+      <tr><td>client_nonce_source</td><td>string</td><td>Where the nonce came from (<code>client_supplied</code>, <code>host_forwarded_nonce</code>, …).</td></tr>
+      <tr><td>model_name_digest</td><td>64 hex</td><td>SHA-256 of the model's name string, not of its weights.</td></tr>
+      <tr><td>serving_provenance.exchange_id</td><td>string</td><td>The host's per-exchange id, to join this record to the host's own log.</td></tr>
+      <tr><td>role</td><td>string</td><td><code>served</code>: this node served the exchange (<code>requested</code> on the other half).</td></tr>
+      <tr><td>evidence_refs.tee_attestation</td><td>object</td><td>The hardware-evidence slot: always empty in v0.1.4, with the reason stated.</td></tr>
+      <tr><td>store_nonce</td><td>64 hex</td><td>256 random bits the store drew for this record alone; inside the <code>capsule_id</code> preimage.</td></tr>
+      <tr><td>effect.effect_attestation</td><td>string</td><td><code>gate_executed</code>: the plugin admitted and served this request itself.</td></tr>
+      <tr><td>signature</td><td>hex</td><td>The COSE_Sign1 Producer Envelope: tag 18, protected header <code>alg</code> -8 (EdDSA), the content type and <code>kid</code>; payload the 32 bytes of <code>capsule_id</code>; empty unprotected header. Outside the id preimage.</td></tr>
+      <tr><td>key_id</td><td>64 hex</td><td>The signer's raw Ed25519 public key, the same bytes as the envelope's <code>kid</code>. Outside the id preimage.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">Source: <code>Mesh-LLM/capsules:vectors/record_push_bundle_rust.json</code> (member <code>capsule</code>) @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+
+  <h2><span class="n">5</span>Status</h2>
+  <div class="tw"><table class="t">
+    <thead><tr><th>Item</th><th>Status</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>The format: <code>inference_completion</code>, request/response digests, Producer Envelope with <code>kid</code>, <code>references</code> with <code>ran_under</code></td><td><span class="stag live">live</span></td><td>Published Internet-Draft -05 and its conformance vectors: <code>action-state-group/agent-action-capsule:spec/draft-mih-scitt-agent-action-capsule-05.md</code>, <code>vectors/capsule/</code>, <code>vectors/producer-envelope/</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></td></tr>
+      <tr><td>One sealed, signed record per exchange half, with digests, <code>store_nonce</code>, <code>signature</code> and <code>key_id</code></td><td><span class="stag live">live</span></td><td><code>Mesh-LLM/capsules:crates/evidence-plugin/src/capsule_emit.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>; <code>CHANGELOG.md</code> 0.1.4: four paid exchanges between two nodes built from the release, &ldquo;each node sealed its own half&rdquo;</td></tr>
+      <tr><td>Request and response digests carried on the host's exchange event</td><td><span class="stag built">built</span></td><td><code>request_digest</code>, <code>response_digest</code> in <code>Mesh-LLM/mesh-llm:mesh/crates/mesh-llm-host-runtime/src/plugin/openai_exchange.rs</code> @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> (main). First in mesh-llm release v0.77.0 (<code>4ae1ace57dbbe28d0c3d10a05ee542328e8e64e7</code>; set in <code>crates/mesh-llm-host-runtime/src/network/openai/ingress.rs</code>). Without them the plugin seals <code>status: "dispatched"</code> and no response digest.</td></tr>
+      <tr><td><code>weights_digest</code> of the served file</td><td><span class="stag built">built</span></td><td>Sealed only when the host reports it: <code>Mesh-LLM/capsules:crates/evidence-plugin/src/producer/capsule.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code></td></tr>
+      <tr><td>Hardware evidence cited by digest (<code>ran_under</code>)</td><td><span class="stag designed">designed</span></td><td>Specified in draft -05 §5.5.5 (the <code>citation_purpose</code> table and grade rule are printed under §5.5.6) with vectors (<code>vectors/capsule/pos-v05-reference-ran-under</code>, <code>vectors/interop/ran_under</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>). Not sealed by capsules v0.1.4: its plugin source (<code>crates/</code>) writes no <code>ran_under</code> entry, and its <code>tee_attestation</code> slot is always empty (<code>producer/capsule.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>).</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2><span class="n">6</span>Specs</h2>
+  <ul class="specs">
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record, its identity, the effect record, the Producer Envelope, and <code>references</code> with <code>citation_purpose</code>.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-05</a> &mdash; the typed digest reference <code>{type, digest_alg, digest}</code> a <code>references</code> entry uses.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; why every record carries a store-drawn random value (&ldquo;What a Checkpoint Reveals&rdquo;).</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every digest and <code>capsule_id</code> covers.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> Producer Envelope.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8949">RFC 8949</a> &mdash; CBOR: the envelope's encoding (tag 18).</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: the separate registration statement for a <code>capsule_id</code>.</li>
+    <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts: what that registration returns.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">action-state-group/agent-action-capsule</a> &mdash; draft source and conformance vectors.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the worked example's producer.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-emit">action-state-group/capsule-emit</a> &mdash; the sealing library the plugin links (crate 0.0.6, tag <code>crates/capsule-emit-v0.0.6</code> @ <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code>).</li>
+  </ul>
+
+  <h2><span class="n">7</span>What you need before the next step</h2>
+  <ul class="next">
+    <li>A field list for each kind of record: what goes in as a digest, what goes in clear, and what never goes in (user and session identifiers, secrets).</li>
+    <li>An effect type and an honest <code>effect_attestation</code> value for each kind of action your host performs.</li>
+    <li>A signing key per producer (Ed25519), its public key as <code>kid</code>, and a way for peers to learn it.</li>
+    <li>A store-drawn random value in every record, separate from any nonce a client or peer supplies.</li>
+    <li>A JCS implementation that passes the format's canonical vectors, so your <code>capsule_id</code> recomputes anywhere.</li>
+    <li>A decision on where hardware evidence would be cited (<code>ran_under</code>), even before you have any.</li>
+  </ul>
+
+  <footer class="pn"><a href="b1-seams.html">&larr; The seams the host exposes</a><a href="b3-evidencebook.html">The local evidence book &rarr;</a></footer>
+</div></main>
+<script src="anim.js"></script>
+</body>
+</html>
