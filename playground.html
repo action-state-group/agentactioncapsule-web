@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Playground &mdash; Agent Action Capsule</title>
-<meta name="description" content="Interactive playground for Agent Action Capsule — coming soon.">
+<meta name="description" content="A demonstration of the open standard: record a sample agent action as an Agent Action Capsule in your browser, register only its digest, and open a link anyone can check. No signup, no install.">
 <link rel="canonical" href="https://agentactioncapsule.org/playground.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Agent Action Capsule">
-<meta property="og:title" content="Playground &mdash; Agent Action Capsule">
-<meta property="og:description" content="Interactive playground for Agent Action Capsule — coming soon.">
+<meta property="og:title" content="Playground &mdash; record a sample agent action">
+<meta property="og:description" content="Build a capsule in your browser, register only its digest, and get a link anyone can check.">
 <meta property="og:url" content="https://agentactioncapsule.org/playground.html">
 <meta property="og:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Playground &mdash; Agent Action Capsule">
-<meta name="twitter:description" content="Interactive playground for Agent Action Capsule — coming soon.">
+<meta name="twitter:title" content="Playground &mdash; record a sample agent action">
+<meta name="twitter:description" content="Build a capsule in your browser, register only its digest, and get a link anyone can check.">
 <meta name="twitter:image" content="https://agentactioncapsule.org/og-image.png">
 <meta name="theme-color" content="#0B0E14">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -23,92 +23,282 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!--
+  Playground configuration: the only two values a deployment sets.
+  anchor: the full URL of the registration endpoint (POST {"capsule_id": "<64 hex>"}),
+          e.g. <witness host>/register. Empty means "do not register": the page still
+          builds the capsule and the link, and says the record is self-attested.
+          It stays empty until Steven gives the go for live registration
+          (tools/check_playground.py fails if it is set).
+  verify: the verify surface the permalink opens (<verify>/v/<capsule_id>#<capsule>).
+-->
+<script id="playground-config" type="application/json">{"anchor": "", "verify": "https://verify.agentactioncapsule.org"}</script>
 <style>
   :root{
     --ink:#0B0E14; --ink-2:#161B25; --paper:#FCFCFA; --paper-2:#F4F4F0;
-    --line:#E3E3DC; --line-2:#2A313F;
-    --muted:#5C6573; --muted-2:#6B7280;
-    --accent:#3A5BD9; --accent-soft:#EAEEFC;
-    --verify:#127A52; --verify-soft:#E6F2EC;
+    --line:#E3E3DC; --line-2:#2A313F; --muted:#5C6573; --muted-2:#6B7280;
+    --accent:#3A5BD9; --accent-soft:#EAEEFC; --verify:#127A52; --verify-soft:#E6F2EC;
+    --fail:#B3261E; --fail-soft:#FBEAE8;
     --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.65;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
   .skip{position:absolute;left:8px;top:-48px;z-index:100;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;text-decoration:none;transition:top .15s}
   .skip:focus{top:8px}
-  .wrap{max-width:1140px;margin:0 auto;padding:0 32px}
-  .mono{font-family:var(--mono)}
-
-  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 32px}
+  .mono,code{font-family:var(--mono)}
+  code{font-size:.92em}
+  header.hero{padding:46px 0 6px}
+  .crumb{font-family:var(--mono);font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  .hero h1{font-size:clamp(28px,4vw,40px);letter-spacing:-1px;line-height:1.1;font-weight:700;margin-bottom:14px}
+  .hero p{font-size:17px;color:var(--muted);max-width:66ch}
+  .demo-tag{display:inline-block;font-family:var(--mono);font-size:11.5px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);border:1px dashed var(--muted-2);border-radius:100px;padding:3px 11px;margin-bottom:14px}
+  section.band{padding:34px 0;border-bottom:1px solid var(--line)}
+  .seyebrow{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+  .stitle{font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px}
+  .ssub{color:var(--muted);font-size:15.5px;max-width:68ch;margin-bottom:22px}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:14px;font-weight:500;border:1px solid var(--line);background:#fff;color:var(--ink);padding:9px 16px;border-radius:9px;cursor:pointer;text-decoration:none;transition:border-color .15s}
+  .btn:hover{border-color:var(--ink)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+  .btn-primary{background:var(--ink);color:var(--paper);border-color:var(--ink);font-size:15px;padding:11px 20px}
+  .btn-primary:hover{background:var(--accent);border-color:var(--accent)}
+  .btn-verify{background:var(--verify);color:#fff;border-color:var(--verify)}
+  .btn-verify:hover{background:var(--ink);border-color:var(--ink)}
+  .grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;min-width:0}
+  .panel{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;padding:20px 22px;min-width:0}
+  .pk{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:10px}
+  .lbl{font-size:13px;color:var(--muted);margin-bottom:7px}
+  textarea{width:100%;min-height:210px;resize:vertical;font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;outline:none}
+  textarea:focus{border-color:var(--accent)}
+  .meter{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--muted-2)}
+  .meter .over{color:var(--fail);font-weight:600}
+  .msg{margin-top:10px;font-size:13.5px;border-radius:9px;padding:9px 12px;display:none}
+  .msg.err{display:block;background:var(--fail-soft);color:var(--fail)}
+  .msg.info{display:block;background:var(--paper-2);color:var(--muted)}
+  .kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;font-size:13px;align-items:baseline}
+  .kv dt{color:var(--muted)}
+  .kv dd{font-family:var(--mono);font-size:12.5px;overflow-wrap:anywhere;min-width:0}
+  .steps{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:4px}
+  .steps li{display:flex;gap:10px;font-size:14px;align-items:baseline}
+  .steps .ic{flex:0 0 2ch;font-family:var(--mono);color:var(--muted-2)}
+  .steps li.done .ic{color:var(--verify)}
+  .steps li.fail .ic{color:var(--fail)}
+  .steps li.skip .ic{color:var(--muted-2)}
+  .steps .d{color:var(--muted);font-size:13px}
+  .tier{margin-top:16px;border-radius:10px;padding:12px 15px;font-size:14px;border:1px solid var(--line);background:var(--paper-2)}
+  .tier strong{font-family:var(--mono);font-size:12.5px;letter-spacing:.5px;text-transform:uppercase}
+  .tier.witnessed{background:var(--verify-soft);border-color:#BFDCCB}
+  .tier.witnessed strong{color:var(--verify)}
+  .link-box{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 12px;overflow-wrap:anywhere;max-height:7.5em;overflow-y:auto}
+  pre.capsule{font-family:var(--mono);font-size:12px;line-height:1.55;background:var(--ink);color:#C9D1E0;border-radius:10px;padding:14px 16px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow-y:auto}
+  .wire{font-family:var(--mono);font-size:12px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 12px;overflow-wrap:anywhere}
+  .wire .m{color:var(--accent);font-weight:600}
+  .note{font-size:13.5px;color:var(--muted);margin-top:14px;max-width:72ch}
+  .policy{max-width:72ch}
+  .policy h3{font-size:16px;margin:20px 0 6px}
+  .policy p,.policy li{font-size:14.5px;color:var(--ink)}
+  .policy ul{padding-left:20px;display:flex;flex-direction:column;gap:5px}
+  #result{display:none}
+  #result.on{display:block}
+  @media(max-width:820px){ .grid{grid-template-columns:1fr} }
+  @media(max-width:560px){ .wrap{padding-left:16px;padding-right:16px} .kv{grid-template-columns:1fr;gap:0 0} .kv dd{margin-bottom:8px} .btn-primary{width:100%;justify-content:center} }
+</style>
+<!--chrome:head--><script>document.documentElement.className+=' js';</script>
+<style>
+  /* shared chrome (tools/build_docs.py) */
+  nav{position:sticky;top:0;z-index:50;background:rgba(252,252,250,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .nav-in{max-width:1140px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:18px}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-0.2px;text-decoration:none;color:var(--ink);white-space:nowrap}
   .brand .glyph{width:22px;height:22px;border:1.5px solid var(--ink);border-radius:5px;position:relative;flex-shrink:0}
   .brand .glyph::after{content:'';position:absolute;inset:4px;border-left:1.5px solid var(--accent);border-bottom:1.5px solid var(--accent);transform:rotate(-45deg) translate(1px,-1px)}
-  .brand .svc{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-left:1px solid var(--line);padding-left:10px;margin-left:2px}
   .nav-links{display:flex;gap:22px;align-items:center}
   .nav-links a{font-size:13.5px;color:var(--muted);text-decoration:none;transition:color .15s;white-space:nowrap}
   .nav-links a:hover{color:var(--ink)}
   .nav-links a.active{color:var(--ink);font-weight:600}
   .nav-ghost{font-family:var(--mono);font-size:13px;border:1px solid var(--line);padding:7px 14px;border-radius:7px;color:var(--ink)!important}
   .nav-ghost:hover{border-color:var(--ink)}
-
-  main{padding:80px 0 100px}
-  .hero{text-align:center;max-width:620px;margin:0 auto}
-  .hero h1{font-size:clamp(32px,5vw,52px);letter-spacing:-1.5px;line-height:1.1;font-weight:700;margin-bottom:20px}
-  .hero p{font-size:18px;color:var(--muted);margin-bottom:36px;line-height:1.6}
-  .stub-box{display:inline-block;border:2px dashed var(--line);border-radius:16px;padding:40px 56px;margin-top:12px;background:var(--paper-2)}
-  .stub-box .label{font-family:var(--mono);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted-2);margin-bottom:10px}
-  .stub-box .msg{font-size:15px;color:var(--muted)}
-  .stub-box a.ln{color:var(--accent);text-decoration:none}
-  .stub-box a.ln:hover{text-decoration:underline}
-
+  .nav-toggle{display:none;align-items:center;gap:8px;font:inherit;font-size:13.5px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:7px;padding:6px 12px;cursor:pointer}
+  .nav-toggle .bars{width:14px;height:10px;border-top:1.5px solid currentColor;border-bottom:1.5px solid currentColor;position:relative}
+  .nav-toggle .bars::after{content:'';position:absolute;left:0;right:0;top:3.5px;border-top:1.5px solid currentColor}
+  .side-d{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow-y:auto}
+  .side-d>summary{display:none}
+  .side-d .side{position:static;max-height:none;overflow:visible;background:none;border:none;backdrop-filter:none;padding:0}
+  .side h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin:20px 0 10px}
+  .side h2:first-child{margin-top:0}
+  .side a{display:block;font-size:14px;color:var(--muted);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);transition:all .12s}
+  .side a:hover{color:var(--ink);border-left-color:var(--muted-2)}
+  .side a.active{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  .next{display:flex;justify-content:space-between;gap:16px;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
+  .next a{flex:1;min-width:200px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .15s}
+  .next a:hover{border-color:var(--ink)}
+  .next .dir{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:5px}
+  .next .ttl{font-size:15px;font-weight:600;color:var(--ink)}
+  .next a.n{text-align:right}
   footer{padding:48px 0 56px;border-top:1px solid var(--line)}
-  .foot-in{display:flex;gap:48px;flex-wrap:wrap;align-items:flex-start}
-  .foot-brand{flex:1;min-width:220px;max-width:320px}
-  .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.55}
+  .foot-in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  .foot-brand{max-width:38ch}
+  .foot-brand p{font-size:13px;color:var(--muted);margin-top:12px}
   .foot-cols{display:flex;gap:48px;flex-wrap:wrap}
   .foot-col h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted-2);margin-bottom:14px}
   .foot-col a{display:block;font-size:13.5px;color:var(--muted);text-decoration:none;margin-bottom:9px}
   .foot-col a:hover{color:var(--ink)}
-  .foot-note{font-family:var(--mono);font-size:11px;color:var(--muted-2);letter-spacing:.5px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line)}
-
-  @media(max-width:640px){
-    .nav-in{padding:12px 20px}
-    .wrap{padding:0 20px}
-    .nav-links{gap:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-    .nav-links::-webkit-scrollbar{display:none}
+  .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted-2);font-family:var(--mono)}
+  @media(max-width:900px){
+    .docs{grid-template-columns:1fr;gap:20px}
+    .side-d{position:static;max-height:none;overflow:visible;border:1px solid var(--line);border-radius:10px;padding:0 14px}
+    .side-d>summary{display:block;cursor:pointer;padding:11px 0;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+    .side-d .side{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:14px}
+    .side-d .side h2{font-weight:700;line-height:inherit;padding:0;border:0;margin-top:0;width:100%;margin:8px 0 2px}
+    .side-d .side a{border-left:none;padding:3px 0}
   }
-</style>
+  @media(max-width:860px){
+    .nav-in{padding:12px 16px;flex-wrap:wrap;gap:10px}
+    .nav-links{flex-wrap:wrap;gap:6px 16px;overflow:visible}
+    html.js .nav-toggle{display:inline-flex}
+    html.js .nav-links{display:none;width:100%;flex-direction:column;align-items:stretch;gap:0;padding:4px 0 8px}
+    html.js .nav-links.open{display:flex}
+    html.js .nav-links a{display:block;padding:10px 0;font-size:15px}
+    html.js .nav-links a:not(.nav-ghost){display:block}
+    html.js .nav-ghost{border:none;padding:10px 0;font-family:inherit;font-size:15px}
+  }
+  @media(max-width:560px){ .wrap{padding-left:16px;padding-right:16px} footer{padding:36px 0 44px} .foot-cols{gap:28px} }
+</style><!--/chrome:head-->
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<nav>
+<!--chrome:nav--><nav aria-label="Site">
   <div class="nav-in">
     <a class="brand" href="/"><span class="glyph"></span> Agent Action Capsule</a>
-    <div class="nav-links">
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links"><span class="bars" aria-hidden="true"></span>Menu</button>
+    <div class="nav-links" id="nav-links">
       <a href="/">Standard</a>
       <a href="https://witness.agentactioncapsule.org">Transparency Log</a>
       <a href="https://verify.agentactioncapsule.org">Verifier</a>
-      <a href="/docs/">Docs</a>
+      <a class="active" href="/docs/">Docs</a>
       <a class="nav-ghost" href="https://github.com/action-state-group">Source &#x2197;</a>
-      <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Draft (IETF) &#x2197;</a>
+      <a href="/docs/specifications.html">Specifications</a>
     </div>
   </div>
-</nav>
-<main class="wrap" id="main">
-  <div class="hero">
-    <h1>Playground</h1>
-    <p>Seal a capsule, verify a receipt, and explore the transparency log &mdash; all in your browser.</p>
-    <div class="stub-box">
-      <div class="label">Coming soon</div>
-      <p class="msg">The interactive playground is in development. In the meantime, try the <a class="ln" href="/docs/quickstart.html">quickstart guide</a> or <a class="ln" href="https://verify.agentactioncapsule.org">verify a capsule</a> directly.</p>
+</nav><!--/chrome:nav-->
+
+<main id="main">
+<noscript><div class="wrap" style="padding:24px 0"><div class="card">This page builds a capsule in your browser and needs JavaScript for SHA-256. With JavaScript off, read <a href="/docs/what-is-a-capsule.html" style="color:var(--accent)">What is a Capsule?</a>, or follow the <a href="/docs/quickstart.html" style="color:var(--accent)">quickstart</a> to seal one on your own machine.</div></div></noscript>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="crumb">Live · Playground</div>
+    <span class="demo-tag">a demonstration of the open standard</span>
+    <h1>Record a sample agent action</h1>
+    <p>Build an Agent Action Capsule in your browser from a small, made-up agent action, register only its digest, and open a link anyone can check without trusting this site. No signup, no install. The record you make is a demonstration record.</p>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap">
+    <div class="seyebrow">1 · the sample action</div>
+    <div class="stitle">What the agent saw, and what it did.</div>
+    <p class="ssub">This is synthetic. Edit it if you like; please do not paste real data. The capsule commits to each half as a SHA-256 digest, and the text itself never leaves this page.</p>
+    <div class="grid">
+      <div class="card">
+        <div class="lbl"><label for="payload">sample payload: <code>agent_input</code> and <code>agent_output</code> (JSON)</label></div>
+        <textarea id="payload" spellcheck="false" autocomplete="off">{
+  "agent_input": {
+    "task": "Refund order DEMO-1001 if the item arrived damaged",
+    "order_id": "DEMO-1001",
+    "photo_check": "damaged",
+    "amount": "24.00"
+  },
+  "agent_output": {
+    "decision": "refund",
+    "refund_id": "DEMO-RF-0077",
+    "amount": "24.00"
+  }
+}</textarea>
+        <div class="meter"><span id="bytes">… bytes</span><span>limit <span id="cap">…</span> bytes</span></div>
+        <div class="msg" id="payloadMsg" role="alert"></div>
+        <div class="controls">
+          <button class="btn btn-primary" id="record" type="button">Record a sample agent action</button>
+          <button class="btn" id="reset" type="button">Reset sample</button>
+        </div>
+      </div>
+      <div class="panel" aria-live="polite">
+        <div class="pk">what happens when you press it</div>
+        <ol class="steps" id="steps">
+          <li data-step="digest"><span class="ic">1</span><span>Hash each half of the payload in this browser.<br><span class="d">SHA-256 over the RFC&nbsp;8785 (JCS) canonical bytes.</span></span></li>
+          <li data-step="seal"><span class="ic">2</span><span>Build the capsule and derive its <code>capsule_id</code>.<br><span class="d">The same code the verifier runs.</span></span></li>
+          <li data-step="check"><span class="ic">3</span><span>Check the capsule against the profile's structural rules.<br><span class="d">The verifier's own check, run here before anything is sent.</span></span></li>
+          <li data-step="register"><span class="ic">4</span><span>Register the <code>capsule_id</code> with a transparency log.<br><span class="d">One 64-character digest. Nothing else is sent.</span></span></li>
+          <li data-step="link"><span class="ic">5</span><span>Make your link and open it in the verifier.<br><span class="d">The capsule rides after the <code>#</code>, which browsers never send to a server.</span></span></li>
+        </ol>
+      </div>
     </div>
   </div>
+</section>
+
+<section class="band" id="result" aria-live="polite">
+  <div class="wrap">
+    <div class="seyebrow">2 · your capsule</div>
+    <div class="stitle">Your record, and how to check it.</div>
+    <div class="grid">
+      <div class="card">
+        <dl class="kv">
+          <dt>capsule_id</dt><dd id="outId">…</dd>
+          <dt>agent_input_digest</dt><dd id="outIn">…</dd>
+          <dt>agent_output_digest</dt><dd id="outOut">…</dd>
+          <dt>operator</dt><dd id="outOp">…</dd>
+          <dt>registration</dt><dd id="outReg">…</dd>
+        </dl>
+        <div class="tier" id="tier">…</div>
+        <div class="controls">
+          <a class="btn btn-verify" id="verifyLink" href="#" target="_blank" rel="noopener noreferrer">Verify it yourself &#x2197;</a>
+          <button class="btn" id="copyLink" type="button">Copy link</button>
+          <button class="btn" id="downloadCap" type="button">Download capsule (.json)</button>
+        </div>
+        <div class="link-box" id="permalink" aria-label="Your permalink"></div>
+      </div>
+      <div class="panel">
+        <div class="pk">what left this page</div>
+        <div id="wire" class="wire">…</div>
+        <p class="note" style="margin-top:12px">Your payload, the capsule and the link stayed in this browser. The verifier receives the page request for <code>/v/&lt;capsule_id&gt;</code>; the capsule after the <code>#</code> is never sent to it.</p>
+      </div>
+    </div>
+    <div style="margin-top:18px">
+      <div class="lbl">The capsule, exactly as hashed (canonical JSON, keys sorted)</div>
+      <pre class="capsule" id="capsuleJson"></pre>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="policy">
+  <div class="wrap"><div class="policy">
+    <div class="seyebrow">3 · demonstration records</div>
+    <div class="stitle">How this page treats the public log</div>
+    <p>A transparency log is append-only: an entry registered here stays there. So this page labels what it makes and keeps it small.</p>
+    <h3>Labelled as a demonstration</h3>
+    <ul>
+      <li>Every capsule made here names its operator <code>demo:agentactioncapsule.org/playground</code>. The <code>demo:</code> prefix marks a demonstration record, so nobody reads it as a record of a real organisation's agent.</li>
+      <li>Every <code>action_id</code> starts with <code>demo-</code>, and the sample payload is made up.</li>
+      <li>The log itself holds only the 64-character <code>capsule_id</code>. The label lives in the capsule, which stays with you and anyone you share the link with.</li>
+    </ul>
+    <h3>Size and rate limits</h3>
+    <ul>
+      <li>The payload is capped at <span id="capText">2,048</span> bytes. The page refuses a larger one before hashing.</li>
+      <li>This page registers at most one capsule every <span id="gapText">20</span> seconds, and at most <span id="maxText">5</span> per browser tab session. These limits are enforced in your browser. They are a courtesy to the log, not a security boundary.</li>
+      <li>Registration sends only the digest, which is 64 hexadecimal characters whatever the payload's size.</li>
+    </ul>
+    <h3>Self-attested, then witnessed</h3>
+    <p>A capsule made here has no producer signature: a browser demonstration holds no producer key. Its <code>capsule_id</code> recomputes from its own bytes, so any change to the record shows. On its own it is <strong>self-attested</strong>: only its maker vouches for it. It is <strong>witnessed</strong> once a transparency log its maker does not run has registered it and returned a receipt that verifies. On this site, &ldquo;witnessed&rdquo; and &ldquo;registered&rdquo; name that same step. A witness vouches for when the digest was registered, never for what the record says. See <a href="/docs/translation.html" style="color:var(--accent)">the assurance ladder</a> and <a href="/docs/witness-anywhere.html" style="color:var(--accent)">witness anywhere</a>.</p>
+  </div></div>
+</section>
+
 </main>
-<footer>
+
+<!--chrome:footer--><footer>
   <div class="wrap">
     <div class="foot-in">
       <div class="foot-brand">
@@ -119,11 +309,26 @@
         <div class="foot-col">
           <h2>Standard</h2>
           <a href="/">Overview</a>
+          <a href="/#compose">Composition</a>
           <a href="/docs/">Docs</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC draft (&#8209;04) &#x2197;</a>
-          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB draft (&#8209;02) &#x2197;</a>
-          <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
           <a href="https://canonicalpayloadbinding.org/">Canonical Payload Binding &#x2197;</a>
+          <a href="/talks/lf-aaif-scitt-aac-cll-cpb-2026-09-02.pdf">Talk slides (LF AAIF WG, Sep 2026) &#x2197;</a>
+        </div>
+        <div class="foot-col">
+          <h2>Internet-Drafts</h2>
+          <a href="/docs/specifications.html">All specifications</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">AAC &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">Selective disclosure &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">Disclosure envelope &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">Evidence Bundle &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">Evidence Request &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">Settlement records &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">Bilateral attestation &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">Composition &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-accountability-conformance/">Conformance &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">CLL &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">MMR receipt profile &#x2197;</a>
         </div>
         <div class="foot-col">
           <h2>Services</h2>
@@ -133,7 +338,9 @@
         <div class="foot-col">
           <h2>Source</h2>
           <a href="https://github.com/action-state-group">GitHub &#x2197;</a>
-          <a href="https://github.com/ietf-wg-scitt/examples">Test vectors &#x2197;</a>
+          <a href="https://github.com/action-state-group/capsule-emit/blob/main/ADOPT.md">Adopters guide &#x2197;</a>
+          <a href="https://github.com/action-state-group/agent-action-capsule/tree/main/vectors">Capsule test vectors &#x2197;</a>
+          <a href="https://github.com/ietf-wg-scitt/examples">SCITT receipt vectors (WG) &#x2197;</a>
         </div>
         <div class="foot-col">
           <h2>Project</h2>
@@ -144,6 +351,241 @@
     </div>
     <div class="foot-note">Open source &middot; built to be donated &middot; agentactioncapsule.org</div>
   </div>
-</footer>
+</footer><!--/chrome:footer-->
+
+<script src="/js/aac-crypto.js"></script>
+<script>
+(function(){
+  "use strict";
+  // Limits (see the "demonstration records" section; the numbers there are filled from these).
+  var MAX_PAYLOAD_BYTES = 2048;
+  var MIN_GAP_MS = 20000;
+  var MAX_PER_SESSION = 5;
+  var OPERATOR = "demo:agentactioncapsule.org/playground";
+  var DEVELOPER = "demo-agent@playground";
+  var SPEC_VERSION = "draft-mih-scitt-agent-action-capsule-04";
+  var SESSION_KEY = "aac-playground-registrations";
+
+  var cfg = JSON.parse(document.getElementById("playground-config").textContent);
+  var ANCHOR = String(cfg.anchor || "");
+  var VERIFY = String(cfg.verify || "").replace(/\/+$/, "");
+
+  function $(id){ return document.getElementById(id); }
+  var ta = $("payload"), btn = $("record");
+  var SAMPLE = ta.value;
+  var enc = new TextEncoder();
+  var lastCapsule = null;
+
+  $("cap").textContent = MAX_PAYLOAD_BYTES.toLocaleString("en-US");
+  $("capText").textContent = MAX_PAYLOAD_BYTES.toLocaleString("en-US");
+  $("gapText").textContent = String(MIN_GAP_MS / 1000);
+  $("maxText").textContent = String(MAX_PER_SESSION);
+
+  function showMsg(text, kind){
+    var m = $("payloadMsg");
+    m.textContent = text || "";
+    m.className = text ? "msg " + (kind || "err") : "msg";
+  }
+  function payloadBytes(){ return enc.encode(ta.value).length; }
+  function updateMeter(){
+    var n = payloadBytes(), el = $("bytes");
+    el.textContent = n.toLocaleString("en-US") + " bytes";
+    el.className = n > MAX_PAYLOAD_BYTES ? "over" : "";
+  }
+  ta.addEventListener("input", function(){ updateMeter(); showMsg(""); });
+  $("reset").addEventListener("click", function(){ ta.value = SAMPLE; updateMeter(); showMsg(""); });
+  updateMeter();
+
+  function setStep(name, state, detail){
+    var li = document.querySelector('#steps li[data-step="' + name + '"]');
+    if(!li) return;
+    li.className = state || "";
+    li.querySelector(".ic").textContent = state === "done" ? "✓" : state === "fail" ? "✕" : state === "skip" ? "–" : li.querySelector(".ic").textContent;
+    if(detail !== undefined) li.querySelector(".d").textContent = detail;
+  }
+  function resetSteps(){
+    var n = 0;
+    document.querySelectorAll("#steps li").forEach(function(li){ n++; li.className = ""; li.querySelector(".ic").textContent = String(n); });
+  }
+
+  // Parse and check the payload. Returns {agent_input, agent_output} or throws an Error with a reader-facing message.
+  function readPayload(){
+    if(payloadBytes() > MAX_PAYLOAD_BYTES)
+      throw new Error("The payload is " + payloadBytes().toLocaleString("en-US") + " bytes; this page accepts at most " + MAX_PAYLOAD_BYTES.toLocaleString("en-US") + ".");
+    var p;
+    try { p = JSON.parse(ta.value); }
+    catch(e){ throw new Error("The payload is not valid JSON: " + e.message); }
+    if(!p || typeof p !== "object" || Array.isArray(p) || !("agent_input" in p) || !("agent_output" in p))
+      throw new Error("The payload must be a JSON object with an \"agent_input\" and an \"agent_output\".");
+    return { agent_input: p.agent_input, agent_output: p.agent_output };
+  }
+
+  function randomHex(bytes){
+    var a = new Uint8Array(bytes); crypto.getRandomValues(a);
+    return Array.prototype.map.call(a, function(b){ return ("0" + b.toString(16)).slice(-2); }).join("");
+  }
+  function nowSeconds(){ return new Date().toISOString().replace(/\.\d{3}Z$/, "Z"); }
+
+  function sessionCount(){
+    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || "[]"); } catch(e){ return []; }
+  }
+  function noteRegistration(){
+    var list = sessionCount(); list.push(Date.now());
+    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(list)); } catch(e){}
+  }
+  var lastRegistrationAt = 0;
+  // Returns a reason string when the page should not register now, or "" when it may.
+  function registrationBlocked(){
+    var list = sessionCount();
+    if(list.length >= MAX_PER_SESSION) return "This tab has already registered " + MAX_PER_SESSION + " demonstration capsules, the limit for one session.";
+    var last = Math.max(lastRegistrationAt, list.length ? list[list.length - 1] : 0);
+    var wait = MIN_GAP_MS - (Date.now() - last);
+    if(wait > 0) return "One registration every " + (MIN_GAP_MS / 1000) + " seconds: try again in " + Math.ceil(wait / 1000) + " s.";
+    return "";
+  }
+
+  // The permalink format the verify surface's /v/ page reads: standard base64 of the UTF-8 JSON capsule.
+  function permalink(capsule){
+    var bytes = enc.encode(JSON.stringify(capsule)), bin = "";
+    for(var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return VERIFY + "/v/" + capsule.capsule_id + "#" + btoa(bin);
+  }
+
+  async function register(capsuleId){
+    var body = JSON.stringify({ capsule_id: capsuleId });
+    $("wire").innerHTML = "";
+    var line = document.createElement("div");
+    line.innerHTML = '<span class="m">POST</span> ';
+    line.appendChild(document.createTextNode(ANCHOR));
+    var b = document.createElement("div"); b.style.marginTop = "6px"; b.textContent = body;
+    $("wire").appendChild(line); $("wire").appendChild(b);
+    lastRegistrationAt = Date.now(); noteRegistration();
+    var r = await fetch(ANCHOR, {
+      method: "POST", mode: "cors", credentials: "omit", referrerPolicy: "no-referrer", cache: "no-store",
+      headers: { "Content-Type": "application/json" }, body: body
+    });
+    if(r.status === 429) throw new Error("The log is busy (HTTP 429). Your capsule is still valid, and still self-attested.");
+    if(!r.ok) throw new Error("The log answered HTTP " + r.status + ".");
+    var j = await r.json();
+    if(!j || typeof j.receipt_b64 !== "string" || !j.receipt_b64) throw new Error("The log's answer carried no receipt.");
+    return j;
+  }
+
+  function showTier(registered, detail){
+    var t = $("tier");
+    t.className = registered ? "tier witnessed" : "tier";
+    t.innerHTML = registered
+      ? "<strong>Registered with a log</strong> — the log returned a receipt for this digest. The verifier checks that receipt against the log's key; until a receipt verifies, read the record as self-attested."
+      : "<strong>Self-attested</strong> — " + detail;
+  }
+
+  async function record(){
+    showMsg(""); resetSteps();
+    var payload;
+    try { payload = readPayload(); } catch(e){ showMsg(e.message); return; }
+    if(!window.AacCrypto){ showMsg("The verifier's code did not load, so nothing was built."); return; }
+    btn.disabled = true;
+    try {
+      var inDigest = await AacCrypto.jsonDigest(payload.agent_input);
+      var outDigest = await AacCrypto.jsonDigest(payload.agent_output);
+      setStep("digest", "done");
+      var capsule = {
+        action_id: "demo-" + randomHex(8),
+        action_type: "decide",
+        assurance: { attestation_mode: "self_attested", effect_mode: "not_applicable", ledger_mode: "standalone" },
+        canonicalization_id: "jcs",
+        developer: DEVELOPER,
+        disposition: { approver: "policy", decision: "accept", human_disposed: false },
+        format_version: "4",
+        model_attestation: { compute_attestation: { agent_input_digest: inDigest, agent_output_digest: outDigest } },
+        operator: OPERATOR,
+        spec_version: SPEC_VERSION,
+        timestamp: nowSeconds()
+      };
+      capsule.capsule_id = await AacCrypto.computeCapsuleId(capsule);
+      setStep("seal", "done");
+      var verdict = await AacCrypto.verifyClass1(capsule);
+      if(!verdict.ok){
+        setStep("check", "fail", verdict.findings.filter(function(f){ return f.severity === "error"; }).map(function(f){ return f.code; }).join(", "));
+        throw new Error("The capsule did not pass the structural check, so it was not registered.");
+      }
+      setStep("check", "done");
+      lastCapsule = capsule;
+
+      $("outId").textContent = capsule.capsule_id;
+      $("outIn").textContent = inDigest;
+      $("outOut").textContent = outDigest;
+      $("outOp").textContent = OPERATOR;
+      $("capsuleJson").textContent = AacCrypto.canonicalPayloadText(capsule);
+
+      var registered = false;
+      if(!ANCHOR){
+        setStep("register", "skip", "Registration is switched off on this copy of the page. Nothing was sent.");
+        $("outReg").textContent = "not registered (switched off on this copy)";
+        $("wire").textContent = "Nothing. Registration is switched off on this copy of the page.";
+        showTier(false, "nothing independent has seen it. The link still lets anyone recompute its capsule_id.");
+      } else {
+        var blocked = registrationBlocked();
+        if(blocked){
+          setStep("register", "skip", blocked);
+          $("outReg").textContent = "not registered (" + blocked + ")";
+          $("wire").textContent = "Nothing. " + blocked;
+          showTier(false, "this capsule was not registered. The link still lets anyone recompute its capsule_id.");
+        } else {
+          try {
+            var res = await register(capsule.capsule_id);
+            registered = true;
+            setStep("register", "done", "Leaf " + res.leaf_index + " in a log of " + res.tree_size + ".");
+            $("outReg").textContent = "leaf " + res.leaf_index + " of " + res.tree_size + " at " + ANCHOR.replace(/^https?:\/\//, "").split("/")[0];
+            showTier(true);
+          } catch(e){
+            setStep("register", "fail", e.message);
+            $("outReg").textContent = "not registered: " + e.message;
+            showTier(false, "registration did not complete. The link still lets anyone recompute its capsule_id.");
+          }
+        }
+      }
+
+      var url = permalink(capsule);
+      $("permalink").textContent = url;
+      $("verifyLink").href = url;
+      setStep("link", "done");
+      $("result").className = "band on";
+      $("result").scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch(e){
+      // The canonicaliser refuses fractions and integers past 2^53 ("float at <path>", "unsafe integer at <path>").
+      showMsg(e instanceof TypeError && /^(float|unsafe integer) at /.test(e.message)
+        ? "The payload has a number JSON cannot carry exactly (" + e.message + "); write it as a string, like \"24.00\"."
+        : (e && e.message) || String(e));
+    } finally {
+      btn.disabled = false;
+    }
+  }
+  btn.addEventListener("click", record);
+
+  $("copyLink").addEventListener("click", function(){
+    var t = $("permalink").textContent, b = this;
+    if(!t || !navigator.clipboard) return;
+    navigator.clipboard.writeText(t).then(function(){ b.textContent = "Copied"; setTimeout(function(){ b.textContent = "Copy link"; }, 1500); });
+  });
+  $("downloadCap").addEventListener("click", function(){
+    if(!lastCapsule) return;
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(lastCapsule, null, 2) + "\n"], { type: "application/json" }));
+    a.download = "demo-capsule-" + lastCapsule.capsule_id.slice(0, 12) + ".json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+  });
+})();
+</script>
+<!--chrome:js--><script>
+(function(){
+  var t=document.querySelector('.nav-toggle'), l=document.getElementById('nav-links');
+  if(t&&l){ t.addEventListener('click',function(){ var o=l.classList.toggle('open'); t.setAttribute('aria-expanded',o?'true':'false'); }); }
+  if(window.matchMedia&&window.matchMedia('(max-width:900px)').matches){
+    document.querySelectorAll('details.side-d').forEach(function(d){ d.open=false; });
+  }
+})();
+</script><!--/chrome:js-->
 </body>
 </html>

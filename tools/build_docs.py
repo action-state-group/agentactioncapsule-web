@@ -336,6 +336,8 @@ TOC = [
     ("Live", "Live &amp; interactive", [
         ("explore", "/docs/explore.html", "Explore a capsule", "Explore a capsule",
          "Interactive: click each field, edit what goes into a digest, tamper one and watch the seal break, then verify a bundle as a skeptical auditor."),
+        ("playground", "/playground.html", "Playground", "Playground: record a sample agent action",
+         "A demonstration of the open standard: build a capsule in your browser, register only its digest, and open a link anyone can check."),
         ("log", "/docs/log.html", "The public log, live", "The public log, live",
          "Watch the transparency log in real time &mdash; total entries, latest checkpoint, operating-since, and the most recent records."),
     ]),
@@ -380,6 +382,7 @@ HAND_PAGES = {
     "index.html": ("standard", None),
     "ip.html": ("docs", "ip"),
     "docs/explore.html": ("docs", "explore"),
+    "playground.html": ("docs", "playground"),
     "docs/log.html": ("docs", "log"),
     "docs/use-cases.html": ("docs", "use-cases"),
     "docs/case-study-mesh-llm.html": ("docs", "case-study-mesh-llm"),
