@@ -379,7 +379,7 @@ python examples/a2a-ap2/run_example.py</code></pre>
 
 <p>Expected output:</p>
 <pre class="code"><code>=== A2A callee-seals capsule example &mdash; AP2 payment headline ===
-Ledger: /tmp/.../a2a_ap2_ledger.jsonl
+Ledger: /tmp/.../a2a-ap2-ledger
 Mode:   sandbox (DRY_RUN)
 
   <span class="ok">✓</span>  dispatched capsule_id: cb96…714c
@@ -403,7 +403,7 @@ Mode:   sandbox (DRY_RUN)
 <h2>Verify</h2>
 
 <pre class="code"><code><span class="c"># digests, chain links and producer signatures (offline — no network needed)</span>
-capsule-emit verify --store /path/to/a2a_ap2_ledger.jsonl
+capsule-emit verify --store /path/to/a2a-ap2-ledger   <span class="c"># the ledger store directory it prints</span>
 
 <span class="c"># Inspect the live log</span>
 curl https://witness.agentactioncapsule.org/anchor/transparency-log</code></pre>

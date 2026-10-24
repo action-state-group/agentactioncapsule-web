@@ -15,10 +15,11 @@ from capsule_emit import seal
 cap = seal({"vendor": "Frobozz Supply", "total": "4210.00"},   # payload: first positional arg
            action="submit_order", operator="acme-co", developer="po-agent@v1",
            agent_output=..., verdict="executed", effect=...)
-# -> signed now, witnessed by default; no config, keys, or account required
+# -> signed now and recorded in ./capsule-ledger/ (a ledger store directory); no config, keys,
+#    or account required. Checkpoints are witnessed once you name a witness (CAPSULE_WITNESS_URL).
 ```
 ```
-capsule-emit verify --store ledger.jsonl   # offline: digests, chain links, producer signatures
+capsule-emit verify --store ./capsule-ledger   # offline: digests, chain links, producer signatures
 ```
 
 ## Docs
