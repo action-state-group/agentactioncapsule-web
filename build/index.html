@@ -15,19 +15,19 @@
   <div class="crumb">Contents</div>
   <h1>Build your own evidence layer</h1>
   <p class="seam"><b>Seams ① Record to ⑤ View.</b> Build: the five seams in order: ① Record, ② Contract, ③ Check/judge, ④ Result, ⑤ View; each page names the one it builds. Conform to: the Internet-Drafts each page cites, starting with <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
-  <p class="lede">For an agent builder or an agent-economy platform that wants signed records of what its agents did, kept so
+  <p class="lede">For an agent builder or a host operator that wants signed records of what its agents did, kept so
     that any verifier can check them later, on any host. Every page follows one loop: an agent acts, the act is recorded,
     the record is judged, the judgment is reported, and the history feeds the next act. The pages are in the order the
     Mesh-LLM worked example was built; each ends with what you need before the next step.</p>
-  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts recomputed from sealed records, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="6" data-delay="1700"
     data-cap-0="Press Play, or Step to go once round the loop."
-    data-cap-1="Act. An agent does something through its host: a request served, a tool called, an approval given. The host exposes the event as a seam (b1)."
+    data-cap-1="Act. An agent does something through its host: a request served, a tool called, an approval given. The host exposes the event through a host hook (b1)."
     data-cap-2="Record. The act becomes a signed record of digests, appended to a local book with signed checkpoints, in open formats any verifier reads (b2, b3, b5)."
     data-cap-3="Judge. A separate step decides whether the act was right: for inference, client-marked twins and a referee (b4); in general, rules or a judge (b9). A judgment is never rounded into evidence."
     data-cap-4="Report. A verifier checks the records first; a report is then rendered from what verified, offline, and cannot change the verdict (b10)."
-    data-cap-5="History. A derived read over sealed records: counts anyone holding the records can recompute, never a score (b11)."
+    data-cap-5="History. A derived read over sealed records: counts recomputed from those records, never a score; who can recompute them depends on which records they read (b11)."
     data-cap-6="Back into the next act. History feeds the next decision: which peer to route to, what a personal agent may do, whom to work with (b6, b7, b11).">
     <svg viewBox="0 0 860 380" role="img" aria-labelledby="idx-t idx-d">
       <title id="idx-t">The evidence loop: act, record, judge, report, history, and back into the next act</title>
@@ -92,8 +92,8 @@
 
   <h2><span class="n">&mdash;</span>Build the layer: act and record</h2>
   <ol class="agenda">
-    <li><a href="b1-seams.html"><span class="num">b1</span><span><span class="t">The seams the host exposes</span>
-      <span class="d">What the host hands an evidence plugin: an event per exchange naming both sides, a plugin key bound to the node key, capability flags, a page, and stop routing.</span></span></a></li>
+    <li><a href="b1-seams.html"><span class="num">b1</span><span><span class="t">The hooks the host exposes</span>
+      <span class="d">Five host hooks, separate from the five seams above. What the host hands an evidence plugin: an event per exchange naming both sides, a plugin key bound to the node key, capability flags, a page, and stop routing.</span></span></a></li>
     <li><a href="b2-record-format.html"><span class="num">b2</span><span><span class="t">The record format</span>
       <span class="d">What one record carries: digests, not payloads; request/response binding; the signer's key id.</span></span></a></li>
     <li><a href="b3-local-log.html"><span class="num">b3</span><span><span class="t">The local evidence log</span>
@@ -121,10 +121,10 @@
     <li><a href="b10-report.html"><span class="num">b10</span><span><span class="t">Reporting: from a verified bundle to a page</span>
       <span class="d">Verify first, then render from what verified, offline; wording changes never move an evidence id.</span></span></a></li>
     <li><a href="b11-history-loop.html"><span class="num">b11</span><span><span class="t">History back into the loop</span>
-      <span class="d">History as a derived read over sealed records, recomputable by anyone, never a reputation number.</span></span></a></li>
+      <span class="d">History as a derived read over sealed records, never a reputation number.</span></span></a></li>
   </ol>
 
-  <footer class="pn"><span></span><a href="b1-seams.html">The seams the host exposes &rarr;</a></footer>
+  <footer class="pn"><span></span><a href="b1-seams.html">The hooks the host exposes &rarr;</a></footer>
 </div></main>
 <script src="anim.js"></script>
 </body>

@@ -10,6 +10,7 @@
   .stag.live{color:var(--verify);background:var(--verify-soft);border-color:#B5D9C6}
   .stag.built{color:var(--accent);background:var(--accent-soft);border-color:#C4CEF3}
   .stag.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+  .stag.planned{color:var(--muted);background:var(--paper-2)}
   ul.next{max-width:780px}
 </style>
 </head>
@@ -21,7 +22,7 @@
   <h1>The record format</h1>
   <p class="seam"><b>Seam ① Record.</b> Build: one sealed record: digests, the effect, a nonce, a signature over its id. Conform to: <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
   <p class="lede">Before you keep a book of records, decide what one record carries: digests of what went in and what came out, the effect it names and who vouches for it, a nonce the store draws itself, and the key that signs the record's identity.</p>
-  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts recomputed from sealed records, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk through it."
@@ -221,7 +222,7 @@
       <tr><td>spec_version</td><td>string</td><td>The profile text the record conforms to; never selects an algorithm.</td></tr>
     </tbody>
   </table></div>
-  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/pos-v05-effect-inference-completion-host-served/input.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/pos-v05-effect-inference-completion-host-served/input.json</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></p>
 
   <p>The hardware citation, from the same repository's vector for <code>ran_under</code>: one <code>references</code> entry, identified by its digest alone (the digest is a filler value).</p>
   <pre class="code"><code>"references": [
@@ -232,7 +233,7 @@
     "type": "agent-action-capsule"
   }
 ]</code></pre>
-  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/pos-v05-reference-ran-under/input.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/pos-v05-reference-ran-under/input.json</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></p>
 
   <p>What the Mesh-LLM producer adds, from a record the plugin sealed with its own fixture generator. This record comes from the path where the plugin admitted and served the request itself, so it reads <code>gate_executed</code>; its <code>developer</code> header (trimmed) names an earlier plugin version. For this page its <code>capsule_id</code> was recomputed and its envelope checked against <code>key_id</code>: both hold.</p>
   <pre class="code"><code>{
@@ -302,21 +303,22 @@
   <p class="src">Source: <code>Mesh-LLM/capsules:vectors/record_push_bundle_rust.json</code> (member <code>capsule</code>) @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
 
   <h2><span class="n">5</span>Status</h2>
+  <p class="legend">Tags, the same on every build page: <span class="stag live">live</span> in a tagged public release (a crate, package or release tag anyone can install) and on by default · <span class="stag built">built, not live</span> merged to a public main branch but in no release yet, or released but off by default or not yet exercised on a stock host (the row says which) · <span class="stag designed">designed</span> written down (text, sometimes vectors), no code · <span class="stag planned">planned</span> named as an open point and not designed, or left open on purpose.</p>
   <div class="tw"><table class="t">
     <thead><tr><th>Item</th><th>Status</th><th>Evidence</th></tr></thead>
     <tbody>
-      <tr><td>The format: <code>inference_completion</code>, request/response digests, Producer Envelope with <code>kid</code>, <code>references</code> with <code>ran_under</code></td><td><span class="stag live">live</span></td><td>Published Internet-Draft -05 and its conformance vectors: <code>action-state-group/agent-action-capsule:spec/draft-mih-scitt-agent-action-capsule-05.md</code>, <code>vectors/capsule/</code>, <code>vectors/producer-envelope/</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></td></tr>
+      <tr><td>The format: <code>inference_completion</code>, request/response digests, Producer Envelope with <code>kid</code>, <code>references</code> with <code>ran_under</code></td><td><span class="stag live">live</span></td><td>Published Internet-Draft -05 and its conformance vectors: <code>action-state-group/agent-action-capsule:spec/draft-mih-scitt-agent-action-capsule-05.md</code>, <code>vectors/capsule/</code>, <code>vectors/producer-envelope/</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></td></tr>
       <tr><td>One sealed, signed record per exchange half, with digests, <code>store_nonce</code>, <code>signature</code> and <code>key_id</code></td><td><span class="stag live">live</span></td><td><code>Mesh-LLM/capsules:crates/evidence-plugin/src/capsule_emit.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>; <code>CHANGELOG.md</code> 0.1.4: four paid exchanges between two nodes built from the release, &ldquo;each node sealed its own half&rdquo;</td></tr>
-      <tr><td>Request and response digests carried on the host's exchange event</td><td><span class="stag built">built</span></td><td><code>request_digest</code>, <code>response_digest</code> in <code>Mesh-LLM/mesh-llm:mesh/crates/mesh-llm-host-runtime/src/plugin/openai_exchange.rs</code> @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> (main). First in mesh-llm release v0.77.0 (<code>4ae1ace57dbbe28d0c3d10a05ee542328e8e64e7</code>; set in <code>crates/mesh-llm-host-runtime/src/network/openai/ingress.rs</code>). Without them the plugin seals <code>status: "dispatched"</code> and no response digest.</td></tr>
-      <tr><td><code>weights_digest</code> of the served file</td><td><span class="stag built">built</span></td><td>Sealed only when the host reports it: <code>Mesh-LLM/capsules:crates/evidence-plugin/src/producer/capsule.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code></td></tr>
-      <tr><td>Hardware evidence cited by digest (<code>ran_under</code>)</td><td><span class="stag designed">designed</span></td><td>Specified in draft -05 §5.5.5 (the <code>citation_purpose</code> table and grade rule are printed under §5.5.6) with vectors (<code>vectors/capsule/pos-v05-reference-ran-under</code>, <code>vectors/interop/ran_under</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>). Not sealed by capsules v0.1.4: its plugin source (<code>crates/</code>) writes no <code>ran_under</code> entry, and its <code>tee_attestation</code> slot is always empty (<code>producer/capsule.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>).</td></tr>
+      <tr><td>Request and response digests carried on the host's exchange event</td><td><span class="stag live">live</span></td><td><code>request_digest</code>, <code>response_digest</code> in <code>Mesh-LLM/mesh-llm:mesh/crates/mesh-llm-host-runtime/src/plugin/openai_exchange.rs</code> @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> (main). First in mesh-llm release v0.77.0 (<code>4ae1ace57dbbe28d0c3d10a05ee542328e8e64e7</code>; set in <code>crates/mesh-llm-host-runtime/src/network/openai/ingress.rs</code>). Without them the plugin seals <code>status: "dispatched"</code> and no response digest.</td></tr>
+      <tr><td><code>weights_digest</code> of the served file</td><td><span class="stag built">built, not live</span></td><td>In release v0.1.4, sealed only when the host reports it; whether a stock host release reports it at run time is not checked here: <code>Mesh-LLM/capsules:crates/evidence-plugin/src/producer/capsule.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code></td></tr>
+      <tr><td>Hardware evidence cited by digest (<code>ran_under</code>)</td><td><span class="stag designed">designed</span></td><td>Specified in draft -05 §5.5.5 (the <code>citation_purpose</code> table and grade rule are printed under §5.5.6) with vectors (<code>vectors/capsule/pos-v05-reference-ran-under</code>, <code>vectors/interop/ran_under</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>). Not sealed by capsules v0.1.4: its plugin source (<code>crates/</code>) writes no <code>ran_under</code> entry, and its <code>tee_attestation</code> slot is always empty (<code>producer/capsule.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>). Capsules main, not yet released, fills that slot with a TDX quote checked offline (<a href="https://github.com/Mesh-LLM/capsules/pull/29">capsules PR 29</a>; see <a href="b4-use-case-evidence.html">b4</a>).</td></tr>
     </tbody>
   </table></div>
 
   <h2><span class="n">6</span>Specs</h2>
   <ul class="specs">
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record, its identity, the effect record, the Producer Envelope, and <code>references</code> with <code>citation_purpose</code>.</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-05</a> &mdash; the typed digest reference <code>{type, digest_alg, digest}</code> a <code>references</code> entry uses.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-06</a> &mdash; the typed digest reference <code>{type, digest_alg, digest}</code> a <code>references</code> entry uses.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; why every record carries a store-drawn random value (&ldquo;What a Checkpoint Reveals&rdquo;).</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every digest and <code>capsule_id</code> covers.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> Producer Envelope.</li>
@@ -338,7 +340,7 @@
     <li>A decision on where hardware evidence would be cited (<code>ran_under</code>), even before you have any.</li>
   </ul>
 
-  <footer class="pn"><a href="b1-seams.html">&larr; The seams the host exposes</a><a href="b3-local-log.html">The local evidence log &rarr;</a></footer>
+  <footer class="pn"><a href="b1-seams.html">&larr; The hooks the host exposes</a><a href="b3-local-log.html">The local evidence log &rarr;</a></footer>
 </div></main>
 <script src="anim.js"></script>
 </body>

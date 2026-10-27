@@ -31,26 +31,26 @@ ul.status li:last-child{border-bottom:none}
   <div class="crumb">b8 / 11</div>
   <h1>The builder's checklist</h1>
   <p class="seam"><b>Seams ① Record to ⑤ View.</b> Build: every step, in order. Conform to: the spec named on each row, starting with <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
-  <p class="lede">The seven steps in the order they were built for Mesh-LLM, each with what you need, where it lives today, and how far along it is, checked against the repositories on 2026-10-19.</p>
-  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+  <p class="lede">The seven steps in the order they were built for Mesh-LLM, each with what you need, where it lives today, and how far along it is, checked against the repositories on 2026-10-19; the agent-action-capsule pin, the capsules main branch and mesh-llm PR 2459 (closed, not merged) re-read on 2026-10-27.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts recomputed from sealed records, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk down the staircase. Green: live (in a published release). Blue: built, not live. Amber: designed. Grey: planned."
-    data-cap-1="Step 1, the seams. Released mesh-llm (v0.78.1) already gives a plugin exchange events, payment lifecycle events, a page, a slot under chat answers and in the Logs request inspector, and a stop-routing request. Plugin keys bound to the node key (PR 2299) and the twin-bracket capability (PR 2300) are merged but in no release yet."
+    data-cap-1="Step 1, the host hooks. Released mesh-llm (v0.78.1) already gives a plugin exchange events, payment lifecycle events, a page, a slot under chat answers and in the Logs request inspector, and a stop-routing request. Plugin keys bound to the node key (PR 2299) and the twin-bracket capability (PR 2300) are merged but in no release yet."
     data-cap-2="Step 2, the record format. The capsules plugin v0.1.4 seals every record as an Agent Action Capsule (draft-mih-scitt-agent-action-capsule-05), built by the capsule-emit crate."
-    data-cap-3="Step 3, the local book. Today the plugin keeps its own signed, checkpointed log through capsule-emit and checkpointed-local-log. Moving the plugin into the mesh-llm workspace is planned (PR 2459, open)."
+    data-cap-3="Step 3, the local book. Today the plugin keeps its own signed, checkpointed log through capsule-emit and checkpointed-local-log. The plugin stays in its own repository: the pull request that would have moved it into the mesh-llm workspace (PR 2459) was closed without merging on 2026-10-22."
     data-cap-4="Step 4, use-case evidence. Twins and the referee are in the v0.1.4 release, off by default; a referee verdict between live hosts is covered by tests only."
-    data-cap-5="Step 5, portability. The specs, vectors and libraries are published and the plugin depends on them by version (scitt-cose-receipt by git commit). The plugin's move into the host's own repository is an open PR."
-    data-cap-6="Step 6, personal agents. The History profile is a pre-Internet-Draft text with conformance vectors. No personal-agent host in these repositories emits it yet."
+    data-cap-5="Step 5, portability. The specs, vectors and libraries are published and the plugin depends on them by version (scitt-cose-receipt by git commit). The plugin's main branch, not yet released, moves to the newer library releases (capsules PR 36)."
+    data-cap-6="Step 6, personal agents. The History profile is a pre-Internet-Draft text; its Basic level has conformance vectors and a Go evaluator (built, not live), its Outcome level is designed. No personal-agent host in these repositories emits it yet."
     data-cap-7="Step 7, agent work for someone else. Settlement records have an Internet-Draft, vectors and libraries, and the plugin seals settlement legs for paid exchanges. The general case, work done on someone's behalf with a counterparty, is designed, not built.">
     <svg viewBox="0 0 860 450" role="img" aria-labelledby="ck-t ck-d">
       <title id="ck-t">The builder's checklist as a staircase, ticked step by step with status colours</title>
-      <desc id="ck-d">Seven steps descend from top left to bottom right: 1 seams, 2 record format, 3 local book, 4 use-case evidence, 5 portability, 6 personal agents, 7 agent work. Each step is ticked in turn and gains a status label. Step 1: live, with two host changes merged but unreleased. Step 2: live. Step 3: live, with the move into the mesh-llm workspace planned. Step 4: built, not live (off by default). Step 5: live, with the in-tree move built but not live (an open pull request). Step 6: designed, with spec text and vectors. Step 7: designed, with settlement legs built. A legend at the bottom gives the colours: green live, blue built not live, amber designed, grey planned.</desc>
+      <desc id="ck-d">Seven steps descend from top left to bottom right: 1 host hooks, 2 record format, 3 local book, 4 use-case evidence, 5 portability, 6 personal agents, 7 agent work. Each step is ticked in turn and gains a status label. Step 1: live, with two host changes merged but unreleased. Step 2: live. Step 3: live; the move into the mesh-llm workspace was closed without merging. Step 4: built, not live (off by default). Step 5: live, with newer library pins on the plugin's main branch built but not live. Step 6: designed, with spec text, vectors and a Go evaluator for the Basic level. Step 7: designed, with settlement legs built. A legend at the bottom gives the colours: green live, blue built not live, amber designed, grey planned.</desc>
 
       <!-- Staircase (always visible, unticked) -->
       <g font-size="14" fill="#0B0E14">
         <rect x="20"  y="16"  width="360" height="46" rx="8" fill="#fff" stroke="#5C6573"/>
-        <text x="62"  y="44">1 · Seams the host exposes</text>
+        <text x="62"  y="44">1 · Hooks the host exposes</text>
         <rect x="90"  y="72"  width="360" height="46" rx="8" fill="#fff" stroke="#5C6573"/>
         <text x="132" y="100">2 · Record format</text>
         <rect x="160" y="128" width="360" height="46" rx="8" fill="#fff" stroke="#5C6573"/>
@@ -95,7 +95,7 @@ ul.status li:last-child{border-bottom:none}
         <rect x="528" y="132" width="62" height="20" rx="4" fill="#E6F2EC" stroke="#127A52"/>
         <text x="559" y="147" text-anchor="middle" font-size="12" fill="#127A52">live</text>
         <rect x="596" y="132" width="230" height="20" rx="4" fill="#F4F4F0" stroke="#5C6573"/>
-        <text x="711" y="147" text-anchor="middle" font-size="12" fill="#5C6573">in-tree move: planned</text>
+        <text x="711" y="147" text-anchor="middle" font-size="12" fill="#5C6573">in-tree move: closed, not merged</text>
       </g>
       <!-- Step 4: built, not live -->
       <g class="st" data-step="4">
@@ -103,20 +103,20 @@ ul.status li:last-child{border-bottom:none}
         <rect x="598" y="188" width="236" height="20" rx="4" fill="#EAEEFC" stroke="#3A5BD9"/>
         <text x="716" y="203" text-anchor="middle" font-size="12" fill="#3A5BD9">built, not live (off by default)</text>
       </g>
-      <!-- Step 5: live + open PR -->
+      <!-- Step 5: live + unreleased main -->
       <g class="st" data-step="5">
         <path d="M316,263 l5,6 l9,-12" fill="none" stroke="#127A52" stroke-width="3"/>
         <rect x="668" y="244" width="62" height="20" rx="4" fill="#E6F2EC" stroke="#127A52"/>
         <text x="699" y="259" text-anchor="middle" font-size="12" fill="#127A52">live</text>
         <rect x="668" y="268" width="180" height="20" rx="4" fill="#EAEEFC" stroke="#3A5BD9"/>
-        <text x="758" y="283" text-anchor="middle" font-size="12" fill="#3A5BD9">in-tree move: PR open</text>
+        <text x="758" y="283" text-anchor="middle" font-size="12" fill="#3A5BD9">main: newer pins</text>
       </g>
       <!-- Step 6: designed -->
       <g class="st" data-step="6">
         <path d="M386,319 l5,6 l9,-12" fill="none" stroke="#9A5B00" stroke-width="3"/>
         <rect x="738" y="300" width="96" height="20" rx="4" fill="#FBF1E1" stroke="#9A5B00"/>
         <text x="786" y="315" text-anchor="middle" font-size="12" fill="#9A5B00">designed</text>
-        <text x="738" y="336" font-size="12" fill="#5C6573">+ spec, vectors</text>
+        <text x="834" y="336" text-anchor="end" font-size="12" fill="#5C6573">+ spec, vectors, Go evaluator</text>
       </g>
       <!-- Step 7: designed -->
       <g class="st" data-step="7">
@@ -143,7 +143,7 @@ ul.status li:last-child{border-bottom:none}
 
   <h2><span class="n">1</span>What it is</h2>
   <div class="what">
-    <p>An evidence layer is built bottom up: the host has to expose a few seams first (an exchange event before any record can be sealed, the rest before records can be checked and acted on), then come the record format, the local book, the use-case evidence, and only then the parts that make it portable.</p>
+    <p>An evidence layer is built bottom up: the host has to expose a few host hooks first (an exchange event before any record can be sealed, the rest before records can be checked and acted on), then come the record format, the local book, the use-case evidence, and only then the parts that make it portable.</p>
     <p>Each step below names what a builder needs from their own host or code, and where the Mesh-LLM worked example keeps it today: a crate, a repository, or an Internet-Draft.</p>
     <p>Status is what the code shows at a named commit or what a pull request's state shows today, not what a slide or plan says.</p>
   </div>
@@ -151,7 +151,7 @@ ul.status li:last-child{border-bottom:none}
   <h2><span class="n">2</span>Design choices</h2>
   <div class="choices">
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> ask the host for small generic seams (events, a plugin key, a capability flag, a page, a stop-routing request) and keep evidence in one plugin.</div>
+      <div class="pick"><b>Chosen:</b> ask the host for small generic hooks (events, a plugin key, a capability flag, a page, a stop-routing request) and keep evidence in one plugin.</div>
       <div class="not"><b>Rejected:</b> patching or forking the host, and operators copying each peer's key by hand, which &ldquo;does not scale past a few nodes&rdquo;. (mesh-llm PR 2299; the plugin depends on <code>mesh-llm-plugin = "0.78"</code>, capsules <code>crates/evidence-plugin/Cargo.toml</code>)</div>
     </div>
     <div class="choice">
@@ -193,7 +193,7 @@ ul.status li:last-child{border-bottom:none}
     <thead><tr><th>Step</th><th>What you need</th><th>Where it lives today</th><th>Status</th><th>Evidence</th></tr></thead>
     <tbody>
       <tr>
-        <td>1 · Seams<br><a href="b1-seams.html">b1</a></td>
+        <td>1 · Host hooks<br><a href="b1-seams.html">b1</a></td>
         <td>An exchange event naming both sides; payment events; a plugin page, and a slot under each chat answer and in the Logs request inspector header; a stop-routing request; a plugin key bound to the node key; a twin-pair capability flag.</td>
         <td>Host repo <code>Mesh-LLM/mesh-llm</code>; plugin SDK crate <code>mesh-llm-plugin</code> (0.78).</td>
         <td><span class="tag live">live</span> events, page, slot, stop routing<br><span class="tag built">built, not live</span> plugin key, twin-pair flag</td>
@@ -210,8 +210,8 @@ ul.status li:last-child{border-bottom:none}
         <td>3 · Local log<br><a href="b3-local-log.html">b3</a></td>
         <td>An append-only log on the node's own disk with signed checkpoints, inclusion and consistency proofs.</td>
         <td>Internet-Draft <code>draft-mih-scitt-checkpointed-local-log-02</code>; crate <code>checkpointed-local-log</code> (reference implementation; any conforming log).</td>
-        <td><span class="tag live">live</span> plugin's own log<br><span class="tag planned">planned</span> plugin moved in-tree</td>
-        <td>capsules v0.1.4 depends on <code>checkpointed-local-log</code> 0.2.1 (tag <code>04339d9ae622014b5c1651961a795d9977e4bba1</code>); checkpointing on by default, local only (<code>checkpoint_cadence.rs</code>). The plugin's move into the mesh-llm workspace: PR 2459 (open).</td>
+        <td><span class="tag live">live</span> plugin's own log</td>
+        <td>capsules v0.1.4 depends on <code>checkpointed-local-log</code> 0.2.1 (tag <code>04339d9ae622014b5c1651961a795d9977e4bba1</code>); checkpointing on by default, local only (<code>checkpoint_cadence.rs</code>). The plugin's move into the mesh-llm workspace (mesh-llm PR 2459) was closed without merging on 2026-10-22; the plugin stays in <code>Mesh-LLM/capsules</code> (capsules PR 35).</td>
       </tr>
       <tr>
         <td>4 · Twins and a referee<br><a href="b4-use-case-evidence.html">b4</a></td>
@@ -224,21 +224,21 @@ ul.status li:last-child{border-bottom:none}
         <td>5 · Portability<br><a href="b5-portable.html">b5</a></td>
         <td>Open specs and vectors, libraries any host can link, the plugin depending on them by version, an evidence request any party can send.</td>
         <td>Internet-Drafts in <code>action-state-group/agent-action-capsule</code> <code>spec/</code>; crates <code>capsule-emit</code>, <code>checkpointed-local-log</code>, <code>evidence-request</code>, <code>scitt-cose-receipt</code>; the request draft <code>draft-mih-agent-evidence-request-00</code>.</td>
-        <td><span class="tag live">live</span> libraries, version pins<br><span class="tag built">built, not live</span> plugin in the host's repo</td>
-        <td>Version pins: capsules <code>crates/evidence-plugin/Cargo.toml</code> (<code>capsule-emit</code> 0.0.6, <code>checkpointed-local-log</code> 0.2.1, <code>capsule-emit-evidence-request</code> =0.0.3; <code>scitt-cose-receipt</code> by git commit <code>8833281c11d33e3c1e289cf74f11d25ee7f3c6dc</code>); the request crate <code>evidence-request</code> 0.2.0 is tagged at <code>dd64efe7c394ab78fc228ce91144528cdd95a83a</code>. Plugin move into <code>mesh/crates/mesh-llm-capsules-plugin</code>: mesh-llm PR 2459, open.</td>
+        <td><span class="tag live">live</span> libraries, version pins<br><span class="tag built">built, not live</span> newer pins on capsules main</td>
+        <td>Version pins: capsules <code>crates/evidence-plugin/Cargo.toml</code> (<code>capsule-emit</code> 0.0.6, <code>checkpointed-local-log</code> 0.2.1, <code>capsule-emit-evidence-request</code> =0.0.3; <code>scitt-cose-receipt</code> by git commit <code>8833281c11d33e3c1e289cf74f11d25ee7f3c6dc</code>); the request crate <code>evidence-request</code> 0.2.0 is tagged at <code>dd64efe7c394ab78fc228ce91144528cdd95a83a</code>. Capsules main @ <code>424f2c749ecdbe2a1df2442c51f5c7b057c049f1</code>, not yet released: <code>capsule-emit</code> 0.0.8, <code>checkpointed-local-log</code> 0.3.1, <code>evidence-request</code> =0.2.0, <code>scitt-cose-receipt</code> 0.1 from crates.io (capsules PR 36). The move into <code>mesh/crates/mesh-llm-capsules-plugin</code> (mesh-llm PR 2459) was closed without merging.</td>
       </tr>
       <tr>
         <td>6 · Personal agents<br><a href="b6-personal-agents.html">b6</a></td>
-        <td>Host seams on a personal agent, the same record and book, and a shareable History read.</td>
+        <td>Host hooks on a personal agent, the same record and book, and a shareable History read.</td>
         <td><code>action-state-group/agent-action-capsule</code> <code>spec/personal-agent-history-profile-v0.md</code> (pre-Internet-Draft, <code>personal_history_basic/1</code>); vectors <code>vectors/personal-history-basic-v0/</code>.</td>
-        <td><span class="tag designed">designed</span> no personal-agent host emits it here</td>
-        <td>Profile and vectors merged in agent-action-capsule PR 259 (<code>995c377bf3fbc5a50630a07c998c0d0fce315a87</code>); positive and mutant cases in <code>vectors/personal-history-basic-v0/</code>.</td>
+        <td><span class="tag built">built, not live</span> Basic level<br><span class="tag designed">designed</span> Outcome level; no personal-agent host emits either here</td>
+        <td>Profile and vectors merged in agent-action-capsule PR 259 (<code>995c377bf3fbc5a50630a07c998c0d0fce315a87</code>); positive and mutant cases in <code>vectors/personal-history-basic-v0/</code>; Go Basic evaluator <code>go/personalhistory/</code> (PR 324); Outcome level <code>spec/personal-agent-history-outcome-v0.md</code> and <code>vectors/personal-history-outcome-v0/</code> (PR 314), @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>.</td>
       </tr>
       <tr>
         <td>7 · Agent work<br><a href="b7-agent-work.html">b7</a></td>
         <td>Both sides' records of work done on someone's behalf, evidence requests between them, and settlement legs tied to the exchange.</td>
         <td>Internet-Drafts <code>draft-mih-agent-settlement-records-00</code>, <code>draft-mih-agent-bilateral-attestation-02</code>, <code>draft-mih-agent-evidence-request-00</code>; vectors <code>vectors/settlement/</code>.</td>
-        <td><span class="tag designed">designed</span> general case<br><span class="tag built">built</span> settlement legs for paid exchanges</td>
+        <td><span class="tag designed">designed</span> general case<br><span class="tag built">built, not live</span> settlement legs for paid exchanges</td>
         <td>Settlement libraries and vectors: agent-action-capsule <code>rust/agent-action-capsule/src/settlement.rs</code>, <code>vectors/settlement/</code>. Plugin legs: capsules <code>crates/evidence-plugin/src/settlement_legs.rs</code>; paid exchanges across two nodes verified (<code>CHANGELOG.md</code> 0.1.4).</td>
       </tr>
     </tbody>
@@ -249,36 +249,38 @@ ul.status li:last-child{border-bottom:none}
       <tr><td>Step</td><td>ordinal</td><td>Where it sits in the build order; each step needs the ones above it.</td></tr>
       <tr><td>What you need</td><td>text</td><td>The generic requirement, for any host.</td></tr>
       <tr><td>Where it lives</td><td>crate / repo / I-D</td><td>Where the Mesh-LLM example keeps it today.</td></tr>
-      <tr><td>Status</td><td>tag</td><td>live (in a published release), built not live, designed, or planned.</td></tr>
-      <tr><td>Evidence</td><td>path@SHA / PR</td><td>What the status was read from on 2026-10-19.</td></tr>
+      <tr><td>Status</td><td>tag</td><td>live, built not live, designed, or planned, as the legend under Status defines them.</td></tr>
+      <tr><td>Evidence</td><td>path@SHA / PR</td><td>What the status was read from on 2026-10-19, or on 2026-10-27 where the row cites capsules main or the agent-action-capsule pin.</td></tr>
     </tbody>
   </table></div>
-  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/Cargo.toml</code>, <code>CHANGELOG.md</code>, <code>crates/evidence-plugin/src/referee/request.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4); <code>action-state-group/capsule-emit</code> @ <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code> (tag 0.0.6); <code>action-state-group/agent-action-capsule</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>; <code>Mesh-LLM/mesh-llm</code> tag v0.78.1 @ <code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>; PR states as GitHub shows them on 2026-10-19.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/Cargo.toml</code>, <code>CHANGELOG.md</code>, <code>crates/evidence-plugin/src/referee/request.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4); <code>action-state-group/capsule-emit</code> @ <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code> (tag <code>crates/capsule-emit-v0.0.6</code>); <code>action-state-group/agent-action-capsule</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>; <code>Mesh-LLM/capsules</code> main @ <code>424f2c749ecdbe2a1df2442c51f5c7b057c049f1</code>; <code>Mesh-LLM/mesh-llm</code> tag v0.78.1 @ <code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>; PR states as GitHub shows them on 2026-10-19, and for mesh-llm PR 2459 (closed, not merged) and capsules PRs 25, 29, 35 and 36 on 2026-10-27.</p>
 
   <h2><span class="n">5</span>Status</h2>
+  <p class="legend">Tags, the same on every build page: <span class="tag live">live</span> in a tagged public release (a crate, package or release tag anyone can install) and on by default · <span class="tag built">built, not live</span> merged to a public main branch but in no release yet, or released but off by default or not yet exercised on a stock host (the row says which) · <span class="tag designed">designed</span> written down (text, sometimes vectors), no code · <span class="tag planned">planned</span> named as an open point and not designed, or left open on purpose.</p>
   <ul class="status">
     <li><span class="tag live">live</span> Record format, the plugin's own log and checkpoints, and the published libraries: capsules v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>), released 2026-10-12.</li>
     <li><span class="tag live">live</span> Host exchange event (on the paid path too since PR 2109), payment lifecycle events (PR 2108), the plugin page and its chat and Logs slots, and the plugin stop-routing request: in mesh-llm v0.78.1 (<code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>).</li>
     <li><span class="tag built">built, not live</span> Plugin key bound to the node key (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2299">PR 2299</a>, merged) and the twin-pair capability (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">PR 2300</a>, merged): on upstream mesh-llm main (<code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code>), in no release tag.</li>
     <li><span class="tag built">built, not live</span> Twins and the referee: in capsules v0.1.4, off by default, a live-host verdict covered by tests only (<code>CHANGELOG.md</code> 0.1.4).</li>
-    <li><span class="tag built">built, not live</span> The plugin inside the host's own repository: <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">mesh-llm PR 2459</a>, open.</li>
-    <li><span class="tag planned">planned</span> The plugin moved into the mesh-llm workspace: PR 2459 (open).</li>
-    <li><span class="tag designed">designed</span> Personal-agent History: profile text and vectors at <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>; no host here emits it.</li>
+    <li><span class="tag built">built, not live</span> On capsules main, in no release yet: the plugin announces its own key (capsules PR 25), carries a TDX quote checked offline (PR 29) and moves to the newer library releases (PR 36), @ <code>424f2c749ecdbe2a1df2442c51f5c7b057c049f1</code>.</li>
+    <li>Not happening: the plugin inside the host's own repository. <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">mesh-llm PR 2459</a> was closed without merging on 2026-10-22; the plugin stays in <code>Mesh-LLM/capsules</code> (<a href="https://github.com/Mesh-LLM/capsules/pull/35">capsules PR 35</a>).</li>
+    <li><span class="tag built">built, not live</span> Personal-agent History, Basic level: profile text, vectors and a Go evaluator (agent-action-capsule PR 324) at <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>; no host here emits it.</li>
+    <li><span class="tag designed">designed</span> Personal-agent History, Outcome level: spec text and vectors (agent-action-capsule PR 314) at the same commit.</li>
     <li><span class="tag designed">designed</span> Agent work on someone's behalf with a counterparty, beyond the paid-exchange settlement legs the plugin seals.</li>
   </ul>
 
   <h2><span class="n">6</span>Specs</h2>
   <ul class="specs">
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; step 2, and the verdict record of step 4.</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-05</a> &mdash; step 2: binding a record to payloads it carries only by digest.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-06</a> &mdash; step 2: binding a record to payloads it carries only by digest.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; step 3.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">draft-bryce-cose-receipts-mmr-profile-03</a> &mdash; step 3: the MMR proofs.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; step 3: the semantics any conforming book implements.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> &mdash; steps 5 and 7: asking another party for evidence.</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-00</a> &mdash; step 5: a bundle a stranger checks.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-01</a> &mdash; step 5: a bundle a stranger checks.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; step 7: both sides' records.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a> &mdash; step 7: settlement legs.</li>
-    <li><span class="kind">Profile</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/main/spec/personal-agent-history-profile-v0.md">personal-agent-history-profile-v0</a> &mdash; step 6; pre-Internet-Draft, in the repository.</li>
+    <li><span class="kind">Profile</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/062e89bd145d25d097f3b5e4540d69341fff9f1f/spec/personal-agent-history-profile-v0.md">personal-agent-history-profile-v0</a> &mdash; step 6; pre-Internet-Draft, in the repository.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the signature on each record.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes each digest covers.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: an optional witness for checkpoints.</li>
@@ -287,7 +289,7 @@ ul.status li:last-child{border-bottom:none}
   </ul>
 
   <h2><span class="n">7</span>Back to the start</h2>
-  <p>That is the whole path. To build your own, take the steps in this order and do not skip the seams: every later row depends on what the host exposes. The next three pages close the loop that every step sits in: <a href="b9-judge.html">judging</a>, <a href="b10-report.html">reporting</a> and <a href="b11-history-loop.html">history feeding the next act</a>. The <a href="index.html">contents page</a> shows the loop, starting at <a href="b1-seams.html">the seams the host exposes</a>.</p>
+  <p>That is the whole path. To build your own, take the steps in this order and do not skip the host hooks: every later row depends on what the host exposes. The next three pages close the loop that every step sits in: <a href="b9-judge.html">judging</a>, <a href="b10-report.html">reporting</a> and <a href="b11-history-loop.html">history feeding the next act</a>. The <a href="index.html">contents page</a> shows the loop, starting at <a href="b1-seams.html">the hooks the host exposes</a>.</p>
 
   <footer class="pn"><a href="b7-agent-work.html">&larr; Agent work for someone else</a><a href="b9-judge.html">Judging: a separate step from evidence &rarr;</a></footer>
 </div></main>
