@@ -1,0 +1,116 @@
+{
+  "files": [
+    {
+      "path": "schemas/contract-report-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/contract-report-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/contract-report-v1.json",
+      "sha256": "9ec8c1a0eecd9eca3061ad18c2520fcb89162fa0457104309611eefe7c338442"
+    },
+    {
+      "path": "schemas/evidence-plan-ir-v0.json",
+      "id": "https://agentactioncapsule.org/schemas/evidence-plan-ir-v0.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/evidence-plan-ir-v0.json",
+      "sha256": "18842d85dc766342d045205893169fc2b329c69748c483486f5b53b427e1b7d8"
+    },
+    {
+      "path": "schemas/evidence-result-v0.json",
+      "id": "https://agentactioncapsule.org/schemas/evidence-result-v0.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/evidence-result-v0.json",
+      "sha256": "2776a4441b3ee2e3a9c30fe63c008efdebc5bf6450cdaf0a422ec6b5586352e4"
+    },
+    {
+      "path": "schemas/judge/adjudication-response-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judge/adjudication-response-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judge/adjudication-response-v1.json",
+      "sha256": "32d7f6b1ae8e47598e0548170d2e0e38a7ee6b491975df00aeb2e111305fa6ce"
+    },
+    {
+      "path": "schemas/judge/adjudication-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judge/adjudication-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judge/adjudication-v1.json",
+      "sha256": "4cd4a2dcdba069bcd0d4a0c39e5d56dec2a0ba80a9e6e9ba74072fe5a4447df6"
+    },
+    {
+      "path": "schemas/judge/calibration-summary-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judge/calibration-summary-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judge/calibration-summary-v1.json",
+      "sha256": "2801e9e3865b756c8d73a5b7bb75c840db2d07c41626f11863ef9c16d48c752f"
+    },
+    {
+      "path": "schemas/judge/close-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judge/close-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judge/close-v1.json",
+      "sha256": "183774e7eeb50f50aae545f5dca50c966624e14c1bc78d17f16922e2c6ae2f03"
+    },
+    {
+      "path": "schemas/judge/contract-compile-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judge/contract-compile-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judge/contract-compile-v1.json",
+      "sha256": "9d39dde15f9e629e2ddb36ec60502536166976945a157334b792b50960ccb790"
+    },
+    {
+      "path": "schemas/judge/evaluation-report-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judge/evaluation-report-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judge/evaluation-report-v1.json",
+      "sha256": "b6d5e95ee16eebaed91ad060043892625f4f5cc1118a402da27c980418a81843"
+    },
+    {
+      "path": "schemas/judge/human-rating-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judge/human-rating-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judge/human-rating-v1.json",
+      "sha256": "b34799cb9ba3ad6099906fd51d8337bff26457453438498ed99e1387684bd5d7"
+    },
+    {
+      "path": "schemas/judge/sample-manifest-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judge/sample-manifest-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judge/sample-manifest-v1.json",
+      "sha256": "33b87572c6f58775cd54af24ca770de35e00f5904e33cac0aa3bed4eec2b332b"
+    },
+    {
+      "path": "schemas/judgment/judgment-extension-v1.json",
+      "id": "https://agentactioncapsule.org/schemas/judgment/judgment-extension-v1.json",
+      "repo": "action-state-group/agent-action-capsule",
+      "commit": "4b02463961c54163cd311af6f1882a0c9cbac72b",
+      "source": "schemas/judgment/judgment-extension-v1.json",
+      "sha256": "164869bae1d161fd38963b3fe1071eebb5388375410faed5a9cf3924c5374716"
+    },
+    {
+      "path": "schemas/presentation-manifest-v0.json",
+      "id": "https://agentactioncapsule.org/schemas/presentation-manifest-v0.json",
+      "repo": "action-state-group/capsule-viewer",
+      "commit": "c5a8ae38db3fec68282e6c1beeb664649213ab09",
+      "source": "schemas/presentation-manifest-v0.json",
+      "sha256": "c187cf8edcd1e582c0980e0124979cb60dff41e273b936406c81f02f25e3479b"
+    },
+    {
+      "path": "schemas/skill-spec-v0.json",
+      "id": "https://agentactioncapsule.org/schemas/skill-spec-v0.json",
+      "repo": "action-state-group/capsule-cli",
+      "commit": "fddcf66d77dd01e6bbab79d2f64956566e85e838",
+      "source": "schemas/skill-spec-v0.json",
+      "sha256": "fb2deea4eb9d7b929a7716a777c0a752c29cfe0b446d4248a4f06052ca493f17"
+    }
+  ]
+}
