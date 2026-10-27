@@ -10,5 +10,7 @@ COPY profiles/ /usr/share/nginx/html/profiles/
 COPY explain/ /usr/share/nginx/html/explain/
 COPY build/ /usr/share/nginx/html/build/
 COPY map/ /usr/share/nginx/html/map/
+# JSON Schemas served at their $id; bytes pinned in data/schemas-pin.json, checked by tools/check_schemas.py
+COPY schemas/ /usr/share/nginx/html/schemas/
 RUN chmod -R a+rX /usr/share/nginx/html
 EXPOSE 8080
