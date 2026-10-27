@@ -261,7 +261,7 @@
   <p class="src">Source: <code>Mesh-LLM/capsules:vectors/parity/referee/corpus/counts.json</code> and <code>vectors/parity/referee/rule_answers/counts.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4). Node ids are the corpus's placeholders.</p>
 
   <h2><span class="n">5</span>Status</h2>
-  <p>The September deck split this into a &ldquo;demo build today&rdquo; and a later upstream plugin release. The code differs from both columns. Today means the latest tagged release; the upstream column is the plugin's move into the mesh-llm repository, which is not merged.</p>
+  <p>The September deck split this into a &ldquo;demo build today&rdquo; and a later upstream plugin release. The code differs from both columns. Today means the latest tagged release; the upstream column was the plugin's move into the mesh-llm repository, which was closed unmerged on 22 Oct 2026.</p>
   <div class="tw"><table class="t when">
     <thead><tr><th>Piece</th><th>Today: capsules v0.1.4</th><th>Not released yet</th></tr></thead>
     <tbody>
@@ -270,10 +270,10 @@
       <tr><td>Verdict sealed by every node it concerns</td><td>Built: <code>adjudication_issued</code> on the referee, <code>adjudication_received</code> on the asking node and, with <code>share_adjudications</code> on (off by default), on each twin.</td><td>&mdash;</td></tr>
       <tr><td>Verdict counts per peer</td><td>Built: the Peers page's four counts, local only (<code>verdict_counts.rs</code>).</td><td>&mdash;</td></tr>
       <tr><td>Opt-in stop-routing rule</td><td>Built, off by default (<code>routing_rule.rs</code>). The host path it needs, <code>allow_peer_blocks</code>, is in mesh-llm release v0.78.1 (<code>crates/mesh-llm-config/src/model.rs</code>). The deck's &ldquo;stop routing is manual&rdquo; no longer holds.</td><td>&mdash;</td></tr>
-      <tr><td>The plugin inside mesh-llm</td><td>A separate repository and release.</td><td>mesh-llm PR 2459 (open) moves it into the mesh-llm workspace; PR 2337 (merged) lets a node install default plugins from a release bundle, and is inert until a release carries one. mesh-llm v0.78.1, its latest release, carries none.</td></tr>
+      <tr><td>The plugin inside mesh-llm</td><td>A separate repository and release: the plugin remains in <code>Mesh-LLM/capsules</code>.</td><td>mesh-llm PR 2459, which would have moved it into the mesh-llm workspace, was closed unmerged on 22 Oct 2026; PR 2337 (merged) lets a node install default plugins from a release bundle, and is inert until a release carries one. mesh-llm v0.78.1, its latest release, carries none.</td></tr>
     </tbody>
   </table></div>
-  <p class="src">Evidence: <code>Mesh-LLM/capsules</code> tag v0.1.4 @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (<code>CHANGELOG.md</code>, <code>docs/TWIN-REFEREE-SELECTION.md</code>, <code>docs/SHARING-POLICY.md</code>, <code>crates/evidence-plugin/src/verdict_counts.rs</code>, <code>routing_rule.rs</code>, <code>referee/</code>); capsules <code>main</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>; <code>Mesh-LLM/mesh-llm</code> tag v0.78.1 @ <code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>; mesh-llm PRs 2144, 2300, 2337, 2459 (checked 2026-10-19).</p>
+  <p class="src">Evidence: <code>Mesh-LLM/capsules</code> tag v0.1.4 @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (<code>CHANGELOG.md</code>, <code>docs/TWIN-REFEREE-SELECTION.md</code>, <code>docs/SHARING-POLICY.md</code>, <code>crates/evidence-plugin/src/verdict_counts.rs</code>, <code>routing_rule.rs</code>, <code>referee/</code>); capsules <code>main</code> @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>; <code>Mesh-LLM/mesh-llm</code> tag v0.78.1 @ <code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>; mesh-llm PRs 2144, 2300, 2337 (checked 2026-10-19); mesh-llm PR 2459 closed unmerged 2026-10-22T05:22Z (checked 2026-10-27).</p>
 
   <h2><span class="n">6</span>Specs</h2>
   <ul class="specs">
@@ -283,7 +283,7 @@
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> signature on each record and verdict.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc3339">RFC 3339</a> &mdash; the timestamps the windows are measured from.</li>
     <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the plugin, the referee parity corpus and the docs cited above.</li>
-    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">Mesh-LLM/mesh-llm#2459</a> &mdash; the plugin moving into the mesh-llm workspace (open).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">Mesh-LLM/mesh-llm#2459</a> &mdash; the proposed move of the plugin into the mesh-llm workspace (closed unmerged).</li>
   </ul>
 
   <footer class="pn"><a href="13-capsule-types.html">&larr; Every capsule type</a><a href="15-evidence-report.html">The evidence report &rarr;</a></footer>

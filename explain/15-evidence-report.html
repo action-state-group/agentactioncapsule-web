@@ -232,7 +232,7 @@
   <div class="tw"><table class="t">
     <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
     <tbody>
-      <tr><td>bundle_kind</td><td>string</td><td><code>evidence-bundle/v2</code>, the Evidence Bundle of disclosure-bundle-00.</td></tr>
+      <tr><td>bundle_kind</td><td>string</td><td><code>evidence-bundle/v2</code>, the Evidence Bundle of disclosure-bundle-01.</td></tr>
       <tr><td>root</td><td>hex</td><td>capsule_id of the record the file's claim starts from.</td></tr>
       <tr><td>records</td><td>array</td><td>The records, byte for byte as sealed; here one, the requester's half.</td></tr>
       <tr><td>effect.request_digest</td><td>hex</td><td>Digest of the request; the request text is not in the file.</td></tr>
@@ -269,7 +269,7 @@ INVALID</code></pre>
     <thead><tr><th>Piece</th><th>Status</th><th>Evidence</th></tr></thead>
     <tbody>
       <tr><td>Offline verifier: <code>capsule-emit verify --bundle</code></td><td>Live</td><td>In capsule-emit since 0.9.0; since 0.11.0 (2026-10-16) the checks are agent-action-capsule's strict <code>verify_bundle</code>. Run on the example above on 2026-10-19. <code>python/capsule_emit/evidence_file.py</code> @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code>.</td></tr>
-      <tr><td>Offline verifier: <code>capsulectl verify --bundle</code></td><td>Pre-release</td><td>Published as GitHub pre-release <code>capsulectl v0.1.0-rc16</code> on 2026-10-14 (tag commit <code>bfeae1aa73c149aa7ffb4de39f0b9990c03b87e0</code>); listed in capsule-cli's README there and at <code>main</code> @ <code>551b5c616641d15089eb0aac747f5c90aa29bf69</code>. Not run for this page.</td></tr>
+      <tr><td>Offline verifier: <code>capsulectl verify --bundle</code></td><td>Pre-release</td><td>Published as GitHub pre-release <code>capsulectl v0.1.0-rc16</code> on 2026-10-14 (tag commit <code>bfeae1aa73c149aa7ffb4de39f0b9990c03b87e0</code>); listed in capsule-cli's README there and at <code>main</code> @ <code>551b5c616641d15089eb0aac747f5c90aa29bf69</code>. Not run for this page. The latest pre-release is <code>capsulectl v0.1.0-rc23</code> (26 Oct 2026; checked 2026-10-27).</td></tr>
       <tr><td>In the browser: <code>verify.agentactioncapsule.org/bundle</code></td><td>Live page</td><td>Answered HTTP 200 on 2026-10-19. Per scitt-cose's README @ <code>ac9d3b90d058ff609497573a68402e561fa99404</code>, a dropped evidence file is read in the browser and never uploaded; integrity, sequence and range membership are checked there, and the signature step shows &ldquo;skip&rdquo; in the browser. The deployed revision was not checked, and the example was not dropped on it.</td></tr>
       <tr><td>Report page: <code>capsule_viewer.evidence_report</code></td><td>Built</td><td>Merged in capsule-viewer (README &ldquo;Evidence report page&rdquo;, <code>main</code> @ <code>204e07a87cae17886b87f1324a5040a4aec6b8bf</code>), moved from capsule-emit in 0.10.0; not on PyPI. Run on the example on 2026-10-19, it wrote a page saying INVALID (exit 1). Its <code>evidence</code> extra pins capsule-emit below 0.10, so it was run with agent-action-capsule 0.9.1. capsule-cli's <code>capsulectl report build --bundle</code> writes a page only for a file <code>verify --bundle</code> calls VALID (its README).</td></tr>
       <tr><td>Scoped export: <code>capsule-emit export LEDGER_DIR --exchange ID</code></td><td>Built</td><td>Released in capsule-emit 0.9.0 (CHANGELOG). It reads a ledger directory of <code>capsules.jsonl</code> and <code>checkpoints.jsonl</code>; the in-tree plugin uses the same file names (<code>crates/evidence-plugin/src/data_dir.rs</code> and <code>checkpoint_cadence.rs</code>, capsules @ <code>efcada74026a2e18b9e62d77432888a31bbe9de4</code>), but the export was not run on that plugin's ledger for this page.</td></tr>
@@ -281,7 +281,7 @@ INVALID</code></pre>
 
   <h2><span class="n">6</span>Specs</h2>
   <ul class="specs">
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-00</a> &mdash; the Evidence Bundle: transports, closure, disclosure overlay, the three completeness claims, verification.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-01</a> &mdash; the Evidence Bundle: transports, closure, disclosure overlay, the three completeness claims, verification.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">draft-mih-agent-disclosure-envelope-00</a> &mdash; revealing the content behind a digest-only field without changing the record or its capsule_id.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record, its capsule_id and its signature.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the local log, its signed checkpoints, and inclusion and consistency proofs.</li>
