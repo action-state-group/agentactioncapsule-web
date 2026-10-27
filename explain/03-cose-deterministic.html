@@ -130,7 +130,7 @@
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> no floating-point values in digest-bearing material; integers outside the IEEE-754 safe range are decimal strings.</div>
-      <div class="not"><b>Rejected:</b> JSON floats. JCS fixes one output per double, but two parsers can round the same literal to different doubles, and then no canonicalization helps. (draft-mih-scitt-agent-action-capsule-05 §2; draft-mih-sokolov-scitt-payload-binding-05 §12.3)</div>
+      <div class="not"><b>Rejected:</b> JSON floats. JCS fixes one output per double, but two parsers can round the same literal to different doubles, and then no canonicalization helps. (draft-mih-scitt-agent-action-capsule-05 §2; draft-mih-sokolov-scitt-payload-binding-06 §13.3)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> for CBOR, a protected Hash Envelope header parameter, <code>payload-preimage-encoding</code>, whose value comes from a small registry; its initial entry is <code>core-deterministic</code> (<a href="https://www.rfc-editor.org/rfc/rfc8949">RFC 8949</a> §4.2.1).</div>
@@ -212,7 +212,7 @@ expected.json
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9995">RFC 9995</a> &mdash; COSE Hash Envelope: signs the digest of a preimage held elsewhere.</li>
     <li><span class="kind">In preparation</span> <a href="https://github.com/action-state-group/cose-deterministic-encodings">COSE deterministic encodings (Internet-Draft in preparation)</a> &mdash; the <code>payload-preimage-encoding</code> parameter and a registry of deterministic encodings.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the Producer Envelope wire profile and the format-4 JCS rules.</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-05</a> &mdash; how a Signed Statement declares its canonicalization (page 04).</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-06</a> &mdash; how a Signed Statement declares its canonicalization (page 04).</li>
     <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">action-state-group/agent-action-capsule</a> &mdash; canonicalization edge-case vectors under <code>vectors/capsule/</code>.</li>
   </ul>
 
