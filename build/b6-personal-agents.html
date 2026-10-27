@@ -15,6 +15,7 @@
   .tag.planned{color:var(--muted);background:var(--paper-2)}
   table.t.status td:first-child{white-space:normal;font-family:var(--sans);font-size:13.5px}
   table.t.status td:nth-child(2){white-space:nowrap}
+  table.t.prose td:nth-child(n+2){font-family:var(--sans);font-size:13px;color:var(--ink);white-space:normal}
   table.t.status td:nth-child(3){font-family:var(--sans);font-size:13px;color:var(--ink);white-space:normal;overflow-wrap:anywhere}
 </style>
 </head>
@@ -26,10 +27,10 @@
 <main><div class="wrap">
   <div class="crumb">b6 / 11</div>
   <h1>Personal agents</h1>
-  <p class="seam"><b>Seams ① Record to ⑤ View.</b> Build: the five layers for an agent acting for one person. Conform to: <code>draft-mih-agent-evidence-request-00</code> (the History profile).</p>
-  <p class="lede">The same five layers, applied to an agent that acts for one person: the host's seams, the records they produce, the person's own book, the deals those records belong to, and a History the person chooses to share, which shows counts and makes no outcome claim.</p>
-  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
-  <div class="banner"><b>Status: designed, not built</b> for a personal-agent host. None of the public repositories this page cites wires a personal agent's connectors, scheduler and approvals into a book end to end. Built at a SHA today: tool-call and approval records (capsule-emit, released), and the 12 conformance vectors for <code>personal_history_basic/1</code>, including a book's answer to a History request (agent-action-capsule). Written down and merged, no host code: the History profile itself. Not built: a scheduler seam, and a History card display. Section 5 lists each item with its evidence.</div>
+  <p class="seam"><b>Seams ① Record to ⑤ View.</b> Build: the five layers for an agent acting for one person. Conform to: the Personal-Agent History Profile v0 (Basic and Outcome levels), carried over <code>draft-mih-agent-evidence-request-00</code>.</p>
+  <p class="lede">The same five layers, applied to an agent that acts for one person: the host's seams, the records they produce, the person's own book, the deals those records belong to, and a History the person chooses to share. At the Basic level a History shows counts and makes no outcome claim; the Outcome level adds outcome claims, each resting on one named source.</p>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts the recipient can recompute from the answers, never a score.</li></ul></aside>
+  <div class="banner"><b>Status, in the public repositories this page cites:</b> none of them wires a personal agent's connectors, scheduler and approvals into a book end to end, so no row in section 5 is tagged live. Built at a SHA: tool-call and approval records (capsule-emit, released); the 14 conformance vectors for <code>personal_history_basic/1</code>, including a book's answer to a History request; and a Go verifier for <code>evidence-interop/0</code> with a Basic level History evaluator (agent-action-capsule). Written down and merged: the History profile's Basic level, and its Outcome level (<code>personal_history_outcome/1</code>), which has conformance vectors and a test-side evaluator, and no responder or library implementation. Not built: a scheduler seam, and a History card display. Section 5 lists each item with its evidence.</div>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk through it."
@@ -38,11 +39,11 @@
     data-cap-3="An approval is its own record: a person approves or denies a blocked action, and the approval record names the blocked record with the relation &quot;supersedes&quot;. With no approval record, the action stays pending. capsule-emit's approval helper does this today."
     data-cap-4="A scheduled task (the agent acting with nobody at the keyboard) should produce a record too. None of the public repositories cited here defines a scheduler seam yet: designed, not built."
     data-cap-5="The book. Every record is appended to the person's own stream and checkpointed. Each record belongs to a deal (one correlation id) and, for a History, is one of two kinds: a step recorded as completed or as failed. Here: 8 step records over 4 deals, from the published vectors."
-    data-cap-6="Use-case evidence. The person picks deals for one recipient: 3 of the 4. The definition document personal_history_basic/1 names the recipient, the selection and the four fields any answer may reveal, and says completeness is not asserted."
-    data-cap-7="The shareable read. The recipient asks for each selected deal and gets a reply signed by the holder key. A History card would show, in order: outcomes not established; 3 selected deals; 1 with a recorded failed step, 2 with completed steps only, 0 with no recorded step. Counts, each in its own unit, never combined.">
+    data-cap-6="Use-case evidence. The person picks deals for one recipient: 3 of the 4. The definition document personal_history_basic/1 names the recipient, the selection and the four fields any answer may reveal, and says completeness is not asserted: the coverage kind is holder_selected."
+    data-cap-7="The shareable read. The recipient asks for each selected deal and gets a reply signed by the holder key. A History card would show, in order: outcomes not established, and coverage holder_selected; 3 selected deals; 1 with a recorded failed step, 2 with completed steps only, 0 with no recorded step. Counts, each in its own unit, never combined.">
     <svg viewBox="0 0 860 440" role="img" aria-labelledby="anim-t anim-d">
       <title id="anim-t">Five layers of an evidence layer for a personal agent</title>
-      <desc id="anim-d">Left: a personal agent host with four seams: connectors, approvals, scheduler and hooks. Step 2: a connector call becomes a signed record with argument and result digests and effect dispatched. Step 3: an approval becomes a record chained to the blocked action with the relation supersedes. Step 4: a scheduled task's record is drawn dashed and marked designed, not built. Step 5: the records are appended to the person's own book, a stream of eight step records over four deals A to D, with a checkpoint; D has one failed step and B has one failed step. Step 6: the person selects deals A, B and C for one recipient under the definition personal_history_basic/1, completeness not asserted; deal D is left out. Step 7: a History card shows outcomes not established, 3 selected deals, 1 with a recorded failed step, 2 with completed steps only, 0 with no recorded step, and record inclusion not checked. Counts only, no ranking.</desc>
+      <desc id="anim-d">Left: a personal agent host with four seams: connectors, approvals, scheduler and hooks. Step 2: a connector call becomes a signed record with argument and result digests and effect dispatched. Step 3: an approval becomes a record chained to the blocked action with the relation supersedes. Step 4: a scheduled task's record is drawn dashed and marked designed, not built. Step 5: the records are appended to the person's own book, a stream of eight step records over four deals A to D, with a checkpoint; D has one failed step and B has one failed step. Step 6: the person selects deals A, B and C for one recipient under the definition personal_history_basic/1, completeness not asserted; deal D is left out. Step 7: a History card shows outcomes not established and coverage holder_selected, 3 selected deals, 1 with a recorded failed step, 2 with completed steps only, 0 with no recorded step, and record inclusion not checked. Counts only, no ranking.</desc>
       <defs>
         <marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
         <marker id="ah6v" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
@@ -150,14 +151,15 @@
         <line x1="755" y1="160" x2="755" y2="176" stroke="#127A52" stroke-width="1.5" marker-end="url(#ah6v)"/>
         <rect x="660" y="178" width="190" height="202" rx="8" fill="#fff" stroke="#127A52" stroke-width="1.5"/>
         <text x="670" y="198" font-size="13" font-weight="600" fill="#0B0E14">History card</text>
-        <text x="670" y="218" font-size="12" fill="#9A5B00">outcomes: not established</text>
-        <text x="670" y="240" font-size="12" fill="#0B0E14">3 selected deals</text>
-        <text x="670" y="260" font-size="12" fill="#0B0E14">1 with a recorded failed step</text>
-        <text x="670" y="278" font-size="12" fill="#0B0E14">2 completed steps only</text>
-        <text x="670" y="296" font-size="12" fill="#0B0E14">0 with no recorded step</text>
-        <text x="670" y="320" font-size="12" class="mono" fill="#5C6573">inclusion: NOT_CHECKED</text>
-        <text x="670" y="342" font-size="12" fill="#5C6573">signed by the holder key</text>
-        <text x="670" y="364" font-size="12" fill="#127A52">counts only, no ranking</text>
+        <text x="670" y="216" font-size="12" fill="#9A5B00">outcomes: not established</text>
+        <text x="670" y="234" font-size="12" fill="#9A5B00">coverage: holder_selected</text>
+        <text x="670" y="256" font-size="12" fill="#0B0E14">3 selected deals</text>
+        <text x="670" y="274" font-size="12" fill="#0B0E14">1 with a recorded failed step</text>
+        <text x="670" y="292" font-size="12" fill="#0B0E14">2 completed steps only</text>
+        <text x="670" y="310" font-size="12" fill="#0B0E14">0 with no recorded step</text>
+        <text x="670" y="332" font-size="12" class="mono" fill="#5C6573">inclusion: NOT_CHECKED</text>
+        <text x="670" y="350" font-size="12" fill="#5C6573">signed by the holder key</text>
+        <text x="670" y="368" font-size="12" fill="#127A52">counts only, no ranking</text>
         <text x="10" y="410" font-size="12" fill="#5C6573">Deals, records and counts are those of the published vectors (agent-action-capsule</text>
         <text x="10" y="428" font-size="12" class="mono" fill="#5C6573">vectors/personal-history-basic-v0, case history-basic)</text>
       </g>
@@ -172,8 +174,8 @@
   <h2><span class="n">1</span>What it is</h2>
   <div class="what">
     <p>A personal agent acts for one person: it calls tools through connectors, waits for that person's approval on some actions, and runs scheduled tasks while nobody is watching. Each of those is a place where the host can hand an event to code that seals a signed record.</p>
-    <p>The records go into the person's own append-only book, grouped into deals (one correlation id each), and each record says whether a step the agent recorded completed or failed.</p>
-    <p>When the person wants to show someone what their agent recorded, they pick some deals for that one recipient, and the recipient gets a History, signed by the holder key, that counts the selected deals by state and states plainly that no outcome is established.</p>
+    <p>The records go into the person's own append-only book, grouped into deals (one correlation id each), and each record says whether a step the agent recorded completed or failed. The book may be one stream or several, for example one per deal; every record of one deal stays in one stream, and one History may span several streams when it is answered at one witnessed checkpoint tick, a checkpoint of the holder's, countersigned by a witness, that commits to each stream's checkpoint (profile §2, PA-14).</p>
+    <p>When the person wants to show someone what their agent recorded, they pick some deals for that one recipient, and the recipient gets a History, signed by the holder key, that counts the selected deals by state and states plainly that no outcome is established. That is the Basic level. At the Outcome level the History can also carry outcome claims, each naming one source, shown side by side (end of section 3).</p>
   </div>
 
   <h2><span class="n">2</span>Design choices</h2>
@@ -199,8 +201,8 @@
       <div class="not"><b>Rejected:</b> a registered derivation token sent on the wire, or presenting a History answer as the canonical answer for the deal it covers. (profile §4, §4.2)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> the holder selects deals, and the definition says <code>completeness: not_asserted</code>.</div>
-      <div class="not"><b>Rejected:</b> implying the selection is everything; a holder can leave out any deal, and a verifier shows that the selection is not claimed to be complete. (profile §4.1, §9)</div>
+      <div class="pick"><b>Chosen:</b> the holder selects deals, and the definition says <code>completeness: not_asserted</code>, which is the coverage kind <code>holder_selected</code>; a verifier shows that coverage kind, with outcomes not established, before any count.</div>
+      <div class="not"><b>Rejected:</b> implying the selection is everything; a holder can leave out any deal, a valid signature on every answer never implies completeness, and a requirement that needs a complete History is never satisfied from a Basic level History. (profile §2, §4.1, §6.3 item 1, §9, PA-15; interop profile §6.7)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> counts in their own units: selected deals, and the count of each deal state; records counted separately.</div>
@@ -219,17 +221,48 @@
       <li>For a History: which deals the holder selected for this recipient.</li>
       <li>When each record was committed to the holder's stream, and the event time the agent claimed, as two separate times.</li>
       <li>Whether each recorded step completed or failed, as the holder's agent recorded it.</li>
-      <li>That one holder key answered for every selected deal, at one anchor.</li>
+      <li>That one holder key answered for every selected deal, at one anchor, whether the answers name one stream or several.</li>
+      <li>The coverage kind, <code>holder_selected</code>, before any count.</li>
     </ul></div>
     <div class="col no"><h3>Does not show</h3><ul>
-      <li>Any outcome: sale, payment, delivery, receipt or return. A recorded completed step is not a completed sale.</li>
-      <li>That the selection is all of the holder's deals.</li>
+      <li>At the Basic level, any outcome: sale, payment, delivery, receipt or return. A recorded completed step is not a completed sale. Outcome claims are the Outcome level's, below.</li>
+      <li>That the selection is all of the holder's deals: the coverage kind is <code>holder_selected</code>, completeness not asserted (PA-15).</li>
+      <li>That a shared anchor is a witnessed checkpoint tick, or that it commits to the stream an answer names: at the Basic level a verifier checks only that every answer names the same anchor (PA-14).</li>
       <li>That anything happened at the claimed event time; neither time is witnessed.</li>
       <li>Who holds the key, or that the key's holder made the deals.</li>
       <li>Record-level inclusion for a History answer: <code>anchor_inclusion</code> is <code>NOT_CHECKED</code> until the interop profile registers the material for it (PA-13).</li>
       <li>That two recipients cannot link a shared deal: deal references and record digests are the same in every History (§4.5, PA-7).</li>
     </ul></div>
   </div>
+
+  <h3>The Outcome level: what it adds (designed)</h3>
+  <p>The Outcome level, <code>personal_history_outcome/1</code>, is a History whose deals also carry outcome claims: what a named source says happened in a deal. Each claim names one predicate and exactly one source. A verifier checks each claim against its own source and shows the claims side by side, one row per claim. It never combines them into one outcome, one count or one figure, and the level defines no rate, share or figure across deals.</p>
+  <div class="tw"><table class="t prose">
+    <thead><tr><th>Source label</th><th>Rests on</th><th>What a counting claim establishes</th></tr></thead>
+    <tbody>
+      <tr><td>holder_record</td><td>the holder's agent's own record</td><td>that the holder's agent recorded the predicate; never corroboration</td></tr>
+      <tr><td>counterparty_half</td><td>the other party's half of the exchange, cited by digest</td><td>that the key named in the half states the predicate; not &ldquo;the other party agrees&rdquo; unless issuer independence is checked, which no verifier built from the interop profile's current revision reports</td></tr>
+      <tr><td>native_object</td><td>an object of a commerce or payment protocol, read through an adapter declaration (<code>ucp-v0</code>, <code>x402-v0</code>)</td><td>the adapter's own predicate and nothing more</td></tr>
+      <tr><td>judge_verdict</td><td>a judge's signed verdict, given after the holder's consent record</td><td>that a judge concluded the predicate from the deal's records it cites</td></tr>
+    </tbody>
+  </table></div>
+  <div class="tw"><table class="t prose">
+    <thead><tr><th>Predicate</th><th>Sources a claim may name</th></tr></thead>
+    <tbody>
+      <tr><td>cancelled</td><td>holder_record, counterparty_half, judge_verdict</td></tr>
+      <tr><td>completed</td><td>holder_record, counterparty_half, judge_verdict, native_object (<code>ucp-v0</code> checkout in state <code>completed</code>)</td></tr>
+      <tr><td>delivered</td><td>holder_record, counterparty_half, judge_verdict</td></tr>
+      <tr><td>paid</td><td>holder_record, counterparty_half, judge_verdict, native_object (<code>x402-v0</code> X3 or X4)</td></tr>
+      <tr><td>disputed</td><td>none: no claim may state it. A deal is shown as disputed only from a <code>disputes</code> lifecycle statement the verifier holds (interop profile §11.2); &ldquo;not disputed&rdquo; is never established</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>Evidence answers only its own question: payment evidence establishes payment, never delivery. A predicate with no claim is shown as not established, never as failed.</li>
+    <li>A claim that only the holder's record ties to the deal never gives <code>met</code> or <code>not_met</code>, because that record's inclusion is not checked.</li>
+    <li>The deal's terms are committed by digest in the holder's stream; the opening that reveals them goes only to the recipient, beside the answers.</li>
+    <li>The definition carries a coverage declaration of any of the three kinds (<code>holder_selected</code>, <code>stream_interval</code>, <code>source_authoritative</code>), so a History at this level can say more than &ldquo;the holder chose these&rdquo;.</li>
+  </ul>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:spec/personal-agent-history-outcome-v0.md</code> §3 to §9 @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></p>
 
   <h2><span class="n">4</span>Example</h2>
   <p>The positive case of the published conformance vectors: a holder stream of four deals, three selected for one recipient. Below are the definition the recipient holds, the artifact of one reply (deal <code>50c8…</code>, decoded from the reply's base64url <code>artifact</code>), and the deal states the test derives. All keys are test keys.</p>
@@ -297,23 +330,27 @@
       <tr><td>deal_states.counts</td><td>object</td><td>One state per selected deal, counted per state. Deal <code>50c8…</code> has a failed step, so it counts under &ldquo;with a recorded failed step&rdquo;.</td></tr>
     </tbody>
   </table></div>
-  <p>The reply that carries this artifact is in the vectors, driven by their <code>producer/main.go</code>; any conforming book must produce the same reply. The twelve cases are this positive run, ten mutant cases covering the nine mutants of the profile's §6.4 (each fails the property §6.4 names), and one refusal to another requester.</p>
-  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/personal-history-basic-v0/vectors.json</code> (case <code>history-basic</code>) @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></p>
+  <p>The reply that carries this artifact is in the vectors, driven by their <code>producer/main.go</code>; any conforming book must produce the same reply. The fourteen cases are this positive run, ten mutant cases covering the nine mutants of the profile's §6.4 (each fails the property §6.4 names), the same deals each in its own stream at one witnessed checkpoint tick and its mixed-anchor mutant (profile §2), and one refusal to another requester.</p>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/personal-history-basic-v0/vectors.json</code> (case <code>history-basic</code>) @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></p>
 
   <h2><span class="n">5</span>Status</h2>
-  <p>Tags: <span class="tag live">live</span> running in a personal-agent host (none today) · <span class="tag built">built-not-live</span> merged or released at a SHA, not running in any personal-agent host · <span class="tag designed">designed</span> written down, no code · <span class="tag planned">planned</span> named as an open point, not designed.</p>
+  <p>Tags, the same on every build page: <span class="tag live">live</span> in a tagged public release (a crate, package or release tag anyone can install) and on by default · <span class="tag built">built, not live</span> merged to a public main branch but in no release yet, or released but off by default or not yet exercised on a stock host (the row says which) · <span class="tag designed">designed</span> written down (text, sometimes vectors), no code · <span class="tag planned">planned</span> named as an open point and not designed, or left open on purpose.</p>
   <div class="tw"><table class="t status">
     <thead><tr><th>Item</th><th>Status</th><th>Evidence</th></tr></thead>
     <tbody>
-      <tr><td>Connector (tool-call) records: MCP adapter and the <code>ConnectorPort</code> contract</td><td><span class="tag built">built-not-live</span> (released library)</td><td>capsule-emit <code>python/capsule_emit/adapters/mcp.py</code>, <code>python/capsule_emit/connector.py</code> @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code> (tag <code>python/v0.11.0</code>, released 2026-10-16)</td></tr>
-      <tr><td>Approval records: <code>seal_approval</code>, <code>list_pending</code></td><td><span class="tag built">built-not-live</span> (released library)</td><td>capsule-emit <code>python/capsule_emit/approval.py</code> @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code> (tag <code>python/v0.11.0</code>)</td></tr>
-      <tr><td>Scheduled-task seam and its record</td><td><span class="tag designed">designed, not built</span></td><td>No public repository defines one: searched capsule-emit @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code>, agent-action-capsule @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></td></tr>
+      <tr><td>Connector (tool-call) records: MCP adapter and the <code>ConnectorPort</code> contract</td><td><span class="tag built">built, not live</span> (released library, not running in any personal-agent host)</td><td>capsule-emit <code>python/capsule_emit/adapters/mcp.py</code>, <code>python/capsule_emit/connector.py</code> @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code> (tag <code>python/v0.11.0</code>, released 2026-10-16)</td></tr>
+      <tr><td>Approval records: <code>seal_approval</code>, <code>list_pending</code></td><td><span class="tag built">built, not live</span> (released library, not running in any personal-agent host)</td><td>capsule-emit <code>python/capsule_emit/approval.py</code> @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code> (tag <code>python/v0.11.0</code>)</td></tr>
+      <tr><td>Scheduled-task seam and its record</td><td><span class="tag designed">designed, not built</span></td><td>No public repository defines one: searched capsule-emit @ <code>d51a934ebf9d3efa3c86e7f27aaafe2bc06ac05d</code>, agent-action-capsule @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></td></tr>
       <tr><td>A personal-agent host wiring connectors, approvals, scheduler and hooks to one book</td><td><span class="tag designed">designed, not built</span></td><td>No public repository at the SHAs above</td></tr>
-      <tr><td>A book answering a History request</td><td><span class="tag built">built-not-live</span></td><td>The positive case and its mutants: <code>action-state-group/agent-action-capsule:vectors/personal-history-basic-v0/</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></td></tr>
-      <tr><td>Personal-Agent History Profile v0, Basic level (<code>personal_history_basic/1</code>)</td><td><span class="tag designed">designed</span></td><td>Informational host profile, pre-Internet-Draft. <a href="https://github.com/action-state-group/agent-action-capsule/pull/259">agent-action-capsule#259</a>, MERGED 2026-10-15 (merge <code>995c377bf3fbc5a50630a07c998c0d0fce315a87</code>); <code>spec/personal-agent-history-profile-v0.md</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></td></tr>
-      <tr><td>Conformance vectors (12 cases) and the Python check that runs them</td><td><span class="tag built">built-not-live</span></td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/296">agent-action-capsule#296</a>, MERGED 2026-10-17 (merge <code>0b7b1825965e7f7845cbc70a490a581cbc70bd37</code>); <code>vectors/personal-history-basic-v0/</code>, <code>python/tests/test_personal_history_basic_v0_vectors.py</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code></td></tr>
-      <tr><td>A History card: a verifier display in the profile's §6.3 order</td><td><span class="tag designed">designed, not built</span></td><td>Display order specified in profile §6.3; no public verifier UI renders it at the SHAs above</td></tr>
-      <tr><td>Outcome claims with source labels (a later level)</td><td><span class="tag planned">planned</span></td><td>Profile §10, PA-9</td></tr>
+      <tr><td>A book answering a History request</td><td><span class="tag built">built, not live</span></td><td>The positive case and its mutants: <code>action-state-group/agent-action-capsule:vectors/personal-history-basic-v0/</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></td></tr>
+      <tr><td>Personal-Agent History Profile v0, Basic level (<code>personal_history_basic/1</code>)</td><td><span class="tag designed">designed</span></td><td>Informational host profile, pre-Internet-Draft. <a href="https://github.com/action-state-group/agent-action-capsule/pull/259">agent-action-capsule#259</a>, MERGED 2026-10-15 (merge <code>995c377bf3fbc5a50630a07c998c0d0fce315a87</code>); amended by #311, #312 and #314 (2026-10-19); <code>spec/personal-agent-history-profile-v0.md</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></td></tr>
+      <tr><td>Conformance vectors (14 cases) and the Python check that runs them</td><td><span class="tag built">built, not live</span></td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/296">agent-action-capsule#296</a>, MERGED 2026-10-17 (merge <code>0b7b1825965e7f7845cbc70a490a581cbc70bd37</code>), 12 cases; #311 added the two multi-stream cases; <code>vectors/personal-history-basic-v0/</code>, <code>python/tests/test_personal_history_basic_v0_vectors.py</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></td></tr>
+      <tr><td>Go verifier for <code>evidence-interop/0</code> and a Basic level History evaluator</td><td><span class="tag built">built, not live</span></td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/324">agent-action-capsule#324</a>, merged 2026-10-20 (commit <code>81e804acee77dcba9754c8d846da4806d477db4e</code>); <code>go/evidencerequest/interop_verify.go</code>, <code>go/personalhistory/personalhistory.go</code>, tested against the vectors above in <code>go/personalhistory/vectors_test.go</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>. Basic level only</td></tr>
+      <tr><td>Coverage kind: a Basic level History declares <code>holder_selected</code>, shown before any count</td><td><span class="tag designed">designed</span></td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/312">agent-action-capsule#312</a>, merged 2026-10-19 (commit <code>78fa440f42b5b4478f00d6822a346a2646ca70a2</code>); profile §2, §4.1, §6.3 item 1, PA-15; <code>spec/interop-profile-v0.md</code> §6.7 @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></td></tr>
+      <tr><td>One History over several streams at one witnessed checkpoint tick</td><td><span class="tag designed">designed</span></td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/311">agent-action-capsule#311</a>, merged 2026-10-19 (commit <code>f0cdd67dbf87af7f4fd09400e653ca683dc06774</code>); profile §2, PA-14; vector cases <code>multi-stream-one-tick</code> and <code>mutant-multi-stream-mixed-anchor</code> check only that every answer names the same anchor @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code></td></tr>
+      <tr><td>Checking that a shared anchor is a witnessed tick committing to each stream an answer names</td><td><span class="tag planned">planned</span></td><td>Profile §10, PA-14: needs verification material from the tick to each stream's checkpoint, which the interop profile does not register</td></tr>
+      <tr><td>A History card: a verifier display in the profile's §6.3 order</td><td><span class="tag designed">designed, not built</span></td><td>Display order specified in profile §6.3, coverage kind and outcomes not established first; no public verifier UI renders a <code>personal_history_basic/1</code> History at the SHAs above</td></tr>
+      <tr><td>Outcome level (<code>personal_history_outcome/1</code>): outcome claims, each with one source label, shown side by side</td><td><span class="tag designed">designed</span></td><td><a href="https://github.com/action-state-group/agent-action-capsule/pull/314">agent-action-capsule#314</a>, merged 2026-10-19 (commit <code>6ead7c9a510b7375108ab0e566e1bce385138dfb</code>); <code>spec/personal-agent-history-outcome-v0.md</code>; 25 derived cases in <code>vectors/personal-history-outcome-v0/</code>, checked by an evaluator written in <code>python/tests/test_personal_history_outcome_v0_vectors.py</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>. No responder implements the level, and neither the Go nor the Python library does</td></tr>
       <tr><td>Record-level inclusion for a History answer</td><td><span class="tag planned">planned</span></td><td>Profile §10, PA-13: <code>anchor_inclusion</code> stays <code>NOT_CHECKED</code> until the interop profile registers the material</td></tr>
     </tbody>
   </table></div>
@@ -326,8 +363,9 @@
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record format capsule-emit seals for tool calls and approvals.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the checkpointed log under the person's book.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes the derivation digest covers.</li>
-    <li><span class="kind">Profile</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/2ef8aeb49e2334e24c404bd62d3fdb161770873c/spec/personal-agent-history-profile-v0.md">spec/personal-agent-history-profile-v0.md</a> &mdash; Personal-Agent History Profile v0 (informational, pre-Internet-Draft).</li>
-    <li><span class="kind">Profile</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/2ef8aeb49e2334e24c404bd62d3fdb161770873c/spec/interop-profile-v0.md">spec/interop-profile-v0.md</a> &mdash; the interop profile (<code>evidence-interop/0</code>) whose envelope and verifier a History uses unchanged.</li>
+    <li><span class="kind">Profile</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/062e89bd145d25d097f3b5e4540d69341fff9f1f/spec/personal-agent-history-profile-v0.md">spec/personal-agent-history-profile-v0.md</a> &mdash; Personal-Agent History Profile v0, Basic level (informational, pre-Internet-Draft).</li>
+    <li><span class="kind">Profile</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/062e89bd145d25d097f3b5e4540d69341fff9f1f/spec/personal-agent-history-outcome-v0.md">spec/personal-agent-history-outcome-v0.md</a> &mdash; its Outcome level, <code>personal_history_outcome/1</code> (informational, pre-Internet-Draft).</li>
+    <li><span class="kind">Profile</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/062e89bd145d25d097f3b5e4540d69341fff9f1f/spec/interop-profile-v0.md">spec/interop-profile-v0.md</a> &mdash; the interop profile (<code>evidence-interop/0</code>) whose envelope, verifier and coverage declaration (§6.7) a History uses unchanged.</li>
     <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-emit/tree/python/v0.11.0">action-state-group/capsule-emit python/v0.11.0</a> &mdash; the MCP adapter and approval records.</li>
   </ul>
 
@@ -336,7 +374,7 @@
     <li>Your host's four seams named: connector calls, approvals, scheduled tasks, and a hook that carries each to the sealer.</li>
     <li>One correlation id per deal, chosen at random when the deal opens, and a mapping from your native step status to <code>step_completed</code> / <code>step_failed</code>.</li>
     <li>One holder key answering every deal of a History, and a pre-release scan for text outside the four declared fields.</li>
-    <li>A verifier display that shows &ldquo;outcomes not established&rdquo; before any count, and never combines the counts.</li>
+    <li>A verifier display that shows &ldquo;outcomes not established&rdquo; and the coverage kind <code>holder_selected</code>, with completeness not asserted, before any count, and never combines the counts.</li>
     <li>Next, a second party: work an agent does for someone, with a counterparty who keeps its own records.</li>
   </ul>
 
