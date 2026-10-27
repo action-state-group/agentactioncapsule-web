@@ -1143,18 +1143,21 @@ PAGES["quickstart"] = dict(
     crumb="Guides",
     body="""
 <h1>Quickstart: seal your first capsule</h1>
-<p class="lede">From install to a witnessed, verified record in a few minutes &mdash; using <code>seal()</code>, the canonical one-call API.</p>
+<p class="lede">From install to a signed, verified record in a few minutes &mdash; using <code>seal()</code>, the canonical one-call API &mdash; and to a witnessed one with one setting.</p>
 
 <h2>1. Install</h2>
 <pre class="code"><code>pip install capsule-emit</code></pre>
 
-<div class="callout"><strong>Where you start matters.</strong> <code>seal()</code> is signed and witnessed by default, async and non-blocking &mdash; no signup, no key. If you want to try locally first with zero network egress, set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>): you get a signed, structured record and a local ledger file you can verify offline. One config change turns witnessing back on when you&rsquo;re ready. See <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">the adoption ladder</a>.</div>
+<div class="callout"><strong>Where you start matters.</strong> <code>seal()</code> signs by default, async and non-blocking &mdash; no signup, no key. Out of the box nothing leaves your process: you get a signed, structured record in a local ledger store you can verify offline, and your checkpoints stay self-attested until you name a witness. One config change, <code>CAPSULE_WITNESS_URL</code>, sends them to a witness when you&rsquo;re ready. See <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">the adoption ladder</a>.</div>
 
 <h2>2. Seal an action</h2>
 <p>Call <code>seal()</code> once at each consequential action &mdash; the payload is the first positional argument, never a keyword. <code>action</code>, <code>operator</code>, <code>developer</code>, and <code>agent_output</code> are what you'll always pass; <code>model</code>, <code>verdict</code>, and <code>effect</code> are optional (adapters fill in what they can &mdash; the MCP adapter, for example, sees the tool boundary, not the LLM, so pass <code>model</code> explicitly there if you want it sealed).</p>
 <pre class="code"><code><span class="k">from</span> capsule_emit <span class="k">import</span> seal
 
-result = place(<span class="s">"Frobozz Supply"</span>, <span class="s">"4210.00"</span>, <span class="s">"PO-0047"</span>)  <span class="c"># your tool logic</span>
+<span class="k">def</span> place(vendor, total, po_number):  <span class="c"># stand-in for your tool logic</span>
+    <span class="k">return</span> {<span class="s">"po_number"</span>: po_number, <span class="s">"status"</span>: <span class="s">"accepted"</span>}
+
+result = place(<span class="s">"Frobozz Supply"</span>, <span class="s">"4210.00"</span>, <span class="s">"PO-0047"</span>)
 
 cap = seal(
     {<span class="s">"vendor"</span>: <span class="s">"Frobozz Supply"</span>, <span class="s">"total"</span>: <span class="s">"4210.00"</span>},  <span class="c"># payload &mdash; first arg; monetary values are strings, not floats</span>
@@ -1166,16 +1169,16 @@ cap = seal(
     verdict=<span class="s">"executed"</span>,               <span class="c"># a verdict_class: executed | blocked | denied | …</span>
     effect={<span class="s">"type"</span>: <span class="s">"submit_order"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
 )
-print(cap.capsule_id, cap.signature)   <span class="c"># sealed, signed, and witnessed by default</span></code></pre>
+print(cap.capsule_id, cap.signature)   <span class="c"># sealed and signed; recorded in ./capsule-ledger/</span></code></pre>
 <div class="callout"><strong>Adapter shortcut:</strong> if you use MCP, LangChain, CrewAI, or Goose, a thin adapter seals on every tool call &mdash; the fields above are what every adapter fills in automatically. See the <a class="ln" href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters">capsule-emit adapter docs</a>.</div>
 
 <h2>3. Where it's witnessed</h2>
-<p>By default, every <code>seal()</code> folds the capsule into your ledger's checkpoint/witness stream: roughly every 100 entries (or 15 minutes), a signed checkpoint of the whole ledger &mdash; never capsule content &mdash; is registered with the public witness, a SCITT Transparency Service, at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a>, no signup, no key. Set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>) to seal fully offline; set <code>CAPSULE_WITNESS_URL</code> or pass <code>witness_url=&hellip;</code> to point at your own Transparency Service. The older per-capsule <em>anchor</em> channel (<code>cap.anchored</code>, <code>anchor=True</code> / <code>CAPSULE_ANCHOR=legacy-on</code>) is a legacy, explicit opt-in kept only as a rollback path &mdash; it has not been the default egress path since 0.5.0. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
+<p>Every <code>seal()</code> folds the capsule into your ledger's checkpoint stream: roughly every 100 entries (or 15 minutes), a signed checkpoint of the whole ledger &mdash; never capsule content &mdash; is cut. Where it goes is your choice: with no witness named, it stays in your process, self-attested, and <code>seal()</code> prints a one-time notice saying so. Set <code>CAPSULE_WITNESS_URL</code> (or pass <code>witness_url=&hellip;</code>) to the witness you choose &mdash; the public one, a SCITT Transparency Service at <a class="ln" href="https://witness.agentactioncapsule.org">witness.agentactioncapsule.org</a> (<code>CAPSULE_WITNESS_URL=https://witness.agentactioncapsule.org</code>, no signup, no key), or your own. Set <code>CAPSULE_WITNESS=off</code> (or pass <code>witness=False</code>) to seal fully offline and silence the notice. The older per-capsule <em>anchor</em> channel (<code>cap.anchored</code>, <code>anchor=True</code> / <code>CAPSULE_ANCHOR=legacy-on</code>) is a legacy, explicit opt-in kept only as a rollback path &mdash; it has not been the default egress path since 0.5.0. See the <a class="ln" href="https://agentactioncapsule.org/#adopt-ladder">adoption ladder</a> for the full rung-by-rung path.</p>
 
 <h2>4. Verify</h2>
-<p>Each <code>seal()</code> also appends the sealed capsule to a local <code>ledger.jsonl</code> by default &mdash; that&rsquo;s the file you verify, offline:</p>
-<pre class="code"><code><span class="c"># verify a ledger of sealed capsules, offline &mdash; no keys or network needed</span>
-capsule-emit verify --store ledger.jsonl
+<p>Each <code>seal()</code> also writes the sealed capsule to a ledger store directory, <code>./capsule-ledger/</code> by default (its signing key sits beside it as <code>capsule-ledger.signing_key.pem</code>) &mdash; that&rsquo;s what you verify, offline:</p>
+<pre class="code"><code><span class="c"># verify the ledger store, offline &mdash; no keys or network needed</span>
+capsule-emit verify --store ./capsule-ledger
 
   <span class="ok">VALID</span>
 
@@ -1201,7 +1204,7 @@ PAGES["verify-a-capsule"] = dict(
 
 <h2>On the command line</h2>
 <pre class="code"><code>pip install capsule-emit
-capsule-emit verify --store ledger.jsonl
+capsule-emit verify --store ./capsule-ledger   <span class="c"># the ledger store seal() writes by default</span>
 
   <span class="ok">VALID</span>
   <span class="ok">VALID</span>
@@ -1210,7 +1213,7 @@ capsule-emit verify --store ledger.jsonl
 <p><code>capsule-emit verify</code> recomputes every capsule's digest and chain link with the reference verifier from <code>agent-action-capsule</code> (which ships as a dependency, and whose own <code>agent-action-capsule verify</code> runs that structural check alone) <em>and</em> checks each producer signature it finds. A tampered record prints <code>INVALID</code> and the command exits 1. Neither check needs the network.</p>
 
 <h2>With the Go CLI: <code>capsulectl</code></h2>
-<p>If you would rather not run Python, <code>capsulectl</code> is a standalone Go binary (built on <code>capsule-emit-go</code>) that seals and verifies its own artifact records &mdash; it does not read the Python <code>ledger.jsonl</code> above, so use it end to end. Only pre-releases exist so far: <a class="ln" href="https://github.com/action-state-group/capsule-cli/releases">the latest pre-release</a> has binaries for Linux (amd64, arm64) and macOS (arm64), with a <code>SHA256SUMS</code> file and a Sigstore bundle. Or install it from source with Go 1.27 or later (the command below). Then create a profile that pins the producer's public key, seal a request (format in the <a class="ln" href="https://github.com/action-state-group/capsule-cli#seal-request-and-stored-artifact">capsule-cli README</a>), and verify:</p>
+<p>If you would rather not run Python, <code>capsulectl</code> is a standalone Go binary (built on capsule-emit&rsquo;s Go module, <code>capsule-emit/go</code>) that seals and verifies its own artifact records &mdash; it does not read the Python ledger store above, so use it end to end. Only pre-releases exist so far: <a class="ln" href="https://github.com/action-state-group/capsule-cli/releases">the latest pre-release</a> has binaries for Linux (amd64, arm64) and macOS (arm64), with a <code>SHA256SUMS</code> file and a Sigstore bundle. Or install it from source with Go 1.27 or later (the command below). Then create a profile that pins the producer's public key, seal a request (format in the <a class="ln" href="https://github.com/action-state-group/capsule-cli#seal-request-and-stored-artifact">capsule-cli README</a>), and verify:</p>
 <pre class="code"><code>go install github.com/action-state-group/capsule-cli/cmd/capsulectl@latest
 capsulectl key generate --output producer.seed        <span class="c"># prints the public key</span>
 capsulectl profile create --name local --type jsonl --jsonl-path ./capsules \\
@@ -1598,7 +1601,7 @@ PAGES["glossary"] = dict(
     <tr><th>Agent Action Capsule</th><td>The profile in this project: a Signed Statement over <code>application/agent-action-capsule+json</code> committing to an action and its input/output digests.</td></tr>
     <tr><th>Transparency Service</th><td>A service that registers Signed Statements into an append-only log, issues receipts, and publishes tree heads and proofs.</td></tr>
     <tr><th>Transparency log</th><td>The public, append-only log a Transparency Service maintains. It is publicly readable &mdash; anyone can fetch its entries and verify any one of them; nothing is taken on trust.</td></tr>
-    <tr><th>Ledger</th><td>Your <em>local</em> append-only trail of capsules (e.g. <code>ledger.jsonl</code>) &mdash; distinct from the public transparency log. The ledger is yours; the transparency log is the shared, witnessed record.</td></tr>
+    <tr><th>Ledger</th><td>Your <em>local</em> append-only trail of capsules (e.g. the <code>./capsule-ledger/</code> store directory <code>seal()</code> writes by default) &mdash; distinct from the public transparency log. The ledger is yours; the transparency log is the shared, witnessed record.</td></tr>
     <tr><th>Receipt</th><td>A signed proof, returned by a transparency service, that a statement was included in its log. Verifiable offline against the log key.</td></tr>
     <tr><th>VDS</th><td>Verifiable Data Structure &mdash; how a log proves inclusion and consistency. <code>vds=1</code> is RFC9162_SHA256; <code>vds=2</code> is CCF (ccf.v1).</td></tr>
     <tr><th>Inclusion proof</th><td>Evidence that a specific leaf is part of the log at a given size &mdash; answers &ldquo;is my record in the log?&rdquo;</td></tr>

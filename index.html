@@ -290,7 +290,7 @@
       <a class="btn btn-ghost" href="#verify">Check what happened <span class="arrow">→</span></a>
       <a class="btn btn-ghost" href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">Read the draft <span class="arrow">↗</span></a>
     </div>
-    <p style="margin-top:18px;font-size:15px;color:var(--muted)"><code class="mono" style="background:var(--ink-2);color:#E8ECF4;padding:2px 8px;border-radius:6px">pip install capsule-emit</code> &rarr; <code class="mono" style="background:var(--ink-2);color:#E8ECF4;padding:2px 8px;border-radius:6px">receipt = seal(payload)</code> — a signed, witnessed record a stranger can verify. No config, keys, or account required. <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none">See it as real, runnable code &rarr;</a></p>
+    <p style="margin-top:18px;font-size:15px;color:var(--muted)"><code class="mono" style="background:var(--ink-2);color:#E8ECF4;padding:2px 8px;border-radius:6px">pip install capsule-emit</code> &rarr; <code class="mono" style="background:var(--ink-2);color:#E8ECF4;padding:2px 8px;border-radius:6px">receipt = seal(payload)</code> — a signed record a stranger can verify offline. No config, keys, or account required; one setting adds a witness. <a href="/docs/quickstart.html" style="color:var(--accent);text-decoration:none">See it as real, runnable code &rarr;</a></p>
     <div class="hero-meta">
       <span><span class="dot"></span> Built on IETF SCITT (RFC&nbsp;9943)</span>
       <span><span class="dot"></span> Verifier + producer, open source</span>
@@ -391,11 +391,11 @@
       </div>
 
       <div class="sw-panel" data-fw="goose">
-        <div class="sw-fw"><b>Goose</b> — pip install capsule-emit · FastMCP extension</div>
-        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from mcp.server.fastmcp import FastMCP
+        <div class="sw-fw"><b>Goose</b> — pip install "capsule-emit[mcp]" · MCP server extension</div>
+        <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from mcp.server.mcpserver import MCPServer   # mcp &lt; 2: from mcp.server.fastmcp import FastMCP
 from capsule_emit.adapters.mcp import MCPCapsuleEmitter
 
-server  = FastMCP("po-agent")
+server  = MCPServer("po-agent")              # FastMCP("po-agent") on mcp &lt; 2
 emitter = MCPCapsuleEmitter(operator="acme-co", developer="goose-agent@v1")
 
 @server.tool()                            # Goose connects over MCP
@@ -408,12 +408,12 @@ server.run()   # stdio — add to Goose as an extension</code></pre></div>
       </div>
 
       <div class="sw-panel" data-fw="mcp">
-        <div class="sw-fw"><b>MCP / any callable</b> — pip install capsule-emit</div>
+        <div class="sw-fw"><b>MCP / any callable</b> — pip install "capsule-emit[mcp]"</div>
         <div class="sw-box"><button class="sw-copy">copy</button><pre><code>from capsule_emit.adapters.mcp import MCPCapsuleEmitter
 
 emitter = MCPCapsuleEmitter(operator="acme-co", developer="po-agent@v1")
 
-@emitter.tool("submit_order")     # one line — each consequential call sealed + witnessed
+@emitter.tool("submit_order")     # one line — each consequential call sealed
 def submit_order(vendor, amount, po_number):
     return place(vendor, amount, po_number)</code></pre></div>
         <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/mcp.md">MCP adapter docs ↗</a>
@@ -707,15 +707,17 @@ agent = Agent(model=None, tools=[], hooks=[listener])  # your model and tools he
 <pre class="code"><span class="c"># install capsule-emit (the reference verifier ships with it)</span>
 pip install capsule-emit
 
-<span class="c"># verify a ledger of sealed actions, offline</span>
-capsule-emit verify --store ledger.jsonl
+<span class="c"># verify the ledger store seal() writes (./capsule-ledger/ by default), offline</span>
+capsule-emit verify --store ./capsule-ledger
 
   <span class="ok">VALID</span>
   <span class="ok">VALID</span>
 
 2/2 VALID
-  <span class="c"># inclusion on the public log:</span>
-  substrate.receipt_verified: <span class="ok">True</span></pre>
+
+<span class="c"># per-record inclusion under a signed checkpoint is checked</span>
+<span class="c"># from an evidence file: capsule-emit verify --bundle FILE.json</span>
+<span class="c"># (add --witness-directory to check the witness receipt too)</span></pre>
       <div class="verify-points">
         <div class="vp"><div class="ic">1</div><div><h3>Inputs &amp; outputs committed by digest</h3><p>The capsule seals SHA-256 digests of what went in and came out. Raw values stay local; the proof travels.</p></div></div>
         <div class="vp"><div class="ic">2</div><div><h3>Signature + inclusion, independently</h3><p>The signature proves who sealed it; the receipt proves the log included it. Both check from the bytes.</p></div></div>
@@ -752,7 +754,7 @@ capsule-emit verify --store ledger.jsonl
       <div class="card">
         <div class="k" style="color:var(--verify)">Rung 1 · Stub</div>
         <h3>Structured records, offline verify</h3>
-        <p>Set <code>CAPSULE_WITNESS=off</code>. Signed structured records, local ledger file, offline verification. Zero services. The ten-minute first touch — no network, no account.</p>
+        <p>Set <code>CAPSULE_WITNESS=off</code>. Signed structured records, local ledger store, offline verification. Zero services. The ten-minute first touch — no network, no account.</p>
         <p style="margin-top:10px;font-size:13px;color:var(--muted)">Page renders: <em>self-attested / not witnessed</em></p>
       </div>
       <div class="card">
