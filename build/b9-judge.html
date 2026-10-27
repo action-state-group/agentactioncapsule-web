@@ -7,10 +7,15 @@
 <link rel="stylesheet" href="explain.css">
 <style>
   table.t td.tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-  table.t td.tag.built{color:var(--verify)}
-  table.t td.tag.notlive{color:var(--warn)}
-  table.t td.tag.designed{color:var(--muted)}
-  table.t td.tag.none{color:var(--bad)}
+  table.t td.tag.live{color:var(--verify)}
+  table.t td.tag.built{color:var(--accent)}
+  table.t td.tag.designed{color:var(--warn)}
+  table.t td.tag.none{color:var(--muted)}
+  span.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:0 6px;border:1px solid var(--line);white-space:nowrap}
+  span.tag.live{color:var(--verify);background:var(--verify-soft);border-color:#A9D3BE}
+  span.tag.built{color:var(--accent);background:var(--accent-soft);border-color:#B9C6F2}
+  span.tag.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+  span.tag.planned{color:var(--muted);background:var(--paper-2)}
   table.t.status td:first-child{white-space:normal;font-family:var(--sans);font-size:13.5px}
   table.t.status td:nth-child(3){white-space:normal;font-family:var(--sans);font-size:13px;color:var(--ink)}
 </style>
@@ -25,7 +30,7 @@
   <h1>Judging: a separate step from evidence</h1>
   <p class="seam"><b>Seam ③ Check/judge.</b> Build: judgment records kept apart from evidence records. Conform to: <code>draft-mih-agent-evidence-layer-00</code> &sect;4.1, &sect;5.</p>
   <p class="lede">Evidence says what was done, by whom, and that the record has not changed since. A judgment says whether it was right. Keep the two as separate records: a verifier can recompute what the evidence supports from its bytes, while the judgment stays labelled as one, naming who made it and on what basis.</p>
-  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts recomputed from sealed records, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="9"
     data-cap-0="Press Play, or Step to walk through it."
@@ -34,7 +39,7 @@
     data-cap-3="A verifier works out each assurance value again from the bytes. It derives unilateral_fallback, reports assurance_overclaim, and reports the derived value. The claim stays in the record, unchanged and readable for what it was."
     data-cap-4="Judging is a separate step. A judgment is a new record that cites the act by digest. The act itself is never edited."
     data-cap-5="Who judges, route 1: rules. If the result is a fixed function of the cited inputs, with no model or human in the loop, its tier is recomputed: anyone holding the inputs can run it again. Designed: a tier value in a design spec, with no open-source implementation yet."
-    data-cap-6="Route 2: a judge model, pinned by model id, prompt digest and sampling settings. Each case reads met, not_met or not_evaluable, and cites the rubric used. Humans rate cases blind, and a judge's calibration agreement is stored as k of n, never as a rate. Designed: schemas and vectors, no open-source producer yet."
+    data-cap-6="Route 2: a judge model, pinned by model id, prompt digest and sampling settings. Each case reads met, not_met or not_evaluable, or out_of_scope where the requirement allows it, and cites the rubric used. Humans rate cases blind, and a judge's calibration agreement is stored as k of n, never as a rate. Designed: schemas and vectors, no open-source producer yet."
     data-cap-7="Route 3, the mesh case: twins and a referee. The referee re-answers one differing pair and signs a verdict record with epistemic type adjudication, citing both twins' halves by id. Built, not yet live."
     data-cap-8="Each route ends in a record whose epistemic type says how it was known: derived_metric for rules, semantic_judgment for a judge model, adjudication for a referee's ruling. The type is set at commit and never upgraded. The record cites what it judges by digest and names its judge and its basis."
     data-cap-9="A verifier checks the judgment's signature and what it cites. It cannot check that the judgment is right. &quot;Was the answer right?&quot; stays a judgment, marked as one, and is never folded into the evidence.">
@@ -115,8 +120,9 @@
         <text x="555" y="240" text-anchor="end" font-size="10" class="mono" fill="#5C6573">DESIGNED</text>
         <text x="309" y="260" font-size="12" class="mono" fill="#0B0E14">evaluation-report/v1</text>
         <text x="309" y="278" font-size="12" fill="#0B0E14">pinned: model, prompt, sampling</text>
-        <text x="309" y="296" font-size="12" class="mono" fill="#0B0E14">met | not_met | not_evaluable</text>
-        <text x="309" y="320" font-size="12" fill="#5C6573">blind human ratings · k of n</text>
+        <text x="309" y="292" font-size="12" class="mono" fill="#0B0E14">met | not_met | not_evaluable</text>
+        <text x="309" y="307" font-size="11" class="mono" fill="#0B0E14">| out_of_scope, where allowed</text>
+        <text x="309" y="324" font-size="12" fill="#5C6573">blind human ratings · k of n</text>
       </g>
 
       <!-- Step 7: twins + referee -->
@@ -181,8 +187,8 @@
       <div class="not"><b>Rejected:</b> trusting the record's own assurance block. &ldquo;A producer MUST NOT record an assurance mode it did not achieve; a verifier rederives each mode from the evidence present and reports any overclaim.&rdquo; (draft-mih-scitt-agent-action-capsule-05 §5.4, §5.4.1, §6; <code>verify.py</code> check 7)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> two answers kept apart on every claim: whether enough evidence existed to judge (<code>SATISFIED / GAP / INSUFFICIENT / UNKNOWN</code>), and only then the judgment (<code>met / not_met / not_evaluable</code>).</div>
-      <div class="not"><b>Rejected:</b> one pass/fail figure, and using <code>not_evaluable</code> for missing evidence. &ldquo;Every claim carries two answers that are never merged.&rdquo; (agent-action-capsule <code>spec/evidence-result-v0.md</code> §1, design specification)</div>
+      <div class="pick"><b>Chosen:</b> two answers kept apart on every claim: whether enough evidence existed to judge (<code>SATISFIED / GAP / INSUFFICIENT / UNKNOWN</code>), and only then the judgment (<code>met / not_met / not_evaluable</code>, or <code>out_of_scope</code> where the requirement carries <code>out_of_scope_allowed</code>, counted on its own and never as <code>met</code> or <code>not_evaluable</code>).</div>
+      <div class="not"><b>Rejected:</b> one pass/fail figure, and using <code>not_evaluable</code> for missing evidence. &ldquo;Every claim carries two answers that are never merged.&rdquo; (agent-action-capsule <code>spec/evidence-result-v0.md</code> §1, design specification; <code>out_of_scope</code> from <a href="https://github.com/action-state-group/agent-action-capsule/pull/368">#368</a> and, for judge records, <a href="https://github.com/action-state-group/agent-action-capsule/pull/373">#373</a>, both merged 2026-10-22)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> say how a result was produced: <code>recomputed</code> (a fixed function of cited inputs, no model or human) or <code>judged</code> (a model or a human applying judgment, pinned).</div>
@@ -228,7 +234,7 @@
 "findings": [{ "check": 7, "code": "assurance_overclaim", "severity": "info",
   "detail": "claimed cross_party_rung 'full_bilateral' but verifier derived 'unilateral_fallback' (§5.3 Cross-party assurance)" }],
 "ok": true</code></pre>
-  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/neg-cross-party-overclaim/{input,expected}.json</code> @ <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code> (also in tag <code>python/v0.10.0</code>). The detail string's §5.3 is a stale section number; the text is §5.4.1 in both -04 and -05.</p>
+  <p class="src">Source: <code>action-state-group/agent-action-capsule:vectors/capsule/neg-cross-party-overclaim/{input,expected}.json</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code> (also in tag <code>python/v0.10.0</code>). The detail string's §5.3 is a stale section number; the text is §5.4.1 in both -04 and -05.</p>
 
   <h3>A judgment record: the referee's signed verdict</h3>
   <p>The verdict a referee seals on a mesh twin pair, from the plugin's test fixture (placeholder node ids), trimmed:</p>
@@ -266,16 +272,17 @@
   <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
 
   <h2><span class="n">5</span>Status</h2>
+  <p class="legend">Tags, the same on every build page: <span class="tag live">live</span> in a tagged public release (a crate, package or release tag anyone can install) and on by default · <span class="tag built">built, not live</span> merged to a public main branch but in no release yet, or released but off by default or not yet exercised on a stock host (the row says which) · <span class="tag designed">designed</span> written down (text, sometimes vectors), no code · <span class="tag planned">planned</span> named as an open point and not designed, or left open on purpose. <span class="tag planned">not built</span> marks a piece no repository cited here has.</p>
   <div class="tw"><table class="t status">
     <thead><tr><th>Item</th><th>Status</th><th>Evidence</th></tr></thead>
     <tbody>
-      <tr><td>The verifier recomputes assurance and reports overclaims (check 7: <code>effect_mode</code> fails verification; <code>attestation_mode</code>, <code>ledger_mode</code>, <code>cross_party_rung</code> are reported as findings)</td><td class="tag built">built, released</td><td>agent-action-capsule <code>python/agent_action_capsule/verify.py</code> in tag <code>python/v0.10.0</code> (<code>f3dcc32213396f71218e0e33539869f99cff9c9e</code>); Go <code>go/verify/verify.go</code> and TypeScript <code>ts/src/verify.ts</code> on main <code>2ef8aeb49e2334e24c404bd62d3fdb161770873c</code>; vector <code>neg-cross-party-overclaim</code>.</td></tr>
-      <tr><td>A claimed time rung above what the record's references support fails verification (check 9, <code>provenance_time_rung_overclaim</code>)</td><td class="tag built">built, released</td><td>Same <code>verify.py</code> in <code>python/v0.10.0</code>; <code>provenance-mode-vectors/neg-provenance-mode-time-rung-overclaim</code> @ <code>2ef8aeb4</code>.</td></tr>
+      <tr><td>The verifier recomputes assurance and reports overclaims (check 7: <code>effect_mode</code> fails verification; <code>attestation_mode</code>, <code>ledger_mode</code>, <code>cross_party_rung</code> are reported as findings)</td><td class="tag live">live</td><td>agent-action-capsule <code>python/agent_action_capsule/verify.py</code> in tag <code>python/v0.10.0</code> (<code>f3dcc32213396f71218e0e33539869f99cff9c9e</code>); Go <code>go/verify/verify.go</code> and TypeScript <code>ts/src/verify.ts</code> on main <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>; vector <code>neg-cross-party-overclaim</code>.</td></tr>
+      <tr><td>A claimed time rung above what the record's references support fails verification (check 9, <code>provenance_time_rung_overclaim</code>)</td><td class="tag live">live</td><td>Same <code>verify.py</code> in <code>python/v0.10.0</code>; <code>provenance-mode-vectors/neg-provenance-mode-time-rung-overclaim</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>.</td></tr>
       <tr><td><code>epistemic_type</code> fixed at commit; an <code>adjudicates</code> link only on an <code>adjudication</code> record</td><td class="tag designed">designed</td><td>Specified in draft-mih-agent-evidence-layer-00 §4.1, §5. A conforming book refuses the mismatch.</td></tr>
-      <tr><td>Referee-signed verdict on a mesh twin pair</td><td class="tag notlive">built, not live</td><td>capsules v0.1.4 (<code>b4e24453</code>): <code>crates/evidence-plugin/src/referee/</code>, <code>crates/evidence-plugin/src/adjudication_records.rs</code>. <code>CHANGELOG.md</code> 0.1.4: &ldquo;A referee verdict on live hosts waits on 0.1.5; until then it is covered by tests only.&rdquo; See <a href="b4-use-case-evidence.html">b4</a>.</td></tr>
-      <tr><td>Judge record family: <code>evaluation-report/v1</code>, <code>adjudication/v1</code>, <code>human-rating/v1</code>, <code>calibration-summary/v1</code> and four more shapes</td><td class="tag designed">designed</td><td>agent-action-capsule <code>spec/judge-record-family-v1.md</code> (&ldquo;Design specification, pre-Internet-Draft&rdquo;), <code>schemas/judge/*.json</code>, <code>vectors/judge/</code> (one positive, one negative per shape) @ <code>2ef8aeb4</code>. Schemas and vectors are published; no open-source producer emits these shapes yet.</td></tr>
-      <tr><td>Evidence Result: sufficiency and verdict kept apart, tier <code>recomputed</code> / <code>judged</code></td><td class="tag designed">designed</td><td><code>spec/evidence-result-v0.md</code>, <code>schemas/evidence-result-v0.json</code>, <code>spec/evidence-plan-ir-v0.md</code> §4.2 @ <code>2ef8aeb4</code>; design specifications, pre-Internet-Draft.</td></tr>
-      <tr><td>A rules judge emitting <code>tier: recomputed</code> results</td><td class="tag designed">designed</td><td><code>spec/evidence-plan-ir-v0.md</code> §4.2 @ <code>2ef8aeb4</code> defines the tier; no open-source implementation.</td></tr>
+      <tr><td>Referee-signed verdict on a mesh twin pair</td><td class="tag built">built, not live</td><td>capsules v0.1.4 (<code>b4e24453</code>): <code>crates/evidence-plugin/src/referee/</code>, <code>crates/evidence-plugin/src/adjudication_records.rs</code>. <code>CHANGELOG.md</code> 0.1.4: &ldquo;A referee verdict on live hosts waits on 0.1.5; until then it is covered by tests only.&rdquo; See <a href="b4-use-case-evidence.html">b4</a>.</td></tr>
+      <tr><td>Judge record family: <code>evaluation-report/v1</code>, <code>adjudication/v1</code>, <code>human-rating/v1</code>, <code>calibration-summary/v1</code> and four more shapes</td><td class="tag designed">designed</td><td>agent-action-capsule <code>spec/judge-record-family-v1.md</code> (&ldquo;Design specification, pre-Internet-Draft&rdquo;), <code>schemas/judge/*.json</code>, <code>vectors/judge/</code> (at least one positive and one negative per shape) @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>. Schemas and vectors are published; no open-source producer emits these shapes yet.</td></tr>
+      <tr><td>Evidence Result: sufficiency and verdict kept apart, tier <code>recomputed</code> / <code>judged</code></td><td class="tag designed">designed</td><td><code>spec/evidence-result-v0.md</code>, <code>schemas/evidence-result-v0.json</code>, <code>spec/evidence-plan-ir-v0.md</code> §4.2 @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>; design specifications, pre-Internet-Draft. Verdicts are <code>met | not_met | not_evaluable | out_of_scope</code>; <code>out_of_scope</code> only where the requirement carries <code>out_of_scope_allowed</code> (#368, #373).</td></tr>
+      <tr><td>A rules judge emitting <code>tier: recomputed</code> results</td><td class="tag designed">designed</td><td><code>spec/evidence-plan-ir-v0.md</code> §4.2 @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code> defines the tier; no open-source implementation.</td></tr>
       <tr><td>The mesh plugin sealing <code>adjudication/v1</code> instead of its own block</td><td class="tag none">not built</td><td>The v0.1.4 fixture above carries <code>"schema": "capsule-emit-mesh/adjudication/v1"</code> and the legacy <code>chain.relation</code> spelling <code>adjudicates</code> (<code>spec/REGISTRY.md</code>, deployed legacy aliases); <code>judge-record-family-v1.md</code> §9 is the field map for the port.</td></tr>
     </tbody>
   </table></div>
@@ -286,7 +293,7 @@
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; §5.4 Assurance and §5.4.1 Cross-party assurance, where the verifier recomputes and reports overclaims; §6, Class 1 verification.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> signature on the act and on the judgment.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every digest a judgment cites covers.</li>
-    <li><span class="kind">Design spec</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/2ef8aeb49e2334e24c404bd62d3fdb161770873c/spec/judge-record-family-v1.md">judge-record-family-v1</a> &mdash; the shapes of a judgment record; not an Internet-Draft.</li>
+    <li><span class="kind">Design spec</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/062e89bd145d25d097f3b5e4540d69341fff9f1f/spec/judge-record-family-v1.md">judge-record-family-v1</a> &mdash; the shapes of a judgment record; not an Internet-Draft.</li>
     <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">action-state-group/agent-action-capsule</a> &mdash; the verifiers (Python, Go, TypeScript) and the overclaim vectors.</li>
     <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the referee and its signed verdict record.</li>
   </ul>

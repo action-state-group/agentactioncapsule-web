@@ -7,9 +7,15 @@
 <link rel="stylesheet" href="explain.css">
 <style>
   table.t td.tag{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-  table.t td.tag.built{color:var(--warn)}
-  table.t td.tag.designed{color:var(--muted)}
-  table.t td.tag.none{color:var(--bad)}
+  table.t td.tag.live{color:var(--verify)}
+  table.t td.tag.built{color:var(--accent)}
+  table.t td.tag.designed{color:var(--warn)}
+  table.t td.tag.none{color:var(--muted)}
+  span.tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:0 6px;border:1px solid var(--line);white-space:nowrap}
+  span.tag.live{color:var(--verify);background:var(--verify-soft);border-color:#A9D3BE}
+  span.tag.built{color:var(--accent);background:var(--accent-soft);border-color:#B9C6F2}
+  span.tag.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
+  span.tag.planned{color:var(--muted);background:var(--paper-2)}
   table.t.status td:first-child{white-space:normal;font-family:var(--sans);font-size:13.5px}
   table.t.status td:nth-child(3){white-space:normal;font-family:var(--sans);font-size:13px;color:var(--ink)}
 </style>
@@ -24,7 +30,7 @@
   <h1>Use-case evidence: twins and a referee</h1>
   <p class="seam"><b>Seam ③ Check/judge.</b> Build: a sampled twin comparison and a signed referee ruling. Conform to: <code>draft-mih-agent-bilateral-attestation-02</code> and <code>draft-mih-agent-evidence-layer-00</code> &sect;4.1, &sect;5.</p>
   <p class="lede">Sending a request to two nodes and comparing the answers tells you how often a pairing disagrees; asking a third node to re-answer one disagreeing pair and sign a ruling tells you which twin it agrees with, and when nobody can rule, the pair is left unruled rather than counted against anyone.</p>
-  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts recomputed from sealed records, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="9"
     data-cap-0="Press Play, or Step to walk through it."
@@ -36,7 +42,7 @@
     data-cap-6="Regime 2, adjudication: the operator turned the referee on. The client supplies the request and both answers; R keeps them only when their digests match the records. If both were answered at temperature 0 on the same model and weights, R compares them word by word and picks one eligible node, C: it serves the same model and weights, is neither twin, announced a key, and is not blocked or barred for that model. C re-answers the request at temperature 0. One call per pair, never retried."
     data-cap-7="C compares its re-answer with both twins at the earliest differing word, agrees with A, and signs a verdict on that one pair: contradicted:B. R holds it and counts it under B: contradicted 1. A count, never one blended number."
     data-cap-8="Same pair, a mesh with no eligible node: &quot;Not adjudicated: no eligible referee.&quot; No call is made and B is not contradicted. A missing ruling never counts against anyone."
-    data-cap-9="Both regimes rest on B's own claim about its weights. The route beyond self-report is hardware evidence of what was loaded, cited by digest from the record. In this plugin (v0.1.4) that slot is written empty: designed.">
+    data-cap-9="Both regimes rest on B's own claim about its weights. The route beyond self-report is hardware evidence of what was loaded, cited by digest from the record. In release v0.1.4 of this plugin that slot is written empty; capsules main, not yet released, fills it with a TDX quote bound to the record and checked offline (capsules PR 29).">
     <svg viewBox="0 0 860 460" role="img" aria-labelledby="b4-t b4-d">
       <title id="b4-t">The same bad provider under sampling only and under adjudication</title>
       <desc id="b4-d">Top band: a client, a requesting node R, two serving nodes A and B, and a compare box. Step 1: node B's record says weights W, like A's, but B runs another file. Step 2: the client marks three pairs with the header x-mesh-twin-bracket; R forwards one request of each pair to A and one to B with the header stripped; one extra request per marked pair. Step 3: R compares the answer digests in the twins' signed records: pair 1 the same, pairs 2 and 3 differ. Bottom left panel, sampling only with the referee off. Step 4: each differing pair reads Not adjudicated, the check is turned off; the Peers row reads twin pairs 3, answers differed 2, not adjudicated. Step 5: what this gives is a rate of differing pairs; it does not say which twin was wrong, nothing counts against either, routing is unchanged. Bottom right panel, with a referee. Step 6: the client supplies the texts, kept only when their digests match the records; for a temperature-0 pair on the same model and weights R compares them word by word and picks an eligible node C, which serves the same model and weights, is neither twin and has a key; C re-answers at temperature 0, one call per pair. Step 7: C signs a verdict on one pair, contradicted B; R counts it under B, contradicted 1. Step 8: with no eligible node, the pair reads Not adjudicated, no eligible referee, and B is not contradicted. Step 9: hardware evidence of what was loaded is the route beyond self-report; in this plugin at v0.1.4 the slot is written empty: designed.</desc>
@@ -148,7 +154,7 @@
       <g class="st" data-step="9">
         <rect x="449" y="408" width="387" height="38" rx="7" fill="#fff" stroke="#5C6573" stroke-dasharray="6 5"/>
         <text x="461" y="424" font-size="12" fill="#5C6573">Beyond self-report: hardware evidence of what B</text>
-        <text x="461" y="440" font-size="12" fill="#5C6573">loaded. v0.1.4: slot written empty · designed</text>
+        <text x="461" y="440" font-size="12" fill="#5C6573">loaded. v0.1.4: slot empty · main: TDX quote, unreleased</text>
         <path d="M580,140 L600,140 L600,168 L856,168 L856,427 L838,427" fill="none" stroke="#5C6573" stroke-width="1.3" stroke-dasharray="6 5" marker-end="url(#b4g)"/>
       </g>
     </svg>
@@ -197,7 +203,7 @@
       <div class="not"><b>Rejected:</b> on by default: asking a referee sends the twins' request, including the prompt, to a third node. (capsules <code>docs/SHARING-POLICY.md</code>; <code>CHANGELOG.md</code> 0.1.3)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> the record keeps a slot for hardware evidence and writes it empty when no quote was taken.</div>
+      <div class="pick"><b>Chosen:</b> the record keeps a slot for hardware evidence and writes it empty when no quote was taken. On capsules main (unreleased) a quote is taken only for a real client nonce, on a host whose report interface is TDX.</div>
       <div class="not"><b>Rejected:</b> filling it from what a node says about itself; a producer must not record an assurance mode it did not achieve, and the same rule applies here: no quote, no claim. (capsules <code>crates/evidence-plugin/src/producer/capsule.rs</code>, <code>tee_attestation</code>; draft-mih-scitt-agent-action-capsule-05 §5.4)</div>
     </div>
   </div>
@@ -217,7 +223,7 @@
       <li>Honesty across different hardware: exact replay can differ on different silicon for reasons unrelated to honesty, so such a mismatch is grounds to investigate, not a ruling.</li>
       <li>That the referee is independent of either twin; that is a claim about who runs it.</li>
       <li>Anything about a pair no client marked.</li>
-      <li>Hardware evidence: at v0.1.4 no hardware quote is taken.</li>
+      <li>Hardware evidence: at v0.1.4 no hardware quote is taken. On capsules main (unreleased), a TDX quote's platform status, revocation and measurements are not checked.</li>
     </ul></div>
   </div>
 
@@ -263,6 +269,7 @@
   <p class="src">Source: <code>Mesh-LLM/capsules:vectors/parity/referee/corpus/request.json</code> and <code>Mesh-LLM/capsules:vectors/parity/referee/rule_answers/request.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
 
   <h2><span class="n">5</span>Status</h2>
+  <p class="legend">Tags, the same on every build page: <span class="tag live">live</span> in a tagged public release (a crate, package or release tag anyone can install) and on by default · <span class="tag built">built, not live</span> merged to a public main branch but in no release yet, or released but off by default or not yet exercised on a stock host (the row says which) · <span class="tag designed">designed</span> written down (text, sometimes vectors), no code · <span class="tag planned">planned</span> named as an open point and not designed, or left open on purpose. <span class="tag planned">not built</span> marks a piece no repository cited here has.</p>
   <div class="tw"><table class="t status">
     <thead><tr><th>Item</th><th>Status</th><th>Evidence</th></tr></thead>
     <tbody>
@@ -272,7 +279,7 @@
       <tr><td>Referee: selection, re-answer, signed verdict, bar window; off by default</td><td class="tag built">built, not live</td><td>capsules v0.1.4 <code>crates/evidence-plugin/src/referee/</code>, <code>docs/TWIN-REFEREE-SELECTION.md</code>. <code>CHANGELOG.md</code> 0.1.4: &ldquo;A referee verdict on live hosts waits on 0.1.5; until then it is covered by tests only.&rdquo;</td></tr>
       <tr><td>Opt-in rule: stop routing to a peer after N referee-signed contradictions in D days</td><td class="tag built">built, not live</td><td>capsules v0.1.4 <code>docs/TWIN-REFEREE-SELECTION.md</code> §6, <code>crates/evidence-plugin/src/routing_rule.rs</code>; off by default, and it counts only referee-signed verdicts, which are not yet live.</td></tr>
       <tr><td>A host-side rate that duplicates a share of requests</td><td class="tag none">not built</td><td>No such setting in mesh-llm at <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> or in capsules v0.1.4; the host &ldquo;sends no second request&rdquo; (<code>docs/plugins/openai-exchange-lifecycle.md</code>).</td></tr>
-      <tr><td>Hardware evidence of what was loaded, cited by digest from the record</td><td class="tag designed">in this plugin: designed</td><td>capsules v0.1.4 <code>crates/evidence-plugin/src/producer/capsule.rs</code>: the <code>tee_attestation</code> slot is always written empty, &ldquo;no TEE quote measured &hellip; recorded absent, never fabricated&rdquo;.</td></tr>
+      <tr><td>Hardware evidence of what was loaded, cited by digest from the record</td><td class="tag built">built, not live</td><td>Release v0.1.4: <code>crates/evidence-plugin/src/producer/capsule.rs</code>, the <code>tee_attestation</code> slot is always written empty, &ldquo;no TEE quote measured &hellip; recorded absent, never fabricated&rdquo;. Capsules main, in no release yet: the slot carries a TDX DCAP v4 quote whose REPORT_DATA binds the exchange digests, the client nonce and the record key; before calling it bound the node checks offline the quote&#x27;s signatures and its PCK certificate chain to a pinned root; platform status, revocation and measurements are not checked (<a href="https://github.com/Mesh-LLM/capsules/pull/29">capsules PR 29</a>, merged 2026-10-14; <code>crates/evidence-plugin/src/producer/tee_attest.rs</code>, <code>CHANGELOG.md</code> &ldquo;Unreleased&rdquo; @ <code>424f2c749ecdbe2a1df2442c51f5c7b057c049f1</code>).</td></tr>
     </tbody>
   </table></div>
 

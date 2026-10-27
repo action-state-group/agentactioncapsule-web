@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>b1 · The seams the host exposes · build</title>
+<title>b1 · The hooks the host exposes · build</title>
 <link rel="stylesheet" href="explain.css">
 <style>
   /* page-local: status tags for section 5 */
@@ -12,8 +12,8 @@
   ul.status li:last-child{border-bottom:none}
   .tag{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;border-radius:4px;padding:0 6px;margin-right:6px;border:1px solid}
   .tag.live{color:var(--verify);background:var(--verify-soft);border-color:#A9D3BF}
-  .tag.built{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
-  .tag.designed{color:var(--accent);background:var(--accent-soft);border-color:#BFCBF3}
+  .tag.built{color:var(--accent);background:var(--accent-soft);border-color:#B9C6F2}
+  .tag.designed{color:var(--warn);background:var(--warn-soft);border-color:#E9CF9F}
   .tag.planned{color:var(--muted);background:var(--paper-2);border-color:var(--line)}
 </style>
 </head>
@@ -24,23 +24,23 @@
 </div></header>
 <main><div class="wrap">
   <div class="crumb">b1 / 11</div>
-  <h1>The seams the host exposes</h1>
+  <h1>The hooks the host exposes</h1>
   <p class="seam"><b>Seam ① Record.</b> Build: the host hooks a recorder needs: an exchange event naming both sides, a bound plugin key, capability flags, a page, stop routing. Conform to: <code>draft-mih-scitt-agent-action-capsule-05</code> for the record those events feed, <code>draft-mih-agent-bilateral-attestation-02</code> for the two sides.</p>
   <p class="lede">Before an evidence plugin can do its job, the host your agents run on has to hand it a few small, generic things: an event per exchange that names both sides, a way to vouch for the plugin's signing key, flags saying what it supports, a place on screen, and a way to stop routing to a peer.</p>
-  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts anyone can recompute, never a score.</li></ul></aside>
+  <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts recomputed from sealed records, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk through it."
-    data-cap-1="The host core seals no records: routing and peers, chat and console, logs, payment events, and a plugin host. What it adds for evidence is small and generic (an exchange event, a response marker and nonce, key announcements); each seam below is a hook any plugin can use, and in Mesh-LLM each one landed through its own pull requests."
-    data-cap-2="Seam 1: an event per exchange, naming both sides. Mesh-LLM's openai.exchange.v1 event carries digests of the request and response and serving_provenance: served_by_node_id and, on the serving side, requested_by_node_id, taken from the authenticated mesh connection, never from the request (PRs 1841, 1946, 2138). In release v0.78.1."
-    data-cap-3="Seam 2: a plugin key bound to the node key. A plugin asks its host to announce one Ed25519 public key; the host signs a binding with its node key and carries it in gossip, and a peer keeps it only if the binding verifies (PR 2299). Merged to main; not yet in a release."
-    data-cap-4="Seam 3: capability flags. The host says what it supports, so a plugin never reads a missing field as missing support: peer_blocks.v1 (PR 2142, in release v0.78.1) and plugin_keys.v1 (PR 2299, on main) in the plugin handshake, and capabilities.twin_bracket on GET /api/status (PR 2300, on main, not yet released)."
-    data-cap-5="Seam 4: a page and two slots. A plugin page may ask for a primary tab and the operator decides (PR 2130); a plugin can mount an element under each chat answer and in the Logs request inspector, and the host passes ids only (PR 2140). In release v0.78.1."
-    data-cap-6="Seam 5: stop routing to a peer. An operator can block a peer for seven days or until undone; a plugin may request the same, only if the operator set allow_peer_blocks for it. Blocks are local, never gossiped, and each change is published on routing.choice.v1 (PR 2142). In release v0.78.1."
-    data-cap-7="The evidence plugin uses all five; on seam 2 it reads peers' keys but does not yet announce its own. It ships as one plugin, not as core code: mesh-llm's default list pins capsules 0.1.4 by version and per-platform SHA-256 (list from PR 2188; entry and bundled-only install from PR 2337). On main, inert until a release bundles the archive; the operator can turn it off.">
+    data-cap-1="The host core seals no records: routing and peers, chat and console, logs, payment events, and a plugin host. What it adds for evidence is small and generic (an exchange event, a response marker and nonce, key announcements); each host hook below is one any plugin can use, and in Mesh-LLM each one landed through its own pull requests. These five host hooks are numbered apart from the five seams on the contents page."
+    data-cap-2="Hook 1: an event per exchange, naming both sides. Mesh-LLM's openai.exchange.v1 event carries digests of the request and response and serving_provenance: served_by_node_id and, on the serving side, requested_by_node_id, taken from the authenticated mesh connection, never from the request (PRs 1841, 1946, 2138). In release v0.78.1."
+    data-cap-3="Hook 2: a plugin key bound to the node key. A plugin asks its host to announce one Ed25519 public key; the host signs a binding with its node key and carries it in gossip, and a peer keeps it only if the binding verifies (PR 2299). Merged to main; not yet in a release."
+    data-cap-4="Hook 3: capability flags. The host says what it supports, so a plugin never reads a missing field as missing support: peer_blocks.v1 (PR 2142, in release v0.78.1) and plugin_keys.v1 (PR 2299, on main) in the plugin handshake, and capabilities.twin_bracket on GET /api/status (PR 2300, on main, not yet released)."
+    data-cap-5="Hook 4: a page and two slots. A plugin page may ask for a primary tab and the operator decides (PR 2130); a plugin can mount an element under each chat answer and in the Logs request inspector, and the host passes ids only (PR 2140). In release v0.78.1."
+    data-cap-6="Hook 5: stop routing to a peer. An operator can block a peer for seven days or until undone; a plugin may request the same, only if the operator set allow_peer_blocks for it. Blocks are local, never gossiped, and each change is published on routing.choice.v1 (PR 2142). In release v0.78.1."
+    data-cap-7="The evidence plugin uses all five; on hook 2, release v0.1.4 reads peers' keys but does not announce its own (capsules main does, PR 25, not yet released). It ships as one plugin, not as core code: mesh-llm's default list pins capsules 0.1.4 by version and per-platform SHA-256 (list from PR 2188; entry and bundled-only install from PR 2337), and the release build bundles that archive (PR 2546). All on main, in no mesh-llm release yet; the operator can turn it off.">
     <svg viewBox="0 0 860 430" role="img" aria-labelledby="anim-t anim-d">
-      <title id="anim-t">Five seams on a lean host core, and one evidence plugin attached to them</title>
-      <desc id="anim-d">A large box on the left is the Mesh-LLM host core, which seals no records, listing routing and peers, chat and console, logs, payment events and the plugin host. On its right edge are five sockets that light one at a time. Socket 1, green: exchange event naming both nodes, openai.exchange.v1, pull requests 1841, 1946 and 2138, in release v0.78.1. Socket 2, amber dashed: plugin key bound to the node key, pull request 2299, on main but not released. Socket 3, amber dashed: capability flags, plugin_keys.v1 from pull request 2299 and twin_bracket from pull request 2300 on main, and peer_blocks.v1 from pull request 2142, which is in release v0.78.1. Socket 4, green: a plugin page and two slots, pull requests 2130 and 2140. Socket 5, green: stop routing to a peer, peer blocks, pull request 2142, operator opt-in for a plugin. In the last step a box on the right, the evidence plugin, connects to all five sockets (on socket 2 it reads peers' keys but does not yet announce its own); a note says it is one pinned default plugin, pull requests 2188 and 2337, on main and inert until a release bundles it. A legend at the bottom: green means in release v0.78.1, amber dashed means merged to main, not yet in a release.</desc>
+      <title id="anim-t">Five host hooks on a lean host core, and one evidence plugin attached to them</title>
+      <desc id="anim-d">A large box on the left is the Mesh-LLM host core, which seals no records, listing routing and peers, chat and console, logs, payment events and the plugin host. On its right edge are five sockets that light one at a time. Socket 1, green: exchange event naming both nodes, openai.exchange.v1, pull requests 1841, 1946 and 2138, in release v0.78.1. Socket 2, amber dashed: plugin key bound to the node key, pull request 2299, on main but not released. Socket 3, amber dashed: capability flags, plugin_keys.v1 from pull request 2299 and twin_bracket from pull request 2300 on main, and peer_blocks.v1 from pull request 2142, which is in release v0.78.1. Socket 4, green: a plugin page and two slots, pull requests 2130 and 2140. Socket 5, green: stop routing to a peer, peer blocks, pull request 2142, operator opt-in for a plugin. In the last step a box on the right, the evidence plugin, connects to all five sockets (on socket 2, release v0.1.4 reads peers' keys but does not announce its own); a note says it is one pinned default plugin, pull requests 2188 and 2337, bundled into the release build by pull request 2546, all on main and in no release yet. A legend at the bottom: green means in release v0.78.1, amber dashed means merged to main, not yet in a release.</desc>
 
       <!-- Host core (always visible) -->
       <rect x="20" y="30" width="300" height="350" rx="12" fill="#F4F4F0" stroke="#5C6573"/>
@@ -113,7 +113,7 @@
         <text x="656" y="222" font-size="12" fill="#0B0E14">Evidence page, chips</text>
         <text x="656" y="258" font-size="12" fill="#0B0E14">opt-in stop-routing rule</text>
         <text x="656" y="300" font-size="12" fill="#3A5BD9">one pinned default plugin</text>
-        <text x="656" y="316" font-size="12" class="mono" fill="#3A5BD9">#2188 #2337</text>
+        <text x="656" y="316" font-size="12" class="mono" fill="#3A5BD9">#2188 #2337 #2546</text>
         <line x1="614" y1="80" x2="638" y2="110" stroke="#3A5BD9" stroke-width="1.2"/>
         <line x1="614" y1="150" x2="638" y2="146" stroke="#3A5BD9" stroke-width="1.2"/>
         <line x1="614" y1="220" x2="638" y2="182" stroke="#3A5BD9" stroke-width="1.2"/>
@@ -136,9 +136,9 @@
 
   <h2><span class="n">1</span>What it is</h2>
   <div class="what">
-    <p>A seam is a small, generic hook the host exposes so that a separate plugin, not the host itself, can keep evidence about what the host did.</p>
+    <p>A host hook is a small, generic interface the host exposes so that a separate plugin, not the host itself, can keep evidence about what the host did. This page numbers five of them; they are not the five seams (Record to View) on the <a href="index.html">contents page</a>.</p>
     <p>An evidence plugin needs the first of them to seal a single record: an event per exchange that names both nodes. The other four let it check peers' records (a key its peers can check), tell what the host supports (flags), show records (a page and slots), and act on what it finds (stop routing to a peer).</p>
-    <p>If you build agents on someone else's runtime, these are the things to ask that runtime's maintainers for; Mesh-LLM is the worked example, where each seam landed upstream through its own pull requests and the evidence code stayed outside core.</p>
+    <p>If you build agents on someone else's runtime, these are the things to ask that runtime's maintainers for; Mesh-LLM is the worked example, where each hook landed upstream through its own pull requests and the evidence code stayed outside core.</p>
   </div>
 
   <h2><span class="n">2</span>Design choices</h2>
@@ -156,7 +156,7 @@
       <div class="not"><b>Rejected:</b> operators copying each peer's key by hand, and the node key signing plugin data. (PR 2299)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> the host advertises each seam as a named capability (<code>plugin_keys.v1</code>, <code>peer_blocks.v1</code>, <code>capabilities.twin_bracket</code>); a plugin call against a host without <code>plugin_keys.v1</code> or <code>peer_blocks.v1</code> fails at once.</div>
+      <div class="pick"><b>Chosen:</b> the host advertises each hook as a named capability (<code>plugin_keys.v1</code>, <code>peer_blocks.v1</code>, <code>capabilities.twin_bracket</code>); a plugin call against a host without <code>plugin_keys.v1</code> or <code>peer_blocks.v1</code> fails at once.</div>
       <div class="not"><b>Rejected:</b> inferring support from an absent field: an exchange without <code>twin_bracket_id</code> may simply not have been marked. (PR 2300; <code>README.md</code> &ldquo;Plugin Keys&rdquo;, &ldquo;Peer Routing Blocks&rdquo;)</div>
     </div>
     <div class="choice">
@@ -178,7 +178,7 @@
     <div class="col yes"><h3>Shows</h3><ul>
       <li>Which node asked and which node served one exchange, as each node observed it, with digests of the request and response, so the two sides' records of one exchange can be matched.</li>
       <li>That a peer's node key vouched for a given plugin key (where the host lists it).</li>
-      <li>Whether a host supports a seam at all, from its own capability flags.</li>
+      <li>Whether a host supports a hook at all, from its own capability flags.</li>
       <li>Who stopped routing to a peer, and why, as a change published to local plugins.</li>
     </ul></div>
     <div class="col no"><h3>Does not show</h3><ul>
@@ -186,7 +186,7 @@
       <li>Anything about honest serving from the key binding: it says only that the node key vouched for the plugin key (PR 2299).</li>
       <li>Keys of peers you are not directly connected to: plugin keys are not relayed. A stable identity for client-only nodes is not addressed (PR 2299).</li>
       <li>Anything to other nodes from a block: it stays on this node and warns no one.</li>
-      <li>Any record at all: the seams carry events; sealing them is the plugin's job (next page).</li>
+      <li>Any record at all: the hooks carry events; sealing them is the plugin's job (next page).</li>
     </ul></div>
   </div>
 
@@ -238,7 +238,8 @@ pub struct ServingProvenance {
   <p class="src">Source: <code>Mesh-LLM/mesh-llm:mesh/crates/mesh-llm-host-runtime/src/plugin/openai_exchange.rs</code> @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> (main, 2026-10-19)</p>
 
   <h2><span class="n">5</span>Status</h2>
-  <p>&ldquo;Live&rdquo; here means in Mesh-LLM's latest release, v0.78.1 (<code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>); &ldquo;built, not live&rdquo; means merged to main @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> but not in a release yet.</p>
+  <p class="legend">Tags, the same on every build page: <span class="tag live">live</span> in a tagged public release (a crate, package or release tag anyone can install) and on by default · <span class="tag built">built, not live</span> merged to a public main branch but in no release yet, or released but off by default or not yet exercised on a stock host (the row says which) · <span class="tag designed">designed</span> written down (text, sometimes vectors), no code · <span class="tag planned">planned</span> named as an open point and not designed, or left open on purpose.</p>
+  <p>For the host, &ldquo;live&rdquo; here means in Mesh-LLM's latest release, v0.78.1 (<code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>); &ldquo;built, not live&rdquo; means merged to main @ <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code> but not in a release yet.</p>
   <ul class="status">
     <li><span class="tag live">live</span> Exchange event with digests and serving provenance (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/1841">PR 1841</a>, <a href="https://github.com/Mesh-LLM/mesh-llm/pull/1946">PR 1946</a>, merged), naming both nodes (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2138">PR 2138</a>, merged), on the paid serving path too (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2109">PR 2109</a>, merged), with <code>twin_bracket_id</code> (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2144">PR 2144</a>, merged).</li>
     <li><span class="tag live">live</span> A plugin page may ask for a primary tab (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2130">PR 2130</a>), can turn off the host's page header (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2141">PR 2141</a>), and two contribution slots (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2140">PR 2140</a>); all merged.</li>
@@ -246,8 +247,9 @@ pub struct ServingProvenance {
     <li><span class="tag live">live</span> Default-plugin mechanism (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2188">PR 2188</a>, merged): in v0.78.1 it downloads a pinned release on first run; the list is empty.</li>
     <li><span class="tag built">built, not live</span> Plugin key bound to the node key, <code>GET /api/plugin-keys</code> (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2299">PR 2299</a>, merged 2026-10-08).</li>
     <li><span class="tag built">built, not live</span> <code>capabilities.twin_bracket</code>; header stripped before forwarding (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">PR 2300</a>, merged 2026-10-11).</li>
-    <li><span class="tag built">built, not live</span> <code>capsules</code> 0.1.4 on the default list, installed only from a release's bundled archive; release archives carry none yet, so it is inert (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2337">PR 2337</a>, merged 2026-10-19; <code>mesh/docs/plugins/README.md</code> &ldquo;Default Plugins&rdquo;).</li>
-    <li><span class="tag live">released (capsules v0.1.4)</span> On the plugin side, <code>capsules</code> v0.1.4 subscribes to <code>openai.exchange.v1</code>, declares a primary-placement Evidence page and both slots, and asks the host for peer blocks; it reads peers' keys from <code>GET /api/plugin-keys</code> where the host announces them, which its INSTALL.md says has not yet run on a stock release. It does not yet announce its own key. (<code>Mesh-LLM/capsules:crates/evidence-plugin/src/main.rs</code>, <code>plugin.package.json</code>, <code>INSTALL.md</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>, tag v0.1.4)</li>
+    <li><span class="tag built">built, not live</span> <code>capsules</code> 0.1.4 on the default list, installed only from a release's bundled archive; the release build bundles that pinned archive since <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2546">PR 2546</a> (merged 2026-10-24, <code>3bddae6ddf05d9f8a075a76b9e9c1af136fd69ca</code>, after the main commit this page pins), and no mesh-llm release carries it yet, so on a stock release it is inert (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2337">PR 2337</a>, merged 2026-10-19; <code>mesh/docs/plugins/README.md</code> &ldquo;Default Plugins&rdquo;).</li>
+    <li><span class="tag live">live</span> On the plugin side, <code>capsules</code> v0.1.4 subscribes to <code>openai.exchange.v1</code>, declares a primary-placement Evidence page and both slots, and asks the host for peer blocks; it reads peers' keys from <code>GET /api/plugin-keys</code> where the host announces them, which its INSTALL.md says has not yet run on a stock release. Release v0.1.4 does not announce its own key. (<code>Mesh-LLM/capsules:crates/evidence-plugin/src/main.rs</code>, <code>plugin.package.json</code>, <code>INSTALL.md</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>, tag v0.1.4)</li>
+    <li><span class="tag built">built, not live</span> The plugin announces its own record key over <code>plugin_keys.v1</code> (<a href="https://github.com/Mesh-LLM/capsules/pull/25">capsules PR 25</a>, merged 2026-10-14, <code>69cbeee397e9979e066a9af755a079c660088180</code>); on capsules main @ <code>424f2c749ecdbe2a1df2442c51f5c7b057c049f1</code>, in no capsules release yet (latest v0.1.4).</li>
   </ul>
 
   <h2><span class="n">6</span>Specs</h2>
@@ -260,11 +262,11 @@ pub struct ServingProvenance {
   </ul>
 
   <h2><span class="n">7</span>What you need before the next step</h2>
-  <p>Write down the seams you will ask your own host for. A builder on any agent runtime can use this list:</p>
+  <p>Write down the host hooks you will ask your own host for. A builder on any agent runtime can use this list:</p>
   <ul>
     <li>An event per exchange (or per tool call, per task) with a stable id, digests of what went in and out, and the ids of both parties, taken from an authenticated channel.</li>
     <li>A way for your plugin's signing key to be vouched for by the host's own identity, and seen by peers.</li>
-    <li>Capability flags for each seam, so absence of data is never read as absence of support.</li>
+    <li>Capability flags for each hook, so absence of data is never read as absence of support.</li>
     <li>A page and a slot or two next to the host's own rows, where the host passes ids only.</li>
     <li>A local, operator-controlled &ldquo;stop sending work to this party&rdquo; that a plugin can request only with the operator's opt-in.</li>
     <li>A way to ship as one removable, pinned plugin rather than as core code.</li>
