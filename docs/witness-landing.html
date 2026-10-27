@@ -261,7 +261,7 @@
 <p class="lede">You probably followed a link from a checkpoint, a receipt, or a post about one. This witness is <strong>a SCITT Transparency Service that registers checkpoints under a <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">published consistency policy</a></strong> (SCITT is the IETF architecture in RFC&nbsp;9943). Here's the whole idea in about five minutes: what a checkpoint is, what this service does and does not show, and how to check any of it yourself &mdash; without asking you to trust us.</p>
 
 <h2>What is a checkpoint?</h2>
-<p>A checkpoint is one signed value &mdash; a 32-byte root, signed: about 300&ndash;500 bytes on the wire &mdash; that commits an entire log's history to date. Whoever holds the log can recompute that value from every entry they've recorded; if even one byte of one past entry changed, the checkpoint would no longer match. It's <strong>registered</strong> when a Transparency Service its owner does not run records it in its own log and returns a Receipt. The Receipt proves the checkpoint is in that log; it does not say the service agrees with what the log contains. That is what turns "trust me, my log is complete" into something a stranger &mdash; you &mdash; can check.</p>
+<p>A checkpoint is one signed value &mdash; a 32-byte root, signed &mdash; that commits an entire log's history to date. Whoever holds the log can recompute that value from every entry they've recorded; if even one byte of one past entry changed, the checkpoint would no longer match. It's <strong>registered</strong> when a Transparency Service its owner does not run records it in its own log and returns a Receipt. The Receipt proves the checkpoint is in that log; it does not say the service agrees with what the log contains. That is what turns "trust me, my log is complete" into something a stranger &mdash; you &mdash; can check.</p>
 
 <h2>What this witness shows &mdash; and what it never does</h2>
 <p>A witness is infrastructure, not a verdict. It commits to three things, checkable from the bytes alone:</p>
@@ -331,6 +331,7 @@
           <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">Disclosure envelope &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">Evidence Bundle &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">Evidence Request &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">Evidence layer &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">Settlement records &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">Bilateral attestation &#x2197;</a>

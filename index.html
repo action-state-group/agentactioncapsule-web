@@ -563,7 +563,7 @@ from capsule_emit.adapters.strands_listener import StrandsCapsuleListener
 
 listener = StrandsCapsuleListener(operator="acme-co", developer="my-agent@v1")
 agent = Agent(model=None, tools=[], hooks=[listener])  # your model and tools here</code></pre></div>
-        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/strands.md">Strands Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/strands.md#version" style="color:var(--muted);text-decoration:underline">verified against capsule-emit 0.8.6 · strands-agents 1.54.0–1.56.0 ↗</a></span>
+        <a class="sw-link" href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/strands.md">Strands Agents adapter docs ↗</a> <span style="color:var(--muted);font-size:13px">· <a href="https://github.com/action-state-group/capsule-emit/blob/main/docs/adapters/strands.md#version" style="color:var(--muted);text-decoration:underline">verified against capsule-emit 0.8.1 · strands-agents 1.54.0–1.56.0 ↗</a></span>
       </div>
 
       <p class="sw-note">Don't see your framework? The base is ~30 lines — <a href="https://github.com/action-state-group/capsule-emit" style="color:var(--accent);text-decoration:none">add an adapter or open a request ↗</a>. Full guides live in <a href="https://github.com/action-state-group/capsule-emit/tree/main/docs/adapters" style="color:var(--accent);text-decoration:none">capsule-emit/docs/adapters</a>.</p>
@@ -808,14 +808,14 @@ capsule-emit verify --store ./capsule-ledger
   <div class="wrap">
     <div class="sec-head">
       <span class="eyebrow">Checkpointed local log</span>
-      <h2>Register one action, or checkpoint your whole log — <code>~300 bytes</code>, any volume.</h2>
-      <p>The witness answers two different requests. <code>POST /register</code> commits one record and hands back a receipt for it. <code>POST /checkpoints</code> — the default route every <code>capsule-emit</code> client uses — commits a signed snapshot of your entire local log (kept by <a href="https://github.com/action-state-group/checkpointed-local-log" style="color:var(--accent);text-decoration:none"><code>checkpointed-local-log</code></a>, CLL) at once. A checkpoint's cost doesn't grow with your log: measured against the reference implementation, a signed checkpoint runs <strong>roughly 300–500 content-free bytes</strong> whether your log holds one record or a million.</p>
+      <h2>Register one action, or checkpoint your whole log — one signed snapshot, any volume.</h2>
+      <p>The witness answers two different requests. <code>POST /register</code> commits one record and hands back a receipt for it. <code>POST /checkpoints</code> — the default route every <code>capsule-emit</code> client uses — commits a signed snapshot of your entire local log (kept by <a href="https://github.com/action-state-group/checkpointed-local-log" style="color:var(--accent);text-decoration:none"><code>checkpointed-local-log</code></a>, CLL) at once. A checkpoint is one signed, content-free value, so you send one per checkpoint rather than one per record, whether your log holds one record or a million.</p>
     </div>
     <table class="fit">
       <thead><tr><th></th><th><code>POST /register</code></th><th><code>POST /checkpoints</code></th></tr></thead>
       <tbody>
         <tr><th>Granularity</th><td>one record</td><td>the whole log</td></tr>
-        <tr><th>What leaves</th><td>a digest per action, and its timing</td><td><strong>~300–500 content-free bytes</strong>, covering any number of records</td></tr>
+        <tr><th>What leaves</th><td>a digest per action, and its timing</td><td><strong>one signed, content-free checkpoint</strong>, covering any number of records</td></tr>
         <tr><th>You get back</th><td>a receipt with an inclusion proof, usable immediately</td><td>a receipt for the signed checkpoint, pinning your history outside you</td></tr>
         <tr><th>Cost shape</th><td>one round-trip per action</td><td>flat, regardless of volume</td></tr>
         <tr><th>Needs</th><td>nothing extra</td><td>your own local log (<code>checkpointed-local-log</code>)</td></tr>
@@ -937,7 +937,7 @@ capsule-emit verify --store ./capsule-ledger
     <!--chrome:specs--><div class="sec-head" id="specifications" style="margin-top:44px;margin-bottom:20px">
       <span class="eyebrow">Specifications</span>
       <h2 style="font-size:clamp(18px,2vw,24px);letter-spacing:-0.4px;margin:8px 0 8px">The Internet-Drafts, their vectors, and the code that implements them.</h2>
-      <p>Each is an individual Internet-Draft submitted for discussion &mdash; not adopted by a working group, and not a standard. Revisions are read from the IETF Datatracker when the site is built (last read 2026-10-22 UTC).</p>
+      <p>Each is an individual Internet-Draft submitted for discussion &mdash; not adopted by a working group, and not a standard. Revisions are read from the IETF Datatracker when the site is built (last read 2026-10-27 UTC).</p>
     </div>
     <ul class="spec-list">
       <li><span class="sp-short">AAC</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule <code>-05</code> &#x2197;</a></li>
@@ -945,8 +945,8 @@ capsule-emit verify --store ./capsule-ledger
       <li><span class="sp-short">Disclosure envelope</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">draft-mih-agent-disclosure-envelope <code>-00</code> &#x2197;</a></li>
       <li><span class="sp-short">Evidence Bundle</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle <code>-01</code> &#x2197;</a></li>
       <li><span class="sp-short">Evidence Request</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request <code>-00</code> &#x2197;</a></li>
-      <li><span class="sp-short">Evidence layer</span> &mdash; not yet posted</li>
-      <li><span class="sp-short">CPB</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding <code>-05</code> &#x2197;</a></li>
+      <li><span class="sp-short">Evidence layer</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer <code>-00</code> &#x2197;</a></li>
+      <li><span class="sp-short">CPB</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding <code>-06</code> &#x2197;</a></li>
       <li><span class="sp-short">Settlement records</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records <code>-00</code> &#x2197;</a></li>
       <li><span class="sp-short">Bilateral attestation</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation <code>-02</code> &#x2197;</a></li>
       <li><span class="sp-short">Composition</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sato-agent-accountability-composition/">draft-mih-sato-agent-accountability-composition <code>-01</code> &#x2197;</a></li>
@@ -988,6 +988,7 @@ capsule-emit verify --store ./capsule-ledger
           <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">Disclosure envelope &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">Evidence Bundle &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">Evidence Request &#x2197;</a>
+          <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">Evidence layer &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">CPB &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">Settlement records &#x2197;</a>
           <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">Bilateral attestation &#x2197;</a>

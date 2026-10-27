@@ -33,6 +33,14 @@
       "title": "Disclosure Envelope Profile for Agent Action Capsules",
       "updated": "2026-09-27"
     },
+    "draft-mih-agent-evidence-layer": {
+      "expires": "2027-04-08",
+      "rev": "00",
+      "state": "Active",
+      "stream": null,
+      "title": "Evidence Layer",
+      "updated": "2026-10-05"
+    },
     "draft-mih-agent-evidence-request": {
       "expires": "2027-03-31",
       "rev": "00",
@@ -82,12 +90,12 @@
       "updated": "2026-10-14"
     },
     "draft-mih-sokolov-scitt-payload-binding": {
-      "expires": "2027-03-17",
-      "rev": "05",
+      "expires": "2027-04-29",
+      "rev": "06",
       "state": "Active",
       "stream": null,
       "title": "Canonicalization Declaration for SCITT Signed Statements",
-      "updated": "2026-09-13"
+      "updated": "2026-10-26"
     },
     "draft-mih-zhang-agent-disclosure-bundle": {
       "expires": "2027-04-23",
@@ -98,5 +106,5 @@
       "updated": "2026-10-20"
     }
   },
-  "fetched": "2026-10-22"
+  "fetched": "2026-10-27"
 }
