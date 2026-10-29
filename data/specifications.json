@@ -3,7 +3,7 @@
   "drafts": [
     {"name": "draft-mih-scitt-agent-action-capsule", "short": "AAC", "role": "family",
      "vectors": [["agent-action-capsule/vectors", "https://github.com/action-state-group/agent-action-capsule/tree/main/vectors"]],
-     "impls": ["agent-action-capsule", "capsule-emit", "capsule-emit-go", "capsule-emit-ts", "evidencebook", "cigar-aac-demo"]},
+     "impls": ["agent-action-capsule", "capsule-emit", "capsule-emit-go", "capsule-emit-ts", "evidencebook", "cigar-aac-demo", "dps-scitt-decision-layer", "scitt-capsule-anchor"]},
     {"name": "draft-mih-scitt-agent-action-capsule-sel-disc", "short": "Selective disclosure", "role": "family",
      "vectors": [],
      "impls": ["agent-action-capsule"]},
@@ -20,7 +20,7 @@
      "vectors": [], "impls": ["evidencebook"]},
     {"name": "draft-mih-sokolov-scitt-payload-binding", "short": "CPB", "role": "family",
      "vectors": [["scitt-payload-binding/vectors", "https://github.com/action-state-group/scitt-payload-binding/tree/main/vectors"]],
-     "impls": ["scitt-payload-binding"]},
+     "impls": ["scitt-payload-binding", "dps-scitt-decision-layer", "receipt-verify"]},
     {"name": "draft-mih-agent-settlement-records", "short": "Settlement records", "role": "family",
      "vectors": [["agent-action-capsule/vectors/settlement", "https://github.com/action-state-group/agent-action-capsule/tree/main/vectors/settlement"],
                  ["capsule-emit/test-vectors/settlement-records", "https://github.com/action-state-group/capsule-emit/tree/main/test-vectors/settlement-records"]],
@@ -87,6 +87,15 @@
      "links": [["Repository", "https://github.com/action-state-group/evidencebook"], ["Design and spec mapping", "https://github.com/action-state-group/evidencebook/blob/main/docs/design.md"], ["Releases", "https://github.com/action-state-group/evidencebook/releases"]]},
     {"id": "cigar-aac-demo", "language": "JavaScript, Python",
      "what": "Independent demo by Ty (Patches) Smith at HOL: compiles governed context with CIGAR, then records the action as an AAC <code>-05</code> capsule with a local checkpoint witness and optional Hedera testnet publication; an in-page verifier names the failures when the evidence is edited.",
-     "links": [["Repository", "https://github.com/hashgraph-online/cigar-aac-demo"]]}
+     "links": [["Repository", "https://github.com/hashgraph-online/cigar-aac-demo"]]},
+    {"id": "dps-scitt-decision-layer", "language": "Python",
+     "what": "Independent interop work by Laurent Lemonnier, the source of <code>draft-lemonnier-scitt-decision-provenance</code>. <code>interop/aac/</code> holds eight cases (01&ndash;08) in which an AAC capsule built with the <code>agent-action-capsule</code> 0.12.0 library cites a decision record and its attachment by CPB typed digest references, checked on both sides; each case folder records what each side reported. They include an altered digest, a re-encoded record, a <code>capsule_id</code> registered with a COSE Receipt, a Producer Envelope, and a CPB-bound Signed Statement with failing variants.",
+     "links": [["Repository", "https://github.com/Laurent-Lemonnier/dps-scitt-decision-layer"], ["interop/aac", "https://github.com/Laurent-Lemonnier/dps-scitt-decision-layer/tree/main/interop/aac"]]},
+    {"id": "receipt-verify", "language": "TypeScript",
+     "what": "Independent implementation by Michael Msebenzi of CPB &sect;4.1 (with &sect;5, &sect;5.1 and &sect;7.1), written from the <code>-02</code> draft text, in the repository&rsquo;s <code>cpb/</code>. It runs the <code>scitt-payload-binding</code> vectors at commit <code>e0ad1c7</code> and logs each reading the draft text left open. The same repository publishes the npm package <code>@headlessoracle/receipt-verify</code>, a cross-format agent-receipt verifier.",
+     "links": [["Repository", "https://github.com/LembaGang/receipt-verify"], ["cpb/", "https://github.com/LembaGang/receipt-verify/tree/master/cpb"]]},
+    {"id": "scitt-capsule-anchor", "language": "Python",
+     "what": "Worked example by giskard09: builds a synthetic capsule in the AAC <code>-02</code> format, computes its <code>capsule_id</code> as that draft defines it, and records the id in a registry contract on a public blockchain; <code>verifier/verify.py</code> recomputes it. It makes no COSE Signed Statement and no Transparency Service receipt (<code>PROVENANCE.md</code>). The README states an MIT licence.",
+     "links": [["Repository", "https://github.com/giskard09/scitt-capsule-anchor"], ["PROVENANCE.md", "https://github.com/giskard09/scitt-capsule-anchor/blob/master/PROVENANCE.md"]]}
   ]
 }
