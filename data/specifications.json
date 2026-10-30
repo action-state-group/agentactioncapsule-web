@@ -126,7 +126,7 @@
      "links": [["Repository", "https://github.com/syncom-systems/mcp-re"], ["Interop test", "https://github.com/syncom-systems/mcp-re/blob/main/mcp-re-conformance/tests/scitt_interop_test.rs"], ["Exchange record", "https://github.com/syncom-systems/mcp-re/blob/main/mcp-re-conformance/tests/vectors/scitt/interop/capsule-anchor-live/exchange-metadata.json"]]},
     {"id": "treeship", "independent": true, "language": "Rust",
      "what": "Partial: <code>core::jcs</code> adds <code>capsule_digest</code>, SHA-256 over RFC 8785 JCS as the AAC profile specifies, beside Treeship&rsquo;s own signing encoding. It is additive; nothing is signed with it.",
-     "links": [["Repository", "https://github.com/zerkerlabs/treeship"], ["Source", "https://github.com/zerkerlabs/treeship/blob/main/packages/core/src/jcs.rs"], ["Changelog entry", "https://github.com/zerkerlabs/treeship/blob/main/changelog.d/jcs-capsule-digest.md"]]},
+     "links": [["Repository", "https://github.com/zerkerlabs/treeship"], ["Source", "https://github.com/zerkerlabs/treeship/blob/main/packages/core/src/jcs.rs"], ["Release v0.32.0", "https://github.com/zerkerlabs/treeship/releases/tag/v0.32.0"]]},
     {"id": "arcs-verify", "independent": true, "language": "Python",
      "what": "An experimental offline SCITT registration verifier that uses <code>scitt-cose</code> as its backend, pinned by commit and by per-file digest.",
      "links": [["Repository", "https://github.com/thelaplage/arcs-verify"], ["Backend pin", "https://github.com/thelaplage/arcs-verify/blob/main/arcs_verify/contracts/scitt-registration/v0.1/source-pin.json"], ["Offline run", "https://github.com/thelaplage/arcs-verify/blob/main/docs/scitt-offline/README.md"]]},
