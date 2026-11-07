@@ -39,7 +39,7 @@
     {"name": "draft-bryce-cose-receipts-mmr-profile", "short": "MMR receipt profile", "role": "dependency",
      "vectors": [["checkpointed-local-log/mmr-profile-vectors", "https://github.com/action-state-group/checkpointed-local-log/tree/main/mmr-profile-vectors"]],
      "impls": []},
-    {"name": null, "short": "COSE deterministic encodings", "role": "family", "search": "cose-deterministic-encodings",
+    {"name": "draft-mih-sokolov-cose-deterministic-encodings", "short": "COSE deterministic encodings", "role": "family", "search": "cose-deterministic-encodings",
      "vectors": [], "impls": []}
   ],
   "implementations": [
@@ -108,7 +108,7 @@
      "links": [["Repository", "https://github.com/Agent-Authority-Conformance/aps-conformance-suite"], ["Composition run", "https://github.com/Agent-Authority-Conformance/aps-conformance-suite/blob/main/interop/mih-sato-composition-00/README.md"], ["SCITT COSE vectors run", "https://github.com/Agent-Authority-Conformance/aps-conformance-suite/blob/main/interop/scitt-cose-vectors-ietf126/README.md"]]},
     {"id": "agent-evidence-vectors", "independent": true, "language": "Python, Go",
      "what": "Its own conformance cases for CLL <code>-02</code>: checkpoint verification (&sect;4.3) and the Consistency Registration Policy (&sect;4.5), built on the CLL vectors vendored at a pinned digest. A Python generator and checker, and a separate Go reader with its own CBOR decoder.",
-     "links": [["Repository", "https://github.com/probityai/agent-evidence-vectors"], ["CLL cases", "https://github.com/probityai/agent-evidence-vectors/blob/main/vectors-ietf-agent-record-drafts/README.md"], ["Go reader", "https://github.com/probityai/agent-evidence-vectors/blob/main/corpora/ietfagentrecord.go"]]},
+     "links": [["Repository", "https://github.com/probityai/agent-evidence-vectors"], ["CLL cases", "https://github.com/probityai/agent-evidence-vectors/blob/main/corpora/vectors-ietf-agent-record-drafts/README.md"], ["Go reader", "https://github.com/probityai/agent-evidence-vectors/blob/main/corpusreaders/ietfagentrecord.go"]]},
     {"id": "plimsoll", "independent": true, "language": "Go",
      "what": "<code>examples/capsule</code> states each call in plimsoll&rsquo;s published session bundle as an AAC <code>-05</code> capsule, once plimsoll&rsquo;s own verifier has accepted the record, then checks the capsules with the capsule project&rsquo;s Go verifier and its Python reference verifier, including copies broken on purpose. CI runs it (<code>make capsule-suite</code>).",
      "links": [["Repository", "https://github.com/plimsollmark/plimsoll"], ["Capsule example", "https://github.com/plimsollmark/plimsoll/blob/main/examples/capsule/README.md"], ["CI workflow", "https://github.com/plimsollmark/plimsoll/blob/main/.github/workflows/audit.yml"]]},
