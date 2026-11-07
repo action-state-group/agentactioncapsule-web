@@ -12,7 +12,7 @@
   <nav><a href="02-aac.html">&larr; Prev</a><a href="index.html">Contents</a><a href="04-cpb.html">Next &rarr;</a></nav>
 </div></header>
 <main><div class="wrap">
-  <div class="crumb">03 / 11</div>
+  <div class="crumb">03 / 16</div>
   <h1>COSE and deterministic encoding</h1>
   <p class="lede">A signature over a digest checks only if the verifier hashes the same bytes the signer hashed, so a structured record must turn into exactly one byte string.</p>
 
@@ -111,13 +111,13 @@
   <div class="what">
     <p>A COSE_Sign1 (RFC 9052) is a CBOR structure holding a protected header, an unprotected header, a payload, and one signature computed over the encoded protected header and the payload.</p>
     <p>A signature over a digest can be checked only by hashing exactly the bytes the signer hashed, so two implementations that rebuild those bytes from the same structured record must encode it the same way.</p>
-    <p>JSON records here use the JSON Canonicalization Scheme (JCS, RFC 8785), and for CBOR content the COSE deterministic encodings Internet-Draft in preparation lets a COSE Hash Envelope name the deterministic encoding that was applied.</p>
+    <p>JSON records here use the JSON Canonicalization Scheme (JCS, RFC 8785), and for CBOR content the COSE deterministic encodings Internet-Draft (<a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-cose-deterministic-encodings/">draft-mih-sokolov-cose-deterministic-encodings-00</a>, posted 2026-10-29) lets a COSE Hash Envelope name the deterministic encoding that was applied.</p>
   </div>
 
   <h2><span class="n">2</span>Design choices</h2>
   <div class="choices">
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> the Producer Envelope's payload is the raw 32 bytes of <code>capsule_id</code>; the protected header holds exactly <code>alg</code> -8 (Ed25519), content type <code>application/agent-action-capsule-id</code>, and <code>kid</code> (the raw 32-byte public key); the unprotected header is empty.</div>
+      <div class="pick"><b>Chosen:</b> the Producer Envelope's payload is the raw 32 bytes of <code>capsule_id</code>; the protected header holds exactly <code>alg</code> -8 (EdDSA), content type <code>application/agent-action-capsule-id</code>, and <code>kid</code> (the raw 32-byte public key); the unprotected header is empty.</div>
       <div class="not"><b>Rejected:</b> signing hex text or the Capsule JSON. The envelope signs the stable identity, so the Capsule needs no re-serialization at verify time. (draft-mih-scitt-agent-action-capsule-05 §3.1)</div>
     </div>
     <div class="choice">
@@ -133,7 +133,7 @@
       <div class="not"><b>Rejected:</b> JSON floats. JCS fixes one output per double, but two parsers can round the same literal to different doubles, and then no canonicalization helps. (draft-mih-scitt-agent-action-capsule-05 §2; draft-mih-sokolov-scitt-payload-binding-06 §13.3)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> for CBOR, a protected Hash Envelope header parameter, <code>payload-preimage-encoding</code>, whose value comes from a small registry; its initial entry is <code>core-deterministic</code> (<a href="https://www.rfc-editor.org/rfc/rfc8949">RFC 8949</a> §4.2.1).</div>
+      <div class="pick"><b>Chosen:</b> for CBOR, a protected Hash Envelope header parameter, <code>deterministic-encodings</code>, whose value comes from a small registry; its initial entry is <code>core-deterministic</code> (<a href="https://www.rfc-editor.org/rfc/rfc8949">RFC 8949</a> §4.2.1).</div>
       <div class="not"><b>Rejected:</b> a media-type parameter on <code>preimage-content-type</code> (259). <code>application/cbor</code> defines no parameters, so one would be needed per media type, and a CoAP Content-Format number per pairing. (COSE deterministic encodings, Introduction)</div>
     </div>
     <div class="choice">
@@ -147,7 +147,7 @@
     <div class="col yes"><h3>Shows</h3><ul>
       <li>That two independent implementations derive the same bytes, and so the same digest, from the same record when both apply the declared encoding.</li>
       <li>Which key signed the 32-byte identity: the envelope signature verifies under the public key in <code>kid</code>.</li>
-      <li>Which encoding produced a Hash Envelope preimage, when <code>payload-preimage-encoding</code> is present.</li>
+      <li>Which encoding produced a Hash Envelope preimage, when <code>deterministic-encodings</code> is present.</li>
       <li>That a digest mismatch under a declared encoding is not an encoder disagreement: the value differs, whether by edit or by a parser that read it differently (see the next column).</li>
     </ul></div>
     <div class="col no"><h3>Does not show</h3><ul>
@@ -210,7 +210,7 @@ expected.json
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; CBOR Object Signing and Encryption (COSE): COSE_Sign1.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme (JCS).</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9995">RFC 9995</a> &mdash; COSE Hash Envelope: signs the digest of a preimage held elsewhere.</li>
-    <li><span class="kind">In preparation</span> <a href="https://github.com/action-state-group/cose-deterministic-encodings">COSE deterministic encodings (Internet-Draft in preparation)</a> &mdash; the <code>payload-preimage-encoding</code> parameter and a registry of deterministic encodings.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-cose-deterministic-encodings/">draft-mih-sokolov-cose-deterministic-encodings-00</a> &mdash; the <code>deterministic-encodings</code> parameter and a registry of deterministic encodings; posted 2026-10-29.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the Producer Envelope wire profile and the format-4 JCS rules.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-sokolov-scitt-payload-binding/">draft-mih-sokolov-scitt-payload-binding-06</a> &mdash; how a Signed Statement declares its canonicalization (page 04).</li>
     <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/agent-action-capsule">action-state-group/agent-action-capsule</a> &mdash; canonicalization edge-case vectors under <code>vectors/capsule/</code>.</li>
