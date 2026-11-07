@@ -821,7 +821,7 @@ PAGES["what-is-a-capsule"] = dict(
     <tr><th>capsule_id</th><td>SHA-256 of the canonical capsule &mdash; the seal / content address.</td></tr>
     <tr><th>action / operator / developer / timestamp</th><td>what was done, the accountable tenant, the agent identity@version, and when.</td></tr>
     <tr><th>disposition</th><td>the <strong>may/did</strong> verdict &mdash; a registered <code>verdict_class</code> such as <code>executed</code>, <code>blocked</code>, <code>denied</code>, <code>timeout</code> or <code>errored</code> (the <a class="ln" href="/docs/glossary.html#disposition">full list</a>), plus who disposed it and an honest human-in-the-loop flag.</td></tr>
-    <tr><th>effect</th><td>what was committed, plus the <strong>confirmed-effect binding</strong> so the claim and the outcome can't drift apart.</td></tr>
+    <tr><th>effect</th><td>what was committed, plus the <strong>confirmed-effect binding</strong> so the claim can be checked against the outcome that was recorded.</td></tr>
     <tr><th>model_attestation</th><td>which model decided, with the <strong>full input</strong> it saw (system prompt, context, tool definitions, and the action's arguments) and the <strong>output</strong> each <strong>committed as a digest</strong> (fixed-size; raw values, however large or sensitive, are never stored) plus best-effort compute.</td></tr>
     <tr><th>assurance</th><td>how far to trust it: attestation / effect / ledger modes.</td></tr>
     <tr><th>chain</th><td>the link to this producer's own previous capsule: a <code>parent_capsule_id</code> plus a registered relation (<code>follows</code>, <code>confirms</code>, <code>supersedes</code>, <code>epoch_opens</code>, <code>duplicates</code>). Same stream only; a citation of anything else &mdash; another producer's record, a grant, a receipt &mdash; goes in <code>references</code>.</td></tr>
@@ -842,7 +842,7 @@ PAGES["what-is-a-capsule"] = dict(
 <h2>What a capsule does not establish</h2>
 <p>Honest claims matter. Know the limits before relying on this for audit or compliance:</p>
 <ul>
-  <li><strong>Attested, not verified.</strong> A capsule records what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one does.</li>
+  <li><strong>Attested, not verified.</strong> A capsule records what the agent <em>attested</em> it did &mdash; not that the real-world effect occurred. A <code>dispatched</code> capsule does not mean the write landed; a <code>confirmed</code> one records that a reply or receipt was observed.</li>
   <li><strong>No anti-omission property.</strong> A capsule shows <em>this</em> action was recorded. It does not prevent an operator from simply not emitting a capsule for an action they'd rather not surface.</li>
   <li><strong>Signer = key-holder.</strong> The signature proves who held the signing key at the moment of sealing &mdash; not that the named agent actually ran the action. Key-management discipline is outside the capsule.</li>
   <li><strong>A hash alone names no one.</strong> Without a Producer Envelope, a capsule is tamper-evident but says nothing about who sealed it. The specification allows that; the reference producer does not do it by default (see <em>What is signed by default</em>, above).</li>
@@ -900,7 +900,7 @@ PAGES["what-is-a-transparency-service"] = dict(
     body="""
 <h1>What is a Transparency Service?</h1>
 <p class="lede">A Transparency Service (TS) registers signed statements in an append-only log and issues a receipt proving inclusion &mdash; so a record can be shown to exist, and a later attempt to drop or rewrite it would be detectable.</p>
-<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
+<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. Nothing leaves your process until you name a witness (<code>CAPSULE_WITNESS_URL</code>); from then on, <code>seal()</code> folds each capsule into your ledger's checkpoints and registers each checkpoint with that witness for you &mdash; this page explains what's happening underneath.</p>
 
 <h2>What it does</h2>
 <ol>
@@ -964,13 +964,13 @@ PAGES["how-verification-works"] = dict(
     crumb="Concepts",
     body=f"""
 <h1>How verification works</h1>
-<p class="lede">Verifying a capsule is three independent checks, in order. The <code>capsule_id</code> shows <strong>the record is intact</strong>. The signature proves <strong>who sealed it</strong>. The receipt proves <strong>the log included it</strong>. None requires trusting the operator &mdash; all run from the bytes, offline.</p>
+<p class="lede">Verifying a capsule is three independent checks, in order. The <code>capsule_id</code> shows <strong>the record is intact</strong>. The signature shows <strong>which key sealed it</strong>; who holds that key is a separate claim. The receipt proves <strong>the log included it</strong>. None requires trusting the operator &mdash; all run from the bytes, offline.</p>
 
 <h2>Check 1 &mdash; the capsule_id</h2>
 <p>The verifier recomputes the <code>capsule_id</code>: the SHA-256 of the canonical capsule. A carried value is never trusted. If any field changed after sealing, the recomputed value differs and the check fails.</p>
 
 <h2>Check 2 &mdash; the signature</h2>
-<p>A Producer Envelope is a <code>COSE_Sign1</code> whose payload is the 32-byte <code>capsule_id</code>. Given the producer's public key, the verifier confirms the signature covers that id. This establishes <em>who</em> sealed the record. A capsule can carry more than one envelope, and each is checked on its own; one with none is intact but unattributed.</p>
+<p>A Producer Envelope is a <code>COSE_Sign1</code> whose payload is the 32-byte <code>capsule_id</code>. Given the producer's public key, the verifier confirms the signature covers that id. This establishes <em>which key</em> sealed the record; who holds that key is a separate claim. A capsule can carry more than one envelope, and each is checked on its own; one with none is intact but unattributed.</p>
 <div class="callout">{SIGNING_NOTE}</div>
 
 <h2>Check 3 &mdash; the inclusion proof</h2>
@@ -1186,14 +1186,14 @@ PAGES["how-it-works"] = dict(
   <div class="hw-p hw-wit">
     <div class="hd">Witness</div>
     <div class="who">sees no content &middot; not operated by the organisation</div>
-    <div class="hw-box ok"><div class="t">&#10003; receipt &middot; 09:41Z</div>grade: consistency-verified</div>
+    <div class="hw-box ok"><div class="t">&#10003; receipt &middot; 09:41Z</div>grade: continuity-witnessed</div>
     <p class="hw-note">The date was fixed before anyone asked.</p>
   </div>
   <div class="hw-p hw-rp">
     <div class="hd">Relying party</div>
     <div class="who">a regulator, counterparty, auditor or evaluator</div>
     <div class="hw-box"><div class="t">evidence request</div>show me: actions under a disclosure duty, September 2026<br>by: a party entitled to ask</div>
-    <div class="hw-box ok"><div class="t">verifier &middot; offline</div>signatures &#10003;<br>inclusion in checkpoint 09:41Z &#10003;<br>receipt &#10003; consistency-verified<br>counts recomputed &#10003;</div>
+    <div class="hw-box ok"><div class="t">verifier &middot; offline</div>signatures &#10003;<br>inclusion in checkpoint 09:41Z &#10003;<br>receipt &#10003; continuity-witnessed<br>counts recomputed &#10003;</div>
     <div class="hw-box ghost"><div class="t">absence</div>if no answer comes in time, the asker records its own request and the empty window</div>
   </div>
 </div>
@@ -1596,7 +1596,7 @@ PAGES["witness-anywhere"] = dict(
     crumb="Concepts",
     body="""
 <h1>Witness anywhere — what leaves your walls</h1>
-<p class="lede">Witnessing means registering with a SCITT Transparency Service: its Receipt proves a capsule was included in an append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
+<p class="lede">Witnessing means registering with a SCITT Transparency Service: its Receipt covers a checkpoint of your log in its append-only log (or, sent to <code>POST /register</code>, a single digest). The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
 
 <h2>What leaves your walls</h2>
 <p>A capsule is <a class="ln" href="/docs/what-is-a-capsule.html">content-private by construction</a>: it carries digests of inputs and outputs, not the raw values. When it's witnessed, the log receives the statement's commitment — a hash — plus a timestamp. The raw content stays where you keep it, under your control. The public log stores <em>a commitment you can check</em>, not your data.</p>

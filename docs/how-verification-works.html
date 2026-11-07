@@ -214,13 +214,13 @@
       <div class="crumb">Concepts</div>
       
 <h1>How verification works</h1>
-<p class="lede">Verifying a capsule is three independent checks, in order. The <code>capsule_id</code> shows <strong>the record is intact</strong>. The signature proves <strong>who sealed it</strong>. The receipt proves <strong>the log included it</strong>. None requires trusting the operator &mdash; all run from the bytes, offline.</p>
+<p class="lede">Verifying a capsule is three independent checks, in order. The <code>capsule_id</code> shows <strong>the record is intact</strong>. The signature shows <strong>which key sealed it</strong>; who holds that key is a separate claim. The receipt proves <strong>the log included it</strong>. None requires trusting the operator &mdash; all run from the bytes, offline.</p>
 
 <h2>Check 1 &mdash; the capsule_id</h2>
 <p>The verifier recomputes the <code>capsule_id</code>: the SHA-256 of the canonical capsule. A carried value is never trusted. If any field changed after sealing, the recomputed value differs and the check fails.</p>
 
 <h2>Check 2 &mdash; the signature</h2>
-<p>A Producer Envelope is a <code>COSE_Sign1</code> whose payload is the 32-byte <code>capsule_id</code>. Given the producer's public key, the verifier confirms the signature covers that id. This establishes <em>who</em> sealed the record. A capsule can carry more than one envelope, and each is checked on its own; one with none is intact but unattributed.</p>
+<p>A Producer Envelope is a <code>COSE_Sign1</code> whose payload is the 32-byte <code>capsule_id</code>. Given the producer's public key, the verifier confirms the signature covers that id. This establishes <em>which key</em> sealed the record; who holds that key is a separate claim. A capsule can carry more than one envelope, and each is checked on its own; one with none is intact but unattributed.</p>
 <div class="callout">A capsule's identity is its <code>capsule_id</code>, a SHA-256 over the canonical capsule, and it does not depend on any signature. The specification makes signing optional: a producer MAY add one or more <code>COSE_Sign1</code> Producer Envelopes over the <code>capsule_id</code>. The reference producer, <a class="ln" href="https://github.com/action-state-group/capsule-emit">capsule-emit</a>, signs every capsule it seals, by default, with a per-ledger Ed25519 key; its only unsigned path is the separately named <code>log()</code> call.</div>
 
 <h2>Check 3 &mdash; the inclusion proof</h2>

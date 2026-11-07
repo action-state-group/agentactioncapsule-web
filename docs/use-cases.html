@@ -230,9 +230,9 @@
 </div>
 
 <div class="ucard">
-  <div class="tag">Composition</div>
-  <h2>Composes with a trace registry</h2>
-  <p>The record layer doesn't have to be the only thing a verifier checks. A capsule can cite an independently-kept trace registry's own record of the same action as a second, foreign-signed binding &mdash; carried with its own construction, never presumed to agree byte-for-byte. Two independent records of the same event, each checkable on its own terms.</p>
+  <div class="tag">Interop</div>
+  <h2>A trace registry that uses CLL</h2>
+  <p>The record layer's log parts work outside capsules. The TRACE Registry, a public, append-only registry of anchors for signed TRACE Trust Records kept by its own project, uses the Checkpointed Local Log for its checkpoint layer: an append-only MMR with signed checkpoints, and a receipt from the public witness over a checkpoint. Each part is checkable with the registry's own published verifier.</p>
   <a class="go" href="/docs/interop/trace-registry.html">See how the TRACE Registry does it &rarr;</a>
 </div>
 
