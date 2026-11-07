@@ -31,21 +31,21 @@ ul.status li:last-child{border-bottom:none}
   <div class="crumb">b8 / 11</div>
   <h1>The builder's checklist</h1>
   <p class="seam"><b>Seams ① Record to ⑤ View.</b> Build: every step, in order. Conform to: the spec named on each row, starting with <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
-  <p class="lede">The seven steps in the order they were built for Mesh-LLM, each with what you need, where it lives today, and how far along it is, checked against the repositories on 2026-10-19; the agent-action-capsule pin, the capsules main branch and mesh-llm PR 2459 (closed, not merged) re-read on 2026-10-27.</p>
+  <p class="lede">The seven steps in the order they were built for Mesh-LLM, each with what you need, where it lives today, and how far along it is, checked against the repositories on 2026-10-19 and re-read in one pass on 2026-11-06.</p>
   <aside class="hold" aria-label="What must hold"><b>What must hold</b><ul><li>Verify before you show.</li><li>A judgment is never rounded into evidence.</li><li>History is counts recomputed from sealed records, never a score.</li></ul></aside>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk down the staircase. Green: live (in a published release). Blue: built, not live. Amber: designed. Grey: planned."
-    data-cap-1="Step 1, the host hooks. Released mesh-llm (v0.78.1) already gives a plugin exchange events, payment lifecycle events, a page, a slot under chat answers and in the Logs request inspector, and a stop-routing request. Plugin keys bound to the node key (PR 2299) and the twin-bracket capability (PR 2300) are merged but in no release yet."
-    data-cap-2="Step 2, the record format. The capsules plugin v0.1.4 seals every record as an Agent Action Capsule (draft-mih-scitt-agent-action-capsule-05), built by the capsule-emit crate."
-    data-cap-3="Step 3, the local book. Today the plugin keeps its own signed, checkpointed log through capsule-emit and checkpointed-local-log. The plugin stays in its own repository: the pull request that would have moved it into the mesh-llm workspace (PR 2459) was closed without merging on 2026-10-22."
-    data-cap-4="Step 4, use-case evidence. Twins and the referee are in the v0.1.4 release, off by default; a referee verdict between live hosts is covered by tests only."
-    data-cap-5="Step 5, portability. The specs, vectors and libraries are published and the plugin depends on them by version (scitt-cose-receipt by git commit). The plugin's main branch, not yet released, moves to the newer library releases (capsules PR 36)."
+    data-cap-1="Step 1, the host hooks. Released mesh-llm (v0.78.1) already gives a plugin exchange events, payment lifecycle events, a page, a slot under chat answers and in the Logs request inspector, and a stop-routing request. Plugin keys bound to the node key (PR 2299) and the twin-bracket capability (PR 2300) are merged but in no release yet (v0.78.1 is still the latest, 2026-11-06)."
+    data-cap-2="Step 2, the record format. The capsules plugin (v0.1.4, and every release since, to v0.1.15) seals every record as an Agent Action Capsule (draft-mih-scitt-agent-action-capsule-05), built by the capsule-emit crate."
+    data-cap-3="Step 3, the local evidence log. The plugin keeps its own signed, checkpointed log through capsule-emit and checkpointed-local-log. The plugin stays in its own repository: the pull request that would have moved it into the mesh-llm workspace (PR 2459) was closed without merging on 2026-10-22."
+    data-cap-4="Step 4, use-case evidence. Twins and the referee are released since v0.1.4, off by default; a referee verdict between live hosts is covered by tests only (0.1.5 notes)."
+    data-cap-5="Step 5, portability. The specs, vectors and libraries are published and the plugin depends on them by version (scitt-cose-receipt by git commit). Releases since v0.1.5 name the newer library releases (capsules PR 36); v0.1.15 is the latest."
     data-cap-6="Step 6, personal agents. The History profile is a pre-Internet-Draft text; its Basic level has conformance vectors and a Go evaluator (built, not live), its Outcome level is designed. No personal-agent host in these repositories emits it yet."
     data-cap-7="Step 7, agent work for someone else. Settlement records have an Internet-Draft, vectors and libraries, and the plugin seals settlement legs for paid exchanges. The general case, work done on someone's behalf with a counterparty, is designed, not built.">
     <svg viewBox="0 0 860 450" role="img" aria-labelledby="ck-t ck-d">
       <title id="ck-t">The builder's checklist as a staircase, ticked step by step with status colours</title>
-      <desc id="ck-d">Seven steps descend from top left to bottom right: 1 host hooks, 2 record format, 3 local book, 4 use-case evidence, 5 portability, 6 personal agents, 7 agent work. Each step is ticked in turn and gains a status label. Step 1: live, with two host changes merged but unreleased. Step 2: live. Step 3: live; the move into the mesh-llm workspace was closed without merging. Step 4: built, not live (off by default). Step 5: live, with newer library pins on the plugin's main branch built but not live. Step 6: designed, with spec text, vectors and a Go evaluator for the Basic level. Step 7: designed, with settlement legs built. A legend at the bottom gives the colours: green live, blue built not live, amber designed, grey planned.</desc>
+      <desc id="ck-d">Seven steps descend from top left to bottom right: 1 host hooks, 2 record format, 3 local evidence log, 4 use-case evidence, 5 portability, 6 personal agents, 7 agent work. Each step is ticked in turn and gains a status label. Step 1: live, with two host changes merged but unreleased. Step 2: live. Step 3: live; the move into the mesh-llm workspace was closed without merging. Step 4: built, not live (off by default). Step 5: live, with newer library pins released since plugin v0.1.5. Step 6: designed, with spec text, vectors and a Go evaluator for the Basic level. Step 7: designed, with settlement legs built. A legend at the bottom gives the colours: green live, blue built not live, amber designed, grey planned.</desc>
 
       <!-- Staircase (always visible, unticked) -->
       <g font-size="14" fill="#0B0E14">
@@ -87,7 +87,7 @@ ul.status li:last-child{border-bottom:none}
         <path d="M106,95 l5,6 l9,-12" fill="none" stroke="#127A52" stroke-width="3"/>
         <rect x="458" y="76" width="62" height="20" rx="4" fill="#E6F2EC" stroke="#127A52"/>
         <text x="489" y="91" text-anchor="middle" font-size="12" fill="#127A52">live</text>
-        <text x="528" y="91" font-size="12" class="mono" fill="#5C6573">capsules v0.1.4 · AAC-05</text>
+        <text x="528" y="91" font-size="12" class="mono" fill="#5C6573">capsules v0.1.15 · AAC-05</text>
       </g>
       <!-- Step 3: live + planned -->
       <g class="st" data-step="3">
@@ -109,7 +109,7 @@ ul.status li:last-child{border-bottom:none}
         <rect x="668" y="244" width="62" height="20" rx="4" fill="#E6F2EC" stroke="#127A52"/>
         <text x="699" y="259" text-anchor="middle" font-size="12" fill="#127A52">live</text>
         <rect x="668" y="268" width="180" height="20" rx="4" fill="#EAEEFC" stroke="#3A5BD9"/>
-        <text x="758" y="283" text-anchor="middle" font-size="12" fill="#3A5BD9">main: newer pins</text>
+        <text x="758" y="283" text-anchor="middle" font-size="12" fill="#127A52">v0.1.5+: newer pins</text>
       </g>
       <!-- Step 6: designed -->
       <g class="st" data-step="6">
@@ -143,7 +143,7 @@ ul.status li:last-child{border-bottom:none}
 
   <h2><span class="n">1</span>What it is</h2>
   <div class="what">
-    <p>An evidence layer is built bottom up: the host has to expose a few host hooks first (an exchange event before any record can be sealed, the rest before records can be checked and acted on), then come the record format, the local book, the use-case evidence, and only then the parts that make it portable.</p>
+    <p>An evidence layer is built bottom up: the host has to expose a few host hooks first (an exchange event before any record can be sealed, the rest before records can be checked and acted on), then come the record format, the local evidence log, the use-case evidence, and only then the parts that make it portable.</p>
     <p>Each step below names what a builder needs from their own host or code, and where the Mesh-LLM worked example keeps it today: a crate, a repository, or an Internet-Draft.</p>
     <p>Status is what the code shows at a named commit or what a pull request's state shows today, not what a slide or plan says.</p>
   </div>
@@ -156,10 +156,10 @@ ul.status li:last-child{border-bottom:none}
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> every record, its ledger, checkpoints and checks come from published libraries, pinned by version.</div>
-      <div class="not"><b>Rejected:</b> a plugin-private record format, or library code copied into the plugin. (capsules <code>crates/evidence-plugin/Cargo.toml</code>: <code>capsule-emit</code> 0.0.6, <code>checkpointed-local-log</code> 0.2.1, <code>capsule-emit-evidence-request</code> =0.0.3)</div>
+      <div class="not"><b>Rejected:</b> a plugin-private record format, or library code copied into the plugin. (capsules <code>crates/evidence-plugin/Cargo.toml</code>: at v0.1.4 <code>capsule-emit</code> 0.0.6, <code>checkpointed-local-log</code> 0.2.1, <code>capsule-emit-evidence-request</code> =0.0.3; at v0.1.15 <code>capsule-emit</code> 0.0.11, <code>checkpointed-local-log</code> 0.4.0, <code>evidence-request</code> =0.4.1)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> the local book first, with nothing leaving the node by default; sharing is a later, explicit switch.</div>
+      <div class="pick"><b>Chosen:</b> the local evidence log first, with nothing leaving the node by default; sharing is a later, explicit switch.</div>
       <div class="not"><b>Rejected:</b> sharing on by default. (capsules <code>CHANGELOG.md</code> 0.1.3: record push, verdict delivery and the referee are off by default; <code>checkpoint_cadence.rs</code>: checkpointing is on by default, local only, no witness)</div>
     </div>
     <div class="choice">
@@ -177,12 +177,12 @@ ul.status li:last-child{border-bottom:none}
     <div class="col yes"><h3>Shows</h3><ul>
       <li>The order of work that produced a running example, and what each step depends on.</li>
       <li>Where each piece lives today, by crate, repository and Internet-Draft, so a builder can link the same libraries.</li>
-      <li>Each status with the commit, tag or pull request it was read from on 2026-10-19.</li>
+      <li>Each status with the commit, tag or pull request it was read from, re-read on 2026-11-06.</li>
     </ul></div>
     <div class="col no"><h3>Does not show</h3><ul>
       <li>That any step is finished for every host: these rows are the Mesh-LLM example.</li>
       <li>That a released plugin is installed or switched on anywhere; &ldquo;live&rdquo; here means in a published release anyone can install.</li>
-      <li>Status after 2026-10-19: open pull requests may have moved since.</li>
+      <li>Status after 2026-11-06: open pull requests may have moved since.</li>
       <li>Whether any record's content is true: each step records and checks; none judges an answer.</li>
     </ul></div>
   </div>
@@ -193,39 +193,39 @@ ul.status li:last-child{border-bottom:none}
     <thead><tr><th>Step</th><th>What you need</th><th>Where it lives today</th><th>Status</th><th>Evidence</th></tr></thead>
     <tbody>
       <tr>
-        <td>1 · Host hooks<br><a href="b1-seams.html">b1</a></td>
+        <td>1 · Hooks the host exposes<br><a href="b1-seams.html">b1</a></td>
         <td>An exchange event naming both sides; payment events; a plugin page, and a slot under each chat answer and in the Logs request inspector header; a stop-routing request; a plugin key bound to the node key; a twin-pair capability flag.</td>
         <td>Host repo <code>Mesh-LLM/mesh-llm</code>; plugin SDK crate <code>mesh-llm-plugin</code> (0.78).</td>
         <td><span class="tag live">live</span> events, page, slot, stop routing<br><span class="tag built">built, not live</span> plugin key, twin-pair flag</td>
-        <td>The exchange event (<code>openai.exchange.v1</code>, on the paid path too since PR 2109) and payment lifecycle events (PR 2108), both merged, in v0.78.1 (<code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>); <code>PeerBlockRequest</code> in <code>crates/mesh-llm-plugin/proto/plugin.proto</code> at that tag; page and slot: <code>PluginWebUiPageManifest</code> and <code>PluginWebUiContributionManifest</code> (slots <code>chat_message</code>, <code>logs_request</code>) in the same file at that tag, used by the plugin from capsules 0.1.3 (<code>CHANGELOG.md</code>). PR 2299 merged (<code>f142883d0b7576ceff64615153d86155030cb9b7</code>) and PR 2300 merged (<code>572419fd1e3074f7e948996c292ca8e7972bda8c</code>), both on upstream main <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code>, neither in any release tag.</td>
+        <td>The exchange event (<code>openai.exchange.v1</code>, on the paid path too since PR 2109) and payment lifecycle events (PR 2108), both merged, in v0.78.1 (<code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>, still the latest release on 2026-11-06); <code>PeerBlockRequest</code> in <code>crates/mesh-llm-plugin/proto/plugin.proto</code> at that tag; page and slot: <code>PluginWebUiPageManifest</code> and <code>PluginWebUiContributionManifest</code> (slots <code>chat_message</code>, <code>logs_request</code>) in the same file at that tag, used by the plugin from capsules 0.1.3 (<code>CHANGELOG.md</code>). PR 2299 merged (<code>f142883d0b7576ceff64615153d86155030cb9b7</code>) and PR 2300 merged (<code>572419fd1e3074f7e948996c292ca8e7972bda8c</code>), both on upstream main <code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code>, neither in any release tag.</td>
       </tr>
       <tr>
         <td>2 · Record format<br><a href="b2-record-format.html">b2</a></td>
         <td>A signed record per exchange: digests not payloads, request/response binding, the signer's key id, nonces.</td>
         <td>Internet-Draft <code>draft-mih-scitt-agent-action-capsule-05</code>; crate <code>capsule-emit</code> (<code>action-state-group/capsule-emit</code>); vectors in <code>action-state-group/agent-action-capsule</code> <code>vectors/capsule/</code>.</td>
         <td><span class="tag live">live</span></td>
-        <td>capsules v0.1.4 (released 2026-10-12) seals <code>draft-mih-scitt-agent-action-capsule-05</code> (test in <code>crates/evidence-plugin/src/producer/capsule.rs</code>); depends on <code>capsule-emit</code> 0.0.6 (tag <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code>), whose <code>SPEC_VERSION</code> in <code>rust/capsule-emit/src/capsule.rs</code> is that draft.</td>
+        <td>capsules v0.1.4 (released 2026-10-12) seals <code>draft-mih-scitt-agent-action-capsule-05</code> (test in <code>crates/evidence-plugin/src/producer/capsule.rs</code>); depends on <code>capsule-emit</code> 0.0.6 (tag <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code>), whose <code>SPEC_VERSION</code> in <code>rust/capsule-emit/src/capsule.rs</code> is that draft. The latest release, v0.1.15 (2026-11-03), depends on <code>capsule-emit</code> 0.0.11 (tag <code>crates/capsule-emit-v0.0.11</code> &rarr; <code>7e5ff60354abdf272d9c602e3bd57a0c91c5b970</code>), whose <code>SPEC_VERSION</code> is the same draft.</td>
       </tr>
       <tr>
-        <td>3 · Local log<br><a href="b3-local-log.html">b3</a></td>
+        <td>3 · Local evidence log<br><a href="b3-local-log.html">b3</a></td>
         <td>An append-only log on the node's own disk with signed checkpoints, inclusion and consistency proofs.</td>
         <td>Internet-Draft <code>draft-mih-scitt-checkpointed-local-log-02</code>; crate <code>checkpointed-local-log</code> (reference implementation; any conforming log).</td>
         <td><span class="tag live">live</span> plugin's own log</td>
-        <td>capsules v0.1.4 depends on <code>checkpointed-local-log</code> 0.2.1 (tag <code>04339d9ae622014b5c1651961a795d9977e4bba1</code>); checkpointing on by default, local only (<code>checkpoint_cadence.rs</code>). The plugin's move into the mesh-llm workspace (mesh-llm PR 2459) was closed without merging on 2026-10-22; the plugin stays in <code>Mesh-LLM/capsules</code> (capsules PR 35).</td>
+        <td>capsules v0.1.4 depends on <code>checkpointed-local-log</code> 0.2.1 (tag <code>04339d9ae622014b5c1651961a795d9977e4bba1</code>), v0.1.15 on 0.4.0 (tag <code>crates/checkpointed-local-log-v0.4.0</code> &rarr; <code>c33470ba047c00e3605742ce45d7ef8c1cbe87b9</code>); checkpointing on by default, local only (<code>checkpoint_cadence.rs</code>). The plugin's move into the mesh-llm workspace (mesh-llm PR 2459) was closed without merging on 2026-10-22; the plugin stays in <code>Mesh-LLM/capsules-plugin</code> (capsules PR 35).</td>
       </tr>
       <tr>
         <td>4 · Twins and a referee<br><a href="b4-use-case-evidence.html">b4</a></td>
         <td>A client-marked pair, a rule for who may referee, a signed verdict, and &ldquo;not adjudicated&rdquo; when no referee qualifies.</td>
-        <td><code>Mesh-LLM/capsules</code> <code>crates/evidence-plugin/src/referee/</code>; rules in <code>docs/TWIN-REFEREE-SELECTION.md</code>; verdict sealed as a capsule (<code>draft-mih-scitt-agent-action-capsule-05</code>).</td>
+        <td><code>Mesh-LLM/capsules-plugin</code> <code>crates/evidence-plugin/src/referee/</code>; rules in <code>docs/TWIN-REFEREE-SELECTION.md</code>; verdict sealed as a capsule (<code>draft-mih-scitt-agent-action-capsule-05</code>).</td>
         <td><span class="tag built">built, not live</span></td>
-        <td>In the v0.1.4 release, <code>adjudicate_differing_twins</code> is off unless set (<code>referee/request.rs</code>); &ldquo;a referee verdict on live hosts &hellip; is covered by tests only&rdquo; (<code>CHANGELOG.md</code> 0.1.4). The host copies the client's <code>x-mesh-twin-bracket</code> into <code>twin_bracket_id</code> and strips it before forwarding since PR 2144 (merged <code>6d36f3845c5f021eac432dfdc8c20efcbfaa340a</code>, in release v0.78.1); only the capability flag that advertises it is PR 2300, merged, unreleased.</td>
+        <td>In the v0.1.4 release, <code>adjudicate_differing_twins</code> is off unless set (<code>referee/request.rs</code>); &ldquo;a referee verdict on live hosts &hellip; is covered by tests only&rdquo; (<code>CHANGELOG.md</code> 0.1.4), and the 0.1.5 notes say it &ldquo;has still not run&rdquo;. The host copies the client's <code>x-mesh-twin-bracket</code> into <code>twin_bracket_id</code> and strips it before forwarding since PR 2144 (merged <code>6d36f3845c5f021eac432dfdc8c20efcbfaa340a</code>, in release v0.78.1); only the capability flag that advertises it is PR 2300, merged, unreleased.</td>
       </tr>
       <tr>
         <td>5 · Portability<br><a href="b5-portable.html">b5</a></td>
         <td>Open specs and vectors, libraries any host can link, the plugin depending on them by version, an evidence request any party can send.</td>
-        <td>Internet-Drafts in <code>action-state-group/agent-action-capsule</code> <code>spec/</code>; crates <code>capsule-emit</code>, <code>checkpointed-local-log</code>, <code>evidence-request</code>, <code>scitt-cose-receipt</code>; the request draft <code>draft-mih-agent-evidence-request-00</code>.</td>
-        <td><span class="tag live">live</span> libraries, version pins<br><span class="tag built">built, not live</span> newer pins on capsules main</td>
-        <td>Version pins: capsules <code>crates/evidence-plugin/Cargo.toml</code> (<code>capsule-emit</code> 0.0.6, <code>checkpointed-local-log</code> 0.2.1, <code>capsule-emit-evidence-request</code> =0.0.3; <code>scitt-cose-receipt</code> by git commit <code>8833281c11d33e3c1e289cf74f11d25ee7f3c6dc</code>); the request crate <code>evidence-request</code> 0.2.0 is tagged at <code>dd64efe7c394ab78fc228ce91144528cdd95a83a</code>. Capsules main @ <code>424f2c749ecdbe2a1df2442c51f5c7b057c049f1</code>, not yet released: <code>capsule-emit</code> 0.0.8, <code>checkpointed-local-log</code> 0.3.1, <code>evidence-request</code> =0.2.0, <code>scitt-cose-receipt</code> 0.1 from crates.io (capsules PR 36). The move into <code>mesh/crates/mesh-llm-capsules-plugin</code> (mesh-llm PR 2459) was closed without merging.</td>
+        <td>Internet-Drafts in <code>action-state-group/agent-action-capsule</code> <code>spec/</code>; crates <code>capsule-emit</code>, <code>checkpointed-local-log</code>, <code>evidence-request</code>, <code>scitt-cose-receipt</code>; the request draft <code>draft-mih-agent-evidence-request-02</code>.</td>
+        <td><span class="tag live">live</span> libraries, version pins, newer pins since plugin v0.1.5</td>
+        <td>Version pins: capsules <code>crates/evidence-plugin/Cargo.toml</code> (<code>capsule-emit</code> 0.0.6, <code>checkpointed-local-log</code> 0.2.1, <code>capsule-emit-evidence-request</code> =0.0.3; <code>scitt-cose-receipt</code> by git commit <code>8833281c11d33e3c1e289cf74f11d25ee7f3c6dc</code>); the request crate <code>evidence-request</code> 0.2.0 is tagged at <code>dd64efe7c394ab78fc228ce91144528cdd95a83a</code>, and its latest, 0.4.1, at <code>32ad0cae6195007de4f79c906648fa3f7a98e7c6</code>. Released in capsules v0.1.5 (<code>5c53ea2441f54c60c87f300af678286a2e12c8fe</code>): <code>capsule-emit</code> 0.0.8, <code>checkpointed-local-log</code> 0.3.1, <code>evidence-request</code> =0.2.0, <code>scitt-cose-receipt</code> 0.1 from crates.io (capsules PR 36); v0.1.15 (<code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code>): <code>capsule-emit</code> 0.0.11, <code>checkpointed-local-log</code> 0.4.0, <code>evidence-request</code> =0.4.1, <code>scitt-cose-receipt</code> 0.1. The move into <code>mesh/crates/mesh-llm-capsules-plugin</code> (mesh-llm PR 2459) was closed without merging.</td>
       </tr>
       <tr>
         <td>6 · Personal agents<br><a href="b6-personal-agents.html">b6</a></td>
@@ -237,7 +237,7 @@ ul.status li:last-child{border-bottom:none}
       <tr>
         <td>7 · Agent work<br><a href="b7-agent-work.html">b7</a></td>
         <td>Both sides' records of work done on someone's behalf, evidence requests between them, and settlement legs tied to the exchange.</td>
-        <td>Internet-Drafts <code>draft-mih-agent-settlement-records-00</code>, <code>draft-mih-agent-bilateral-attestation-02</code>, <code>draft-mih-agent-evidence-request-00</code>; vectors <code>vectors/settlement/</code>.</td>
+        <td>Internet-Drafts <code>draft-mih-agent-settlement-records-00</code>, <code>draft-mih-agent-bilateral-attestation-03</code>, <code>draft-mih-agent-evidence-request-02</code>; vectors <code>vectors/settlement/</code>.</td>
         <td><span class="tag designed">designed</span> general case<br><span class="tag built">built, not live</span> settlement legs for paid exchanges</td>
         <td>Settlement libraries and vectors: agent-action-capsule <code>rust/agent-action-capsule/src/settlement.rs</code>, <code>vectors/settlement/</code>. Plugin legs: capsules <code>crates/evidence-plugin/src/settlement_legs.rs</code>; paid exchanges across two nodes verified (<code>CHANGELOG.md</code> 0.1.4).</td>
       </tr>
@@ -250,20 +250,21 @@ ul.status li:last-child{border-bottom:none}
       <tr><td>What you need</td><td>text</td><td>The generic requirement, for any host.</td></tr>
       <tr><td>Where it lives</td><td>crate / repo / I-D</td><td>Where the Mesh-LLM example keeps it today.</td></tr>
       <tr><td>Status</td><td>tag</td><td>live, built not live, designed, or planned, as the legend under Status defines them.</td></tr>
-      <tr><td>Evidence</td><td>path@SHA / PR</td><td>What the status was read from on 2026-10-19, or on 2026-10-27 where the row cites capsules main or the agent-action-capsule pin.</td></tr>
+      <tr><td>Evidence</td><td>path@SHA / PR</td><td>What the status was read from; every row re-read on 2026-11-06.</td></tr>
     </tbody>
   </table></div>
-  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/Cargo.toml</code>, <code>CHANGELOG.md</code>, <code>crates/evidence-plugin/src/referee/request.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4); <code>action-state-group/capsule-emit</code> @ <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code> (tag <code>crates/capsule-emit-v0.0.6</code>); <code>action-state-group/agent-action-capsule</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>; <code>Mesh-LLM/capsules</code> main @ <code>424f2c749ecdbe2a1df2442c51f5c7b057c049f1</code>; <code>Mesh-LLM/mesh-llm</code> tag v0.78.1 @ <code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>; PR states as GitHub shows them on 2026-10-19, and for mesh-llm PR 2459 (closed, not merged) and capsules PRs 25, 29, 35 and 36 on 2026-10-27.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules-plugin:crates/evidence-plugin/Cargo.toml</code>, <code>CHANGELOG.md</code>, <code>crates/evidence-plugin/src/referee/request.rs</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4); <code>action-state-group/capsule-emit</code> @ <code>44ad8bd528b029c1abff1937f700423f94e1d6db</code> (tag <code>crates/capsule-emit-v0.0.6</code>); <code>action-state-group/agent-action-capsule</code> @ <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>; <code>Mesh-LLM/capsules-plugin</code> tags v0.1.5 @ <code>5c53ea2441f54c60c87f300af678286a2e12c8fe</code> and v0.1.15 @ <code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code>; <code>Mesh-LLM/mesh-llm</code> tag v0.78.1 @ <code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>; release lists and PR states as GitHub shows them on 2026-11-06.</p>
 
   <h2><span class="n">5</span>Status</h2>
   <p class="legend">Tags, the same on every build page: <span class="tag live">live</span> in a tagged public release (a crate, package or release tag anyone can install) and on by default · <span class="tag built">built, not live</span> merged to a public main branch but in no release yet, or released but off by default or not yet exercised on a stock host (the row says which) · <span class="tag designed">designed</span> written down (text, sometimes vectors), no code · <span class="tag planned">planned</span> named as an open point and not designed, or left open on purpose.</p>
   <ul class="status">
-    <li><span class="tag live">live</span> Record format, the plugin's own log and checkpoints, and the published libraries: capsules v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>), released 2026-10-12.</li>
-    <li><span class="tag live">live</span> Host exchange event (on the paid path too since PR 2109), payment lifecycle events (PR 2108), the plugin page and its chat and Logs slots, and the plugin stop-routing request: in mesh-llm v0.78.1 (<code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>).</li>
+    <li><span class="tag live">live</span> Record format, the plugin's own log and checkpoints, and the published libraries: capsules v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>), released 2026-10-12, and every release since; the latest is v0.1.15 (<code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code>), released 2026-11-03.</li>
+    <li><span class="tag live">live</span> Host exchange event (on the paid path too since PR 2109), payment lifecycle events (PR 2108), the plugin page and its chat and Logs slots, and the plugin stop-routing request: in mesh-llm v0.78.1 (<code>bc215ce5b880e21c6c3840b8574ab64f83278821</code>), the latest release on 2026-11-06.</li>
     <li><span class="tag built">built, not live</span> Plugin key bound to the node key (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2299">PR 2299</a>, merged) and the twin-pair capability (<a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">PR 2300</a>, merged): on upstream mesh-llm main (<code>60697c61755b7280c22d3ab9d9bcf5b663e8ae3b</code>), in no release tag.</li>
-    <li><span class="tag built">built, not live</span> Twins and the referee: in capsules v0.1.4, off by default, a live-host verdict covered by tests only (<code>CHANGELOG.md</code> 0.1.4).</li>
-    <li><span class="tag built">built, not live</span> On capsules main, in no release yet: the plugin announces its own key (capsules PR 25), carries a TDX quote checked offline (PR 29) and moves to the newer library releases (PR 36), @ <code>424f2c749ecdbe2a1df2442c51f5c7b057c049f1</code>.</li>
-    <li>Not happening: the plugin inside the host's own repository. <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">mesh-llm PR 2459</a> was closed without merging on 2026-10-22; the plugin stays in <code>Mesh-LLM/capsules</code> (<a href="https://github.com/Mesh-LLM/capsules/pull/35">capsules PR 35</a>).</li>
+    <li><span class="tag built">built, not live</span> Twins and the referee: released since capsules v0.1.4, off by default, a live-host verdict covered by tests only (<code>CHANGELOG.md</code> 0.1.4 and 0.1.5).</li>
+    <li><span class="tag live">live</span> The newer library releases (capsules PR 36): released in capsules v0.1.5 (<code>5c53ea2441f54c60c87f300af678286a2e12c8fe</code>).</li>
+    <li><span class="tag built">built, not live</span> Released in capsules v0.1.5 but not exercised on a stock host: the plugin announces its own key (capsules PR 25), which needs a host listing <code>plugin_keys.v1</code> (no mesh-llm release does yet), and carries a TDX quote checked offline on a TDX host (PR 29); mesh-llm's default list still pins capsules 0.1.4.</li>
+    <li>Not happening: the plugin inside the host's own repository. <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2459">mesh-llm PR 2459</a> was closed without merging on 2026-10-22; the plugin stays in <code>Mesh-LLM/capsules-plugin</code> (<a href="https://github.com/Mesh-LLM/capsules-plugin/pull/35">capsules PR 35</a>).</li>
     <li><span class="tag built">built, not live</span> Personal-agent History, Basic level: profile text, vectors and a Go evaluator (agent-action-capsule PR 324) at <code>062e89bd145d25d097f3b5e4540d69341fff9f1f</code>; no host here emits it.</li>
     <li><span class="tag designed">designed</span> Personal-agent History, Outcome level: spec text and vectors (agent-action-capsule PR 314) at the same commit.</li>
     <li><span class="tag designed">designed</span> Agent work on someone's behalf with a counterparty, beyond the paid-exchange settlement legs the plugin seals.</li>
@@ -276,16 +277,16 @@ ul.status li:last-child{border-bottom:none}
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; step 3.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-bryce-cose-receipts-mmr-profile/">draft-bryce-cose-receipts-mmr-profile-03</a> &mdash; step 3: the MMR proofs.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; step 3: the semantics any conforming book implements.</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> &mdash; steps 5 and 7: asking another party for evidence.</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-01</a> &mdash; step 5: a bundle a stranger checks.</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; step 7: both sides' records.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-02</a> &mdash; steps 5 and 7: asking another party for evidence.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-02</a> &mdash; step 5: a bundle a stranger checks.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-03</a> &mdash; step 7: both sides' records.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a> &mdash; step 7: settlement legs.</li>
     <li><span class="kind">Profile</span> <a href="https://github.com/action-state-group/agent-action-capsule/blob/062e89bd145d25d097f3b5e4540d69341fff9f1f/spec/personal-agent-history-profile-v0.md">personal-agent-history-profile-v0</a> &mdash; step 6; pre-Internet-Draft, in the repository.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the signature on each record.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes each digest covers.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: an optional witness for checkpoints.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts: what a witness returns.</li>
-    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &middot; <a href="https://github.com/action-state-group/capsule-emit">action-state-group/capsule-emit</a> &middot; <a href="https://github.com/action-state-group/checkpointed-local-log">action-state-group/checkpointed-local-log</a></li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules-plugin/tree/v0.1.4">Mesh-LLM/capsules-plugin v0.1.4</a> &middot; <a href="https://github.com/Mesh-LLM/capsules-plugin/tree/v0.1.15">v0.1.15</a> &middot; <a href="https://github.com/action-state-group/capsule-emit">action-state-group/capsule-emit</a> &middot; <a href="https://github.com/action-state-group/checkpointed-local-log">action-state-group/checkpointed-local-log</a></li>
   </ul>
 
   <h2><span class="n">7</span>Back to the start</h2>
