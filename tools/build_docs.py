@@ -1803,7 +1803,7 @@ PAGES["specifications"] = dict(
 <p>A row marked <em>dependency</em> is another author's draft that this family builds on; it is listed because the vectors here test against it.</p>
 
 <h2 id="cited-by">Cited by other Internet-Drafts</h2>
-<p>{cited_by_lead()} The Agent Action Capsule is among the most-cited individual drafts on records of agent actions. A citation is a reference in another individual draft; it is not an endorsement or adoption by that author or by any working group.</p>
+<p>{cited_by_lead()} A citation is a reference in another individual draft; it is not an endorsement or adoption by that author or by any working group.</p>
 <table class="t" id="spec-cited-by">
   <thead><tr><th>Citing draft</th><th>Title</th><th>Drafts in this family it cites</th></tr></thead>
   <tbody>
