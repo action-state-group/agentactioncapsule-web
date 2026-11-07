@@ -128,7 +128,7 @@
   <div class="choices">
     <div class="choice">
       <div class="pick"><b>Chosen:</b> one object, three ways to carry it: in a URL fragment, inside an offline HTML page, or at a hosted URL.</div>
-      <div class="not"><b>Rejected:</b> a separate format per channel; the draft calls these &ldquo;transports for one object, not distinct evidence formats&rdquo;. A fragment is never sent to the server that serves the page. (disclosure-bundle §1, §9)</div>
+      <div class="not"><b>Rejected:</b> a separate format per channel; the draft calls these &ldquo;transports for one object, not distinct evidence formats&rdquo;. A fragment is never sent to the server that serves the page. (disclosure-bundle §1, §10)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> the checkpoint is read only from its signed COSE form (<code>checkpoint.cose</code>); a JSON copy that differs from it fails the file.</div>
@@ -136,11 +136,11 @@
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> an inclusion proof for every record, checked at its stated leaf index and against the checkpoint's size.</div>
-      <div class="not"><b>Rejected:</b> a range proof over the two end records only; an interior record could be deleted or replaced while it still passes. (disclosure-bundle §6, §11)</div>
+      <div class="not"><b>Rejected:</b> a range proof over the two end records only; an interior record could be deleted or replaced while it still passes. (disclosure-bundle §6, §12)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> the report page never checks. It draws the result of <code>check_evidence_file</code> and refuses a result whose bundle digest is not the digest of the file it draws.</div>
-      <div class="not"><b>Rejected:</b> a page with its own checks, or trusting the file's <code>verification</code> member, which the draft makes producer self-report that must not replace independent verification. (disclosure-bundle §10; capsule-viewer README)</div>
+      <div class="not"><b>Rejected:</b> a page with its own checks, or trusting the file's <code>verification</code> member, which the draft makes producer self-report that must not replace independent verification. (disclosure-bundle §11; capsule-viewer README)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> no witness is trusted by default. The verifier supplies a witness directory; without one no receipt is checked and the result says &ldquo;not shown&rdquo;.</div>
@@ -232,7 +232,7 @@
   <div class="tw"><table class="t">
     <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
     <tbody>
-      <tr><td>bundle_kind</td><td>string</td><td><code>evidence-bundle/v2</code>, the Evidence Bundle of disclosure-bundle-01.</td></tr>
+      <tr><td>bundle_kind</td><td>string</td><td><code>evidence-bundle/v2</code>, the Evidence Bundle of disclosure-bundle-02.</td></tr>
       <tr><td>root</td><td>hex</td><td>capsule_id of the record the file's claim starts from.</td></tr>
       <tr><td>records</td><td>array</td><td>The records, byte for byte as sealed; here one, the requester's half.</td></tr>
       <tr><td>effect.request_digest</td><td>hex</td><td>Digest of the request; the request text is not in the file.</td></tr>
@@ -281,7 +281,7 @@ INVALID</code></pre>
 
   <h2><span class="n">6</span>Specs</h2>
   <ul class="specs">
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-01</a> &mdash; the Evidence Bundle: transports, closure, disclosure overlay, the three completeness claims, verification.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-02</a> &mdash; the Evidence Bundle: transports, closure, disclosure overlay, the three completeness claims, verification.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-disclosure-envelope/">draft-mih-agent-disclosure-envelope-00</a> &mdash; revealing the content behind a digest-only field without changing the record or its capsule_id.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record, its capsule_id and its signature.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the local log, its signed checkpoints, and inclusion and consistency proofs.</li>
