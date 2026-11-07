@@ -23,10 +23,10 @@
     data-cap-3="A client marks a pair: the same request also goes to node B, a twin whose own signed record says it serves the same model and weights. That sameness is self-report."
     data-cap-4="The two answers are compared word by word. Same words: corroborated, which twins serving the same wrong model would also be. Any difference: a referee is asked, only if the operator turned the check on (off by default) and an eligible node exists."
     data-cap-5="The referee, a third node that says it serves the same weights, re-answers and signs a verdict on this one pair: the twin it disagrees with is contradicted, or the verdict is inconclusive. It does not establish which model ran."
-    data-cap-6="Hardware attestation of what was loaded and ran is the route toward which model ran. It is a direction only, not in this release.">
+    data-cap-6="Hardware attestation of what was loaded and ran is the route toward which model ran. It is a direction only: since v0.1.5 a record can carry a TDX quote bound to the exchange, taken only on a TDX host, and no release checks the quote's measurements, so it does not show which model ran.">
     <svg viewBox="0 0 860 330" role="img" aria-labelledby="anim-t anim-d">
       <title id="anim-t">From a verified signature to a twin and a referee</title>
-      <desc id="anim-d">Step 1: a requester on the left sends a request to node A at top; node A's response shows a green badge, signature verified, key K. Step 2: an amber dashed claim next to it reads model = X, open. Step 3: the requester sends the same request, marked as a pair, to node B at bottom, the twin, which returns its own answer. Step 4: both answers go to a compare box in the middle: same words means corroborated; any difference means ask a referee, if the check is on and a node is eligible. Step 5: a referee box at right, a third node that says it serves the same weights, re-answers and signs a verdict with outcomes: agrees with one twin, the other contradicted; or inconclusive. Step 6: a grey dashed path from node A to a box at the bottom right reads hardware attestation of what ran, a direction, not in this release. Twin and referee narrow a misstated model; they do not establish which model ran.</desc>
+      <desc id="anim-d">Step 1: a requester on the left sends a request to node A at top; node A's response shows a green badge, signature verified, key K. Step 2: an amber dashed claim next to it reads model = X, open. Step 3: the requester sends the same request, marked as a pair, to node B at bottom, the twin, which returns its own answer. Step 4: both answers go to a compare box in the middle: same words means corroborated; any difference means ask a referee, if the check is on and a node is eligible. Step 5: a referee box at right, a third node that says it serves the same weights, re-answers and signs a verdict with outcomes: agrees with one twin, the other contradicted; or inconclusive. Step 6: a grey dashed path from node A to a box at the bottom right reads hardware attestation of what ran, a direction, no release checks it. Twin and referee narrow a misstated model; they do not establish which model ran.</desc>
       <defs>
         <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5C6573"/></marker>
       </defs>
@@ -50,7 +50,7 @@
         <rect x="668" y="128" width="164" height="30" rx="6" fill="#F4F4F0" stroke="#5C6573"/><text x="676" y="148" font-size="12" fill="#0B0E14">or: inconclusive</text></g>
       <!-- hardware -->
       <g class="st" data-step="6"><path d="M380,40 L420,40 L420,10 L640,10 L640,250 L650,250" fill="none" stroke="#5C6573" stroke-width="1.5" stroke-dasharray="6 5" marker-end="url(#ah)"/>
-        <rect x="654" y="222" width="192" height="76" rx="10" fill="#FFFFFF" stroke="#5C6573" stroke-dasharray="6 5"/><text x="668" y="244" font-size="13" font-weight="600" fill="#5C6573">Hardware attestation</text><text x="668" y="262" font-size="12" fill="#5C6573">of what ran: a direction,</text><text x="668" y="280" font-size="12" fill="#5C6573">not in this release</text></g>
+        <rect x="654" y="222" width="192" height="76" rx="10" fill="#FFFFFF" stroke="#5C6573" stroke-dasharray="6 5"/><text x="668" y="244" font-size="13" font-weight="600" fill="#5C6573">Hardware attestation</text><text x="668" y="262" font-size="12" fill="#5C6573">of what ran: a direction,</text><text x="668" y="280" font-size="12" fill="#5C6573">no release checks it</text></g>
     </svg>
     <figcaption><span class="cap" aria-live="polite"></span>
       <button type="button" data-act="play">Play</button>
@@ -63,7 +63,7 @@
   <div class="what">
     <p>A signature that verifies shows that the holder of a key signed a record, and nothing about whether that key may speak for anyone or whether what it signed is true.</p>
     <p>A node that misstates which model it ran signs that claim as easily as a true one; a twin and a referee can test whether two answers agree under weights both nodes claim, which narrows a misstated model but does not establish which model ran.</p>
-    <p>Hardware attestation, where the machine itself reports what it loaded and ran, is the route beyond self-report, and it is a direction here rather than a released feature.</p>
+    <p>Hardware attestation, where the machine itself reports what it loaded and ran, is the route beyond self-report, and it is a direction here rather than a released check. Since v0.1.5 the plugin seals a TDX quote bound to the exchange when its host can take one, and it does not check the quote's measurements, platform status or revocation (<code>CHANGELOG.md</code> 0.1.5).</p>
   </div>
 
   <h2><span class="n">2</span>Design choices</h2>
@@ -78,11 +78,11 @@
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> a referee only for pairs a client marked, at temperature 0, same model and weights, answers that differ; exact words, no similarity threshold.</div>
-      <div class="not"><b>Rejected:</b> guessing pairs from timing, or scoring answers by similarity. ("pairs are never guessed from timing": <code>Mesh-LLM/capsules</code> docs/TWIN-REFEREE-SELECTION.md at v0.1.4)</div>
+      <div class="not"><b>Rejected:</b> guessing pairs from timing, or scoring answers by similarity. ("pairs are never guessed from timing": <code>Mesh-LLM/capsules-plugin</code> docs/TWIN-REFEREE-SELECTION.md at v0.1.15, as at v0.1.4)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> the record keeps a hardware-attestation slot and writes it empty when no quote was taken.</div>
-      <div class="not"><b>Rejected:</b> presenting a node's hash of its own binary as hardware evidence; at v0.1.4 the slot is "recorded absent, never fabricated". (<code>Mesh-LLM/capsules</code> producer/capsule.rs at v0.1.4; a producer MUST NOT record an assurance it did not achieve, AAC -05 &sect;5.4)</div>
+      <div class="not"><b>Rejected:</b> presenting a node's hash of its own binary as hardware evidence; at v0.1.4 the hardware slot is "recorded absent, never fabricated"; since v0.1.5 it holds a TDX quote when one was taken, and otherwise stays empty with the reason. (<code>Mesh-LLM/capsules-plugin</code> producer/capsule.rs at v0.1.4 and at v0.1.15; a producer MUST NOT record an assurance it did not achieve, AAC -05 &sect;5.4)</div>
     </div>
   </div>
 
@@ -101,7 +101,7 @@
       <li>Which answer is right. A verdict is a ruling on one pair; it says nothing about a node's future answers.</li>
       <li>That the referee is independent of either twin; that is a claim about who runs it.</li>
       <li>Honesty across different hardware: exact replay can differ on different silicon for reasons unrelated to honesty, so such a mismatch is grounds to investigate, not a verdict.</li>
-      <li>What ran inside the machine. At v0.1.4 no hardware quote is taken.</li>
+      <li>What ran inside the machine. At v0.1.4 no hardware quote is taken. Since v0.1.5 a node on a TDX host seals a quote bound to the exchange, and the plugin does not check what the quote says was loaded (<code>CHANGELOG.md</code> 0.1.5).</li>
     </ul></div>
   </div>
 
@@ -171,7 +171,7 @@
     </tbody>
   </table></div>
   <p>The node ids and some digests are placeholder test values (repeated letters), as in the fixture.</p>
-  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules-plugin:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code> (tag v0.1.15); the file is unchanged since tag v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>). Release claims on this page re-read at v0.1.15 on 2026-11-06.</p>
 
   <h2><span class="n">5</span>Specs</h2>
   <ul class="specs">
@@ -179,7 +179,7 @@
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; controlling a key is not standing or role; the <code>adjudication</code> type.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-03</a> &mdash; identity is the floor of a two-party record's weight.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: structures and process.</li>
-    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules">Mesh-LLM/capsules</a> &mdash; the twin comparison, the referee and the verdict record (v0.1.4).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules-plugin">Mesh-LLM/capsules-plugin</a> &mdash; the twin comparison, the referee and the verdict record (read at v0.1.15).</li>
     <li><span class="kind">Code</span> <a href="https://github.com/action-state-group/capsule-emit-mesh">action-state-group/capsule-emit-mesh</a> &mdash; docs/TRUST-MODEL.md: replay agrees exactly only within one hardware class.</li>
   </ul>
 

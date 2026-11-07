@@ -14,20 +14,20 @@
 <main><div class="wrap">
   <div class="crumb">10 / 16</div>
   <h1>Mesh-LLM capsules plugin</h1>
-  <p class="lede">The open-source <code>capsules</code> plugin for Mesh-LLM (release v0.1.4) seals a signed record of every exchange a node serves or asks for, lets two nodes swap those records, and, for a pair of requests a client marked as twins, can ask a third node to referee answers that differ.</p>
+  <p class="lede">The open-source <code>capsules</code> plugin for Mesh-LLM (latest release v0.1.15, 2026-11-03; mesh-llm's default plugin list still pins v0.1.4) seals a signed record of every exchange a node serves or asks for, lets two nodes swap those records, and, for a pair of requests a client marked as twins, can ask a third node to referee answers that differ.</p>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk through it."
-    data-cap-1="Keys. Each plugin signs with its own Ed25519 key. mesh-llm (PR 2299) lets a host bind a plugin's key with its node key (&quot;mesh-llm-plugin-key-v1:&quot; ‖ node id ‖ plugin name ‖ plugin key ‖ algorithm) and gossip it; a peer keeps it only if the binding verifies. capsules v0.1.4 reads peers' keys from the host's GET /api/plugin-keys or from the operator's CAPSULES_PEER_KEYS, but does not yet announce its own key, so its peers need the operator's entry."
+    data-cap-1="Keys. Each plugin signs with its own Ed25519 key. mesh-llm (PR 2299) lets a host bind a plugin's key with its node key (&quot;mesh-llm-plugin-key-v1:&quot; ‖ node id ‖ plugin name ‖ plugin key ‖ algorithm) and gossip it; a peer keeps it only if the binding verifies. capsules reads peers' keys from the host's GET /api/plugin-keys or from the operator's CAPSULES_PEER_KEYS. Release v0.1.4 does not announce its own key; since v0.1.5 the plugin asks the host to, which only a host that lists plugin_keys.v1 can do, and no mesh-llm release does yet (latest v0.78.1). On a stock host its peers still need the operator's entry."
     data-cap-2="A client sends two requests through node R, both carrying the same x-mesh-twin-bracket value. The host copies that value into twin_bracket_id on R's exchange events. The host never sends a second request itself."
     data-cap-3="R forwards one request to node A and one to node B. The twin-bracket header is stripped before forwarding, so neither serving node is told its answer is half of a pair."
     data-cap-4="Each node's plugin seals its own record of the exchange: request and response by digest, the model, a hash-chain link, and a COSE_Sign1 signature by the plugin's Ed25519 key (its key_id; the file is keys/node-key.pub.pem, which is the plugin's key, not mesh-llm's node key). R seals its requester halves, carrying twin_bracket_id."
-    data-cap-5="With record push on at both ends (off by default), each side sends its sealed record over record-push/1, as a bundle with a signed checkpoint and an inclusion proof. R checks that the sender's key (listed by the host or set in CAPSULES_PEER_KEYS) is the record's key_id, then the signature, the claims and the proof; it holds the record only if all pass, else it sends a signed refusal."
+    data-cap-5="With record push on at both ends (on by default since v0.1.6; off in v0.1.4), each side sends its sealed record over record-push/1, as a bundle with a signed checkpoint and an inclusion proof. R checks that the sender's key (listed by the host or set in CAPSULES_PEER_KEYS) is the record's key_id, then the signature, the claims and the proof; it holds the record only if all pass, else it sends a signed refusal."
     data-cap-6="The host passes plugins digests, not text, so the client supplies the request and both answers (referee_supply_twin_texts). R keeps them only if the request's digest is both records' request_digest and each answer's digest is one record's response_digest. If the answers differ, at temperature 0 on the same model and weights, and adjudicate_differing_twins is on (off by default), R picks one eligible referee, node C, asks it to re-answer the request (x-mesh-target), then sends it both halves and its answer to adjudicate."
-    data-cap-7="C signs a verdict from its own re-answer: contradicted:&lt;node&gt; names the twin it did not agree with; otherwise inconclusive; a pair it finds cannot be compared gets a signed not_comparable. R holds the verdict. A pair whose answers agree is never sent to a referee, and any pair without a verdict reads &quot;Not adjudicated&quot; with its reason, counting against neither twin.">
+    data-cap-7="C signs a verdict from its own re-answer: contradicted:&lt;node&gt; names the twin it did not agree with; otherwise inconclusive; a pair it finds cannot be compared gets a signed not_comparable. Since v0.1.13 it names a twin only when its own margin at the split reaches split_margin_threshold (0 by default since v0.1.14); with no logprobs, as on stock mesh-llm 0.78, the ruling is inconclusive. R holds the verdict. A pair whose answers agree is never sent to a referee, and any pair without a verdict reads &quot;Not adjudicated&quot; with its reason, counting against neither twin.">
     <svg viewBox="0 0 860 400" role="img" aria-labelledby="anim-t anim-d">
       <title id="anim-t">Records, record push and a refereed twin pair across Mesh-LLM nodes</title>
-      <desc id="anim-d">Four Mesh-LLM nodes, each running the capsules plugin: R the requesting node on the left, A and B the two serving nodes in the middle, C the referee on the right, and a client at far left. Stage 1: each node shows its plugin's own key; dashed lines show mesh-llm's host gossip of plugin keys bound by node keys, labelled as not used by capsules v0.1.4 for its own key, which does not announce it; a note says peers' keys come from CAPSULES_PEER_KEYS, or from the host's list when a key is announced. Stage 2: the client sends two requests to R, both with the header x-mesh-twin-bracket: bracket-1. Stage 3: R forwards one request to A and one to B with the header stripped, so neither is told it is a twin. Stage 4: A and B each seal a record holding the request and response digests, the model and the key id, signed with COSE_Sign1 by the plugin key; R seals its own requester halves, carrying twin_bracket_id. The key file keys/node-key.pub.pem is the plugin's key, not mesh-llm's node key. Stage 5: A and B push their records to R over record-push/1; R checks that the sender's key, from the host's list or CAPSULES_PEER_KEYS, is the record's key_id, then the signature, the claims and the inclusion proof, then holds the record or sends a signed refusal. Stage 6: the client supplies the request and both answers to R, which keeps them only if their digests match its own records; the twins answered the same request at temperature 0 on the same model and weights with different answers, so R asks referee C to re-answer the request and then sends it both halves. Stage 7: C returns a signed verdict from its re-answer, here contradicted naming node B; the referee signs only contradicted, inconclusive or not_comparable; a pair whose answers agree is never sent to a referee, and a pair without a verdict reads Not adjudicated with its reason. The final picture shows all four nodes, their records, the record pushes, the referee call and the verdict.</desc>
+      <desc id="anim-d">Four Mesh-LLM nodes, each running the capsules plugin: R the requesting node on the left, A and B the two serving nodes in the middle, C the referee on the right, and a client at far left. Stage 1: each node shows its plugin's own key; dashed lines show mesh-llm's host gossip of plugin keys bound by node keys, labelled as not carrying capsules' own key on a stock host: release v0.1.4 does not announce it, and since v0.1.5 it is announced only on a host that lists plugin_keys.v1, which no mesh-llm release does yet; a note says peers' keys come from CAPSULES_PEER_KEYS, or from the host's list when a key is announced. Stage 2: the client sends two requests to R, both with the header x-mesh-twin-bracket: bracket-1. Stage 3: R forwards one request to A and one to B with the header stripped, so neither is told it is a twin. Stage 4: A and B each seal a record holding the request and response digests, the model and the key id, signed with COSE_Sign1 by the plugin key; R seals its own requester halves, carrying twin_bracket_id. The key file keys/node-key.pub.pem is the plugin's key, not mesh-llm's node key. Stage 5: A and B push their records to R over record-push/1; R checks that the sender's key, from the host's list or CAPSULES_PEER_KEYS, is the record's key_id, then the signature, the claims and the inclusion proof, then holds the record or sends a signed refusal. Stage 6: the client supplies the request and both answers to R, which keeps them only if their digests match its own records; the twins answered the same request at temperature 0 on the same model and weights with different answers, so R asks referee C to re-answer the request and then sends it both halves. Stage 7: C returns a signed verdict from its re-answer, here contradicted naming node B; the referee signs only contradicted, inconclusive or not_comparable; a pair whose answers agree is never sent to a referee, and a pair without a verdict reads Not adjudicated with its reason. The final picture shows all four nodes, their records, the record pushes, the referee call and the verdict.</desc>
       <defs>
         <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3A5BD9"/></marker>
         <marker id="ahv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#127A52"/></marker>
@@ -66,15 +66,15 @@
         <text x="515" y="367" text-anchor="middle" font-size="12" fill="#127A52">own plugin key</text>
         <rect x="688" y="218" width="154" height="22" rx="5" fill="#E6F2EC" stroke="#127A52"/>
         <text x="765" y="233" text-anchor="middle" font-size="12" fill="#127A52">own plugin key</text>
-        <text x="10" y="30" font-size="12" fill="#9A5B00">peers' keys in v0.1.4: CAPSULES_PEER_KEYS</text>
-        <text x="10" y="46" font-size="12" fill="#9A5B00">(own key in host gossip: not in v0.1.4)</text>
+        <text x="10" y="30" font-size="12" fill="#9A5B00">peers' keys on a stock host: CAPSULES_PEER_KEYS</text>
+        <text x="10" y="46" font-size="12" fill="#9A5B00">(own key in host gossip: since v0.1.5, needs plugin_keys.v1)</text>
       </g>
       <g class="st" data-step="1" data-until="1">
         <line x1="300" y1="150" x2="440" y2="116" stroke="#9A5B00" stroke-dasharray="5 4"/>
         <line x1="300" y1="246" x2="440" y2="284" stroke="#9A5B00" stroke-dasharray="5 4"/>
         <line x1="310" y1="198" x2="680" y2="198" stroke="#9A5B00" stroke-dasharray="5 4"/>
         <text x="495" y="190" text-anchor="middle" font-size="12" class="mono" fill="#9A5B00">host gossip: PeerAnnouncement.plugin_keys</text>
-        <text x="495" y="218" text-anchor="middle" font-size="12" fill="#9A5B00">mesh-llm binds and gossips; capsules' own key: not in v0.1.4</text>
+        <text x="495" y="218" text-anchor="middle" font-size="12" fill="#9A5B00">mesh-llm binds, gossips; capsules' key: not on 0.78.1</text>
       </g>
 
       <!-- Step 2: client marks two requests with one twin-bracket value -->
@@ -181,8 +181,8 @@
       <div class="not"><b>Rejected:</b> a similarity threshold, and retrying another referee after one did not answer. (capsules <code>docs/TWIN-REFEREE-SELECTION.md</code> §1)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> by default nothing leaves the node on its own: record push, verdict delivery and the referee are each off until the operator turns them on.</div>
-      <div class="not"><b>Rejected:</b> sharing on by default. Asking a referee sends it the twins' prompt, so it needs an explicit switch. (capsules <code>docs/SHARING-POLICY.md</code>; <code>CHANGELOG.md</code> 0.1.3)</div>
+      <div class="pick"><b>Chosen:</b> asking a referee stays off until the operator turns it on. In release v0.1.4 record push and verdict delivery were off by default too; since v0.1.6 a node pushes its record of an exchange to that exchange's counterparty by default, and since v0.1.9 it delivers a verdict to the nodes it judges by default.</div>
+      <div class="not"><b>Rejected:</b> the referee on by default. Asking a referee sends it the twins' prompt, so it needs an explicit switch. (capsules <code>docs/SHARING-POLICY.md</code> @ <code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code> (tag v0.1.15); <code>CHANGELOG.md</code> 0.1.3, 0.1.6, 0.1.9)</div>
     </div>
   </div>
 
@@ -190,8 +190,8 @@
   <div class="cols">
     <div class="col yes"><h3>Shows</h3><ul>
       <li>That the holder of a given plugin key signed a record of one exchange, and that the record's bytes are unchanged (its <code>capsule_id</code> recomputes).</li>
-      <li>Where a host lists a peer's plugin key (mesh-llm PR 2299): that the peer's node key vouched for that key. capsules v0.1.4 reads such keys; it does not yet announce its own.</li>
-      <li>With record push on at both ends: each side holds the other's signed record of the same exchange.</li>
+      <li>Where a host lists a peer's plugin key (mesh-llm PR 2299): that the peer's node key vouched for that key. capsules reads such keys. Since v0.1.5 it asks the host to announce its own, on a host that lists plugin_keys.v1, which no mesh-llm release does yet; v0.1.4 does not ask.</li>
+      <li>With record push on at both ends (the default since v0.1.6): each side holds the other's signed record of the same exchange.</li>
       <li>For a pushed bundle: inclusion of the record under a checkpoint the sender signed.</li>
       <li>For a refereed pair: a signed ruling on one pair of answers, which twin the referee's re-answer agrees with, and the word position where they start to differ (<code>divergence_index</code>).</li>
     </ul></div>
@@ -201,8 +201,8 @@
       <li>Anything about a pair no client marked: those read &ldquo;Not adjudicated&rdquo; and nothing is called.</li>
       <li>A node's future answers. A verdict is a ruling on one pair; nothing counts against a twin without one.</li>
       <li>That the referee's prompt is the twins' prompt: the verdict records it as the requester's word (<code>referee_prompt: requester_attested</code>).</li>
-      <li>In v0.1.4, the plugin announcing its own key: it reads peers' announced keys; announcing its own &ldquo;follows once a mesh-llm plugin release carries the request&rdquo; (INSTALL.md).</li>
-      <li>A live run: host-announced keys were exercised only against a test build of the host, and a referee verdict on live hosts is covered by tests only (CHANGELOG 0.1.4).</li>
+      <li>On a stock host, the plugin announcing its own key: release v0.1.4 does not, and since v0.1.5 it asks only a host that lists plugin_keys.v1, which no mesh-llm release has yet (latest v0.78.1; <code>CHANGELOG.md</code> 0.1.5).</li>
+      <li>A live run on stock hosts: host-announced keys were exercised only against a test build of the host (CHANGELOG 0.1.4), and signed requests only on a lab host built from mesh-llm main (CHANGELOG 0.1.5). A referee verdict on live hosts &ldquo;has still not run&rdquo; (CHANGELOG 0.1.5). Since 0.1.13 the nightly two-node test on stock mesh-llm 0.78.0 has a referee sign and deliver a verdict on a test pair whose twins are test keys; it rules <code>inconclusive</code>, because stock mesh-llm serves no logprobs (<code>crates/evidence-plugin/src/two_node_e2e.rs</code> @ <code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code> (tag v0.1.15)).</li>
     </ul></div>
   </div>
 
@@ -272,7 +272,7 @@
       <tr><td>status</td><td>string</td><td>Paired with the verdict: SATISFIED, CONTRADICTED or UNKNOWN.</td></tr>
       <tr><td>divergence_index</td><td>integer</td><td>The word position at which the two answers start to differ.</td></tr>
       <tr><td>prefix_digest</td><td>hex</td><td>Digest of the words the two answers share before they differ.</td></tr>
-      <tr><td>margin / margin_tau</td><td>string</td><td>Read and shown by the v0.1.4 web UI; written by no v0.1.4 Rust code. capsule-emit&rsquo;s Python adjudication record defines them: <code>margin</code> is the agreement margin the verdict rule compared against the threshold <code>margin_tau</code>, both carried as exact decimal strings (<code>python/capsule_emit/adjudication.py</code>, python/v0.15.0).</td></tr>
+      <tr><td>margin / margin_tau</td><td>string</td><td>Read by the plugin's web UI (v0.1.4, and still parsed at v0.1.15); written by no plugin Rust code in either release. Since v0.1.13 the plugin seals the referee's own margin in a separate <code>split_margin</code> block instead (the threshold and the referee's top-2 margin, in nats). capsule-emit&rsquo;s Python adjudication record defines them: <code>margin</code> is the agreement margin the verdict rule compared against the threshold <code>margin_tau</code>, both carried as exact decimal strings (<code>python/capsule_emit/adjudication.py</code>, python/v0.15.0).</td></tr>
       <tr><td>twin_owner_distinct</td><td>bool</td><td>The twins have different owners; a same-owner pair gets no verdict.</td></tr>
       <tr><td>weights_digest</td><td>hex</td><td>The weights both halves name; set only when both name the same.</td></tr>
       <tr><td>half_a/b_capsule_id</td><td>hex</td><td>The two twins' served records (A's and B's), pushed to the requesting node and held there.</td></tr>
@@ -287,8 +287,8 @@
       <tr><td>key_id</td><td>hex</td><td>The plugin's own key that signed this record (here <code>referee_key_id</code>); on disk <code>keys/node-key.pub.pem</code>, not mesh-llm's node key.</td></tr>
     </tbody>
   </table></div>
-  <p>This fixture's <code>spec_version</code> (trimmed above) names an earlier revision of the capsule Internet-Draft; the v0.1.4 producer seals <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
-  <p class="src">Source: <code>Mesh-LLM/capsules:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code> (tag v0.1.4)</p>
+  <p>This fixture's <code>spec_version</code> (trimmed above) names an earlier revision of the capsule Internet-Draft; the plugin's producer (v0.1.4, and still at v0.1.15) seals <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules-plugin:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code> (tag v0.1.15); the file is unchanged since tag v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>). Release claims on this page re-read at v0.1.15 on 2026-11-06.</p>
 
   <h2><span class="n">5</span>Specs</h2>
   <ul class="specs">
@@ -299,7 +299,7 @@
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every digest and <code>capsule_id</code> covers.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: the witness an operator may name for checkpoints (none by default).</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts: what a named witness returns.</li>
-    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the plugin, its Evidence page, vectors and docs.</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules-plugin/tree/v0.1.15">Mesh-LLM/capsules-plugin v0.1.15</a> &mdash; the plugin, its Evidence page, vectors and docs (latest release; the repository was Mesh-LLM/capsules).</li>
     <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2299">Mesh-LLM/mesh-llm#2299</a> &mdash; plugin keys bound to the node key, carried in gossip (merged).</li>
     <li><span class="kind">Code</span> The host strips the <code>x-mesh-twin-bracket</code> header before it forwards a request to a peer: <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2144">mesh-llm PR 2144</a> added the stripping, and <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">PR 2300</a> added a test and documentation for it and advertises the <code>twin_bracket</code> capability. Both are merged.</li>
   </ul>
