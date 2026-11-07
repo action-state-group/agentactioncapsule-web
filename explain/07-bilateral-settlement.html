@@ -12,7 +12,7 @@
   <nav><a href="06-cll-mmr.html">&larr; Prev</a><a href="index.html">Contents</a><a href="08-bundles-disclosure.html">Next &rarr;</a></nav>
 </div></header>
 <main><div class="wrap">
-  <div class="crumb">07 / 11</div>
+  <div class="crumb">07 / 16</div>
   <h1>Bilateral attestation and settlement</h1>
   <p class="lede">Two parties who do not trust each other each seal only what their own side observed, and a verifier who trusts neither derives from the two records whether they agree.</p>
 
@@ -140,7 +140,7 @@
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> a verifier reports three distinct bilateral states: both halves present and agreeing, one half unavailable, both present and disagreeing.</div>
-      <div class="not"><b>Rejected:</b> one "incomplete" outcome; a half that aged out of retention is not a finding against the record, while a disagreement is a contradiction that must stay one. (bilateral-attestation §10.1)</div>
+      <div class="not"><b>Rejected:</b> one "incomplete" outcome; a half that aged out of retention is not a finding against the record, while a disagreement is a contradiction that must stay one. (bilateral-attestation editor&rsquo;s copy, &ldquo;Three States&rdquo;; not in the posted -03)</div>
     </div>
     <div class="choice">
       <div class="pick"><b>Chosen:</b> a declined request is a completed exchange, recorded with its constraint basis and acknowledged by the refused party.</div>
@@ -163,7 +163,7 @@
       <li>For a bilateral exchange: that a refusal was made and acknowledged, recorded with the same fidelity as performance.</li>
     </ul></div>
     <div class="col no"><h3>Does not show</h3><ul>
-      <li>That either side's observation is true; agreement on a digest attests to the digest, not to what it represents (bilateral-attestation §10.1).</li>
+      <li>That either side's observation is true; agreement on a digest attests to the digest, not to what it represents (bilateral-attestation editor&rsquo;s copy, &ldquo;Three States&rdquo;; not in the posted -03).</li>
       <li>That a key belongs to the payer or the payee; that is the verifier's own key policy.</li>
       <li>That a missing leg means disagreement; it may not exist yet, may not have been shared, or may never be produced.</li>
       <li>Whether a fee was acceptable; <code>agreed</code> is about the payment only, and the terms comparison is reported separately as <code>terms_amount</code>.</li>
@@ -171,7 +171,7 @@
       <li>Who is right in a disagreement; neither half is preferred, and no dispute mechanism is defined.</li>
     </ul></div>
   </div>
-  <p>A note on counts: the six slots above are the payment states of the settlement-records draft (§9.2). The bilateral-attestation draft defines three verifier states (§10.1), plus the three asymmetry dispositions and the orphan half of §8, and the reduced-assurance indicator of §7.</p>
+  <p>A note on counts: the six slots above are the payment states of the settlement-records draft (§9.2). The bilateral-attestation draft&rsquo;s editor&rsquo;s copy adds three verifier states (&ldquo;Three States&rdquo;), which are not in the posted -03; -03 defines the three asymmetry dispositions and the orphan half of §8, and the reduced-assurance indicator of §7.</p>
 
   <h2><span class="n">4</span>Example</h2>
   <p>The payee's leg from the conformance vector for two Lightning payments: 995 received plus a receive fee of 5 explains the payer's 1000, so the expected state is <code>agreed</code>.</p>
@@ -245,7 +245,7 @@
 
   <h2><span class="n">5</span>Specs</h2>
   <ul class="specs">
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-02</a> &mdash; the four-move exchange, refusals, asymmetry dispositions, the three verifier states.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation-03</a> &mdash; the four-move exchange, refusals, asymmetry dispositions, the three verifier states.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a> &mdash; the four legs, exact amounts, payment references, derived payment and delivery states.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record each leg is, its capsule_id and Producer Envelope.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme (JCS), the canonical form under each capsule_id.</li>

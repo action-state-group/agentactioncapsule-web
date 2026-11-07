@@ -12,7 +12,7 @@
   <nav><a href="07-bilateral-settlement.html">&larr; Prev</a><a href="index.html">Contents</a><a href="09-grades.html">Next &rarr;</a></nav>
 </div></header>
 <main><div class="wrap">
-  <div class="crumb">08 / 11</div>
+  <div class="crumb">08 / 16</div>
   <h1>Bundles and selective disclosure</h1>
   <p class="lede">A bundle packages a record with what makes it checkable and says exactly what it left out; selective disclosure withholds single fields without breaking the signature over the record.</p>
 
@@ -98,7 +98,7 @@
         <text x="618" y="236" class="mono" font-size="12" fill="#9A5B00">sd_undisclosed_constraints: 1</text>
         <text x="614" y="268" font-size="12" fill="#5C6573">reported, never filled in</text>
       </g>
-      <text x="16" y="312" font-size="12" fill="#5C6573">Values from the selective-disclosure draft examples (§7.1, §7.2); the digests are SHA-256 of the JCS form</text><text x="16" y="327" font-size="12" fill="#5C6573">of each array, computed for this page.</text>
+      <text font-size="12" fill="#5C6573"><tspan x="16" y="312">Values from the selective-disclosure draft examples (§7.1, §7.2); the digests are SHA-256 of the JCS form</tspan> <tspan x="16" y="327">of each array, computed for this page.</tspan></text>
       <text x="16" y="344" font-size="12" fill="#5C6573">The salts are the draft's own example salts, so these digests are illustrative, not from a production record.</text>
     </svg>
     <figcaption><span class="cap" aria-live="polite"></span>
@@ -259,9 +259,9 @@
 
   <h2><span class="n">5</span>Specs</h2>
   <ul class="specs">
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-01</a> &mdash; the Evidence Bundle: closure, overlay, the three completeness claims, bundle digest.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-zhang-agent-disclosure-bundle/">draft-mih-zhang-agent-disclosure-bundle-02</a> &mdash; the Evidence Bundle: closure, overlay, the three completeness claims, bundle digest.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule-sel-disc/">draft-mih-scitt-agent-action-capsule-sel-disc-00</a> &mdash; per-field salted commitments, decoys, eligible fields, verifier checks.</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-ietf-spice-sd-cwt/">draft-ietf-spice-sd-cwt-08</a> &mdash; SD-CWT, the CBOR sibling of the same selective-disclosure model.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-ietf-spice-sd-cwt/">draft-ietf-spice-sd-cwt-09</a> &mdash; SD-CWT, the CBOR sibling of the same selective-disclosure model.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the record, its capsule_id and Producer Envelope.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; related reading on checkpointed logs and MMR proofs; the bundle draft defines its own log-evidence shape and cites no revision of it.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme (JCS), hashed by both digest checks.</li>
