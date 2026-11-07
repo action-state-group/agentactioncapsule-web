@@ -14,7 +14,7 @@
 <main><div class="wrap">
   <div class="crumb">10 / 16</div>
   <h1>Mesh-LLM capsules plugin</h1>
-  <p class="lede">The open-source <code>capsules</code> plugin for Mesh-LLM (latest release v0.1.15, 2026-11-03; mesh-llm's default plugin list still pins v0.1.4) seals a signed record of every exchange a node serves or asks for, lets two nodes swap those records, and, for a pair of requests a client marked as twins, can ask a third node to referee answers that differ.</p>
+  <p class="lede">The open-source <code>capsules</code> plugin for Mesh-LLM (latest release v0.1.16, 2026-11-07, re-read that day; mesh-llm's default plugin list still pins v0.1.4) seals a signed record of every exchange a node serves or asks for, lets two nodes swap those records, and, for a pair of requests a client marked as twins, can ask a third node to referee answers that differ.</p>
 
   <figure class="anim" data-steps="7"
     data-cap-0="Press Play, or Step to walk through it."
@@ -288,7 +288,7 @@
     </tbody>
   </table></div>
   <p>This fixture's <code>spec_version</code> (trimmed above) names an earlier revision of the capsule Internet-Draft; the plugin's producer (v0.1.4, and still at v0.1.15) seals <code>draft-mih-scitt-agent-action-capsule-05</code>.</p>
-  <p class="src">Source: <code>Mesh-LLM/capsules-plugin:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code> (tag v0.1.15); the file is unchanged since tag v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>). Release claims on this page re-read at v0.1.15 on 2026-11-06.</p>
+  <p class="src">Source: <code>Mesh-LLM/capsules-plugin:crates/evidence-plugin/tests/fixtures/referee-verdict.json</code> @ <code>3b3538179c50ca11c5266d6c0bb3aaca677d5fb3</code> (tag v0.1.15); the file is unchanged since tag v0.1.4 (<code>b4e24453f572b2d9fe8f2cefbd0f35a5eb54b0ad</code>). Release claims on this page re-read at v0.1.15 on 2026-11-06, and re-read on 2026-11-07 at v0.1.16, the latest release (<code>02ee5c9bbbad32de9037c7b8d4aaab10bf0f911d</code> (tag v0.1.16), published 2026-11-07); the v0.1.15 to v0.1.16 diff changes none of them.</p>
 
   <h2><span class="n">5</span>Specs</h2>
   <ul class="specs">
@@ -299,7 +299,7 @@
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every digest and <code>capsule_id</code> covers.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture: the witness an operator may name for checkpoints (none by default).</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts: what a named witness returns.</li>
-    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules-plugin/tree/v0.1.15">Mesh-LLM/capsules-plugin v0.1.15</a> &mdash; the plugin, its Evidence page, vectors and docs (latest release; the repository was Mesh-LLM/capsules).</li>
+    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules-plugin/tree/v0.1.16">Mesh-LLM/capsules-plugin v0.1.16</a> &mdash; the plugin, its Evidence page, vectors and docs (latest release, 2026-11-07; the repository was Mesh-LLM/capsules).</li>
     <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2299">Mesh-LLM/mesh-llm#2299</a> &mdash; plugin keys bound to the node key, carried in gossip (merged).</li>
     <li><span class="kind">Code</span> The host strips the <code>x-mesh-twin-bracket</code> header before it forwards a request to a peer: <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2144">mesh-llm PR 2144</a> added the stripping, and <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">PR 2300</a> added a test and documentation for it and advertises the <code>twin_bracket</code> capability. Both are merged.</li>
   </ul>
