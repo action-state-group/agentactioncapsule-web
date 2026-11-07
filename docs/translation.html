@@ -264,7 +264,7 @@
     <tr><th>the witnessing party</th><td>witness</td><td>the party that makes the log checkable by a stranger</td><td>Transparency Service (RFC&nbsp;9943)</td></tr>
     <tr><th>an action's account</th><td>proof (of an action)</td><td>the signed membership claim: which records constitute one action</td><td>composition capsule</td></tr>
     <tr><th>foreign bytes brought in</th><td>carry / received</td><td>someone else's already-signed record, committed as-transmitted</td><td>as-transmitted CPB binding</td></tr>
-    <tr><th>the hand-over file</th><td>bundle</td><td>digests + proofs + stamps; lets anyone check integrity/order/completeness, carries no content</td><td>bundle</td></tr>
+    <tr><th>the hand-over file</th><td>bundle</td><td>digests + proofs + stamps; lets anyone check integrity/order/continuity, carries no content</td><td>bundle</td></tr>
     <tr><th>content release</th><td>disclose</td><td>a deliberate, recorded release of content to a named audience; itself logged</td><td>disclosure record</td></tr>
   </tbody>
 </table></div>
@@ -289,7 +289,7 @@
   <thead><tr><th>Rung</th><th>Dev</th><th>Auditor</th><th>Spec</th></tr></thead>
   <tbody>
     <tr><th>self-attested</th><td>&ldquo;signed by me&rdquo;</td><td>record integrity by the producer's key alone; no third-party confirmation</td><td><code>attestation_mode=self_attested</code></td></tr>
-    <tr><th>witnessed</th><td>&ldquo;an independent log registered it&rdquo;</td><td>existence + order + completeness checkable without trusting the producer</td><td>registered checkpoint (&ge;1 valid Receipt)</td></tr>
+    <tr><th>witnessed</th><td>&ldquo;an independent log registered it&rdquo;</td><td>existence + order + continuity checkable without trusting the producer; it cannot show an action was never logged</td><td>registered checkpoint (&ge;1 valid Receipt)</td></tr>
   </tbody>
 </table></div>
 <p style="color:var(--muted);font-size:14.5px">There is no third rung. A witness Receipt is not a countersignature, and a witness vouches for nothing about the content. A counterparty's own signature over a shared record is a separate claim described on the <a class="ln" href="/docs/bilateral.html">bilateral</a> page, not a step on this ladder. A record is self-attested until a Transparency Service its producer does not run has registered its checkpoint and returned a Receipt. On this site &ldquo;witnessed&rdquo; and &ldquo;registered&rdquo; name that same step. See <a class="ln" href="/docs/witness-anywhere.html">witness anywhere</a> for how you move a record up this ladder.</p>
@@ -297,7 +297,7 @@
 <h2>The honesty rows</h2>
 <p>This is the auditor register's spine &mdash; the claims this project will not round up, anywhere:</p>
 <ul class="honesty">
-  <li>A witnessed record is not a true record. The stamp attests existence/order/completeness, never accuracy.</li>
+  <li>A witnessed record is not a true record. The stamp attests existence/order/continuity, never accuracy.</li>
   <li>A derived verdict is not an adjudicated one. <code>verify</code> never grades up: absence &ne; forgery, unsigned &ne; invalid.</li>
   <li>Coverage is the range, not the population.</li>
   <li>Registration &ne; Receipt &ne; agreement. Registration is the act. A Receipt is what the service returns: it proves inclusion in that service's log, not agreement with the content. When a checkpoint carries a consistency proof, this service registers it only if the proof shows it extends the last one it registered for the same log; that check is part of its published <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">Registration Policy</a>. &ldquo;Anchor&rdquo; is avoided as a verb (it collides with &ldquo;trust anchor&rdquo;).</li>

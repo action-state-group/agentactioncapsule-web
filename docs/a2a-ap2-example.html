@@ -263,7 +263,7 @@
   <tbody>
     <tr><th>Authorization</th><td>AP2 CartMandate</td><td>Caller permitted this payment (for up to X, to payee Y)</td></tr>
     <tr><th>Neutral record</th><td>AAC capsule</td><td>Callee sealed what actually happened &mdash; approved or refused</td></tr>
-    <tr><th>Independent proof</th><td>SCITT receipt</td><td>Third-party log the capsule was registered; verifiable without trusting the callee</td></tr>
+    <tr><th>Independent check</th><td>SCITT receipt</td><td>Once you name a witness, a third-party log registered a checkpoint of the ledger that includes the capsule; verifiable without trusting the callee</td></tr>
   </tbody>
 </table></div>
 
@@ -300,12 +300,11 @@
 dispatched = seal(
     task.input_dict(),   <span class="c"># AP2 CartMandate → agent_input_digest</span>
     action=<span class="s">"send_payment"</span>,
-    operator=<span class="s">"action-state-group"</span>,
+    operator=<span class="s">"acme-co"</span>,
     developer=<span class="s">"ap2-payment-agent@v1"</span>,
     agent_output=<span class="k">None</span>,
     verdict=<span class="s">"executed"</span>,
     effect={<span class="s">"type"</span>: <span class="s">"send_payment"</span>, <span class="s">"status"</span>: <span class="s">"dispatched"</span>},
-    anchor=<span class="k">True</span>,
 )
 <span class="c"># dispatched.capsule_id  =  SHA-256(JCS(capsule_body))</span>
 
@@ -321,7 +320,6 @@ confirmed = seal(
     verdict=<span class="s">"executed"</span>,
     effect={<span class="s">"type"</span>: <span class="s">"send_payment"</span>, <span class="s">"status"</span>: <span class="s">"confirmed"</span>},
     confirms=dispatched.capsule_id,  <span class="c"># chain → dispatch</span>
-    anchor=<span class="k">True</span>,
 )</code></pre>
 
 <h3>Scenario B &mdash; over-limit refusal</h3>
@@ -339,7 +337,6 @@ confirmed = seal(
     verdict=<span class="s">"blocked"</span>,
     decision=<span class="s">"reject"</span>,
     effect={<span class="s">"type"</span>: <span class="s">"send_payment"</span>, <span class="s">"status"</span>: <span class="s">"planned"</span>},  <span class="c"># ← NEVER dispatched</span>
-    anchor=<span class="k">True</span>,
 )</code></pre>
 
 <h2>What a sealed capsule looks like</h2>
@@ -349,7 +346,7 @@ confirmed = seal(
   <span class="s">"capsule_id"</span>: <span class="s">"cb96…714c"</span>,         <span class="c"># SHA-256(JCS(this body)) — the seal</span>
   <span class="s">"format_version"</span>: <span class="s">"2"</span>,
   <span class="s">"action"</span>: <span class="s">"send_payment"</span>,
-  <span class="s">"operator"</span>: <span class="s">"action-state-group"</span>,
+  <span class="s">"operator"</span>: <span class="s">"acme-co"</span>,
   <span class="s">"developer"</span>: <span class="s">"ap2-payment-agent@v1"</span>,
   <span class="s">"timestamp"</span>: <span class="s">"2026-06-29T20:30:00Z"</span>,
   <span class="s">"agent_input_digest"</span>: <span class="s">"a3f1…e842"</span>,  <span class="c"># SHA-256(JCS(A2A Task + CartMandate))</span>
@@ -375,6 +372,7 @@ confirmed = seal(
 <pre class="code"><code>pip install "capsule-emit"
 git clone https://github.com/action-state-group/capsule-emit
 cd capsule-emit
+export CAPSULE_WITNESS_URL=https://witness.agentactioncapsule.org   <span class="c"># name a witness; without it nothing leaves your process</span>
 python examples/a2a-ap2/run_example.py</code></pre>
 
 <p>Expected output:</p>
@@ -385,12 +383,10 @@ Mode:   sandbox (DRY_RUN)
   <span class="ok">✓</span>  dispatched capsule_id: cb96…714c
   <span class="ok">✓</span>  confirmed capsule_id:  00fe…034
      chains → dispatched: cb9678f17cc3d96c…
-  <span class="ok">✓</span>  SCITT witnessed:  dispatch leaf=5, confirm leaf=4
 
   <span class="ok">✓</span>  refusal capsule_id: 16be…3b3
      verdict_class:  blocked
      effect.status:  planned  <span class="c">← 'planned' = NEVER dispatched</span>
-  <span class="ok">✓</span>  SCITT witnessed: leaf=6
 
   [0] <span class="ok">VALID  ✓</span>  cb9678f17cc3d96c56cd…  verdict=executed effect.status=dispatched
   [1] <span class="ok">VALID  ✓</span>  00feb2159a5ed32d903e…  verdict=executed effect.status=confirmed
@@ -398,7 +394,7 @@ Mode:   sandbox (DRY_RUN)
 
   All capsules VALID <span class="ok">✓</span></code></pre>
 
-<div class="callout ok">Every capsule is witnessed by the <a class="ln" href="https://witness.agentactioncapsule.org">public SCITT transparency log</a>. After running the example, visit the log explorer to see your capsule digests in the tree.</div>
+<div class="callout ok">With <code>CAPSULE_WITNESS_URL</code> set, every <code>seal()</code> folds its capsule into the ledger's checkpoint stream, and each checkpoint is registered with the witness you named &mdash; here the <a class="ln" href="https://witness.agentactioncapsule.org">public SCITT transparency log</a>. The witness sees the checkpoint, never a capsule or its digests. A checkpoint is cut roughly every 100 entries or 15 minutes, so a three-capsule run stays in your ledger until one comes due.</div>
 
 <h2>Verify</h2>
 
@@ -408,7 +404,7 @@ capsule-emit verify --store /path/to/a2a-ap2-ledger   <span class="c"># the ledg
 <span class="c"># Inspect the live log</span>
 curl https://witness.agentactioncapsule.org/anchor/transparency-log</code></pre>
 
-<div class="callout warn"><strong>Content-private by construction.</strong> The AP2 CartMandate, payee details, amounts, and payment outcomes never leave your process &mdash; only their SHA-256 digests travel in the capsule and to the witness. Pass <code>salt_digests=False</code> only when you need deterministic digests for cross-system comparison (as in this example for reproducibility).</div>
+<div class="callout warn"><strong>Content-private by construction.</strong> The AP2 CartMandate, payee details, amounts, and payment outcomes never leave your process &mdash; only their SHA-256 digests travel in the capsule, and the witness sees only checkpoints of the ledger. Pass <code>salt_digests=False</code> only when you need deterministic digests for cross-system comparison (as in this example for reproducibility).</div>
 
 <h2>What this is not</h2>
 <ul>
@@ -417,10 +413,6 @@ curl https://witness.agentactioncapsule.org/anchor/transparency-log</code></pre>
   <li><strong>Not a payment library</strong> &mdash; <code>a2a_sandbox.py</code> is a thin demo shim, not a payment integration.</li>
 </ul>
 
-      <div class="next">
-        <a class="p" href="/docs/quickstart.html"><div class="dir">&#8592; Previous</div><div class="ttl">Quickstart</div></a>
-        <a class="n" href="/docs/verify-a-capsule.html"><div class="dir">Next &#8594;</div><div class="ttl">Verify a capsule</div></a>
-      </div>
     <!--chrome:next--><div class="next"><a class="p" href="/docs/verify-a-capsule.html"><div class="dir">&#8592; Previous</div><div class="ttl">Verify a capsule</div></a><a class="n" href="/docs/explore.html"><div class="dir">Next &#8594;</div><div class="ttl">Explore a capsule</div></a></div><!--/chrome:next-->
 </article>
   </div>

@@ -336,7 +336,7 @@
 
 <h2>The Internet-Draft</h2>
 <p>The bilateral attestation exchange is specified as a companion Internet-Draft to the Agent Action Capsule profile:</p>
-<p><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation &#x2197;</a> &mdash; always resolves to the current revision on the Datatracker; as of this writing, -02.</p>
+<p><a class="ln" href="https://datatracker.ietf.org/doc/draft-mih-agent-bilateral-attestation/">draft-mih-agent-bilateral-attestation &#x2197;</a> &mdash; always resolves to the current revision on the Datatracker.</p>
 <p>The draft fixes the exchange, the binding obligations, and the disposition semantics. Wire encodings are left to a future revision. What the draft already fixes is how canonicalization works: each attested object must <em>declare</em> its canonicalization by identifier, inside the bytes its signature covers, and a verifier must apply the declared construction rather than infer one. The expected construction is JCS (<a class="ln" href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a>). This is the same rule the <a class="ln" href="https://canonicalpayloadbinding.org/">Canonical Payload Binding</a> defines, and the same JCS a capsule already declares (<code>canonicalization_id: "jcs"</code>). JCS is the construction; CPB is how a record names it.</p>
 
 <h2>Open-source implementation</h2>

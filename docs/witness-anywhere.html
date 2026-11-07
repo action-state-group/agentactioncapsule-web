@@ -214,7 +214,7 @@
       <div class="crumb">Concepts</div>
       
 <h1>Witness anywhere — what leaves your walls</h1>
-<p class="lede">Witnessing means registering with a SCITT Transparency Service: its Receipt proves a capsule was included in an append-only log. The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
+<p class="lede">Witnessing means registering with a SCITT Transparency Service: its Receipt covers a checkpoint of your log in its append-only log (or, sent to <code>POST /register</code>, a single digest). The only thing that travels to the log is a <strong>digest (a hash) and a timestamp</strong> — never your prompts, payloads, reasoning, or PII.</p>
 
 <h2>What leaves your walls</h2>
 <p>A capsule is <a class="ln" href="/docs/what-is-a-capsule.html">content-private by construction</a>: it carries digests of inputs and outputs, not the raw values. When it's witnessed, the log receives the statement's commitment — a hash — plus a timestamp. The raw content stays where you keep it, under your control. The public log stores <em>a commitment you can check</em>, not your data.</p>

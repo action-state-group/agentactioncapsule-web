@@ -215,7 +215,7 @@
       
 <h1>What is a Transparency Service?</h1>
 <p class="lede">A Transparency Service (TS) registers signed statements in an append-only log and issues a receipt proving inclusion &mdash; so a record can be shown to exist, and a later attempt to drop or rewrite it would be detectable.</p>
-<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. <code>seal()</code> registers the digest for you and hands back a witnessed record &mdash; this page explains what's happening underneath.</p>
+<p style="color:var(--muted);font-size:15px;margin-top:-10px;margin-bottom:24px">You don't call this service directly. Nothing leaves your process until you name a witness (<code>CAPSULE_WITNESS_URL</code>); from then on, <code>seal()</code> folds each capsule into your ledger's checkpoints and registers each checkpoint with that witness for you &mdash; this page explains what's happening underneath.</p>
 
 <h2>What it does</h2>
 <ol>

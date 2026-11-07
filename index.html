@@ -583,7 +583,7 @@ agent = Agent(model=None, tools=[], hooks=[listener])  # your model and tools he
       <div class="card">
         <div class="k">Decision</div>
         <h3>The may/did, bound to its effect</h3>
-        <p>What the agent decided and whether it executed, was confirmed, denied, or blocked — with a confirmed-effect binding, so the claim and the real outcome can't drift apart.</p>
+        <p>What the agent decided and whether it executed, was confirmed, denied, or blocked — with a confirmed-effect binding, so the claim can be checked against the outcome that was recorded.</p>
       </div>
       <div class="card">
         <div class="k">Attestation</div>
@@ -720,7 +720,7 @@ capsule-emit verify --store ./capsule-ledger
 <span class="c"># (add --witness-directory to check the witness receipt too)</span></pre>
       <div class="verify-points">
         <div class="vp"><div class="ic">1</div><div><h3>Inputs &amp; outputs committed by digest</h3><p>The capsule seals SHA-256 digests of what went in and came out. Raw values stay local; the proof travels.</p></div></div>
-        <div class="vp"><div class="ic">2</div><div><h3>Signature + inclusion, independently</h3><p>The signature proves who sealed it; the receipt proves the log included it. Both check from the bytes.</p></div></div>
+        <div class="vp"><div class="ic">2</div><div><h3>Signature + inclusion, independently</h3><p>The signature shows which key sealed it (who holds that key is a separate claim); the receipt proves the log included it. Both check from the bytes.</p></div></div>
         <div class="vp"><div class="ic">3</div><div><h3>VDS-agnostic</h3><p>The same statement verifies whether the log uses RFC 9162 Merkle proofs or CCF (Confidential Consortium Framework). The action layer never changes.</p></div></div>
       </div>
     </div>
@@ -809,7 +809,7 @@ capsule-emit verify --store ./capsule-ledger
     <div class="sec-head">
       <span class="eyebrow">Checkpointed local log</span>
       <h2>Register one action, or checkpoint your whole log — one signed snapshot, any volume.</h2>
-      <p>The witness answers two different requests. <code>POST /register</code> commits one record and hands back a receipt for it. <code>POST /checkpoints</code> — the default route every <code>capsule-emit</code> client uses — commits a signed snapshot of your entire local log (kept by <a href="https://github.com/action-state-group/checkpointed-local-log" style="color:var(--accent);text-decoration:none"><code>checkpointed-local-log</code></a>, CLL) at once. A checkpoint is one signed, content-free value, so you send one per checkpoint rather than one per record, whether your log holds one record or a million.</p>
+      <p>The witness answers two different requests. <code>POST /register</code> commits one record and hands back a receipt for it. <code>POST /checkpoints</code> — the route a <code>capsule-emit</code> client uses once you name a witness; until then nothing leaves your process — commits a signed snapshot of your entire local log (kept by <a href="https://github.com/action-state-group/checkpointed-local-log" style="color:var(--accent);text-decoration:none"><code>checkpointed-local-log</code></a>, CLL) at once. A checkpoint is one signed, content-free value, so you send one per checkpoint rather than one per record, whether your log holds one record or a million.</p>
     </div>
     <table class="fit">
       <thead><tr><th></th><th><code>POST /register</code></th><th><code>POST /checkpoints</code></th></tr></thead>
@@ -853,7 +853,7 @@ capsule-emit verify --store ./capsule-ledger
         <a href="https://datatracker.ietf.org/meeting/126/materials/slides-126-scitt-ietf-126-vienna-scitt-04">SCITT session slides ↗</a>&ensp;&middot;&ensp;<a href="https://datatracker.ietf.org/meeting/126/materials/minutes-126-scitt-00.md">minutes ↗</a>
       </div>
       <div class="ic-card" style="grid-column:1/-1">
-        <span class="badge">INDEPENDENT PROJECT · USES CLL</span>
+        <span class="badge">SEPARATE PROJECT · USES CLL</span>
         <h3>The TRACE Registry</h3>
         <p>A public, append-only registry of anchors for signed TRACE Trust Records. Its checkpoint layer uses the Checkpointed Local Log: an append-only MMR with signed checkpoints, and a witness receipt over a checkpoint &mdash; each checkable with the registry's own published verifier.</p>
         <a href="/docs/interop/trace-registry">How it uses CLL, and how to check an entry →</a>&ensp;&middot;&ensp;<a href="https://field-notes-on-the-agent-economy.ghost.io/deep-dive-how-the-public-trace-registry-is-built-to-be-distrusted/">joint post ↗</a>&ensp;&middot;&ensp;<a href="https://github.com/agentrust-io/trace-registry">agentrust-io/trace-registry ↗</a>

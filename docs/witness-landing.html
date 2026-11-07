@@ -268,11 +268,11 @@
 <ul>
   <li><strong>Existence</strong> &mdash; the record was in the log at a point in time.</li>
   <li><strong>Order</strong> &mdash; where it fell relative to everything else.</li>
-  <li><strong>Completeness</strong> &mdash; a consistency proof between two checkpoints shows whether anything between them was dropped or rewritten: a rewrite would be detectable.</li>
+  <li><strong>Continuity</strong> &mdash; a consistency proof between two checkpoints shows whether anything between them was dropped or rewritten: a rewrite would be detectable. It cannot show that an action was never logged.</li>
 </ul>
 <p>It never says anything about whether the content was true. These are the claims this project will not round up, anywhere &mdash; the same wording an auditor reading the spec would use:</p>
 <ul class="honesty">
-  <li>A witnessed record is not a true record. The stamp attests existence/order/completeness, never accuracy.</li>
+  <li>A witnessed record is not a true record. The stamp attests existence/order/continuity, never accuracy.</li>
   <li>A derived verdict is not an adjudicated one. <code>verify</code> never grades up &mdash; it never reports more assurance than the bytes support: absence &ne; forgery, unsigned &ne; invalid.</li>
   <li>Coverage is the range, not the population.</li>
   <li>Registration &ne; Receipt &ne; agreement. Registration is the act. A Receipt is what the service returns: it proves inclusion in that service's log, not agreement with the content. When a checkpoint carries a consistency proof, this service registers it only if the proof shows it extends the last one it registered for the same log; that check is part of its published <a class="ln" href="https://github.com/action-state-group/capsule-anchor/blob/main/OPERATOR_GUIDE.md#registration-policy">Registration Policy</a>.</li>
@@ -297,7 +297,7 @@
 <h2>Try it yourself, in order</h2>
 <div class="steps">
   <a class="step" href="https://verify.agentactioncapsule.org"><div class="num">1</div><div><div class="ttl">Verify a witnessed checkpoint</div><div class="d">Paste or drop a checkpoint at the verifier and see the strip: verified, what it covers, and its grade &mdash; entirely offline, in your browser.</div></div></a>
-  <a class="step" href="/docs/quickstart.html"><div class="num">2</div><div><div class="ttl">Seal your first capsule</div><div class="d">One call witnesses your own first record, end to end &mdash; then flip a byte and watch verification fail.</div></div></a>
+  <a class="step" href="/docs/quickstart.html"><div class="num">2</div><div><div class="ttl">Seal your first capsule</div><div class="d">One call seals and signs a record in your process; name a witness with <code>CAPSULE_WITNESS_URL</code> and your log's checkpoints are registered with it &mdash; then flip a byte and watch verification fail.</div></div></a>
   <a class="step" href="/docs/governance.html"><div class="num">3</div><div><div class="ttl">Find out who's behind this</div><div class="d">An open, individual IETF Internet-Draft, stewarded by Action State Group, built to be donated to a neutral home. Source, governance, and patent posture are all public.</div></div></a>
 </div>
 
