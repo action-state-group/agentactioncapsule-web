@@ -251,7 +251,7 @@
     <thead><tr><th>Field</th><th>Type</th><th>Meaning</th></tr></thead>
     <tbody>
       <tr><td>record_push_bundle</td><td>integer</td><td>Bundle format version: one record plus the evidence the receiver checks it against.</td></tr>
-      <tr><td>capsule_id</td><td>hex</td><td>SHA-256 of the record's canonical (JCS) bytes, without its id, signature and key id. A received-half citation cites the half by this digest.</td></tr>
+      <tr><td>capsule_id</td><td>hex</td><td>SHA-256 of the record's canonical (JCS) bytes without <code>capsule_id</code>, <code>signature</code> and <code>key_id</code>. The plugin keeps its signature and key id inside the record instead of in a separate -05 Producer Envelope, so its exclusion set is those three members. A received-half citation cites the half by this digest.</td></tr>
       <tr><td>developer</td><td>string</td><td>The producer that sealed it: <code>capsule-emit-mesh/</code> plus the plugin crate's version when the record was sealed. Records from v0.1.4 keep this prefix.</td></tr>
       <tr><td>role</td><td>string</td><td><code>served</code>: this is the provider's half (record 2). The requester's half says <code>requested</code>.</td></tr>
       <tr><td>agent_input/output_digest</td><td>hex</td><td>Digests of the request and the response; the text itself is not in the record.</td></tr>
@@ -306,13 +306,13 @@
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a> &mdash; the capsule format of every kind here except checkpoints, padding and push refusals; citations go in <code>references</code>.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-checkpointed-local-log/">draft-mih-scitt-checkpointed-local-log-02</a> &mdash; the node's log, its checkpoints and inclusion proofs.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a> &mdash; padding records (&ldquo;What a Checkpoint Reveals&rdquo;).</li>
-    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-00</a> &mdash; asking a peer for a record, and the signed refusal when it declines.</li>
+    <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-02</a> &mdash; asking a peer for a record, and the signed refusal when it declines.</li>
     <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-settlement-records/">draft-mih-agent-settlement-records-00</a> &mdash; the settlement legs each side seals.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9052">RFC 9052</a> &mdash; COSE: the <code>COSE_Sign1</code> signature on each capsule.</li>
     <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc8785">RFC 8785</a> &mdash; JSON Canonicalization Scheme: the bytes every <code>capsule_id</code> covers.</li>
     <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/capsules/tree/v0.1.4">Mesh-LLM/capsules v0.1.4</a> &mdash; the plugin, its vectors and docs.</li>
     <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2142">Mesh-LLM/mesh-llm#2142</a> &mdash; operator-local peer blocks a plugin can request (in 0.78).</li>
-    <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">Mesh-LLM/mesh-llm#2300</a> &mdash; advertises the twin-bracket capability (<code>capabilities.twin_bracket</code>); merged, in no release yet. Stripping the header before forwarding is already in 0.78 (#2144).</li>
+    <li><span class="kind">Code</span> The host strips the <code>x-mesh-twin-bracket</code> header before it forwards a request to a peer: <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2144">mesh-llm PR 2144</a> added the stripping, and <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2300">PR 2300</a> added a test and documentation for it and advertises the <code>twin_bracket</code> capability. PR 2300 is merged, in no release yet; the stripping is already in 0.78.</li>
     <li><span class="kind">Code</span> <a href="https://github.com/Mesh-LLM/mesh-llm/pull/2144">Mesh-LLM/mesh-llm#2144</a> &mdash; the client-marked twin pair on exchange events (in 0.78).</li>
   </ul>
 

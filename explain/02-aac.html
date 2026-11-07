@@ -12,7 +12,7 @@
   <nav><a href="01-problem.html">&larr; Prev</a><a href="index.html">Contents</a><a href="03-cose-deterministic.html">Next &rarr;</a></nav>
 </div></header>
 <main><div class="wrap">
-  <div class="crumb">02 / 11</div>
+  <div class="crumb">02 / 16</div>
   <h1>Agent Action Capsule</h1>
   <p class="lede">A Capsule is a JSON record of one agent action that commits to what went in and what came out by digest, never by content, and whose identity is the SHA-256 of its own canonical bytes.</p>
 
@@ -130,7 +130,7 @@
       <div class="not"><b>Rejected:</b> carrying raw content. A committed Capsule cannot be retracted, so anything admitted is admitted permanently; content that must be checkable later but not disclosed now is committed as a digest. (Draft §5, §14.1)</div>
     </div>
     <div class="choice">
-      <div class="pick"><b>Chosen:</b> a signer-independent identity: <code>capsule_id</code> is SHA-256 over plain JCS of the Capsule with only <code>capsule_id</code> removed, and a COSE_Sign1 Producer Envelope signs those raw 32 bytes.</div>
+      <div class="pick"><b>Chosen:</b> a signer-independent identity: <code>capsule_id</code> is SHA-256 over plain JCS of the Capsule with only <code>capsule_id</code> removed, and a COSE_Sign1 Producer Envelope signs those raw 32 bytes. A producer that keeps its signature inside the record instead also removes those signature members, as the Mesh-LLM plugin does with <code>signature</code> and <code>key_id</code> (pages 12 and 13).</div>
       <div class="not"><b>Rejected:</b> making the signature part of the identity. Envelopes are not in the preimage, so adding, removing, or replacing one never changes <code>capsule_id</code>. (Draft §3.1, §5.1)</div>
     </div>
     <div class="choice">
