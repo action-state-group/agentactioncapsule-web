@@ -1,4 +1,4 @@
-docs/vendor/aac-bundle-verifier.js bundles the following packages (see aac-bundle-verifier.json for versions).
+docs/vendor/aac-bundle-verifier.js bundles the following packages (versions in aac-bundle-verifier.json and tools/vendor/package-lock.json).
 
 == @action-state-group/agent-action-capsule (BSD-3-Clause) ==
 BSD 3-Clause License
@@ -32,3 +32,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 == @action-state-group/cll (Apache-2.0; same terms as this repository's LICENSE) ==
 Copyright Action State Group, Inc. Licensed under the Apache License, Version 2.0: https://www.apache.org/licenses/LICENSE-2.0
+
+== cborg (Apache-2.0) ==
+Copyright 2020 Rod Vagg. Licensed under the Apache License, Version 2.0: https://www.apache.org/licenses/LICENSE-2.0
+
+== @noble/hashes (MIT) and @noble/curves (MIT) ==
+The MIT License (MIT)
+
+Copyright (c) 2022 Paul Miller (https://paulmillr.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.

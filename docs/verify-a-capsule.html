@@ -100,7 +100,7 @@
 .vb-state.verified{border-left-color:var(--verify);background:var(--verify-soft)}
 .vb-state.failed{border-left-color:#B42318;background:#FDECEA}
 .vb-state.incomplete,.vb-state.cannot-check{border-left-color:#B7791F;background:#FDF6E3}
-.vb-state.not-a-bundle{border-left-color:var(--muted-2)}
+.vb-state.not-a-bundle,.vb-state.checking{border-left-color:var(--muted-2)}
 .vb-claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
 .vb-claims th,.vb-claims td{text-align:left;padding:6px 10px;border-top:1px solid var(--line);vertical-align:top}
 .vb-claims th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -240,7 +240,7 @@
 <p class="lede">Anyone holding a capsule, an Evidence Bundle or a receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path runs the same open-source verifier. The command line checks a ledger &mdash; digests, chain links, and producer signatures. This page checks an Evidence Bundle in the browser, producer signatures included. The hosted verifier checks a receipt or signed statement &mdash; the signature and the inclusion proof.</p>
 
 <h2 id="verify-a-bundle">Verify a bundle in this page</h2>
-<p>Paste an Evidence Bundle (JSON) or choose its file. The strict verifier from the <code>agent-action-capsule</code> package runs here, in your browser. The bundle is not uploaded, and this page is set up so it cannot send anything anywhere: its content security policy allows no network connections (<code>connect-src 'none'</code>).</p>
+<p>Paste an Evidence Bundle (JSON) or choose its file. The strict verifier from the <code>agent-action-capsule</code> package runs here, in your browser. The bundle is not uploaded: the code that reads it is the vendored, hash-checked verifier plus a short script on this page, and none of it makes a network request. The page&rsquo;s content security policy also blocks <code>fetch</code> and other connections (<code>connect-src 'none'</code>).</p>
 <noscript><div class="callout">This check needs JavaScript. Without it, use <code>capsulectl verify</code> below.</div></noscript>
 <div class="vb" id="vb-form" hidden>
   <label for="vb-text" class="sr-only">Evidence Bundle JSON</label>
@@ -252,8 +252,8 @@
   </div>
   <div class="vb-out" id="vb-out" role="status" aria-live="polite" hidden></div>
 </div>
-<p><strong>What this checks.</strong> Each record&rsquo;s identity (its digest recomputed from its bytes), each record&rsquo;s producer signature against the key the record carries, the signed checkpoint, graph closure, interval coverage and per-record membership proofs, and the disclosures overlay. A bundle that passes all of them is <em>verified</em>; one that fails any is <em>failed</em>; one where nothing failed but something could not be shown is <em>incomplete</em>.</p>
-<p><strong>What it does not check.</strong> That the signing key belongs to anyone you trust: this page does not know your pinned key, so use <code>capsulectl verify</code> with a profile for that. Bound original artifacts, which are not in the bundle. Witness receipts against trusted witness keys: this page supplies no witness directory, so no witness is trusted. And whether what the records say is true or the agent did the right thing.</p>
+<p><strong>What this checks.</strong> Each record&rsquo;s identity (its digest recomputed from its bytes), each record&rsquo;s producer signature against the key the record carries, the signed checkpoint, graph closure, interval coverage and per-record membership proofs, the disclosures overlay, and category coverage. A bundle that passes all of them is <em>verified</em>; one that fails any is <em>failed</em>; one where nothing failed but something could not be shown is <em>incomplete</em>.</p>
+<p><strong>What it does not check.</strong> That the signing key belongs to anyone you trust: this page does not know your pinned key, so use <code>capsulectl verify</code> with a profile for that. Bound original artifacts, which are not in the bundle. Witness receipts against trusted witness keys: this page supplies no witness directory, so no witness is trusted (a malformed receipt still fails the bundle). And whether what the records say is true or the agent did the right thing.</p>
 <p><strong>When this browser cannot check signatures.</strong> Signature checking needs Ed25519 from the browser&rsquo;s own crypto, which is available only on secure pages (https) in a current browser. Where it is missing &mdash; a page opened from a file, or an in-app viewer on a phone &mdash; the result is <em>Can&rsquo;t check signatures in this browser</em>, never <em>failed</em>. The bundle may be fine; this page just cannot tell.</p>
 
 <h2>Check a receipt or statement: the hosted verifier</h2>
@@ -376,26 +376,30 @@ const LABEL = {
 };
 const COPY = {
   verified: ["Verified, producer signatures included",
-    "Every strict check passed, and each record’s producer signature was checked and holds. This is a statement about the bundle’s integrity, not about whether the agent did the right thing."],
+    "Every strict check passed, and each record’s producer signature holds under the key the record carries. That shows the bundle is unchanged since it was signed. It does not show who signed it, or that the agent did the right thing."],
   failed: ["Failed",
-    "At least one check failed. The bundle was changed after it was made, or it is not the kind of bundle it says it is. The rows below name what failed."],
+    "At least one check failed, so this bundle does not hold together. The rows below name what failed. Do not rely on it."],
   incomplete: ["Incomplete",
     "Nothing failed, but some checks could not be shown to hold (for example an unsigned record, or no signed checkpoint). This is not a pass."],
   "cannot-check": ["Can’t check signatures in this browser",
     "This browser, or the way this page was opened, has no Ed25519 signature check, so no verdict is possible here. This is not a failure of the bundle. Open this page over https in a current Chrome, Firefox or Safari, or run <code>capsulectl verify</code>."],
+  "checking": ["Checking…", "Running the strict checks in this page."],
   "not-a-bundle": ["Nothing to verify", "The input is not valid JSON."],
+  "not-an-evidence-bundle": ["Nothing to verify", "This is JSON, but not an Evidence Bundle (its <code>bundle_kind</code> and <code>bundle_version</code> are not those of <code>evidence-bundle/v2</code>). This is not a failed check."],
 };
+const LABEL2 = { witnesses: "Witness receipts", parent_witness: "Parent-log witness", category_coverage: "Category coverage" };
 const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 function show(state, result) {
   const [title, body] = COPY[state];
-  let html = '<div class="vb-state ' + state + '"><h3>' + title + "</h3><p>" + body + "</p>";
+  const cls = state === "not-an-evidence-bundle" ? "not-a-bundle" : state;
+  let html = '<div class="vb-state ' + cls + '"><h3>' + title + "</h3><p>" + body + "</p>";
   if (result && result.claims) {
     html += '<table class="vb-claims"><thead><tr><th>Check</th><th>Result</th><th>Findings</th></tr></thead><tbody>';
-    for (const c of result.claims) {
-      html += "<tr><td>" + esc(LABEL[c.name] || c.name) + '</td><td class="' + esc(c.status) + '">' + esc(c.status) + "</td><td>" +
+    for (const c of result.claims.concat(result.beside || [])) {
+      html += "<tr><td>" + esc(LABEL[c.name] || LABEL2[c.name] || c.name) + '</td><td class="' + esc(c.status) + '">' + esc(c.status) + "</td><td>" +
         (c.findings.length ? c.findings.map((f) => "<code>" + esc(f) + "</code>").join(" ") : "&mdash;") + "</td></tr>";
     }
-    html += "</tbody></table>";
+    html += '</tbody></table><p class="vb-note">Row names are the Evidence Bundle draft’s names for its checks; <a class="ln" href="/docs/how-verification-works.html">how verification works</a> explains the checks.</p>';
     const bad = result.records.filter((r) => !r.identityOk || r.signature !== "authored");
     if (bad.length) {
       html += '<p class="vb-note">Records without a verified signature: ' +
@@ -405,7 +409,8 @@ function show(state, result) {
   out.innerHTML = html + "</div>";
   out.hidden = false;
 }
-let lib;
+let lib, current = 0;
+function reset() { current++; out.hidden = true; out.innerHTML = ""; }
 async function load() {
   if (!lib) {
     const [v, c] = await Promise.all([import("./vendor/aac-bundle-verifier.js"), import("./vendor/bundle-check.js")]);
@@ -414,23 +419,28 @@ async function load() {
   return lib;
 }
 run.addEventListener("click", async () => {
+  const mine = ++current;
   run.disabled = true;
+  show("checking");
   try {
     const { check } = await load();
     const r = await check(text.value);
-    show(r.state, r);
+    if (mine !== current) return;
+    show(r.state === "not-a-bundle" && r.detail === "not-an-evidence-bundle" ? r.detail : r.state, r);
   } catch (e) {
+    if (mine !== current) return;
     out.innerHTML = '<div class="vb-state not-a-bundle"><h3>The verifier did not run</h3><p>This page could not load or run its verifier (' + esc((e && e.message) || e) + '). That is not a verdict on your bundle. Use <code>capsulectl verify</code> instead.</p></div>';
     out.hidden = false;
   } finally {
-    run.disabled = false;
+    if (mine === current) run.disabled = false;
   }
 });
+text.addEventListener("input", () => { reset(); run.disabled = false; });
 file.addEventListener("change", async () => {
   const f = file.files && file.files[0];
-  if (f) text.value = await f.text();
+  if (f) { reset(); run.disabled = false; text.value = await f.text(); }
 });
-$("vb-clear").addEventListener("click", () => { text.value = ""; file.value = ""; out.hidden = true; out.innerHTML = ""; });
+$("vb-clear").addEventListener("click", () => { text.value = ""; file.value = ""; reset(); run.disabled = false; });
 $("vb-form").hidden = false;
 </script>
 

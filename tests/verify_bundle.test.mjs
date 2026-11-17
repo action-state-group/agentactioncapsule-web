@@ -4,13 +4,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { verifyBundle, Ed25519UnavailableError } from "../docs/vendor/aac-bundle-verifier.js";
+import * as lib from "../docs/vendor/aac-bundle-verifier.js";
 import { checkBundleText } from "../docs/vendor/bundle-check.js";
 
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
-const deps = { verifyBundle, Ed25519UnavailableError };
 const valid = read("./fixtures/strict-valid-bundle.json");
-const check = (text) => checkBundleText(text, deps);
+const check = (text) => checkBundleText(text, lib);
 
 async function withoutCrypto(replacement, fn) {
   const saved = Object.getOwnPropertyDescriptor(globalThis, "crypto");
@@ -81,8 +80,27 @@ test("input that is not JSON is not-a-bundle", async () => {
   assert.equal((await check("{nope")).state, "not-a-bundle");
 });
 
-test("JSON that is not an evidence bundle fails", async () => {
-  assert.equal((await check("[]")).state, "failed");
+test("JSON that is not an evidence bundle is nothing to verify, not failed", async () => {
+  assert.deepEqual(await check("[]"), { state: "not-a-bundle", detail: "not-an-evidence-bundle" });
+  assert.equal((await check("{}")).detail, "not-an-evidence-bundle");
+});
+
+test("a changed number spelling is not normalised away (1 -> 1.0 must not verify)", async () => {
+  const respelled = valid.replace('"seq": 1,', '"seq": 1.0,');
+  assert.notEqual(respelled, valid);
+  const r = await check(respelled);
+  assert.notEqual(r.state, "verified");
+});
+
+test("a failure outside the seven claims is shown, so a failed verdict is never above an all-pass table", async () => {
+  const b = JSON.parse(valid);
+  b.checkpoint.witnesses = [{}];
+  const r = await check(JSON.stringify(b));
+  assert.equal(r.state, "failed");
+  assert.ok(r.claims.every((c) => c.status === "pass"), "all seven claims pass");
+  const w = r.beside.find((x) => x.name === "witnesses");
+  assert.equal(w.status, "fail");
+  assert.ok(w.findings.length > 0);
 });
 
 test("the vendored verifier matches its recorded SHA-256", () => {

@@ -10,7 +10,7 @@ trap 'rm -rf "$work"' EXIT
 cp "$root/tools/vendor/package.json" "$root/tools/vendor/package-lock.json" "$root/tools/vendor/entry.js" "$work/"
 (cd "$work" && npm ci --silent --ignore-scripts=false >/dev/null)
 (cd "$work" && ./node_modules/.bin/esbuild entry.js --bundle --format=esm --platform=browser \
-  --conditions=browser --minify --legal-comments=none --log-level=warning --outfile=out.js)
+  --conditions=browser --minify --legal-comments=eof --log-level=warning --outfile=out.js)
 sha="$(shasum -a 256 "$work/out.js" | cut -d' ' -f1)"
 ver() { node -p "require('$work/node_modules/$1/package.json').version"; }
 record="$(printf '{\n  "package": "@action-state-group/agent-action-capsule",\n  "version": "%s",\n  "cll": "%s",\n  "esbuild": "%s",\n  "sha256": "%s",\n  "source": "https://github.com/action-state-group/agent-action-capsule/tree/ts/v%s/ts",\n  "build": "tools/vendor_verifier.sh"\n}\n' \
