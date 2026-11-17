@@ -1329,7 +1329,7 @@ const LABEL = {
 };
 const COPY = {
   verified: ["Verified: intact, and signed by the keys it carries",
-    "Every strict check passed, and each record’s producer signature holds under the key the record carries. That shows the records and the checkpoint are unchanged since they were signed. Whether those keys belong to who you expect is not checked here; use <code>capsulectl verify</code> with a pinned key. It does not cover any countersignatures or producer self-reports in the bundle, and it does not show that the agent did the right thing."],
+    "Every strict check passed, and each record’s producer signature holds under the key the record carries. That shows the records and the checkpoint are unchanged since they were signed. Whether those keys belong to who you expect is not checked here; use <code>capsulectl verify</code> with a pinned key. It does not cover any countersignatures or producer self-reports in the bundle, and it does not show that the agent did the right thing. Rows marked withheld were not checked."],
   failed: ["Failed",
     "At least one check failed: something in the bundle does not match what it claims. The rows below name what failed. Do not rely on it."],
   incomplete: ["Incomplete",
@@ -1431,7 +1431,7 @@ PAGES["verify-a-capsule"] = dict(
   </div>
   <div class="vb-out" id="vb-out" role="status" aria-live="polite" hidden></div>
 </div>
-<p><strong>What this checks.</strong> Each record&rsquo;s identity (its digest recomputed from its bytes), each record&rsquo;s producer signature against the key the record carries, the signed checkpoint, graph closure, interval coverage and per-record membership proofs, the disclosures overlay, and category coverage. A bundle that passes all of them is <em>verified</em>; one that fails any is <em>failed</em>; one where nothing failed but something could not be shown is <em>incomplete</em>.</p>
+<p><strong>What this checks.</strong> Each record&rsquo;s identity (its digest recomputed from its bytes), each record&rsquo;s producer signature against the key the record carries, the signed checkpoint, graph closure, interval coverage and per-record membership proofs, the disclosures overlay, and category coverage where the bundle carries what it needs (otherwise shown as withheld, not passed). A bundle that passes all of them is <em>verified</em>; one that fails any is <em>failed</em>; one where nothing failed but something could not be shown is <em>incomplete</em>.</p>
 <p><strong>What it does not check.</strong> That the signing key belongs to anyone you trust: this page does not know your pinned key, so use <code>capsulectl verify</code> with a profile for that. Bound original artifacts, which are not in the bundle. Witness receipts against trusted witness keys: this page supplies no witness directory, so no witness is trusted (a malformed receipt still fails the bundle). And whether what the records say is true or the agent did the right thing.</p>
 <p><strong>When this browser cannot check signatures.</strong> Signature checking needs Ed25519 from the browser&rsquo;s own crypto, which is available only on secure pages (https) in a current browser. Where it is missing &mdash; a page opened from a file, or an in-app viewer on a phone &mdash; the result is <em>Can&rsquo;t check signatures in this browser</em>, never <em>failed</em>. The bundle may be fine; this page just cannot tell.</p>
 
