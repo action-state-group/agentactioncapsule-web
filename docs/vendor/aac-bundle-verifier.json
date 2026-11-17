@@ -1,0 +1,9 @@
+{
+  "package": "@action-state-group/agent-action-capsule",
+  "version": "0.14.0",
+  "cll": "0.3.0",
+  "esbuild": "0.28.2",
+  "sha256": "edeef74c2f8a40bd73cf6852db355a8db37cbc4084300e7de0de26325e22a949",
+  "source": "https://github.com/action-state-group/agent-action-capsule/tree/ts/v0.14.0/ts",
+  "build": "tools/vendor_verifier.sh"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "aac-web-verifier-vendor",
+  "private": true,
+  "description": "Pins the build inputs of docs/vendor/aac-bundle-verifier.js. Authoring-time only; the site has no build step at deploy.",
+  "type": "module",
+  "dependencies": {
+    "@action-state-group/agent-action-capsule": "0.14.0",
+    "@action-state-group/cll": "0.3.0",
+    "esbuild": "0.28.2"
+  }
+}

@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: Apache-2.0
+# The in-page bundle verifier on docs/verify-a-capsule.html: its tests, and the vendored verifier
+# must be byte-identical to a fresh build from the pinned agent-action-capsule release.
+name: verify-bundle
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Bundle verifier tests
+        run: node --test tests/*.test.mjs
+      - name: Vendored verifier matches the pinned release build
+        run: tools/vendor_verifier.sh --check

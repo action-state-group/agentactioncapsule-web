@@ -53,6 +53,16 @@ menu, the docs sidebar, prev/next and the footer. It rewrites only what sits bet
 `FOOTER`, `CHROME_CSS`), never in the page, or the next build will overwrite the edit. A new docs
 page goes into `TOC` once, and its sidebar entry, prev/next neighbors and index card all follow.
 
+## The in-page bundle verifier
+
+`docs/verify-a-capsule.html` verifies an Evidence Bundle in the browser with strict `verifyBundle`.
+The verifier is vendored, not loaded from a CDN: `docs/vendor/aac-bundle-verifier.js` is built from
+the pinned `agent-action-capsule` release (`tools/vendor/package.json` and its lockfile), with its
+version and SHA-256 in `docs/vendor/aac-bundle-verifier.json`. To update, change the pin, run
+`tools/vendor_verifier.sh`, and commit the result; `tools/vendor_verifier.sh --check` (CI) fails if
+the file differs from a fresh build. `docs/vendor/bundle-check.js` maps the result to the outcomes
+the page shows (verified, failed, incomplete, cannot-check, and not-a-bundle, which is no verdict). Tests: `node --test tests/*.test.mjs` (Node 20 or later).
+
 ## Deploy to Cloud Run (gated — Steven only)
 
 ```sh
