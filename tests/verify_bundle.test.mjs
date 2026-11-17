@@ -103,6 +103,23 @@ test("a failure outside the seven claims is shown, so a failed verdict is never 
   assert.ok(w.findings.length > 0);
 });
 
+test("category coverage that was not checked is withheld, never a green pass", async () => {
+  const props = lib.CATEGORY_COVERAGE_PROPERTIES;
+  const coverage = Object.fromEntries(props.map((p, i) => [p, i === 0 ? "PASS" : i % 2 ? "NOT_CHECKED" : "INCONCLUSIVE"]));
+  const stub = {
+    ...lib,
+    decodeFragment: () => ({}),
+    verifyBundle: async () => ({
+      categoryCoverage: coverage,
+      strict: { verdict: "VALID", kindOk: true, claims: [{ name: "signatures", status: "pass", findings: [] }], witnesses: null, parentWitness: null, records: [] },
+    }),
+  };
+  const r = await checkBundleText("{}", stub);
+  const row = r.beside.find((x) => x.name === "category_coverage");
+  assert.equal(row.status, "withheld");
+  assert.ok(row.findings.length > 0 && row.findings.every((f) => /=(NOT_CHECKED|INCONCLUSIVE)$/.test(f)));
+});
+
 test("the vendored verifier matches its recorded SHA-256", () => {
   const rec = JSON.parse(read("../docs/vendor/aac-bundle-verifier.json"));
   const sha = createHash("sha256").update(readFileSync(new URL("../docs/vendor/aac-bundle-verifier.js", import.meta.url))).digest("hex");

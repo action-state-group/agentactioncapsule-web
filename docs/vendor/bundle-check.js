@@ -51,11 +51,14 @@ export async function checkBundleText(text, lib) {
   }
   const coverage = result.categoryCoverage ?? null;
   if (coverage) {
-    const failing = lib.CATEGORY_COVERAGE_PROPERTIES.filter((p) => coverage[p] === "FAIL");
+    // Per-property values (PASS, FAIL, NOT_PRESENT, NOT_CHECKED, INCONCLUSIVE). With the inputs this
+    // page has, some properties are expected to be NOT_CHECKED or INCONCLUSIVE: show that as
+    // withheld, never as a pass.
+    const shown = lib.CATEGORY_COVERAGE_PROPERTIES.filter((p) => coverage[p] !== "PASS" && coverage[p] !== "NOT_PRESENT");
     beside.push({
       name: "category_coverage",
-      status: lib.categoryCoverageFails(coverage) ? "fail" : "pass",
-      findings: failing,
+      status: lib.categoryCoverageFails(coverage) ? "fail" : shown.length ? "withheld" : "pass",
+      findings: shown.map((p) => `${p}=${coverage[p]}`),
     });
   }
   const signatures = claims.find((c) => c.name === "signatures");

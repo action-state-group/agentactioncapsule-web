@@ -376,7 +376,7 @@ const LABEL = {
 };
 const COPY = {
   verified: ["Verified, producer signatures included",
-    "Every strict check passed, and each record’s producer signature holds under the key the record carries. That shows the bundle is unchanged since it was signed. It does not show who signed it, or that the agent did the right thing."],
+    "Every strict check passed, and each record’s producer signature holds under the key the record carries. That shows the records and the checkpoint are unchanged since they were signed. It does not show who signed them, it does not cover any countersignatures or producer self-reports in the bundle, and it does not show that the agent did the right thing."],
   failed: ["Failed",
     "At least one check failed, so this bundle does not hold together. The rows below name what failed. Do not rely on it."],
   incomplete: ["Incomplete",
@@ -438,7 +438,16 @@ run.addEventListener("click", async () => {
 text.addEventListener("input", () => { reset(); run.disabled = false; });
 file.addEventListener("change", async () => {
   const f = file.files && file.files[0];
-  if (f) { reset(); run.disabled = false; text.value = await f.text(); }
+  if (!f) return;
+  reset();
+  run.disabled = true;
+  const mine = current;
+  try {
+    const t = await f.text();
+    if (mine === current) text.value = t;
+  } finally {
+    if (mine === current) run.disabled = false;
+  }
 });
 $("vb-clear").addEventListener("click", () => { text.value = ""; file.value = ""; reset(); run.disabled = false; });
 $("vb-form").hidden = false;
