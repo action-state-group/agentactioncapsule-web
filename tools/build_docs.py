@@ -716,7 +716,7 @@ PAGE = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">{extra_head}
 <title>{title} &mdash; Agent Action Capsule docs</title>
 <meta name="description" content="{desc}">
 <link rel="canonical" href="{url}">
@@ -754,7 +754,7 @@ PAGE = """<!DOCTYPE html>
   </div>
 </main>
 {footer}
-{chrome_js}
+{chrome_js}{extra_js}
 </body>
 </html>
 """
@@ -766,7 +766,7 @@ def wrap_tables(body: str) -> str:
     return re.sub(r'(<table class="t".*?</table>)', r'<div class="tw">\1</div>', body, flags=re.S)
 
 
-def render(slug, title, desc, crumb, body, *, is_index=False, css=""):
+def render(slug, title, desc, crumb, body, *, is_index=False, css="", head="", js=""):
     body = wrap_tables(body)
     url = "https://agentactioncapsule.org/docs/" if is_index else f"https://agentactioncapsule.org/docs/{slug}.html"
     return PAGE.format(
@@ -774,7 +774,7 @@ def render(slug, title, desc, crumb, body, *, is_index=False, css=""):
         chrome_head=_mark("head", CHROME_HEAD), nav=_mark("nav", nav_html("specifications" if slug == "specifications" else "docs")),
         footer=_mark("footer", FOOTER), chrome_js=_mark("js", CHROME_JS),
         sidebar=_mark("side", sidebar_html("index" if is_index else slug)),
-        crumb=crumb, body=body,
+        crumb=crumb, body=body, extra_head=head, extra_js=js,
         nxt="" if is_index else _mark("next", next_block(slug)),
     )
 
@@ -1286,16 +1286,138 @@ capsule-emit verify --store ./capsule-ledger
 """,
 )
 
+VERIFY_BUNDLE_CSS = """
+.vb textarea{width:100%;min-height:150px;font-family:var(--mono);font-size:12.5px;line-height:1.5;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);resize:vertical}
+.vb .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.vb button{font:inherit;font-size:14px;font-weight:600;padding:9px 18px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer}
+.vb button.alt{background:transparent;color:var(--ink)}
+.vb button:disabled{opacity:.5;cursor:default}
+.vb-out{margin:16px 0 8px}
+.vb-out[hidden]{display:none}
+.vb-state{border:1px solid var(--line);border-left-width:4px;border-radius:10px;padding:14px 18px;background:#fff}
+.vb-state h3{margin:0 0 6px;font-size:17px}
+.vb-state p{margin:0 0 8px;font-size:14.5px}
+.vb-state.verified{border-left-color:var(--verify);background:var(--verify-soft)}
+.vb-state.failed{border-left-color:#B42318;background:#FDECEA}
+.vb-state.incomplete,.vb-state.cannot-check{border-left-color:#B7791F;background:#FDF6E3}
+.vb-state.not-a-bundle{border-left-color:var(--muted-2)}
+.vb-claims{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
+.vb-claims th,.vb-claims td{text-align:left;padding:6px 10px;border-top:1px solid var(--line);vertical-align:top}
+.vb-claims th{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.vb-claims .pass{color:var(--verify);font-weight:600}
+.vb-claims .fail{color:#B42318;font-weight:600}
+.vb-claims .withheld{color:#8A5A00;font-weight:600}
+.vb-note{font-size:13.5px;color:var(--muted)}
+"""
+
+# A page-level policy: this page has no use for the network after it loads, so it forbids it.
+VERIFY_BUNDLE_HEAD = (
+    '\n<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; '
+    "script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+    "font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; "
+    "base-uri 'none'; form-action 'none'\">"
+)
+
+VERIFY_BUNDLE_JS = r"""
+<script type="module" id="bundle-verify">
+const $ = (id) => document.getElementById(id);
+const text = $("vb-text"), run = $("vb-run"), out = $("vb-out"), file = $("vb-file");
+const LABEL = {
+  records: "Record identity", signatures: "Producer signatures", graph_closure: "Graph closure",
+  checkpoint: "Signed checkpoint", interval_coverage: "Interval coverage",
+  per_record_membership: "Per-record membership", disclosures: "Disclosures",
+};
+const COPY = {
+  verified: ["Verified, producer signatures included",
+    "Every strict check passed, and each record’s producer signature was checked and holds. This is a statement about the bundle’s integrity, not about whether the agent did the right thing."],
+  failed: ["Failed",
+    "At least one check failed. The bundle was changed after it was made, or it is not the kind of bundle it says it is. The rows below name what failed."],
+  incomplete: ["Incomplete",
+    "Nothing failed, but some checks could not be shown to hold (for example an unsigned record, or no signed checkpoint). This is not a pass."],
+  "cannot-check": ["Can’t check signatures in this browser",
+    "This browser, or the way this page was opened, has no Ed25519 signature check, so no verdict is possible here. This is not a failure of the bundle. Open this page over https in a current Chrome, Firefox or Safari, or run <code>capsulectl verify</code>."],
+  "not-a-bundle": ["Nothing to verify", "The input is not valid JSON."],
+};
+const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function show(state, result) {
+  const [title, body] = COPY[state];
+  let html = '<div class="vb-state ' + state + '"><h3>' + title + "</h3><p>" + body + "</p>";
+  if (result && result.claims) {
+    html += '<table class="vb-claims"><thead><tr><th>Check</th><th>Result</th><th>Findings</th></tr></thead><tbody>';
+    for (const c of result.claims) {
+      html += "<tr><td>" + esc(LABEL[c.name] || c.name) + '</td><td class="' + esc(c.status) + '">' + esc(c.status) + "</td><td>" +
+        (c.findings.length ? c.findings.map((f) => "<code>" + esc(f) + "</code>").join(" ") : "&mdash;") + "</td></tr>";
+    }
+    html += "</tbody></table>";
+    const bad = result.records.filter((r) => !r.identityOk || r.signature !== "authored");
+    if (bad.length) {
+      html += '<p class="vb-note">Records without a verified signature: ' +
+        bad.map((r) => "<code>" + esc(r.capsuleId.slice(0, 12)) + "&hellip;</code> (" + esc(r.signature) + ")").join(", ") + ".</p>";
+    }
+  }
+  out.innerHTML = html + "</div>";
+  out.hidden = false;
+}
+let lib;
+async function load() {
+  if (!lib) {
+    const [v, c] = await Promise.all([import("./vendor/aac-bundle-verifier.js"), import("./vendor/bundle-check.js")]);
+    lib = { check: (t) => c.checkBundleText(t, v) };
+  }
+  return lib;
+}
+run.addEventListener("click", async () => {
+  run.disabled = true;
+  try {
+    const { check } = await load();
+    const r = await check(text.value);
+    show(r.state, r);
+  } catch (e) {
+    out.innerHTML = '<div class="vb-state not-a-bundle"><h3>The verifier did not run</h3><p>This page could not load or run its verifier (' + esc((e && e.message) || e) + '). That is not a verdict on your bundle. Use <code>capsulectl verify</code> instead.</p></div>';
+    out.hidden = false;
+  } finally {
+    run.disabled = false;
+  }
+});
+file.addEventListener("change", async () => {
+  const f = file.files && file.files[0];
+  if (f) text.value = await f.text();
+});
+$("vb-clear").addEventListener("click", () => { text.value = ""; file.value = ""; out.hidden = true; out.innerHTML = ""; });
+$("vb-form").hidden = false;
+</script>
+"""
+
 PAGES["verify-a-capsule"] = dict(
     title="Verify a capsule",
-    desc="Verify an Agent Action Capsule three ways: in the browser with the hosted verifier, on the command line, or as a library — all running the same open-source checks.",
+    desc="Verify an Agent Action Capsule or Evidence Bundle: in this page with producer signatures, with the hosted receipt verifier, on the command line, or as a library — all running the same open-source checks.",
     crumb="Guides",
+    css=VERIFY_BUNDLE_CSS,
+    head=VERIFY_BUNDLE_HEAD,
+    js=VERIFY_BUNDLE_JS,
     body="""
 <h1>Verify a capsule</h1>
-<p class="lede">Anyone holding a capsule or receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path runs the same open-source verifier. The command line checks a ledger &mdash; digests, chain links, and producer signatures; the browser and the library check a receipt &mdash; the signature and the inclusion proof.</p>
+<p class="lede">Anyone holding a capsule, an Evidence Bundle or a receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path runs the same open-source verifier. The command line checks a ledger &mdash; digests, chain links, and producer signatures. This page checks an Evidence Bundle in the browser, producer signatures included. The hosted verifier checks a receipt or signed statement &mdash; the signature and the inclusion proof.</p>
 
-<h2>In the browser</h2>
-<p>The fastest way to check a single receipt or signed statement is the hosted verifier. Paste a receipt or statement (and a key, if you want the signature checked) and read the verdict and reasons. It is stateless &mdash; nothing you submit is stored.</p>
+<h2 id="verify-a-bundle">Verify a bundle in this page</h2>
+<p>Paste an Evidence Bundle (JSON) or choose its file. The strict verifier from the <code>agent-action-capsule</code> package runs here, in your browser. The bundle is not uploaded, and this page is set up so it cannot send anything anywhere: its content security policy allows no network connections (<code>connect-src 'none'</code>).</p>
+<noscript><div class="callout">This check needs JavaScript. Without it, use <code>capsulectl verify</code> below.</div></noscript>
+<div class="vb" id="vb-form" hidden>
+  <label for="vb-text" class="sr-only">Evidence Bundle JSON</label>
+  <textarea id="vb-text" spellcheck="false" placeholder="Paste an Evidence Bundle (JSON) here"></textarea>
+  <div class="row">
+    <input type="file" id="vb-file" accept=".json,application/json" aria-label="Choose a bundle file">
+    <button type="button" id="vb-run">Verify bundle</button>
+    <button type="button" id="vb-clear" class="alt">Clear</button>
+  </div>
+  <div class="vb-out" id="vb-out" role="status" aria-live="polite" hidden></div>
+</div>
+<p><strong>What this checks.</strong> Each record&rsquo;s identity (its digest recomputed from its bytes), each record&rsquo;s producer signature against the key the record carries, the signed checkpoint, graph closure, interval coverage and per-record membership proofs, and the disclosures overlay. A bundle that passes all of them is <em>verified</em>; one that fails any is <em>failed</em>; one where nothing failed but something could not be shown is <em>incomplete</em>.</p>
+<p><strong>What it does not check.</strong> That the signing key belongs to anyone you trust: this page does not know your pinned key, so use <code>capsulectl verify</code> with a profile for that. Bound original artifacts, which are not in the bundle. Witness receipts against trusted witness keys: this page supplies no witness directory, so no witness is trusted. And whether what the records say is true or the agent did the right thing.</p>
+<p><strong>When this browser cannot check signatures.</strong> Signature checking needs Ed25519 from the browser&rsquo;s own crypto, which is available only on secure pages (https) in a current browser. Where it is missing &mdash; a page opened from a file, or an in-app viewer on a phone &mdash; the result is <em>Can&rsquo;t check signatures in this browser</em>, never <em>failed</em>. The bundle may be fine; this page just cannot tell.</p>
+
+<h2>Check a receipt or statement: the hosted verifier</h2>
+<p>The hosted verifier checks a single receipt or signed statement, not an Evidence Bundle. Paste a receipt or statement (and a key, if you want the signature checked) and read the verdict and reasons. It is stateless &mdash; nothing you submit is stored.</p>
 <div class="callout">Open <a class="ln" href="https://verify.agentactioncapsule.org">verify.agentactioncapsule.org</a>. The page runs the identical library you can install locally; for maximal privacy, verify locally instead.</div>
 
 <h2>On the command line</h2>
@@ -1869,7 +1991,7 @@ def main():
         p = PAGES[slug]
         body = p["body"] + go_deeper_html(slug)
         (OUT / f"{slug}.html").write_text(
-            render(slug, p["title"], p["desc"], p["crumb"], body, css=p.get("css", "")), encoding="utf-8")
+            render(slug, p["title"], p["desc"], p["crumb"], body, css=p.get("css", ""), head=p.get("head", ""), js=p.get("js", "")), encoding="utf-8")
         n += 1
     # hand-written pages: splice in the same header, sidebar, prev/next and footer
     for rel, (active, key) in HAND_PAGES.items():

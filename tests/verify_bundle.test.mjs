@@ -1,0 +1,104 @@
+// Run: node --test tests/
+// Fixtures are cases from vectors/bundle/strict in agent-action-capsule (ts/v0.14.0 era).
+import test from "node:test";
+import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { verifyBundle, Ed25519UnavailableError } from "../docs/vendor/aac-bundle-verifier.js";
+import { checkBundleText } from "../docs/vendor/bundle-check.js";
+
+const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
+const deps = { verifyBundle, Ed25519UnavailableError };
+const valid = read("./fixtures/strict-valid-bundle.json");
+const check = (text) => checkBundleText(text, deps);
+
+async function withoutCrypto(replacement, fn) {
+  const saved = Object.getOwnPropertyDescriptor(globalThis, "crypto");
+  Object.defineProperty(globalThis, "crypto", { value: replacement, configurable: true, writable: true });
+  try {
+    return await fn();
+  } finally {
+    Object.defineProperty(globalThis, "crypto", saved);
+  }
+}
+
+test("a strict-valid bundle is verified, signatures claim passing", async () => {
+  const r = await check(valid);
+  assert.equal(r.state, "verified");
+  assert.equal(r.claims.find((c) => c.name === "signatures").status, "pass");
+  assert.ok(r.records.length > 0 && r.records.every((x) => x.signature === "authored" && x.identityOk));
+});
+
+test("a one-byte change to any record signature fails", async () => {
+  const bundle = JSON.parse(valid);
+  for (let i = 0; i < bundle.records.length; i++) {
+    const copy = JSON.parse(valid);
+    const sig = copy.records[i].signature;
+    const at = sig.length - 2;
+    copy.records[i].signature = sig.slice(0, at) + (sig[at] === "0" ? "1" : "0") + sig.slice(at + 1);
+    const r = await check(JSON.stringify(copy));
+    assert.equal(r.state, "failed", `record ${i}`);
+    assert.equal(r.records[i].signature, "invalid", `record ${i}`);
+  }
+});
+
+test("an unsigned record is incomplete, not verified", async () => {
+  const r = await check(read("./fixtures/strict-incomplete-unsigned-record.json"));
+  assert.equal(r.state, "incomplete");
+});
+
+test("with crypto.subtle removed the valid bundle is cannot-check, not failed", async () => {
+  const r = await withoutCrypto({}, () => check(valid));
+  assert.deepEqual(r, { state: "cannot-check", detail: "ed25519" });
+});
+
+test("with no crypto object at all the valid bundle is cannot-check", async () => {
+  const r = await withoutCrypto(undefined, () => check(valid));
+  assert.equal(r.state, "cannot-check");
+});
+
+test("a subtle without Ed25519 is cannot-check, not failed", async () => {
+  const real = globalThis.crypto.subtle;
+  const noEd25519 = {
+    subtle: new Proxy(real, {
+      get(target, prop) {
+        if (prop === "importKey") {
+          return (fmt, key, algo, ...rest) => {
+            if (algo?.name === "Ed25519") return Promise.reject(Object.assign(new Error("no"), { name: "NotSupportedError" }));
+            return target.importKey(fmt, key, algo, ...rest);
+          };
+        }
+        const v = target[prop];
+        return typeof v === "function" ? v.bind(target) : v;
+      },
+    }),
+  };
+  const r = await withoutCrypto(noEd25519, () => check(valid));
+  assert.equal(r.state, "cannot-check");
+});
+
+test("input that is not JSON is not-a-bundle", async () => {
+  assert.equal((await check("{nope")).state, "not-a-bundle");
+});
+
+test("JSON that is not an evidence bundle fails", async () => {
+  assert.equal((await check("[]")).state, "failed");
+});
+
+test("the vendored verifier matches its recorded SHA-256", () => {
+  const rec = JSON.parse(read("../docs/vendor/aac-bundle-verifier.json"));
+  const sha = createHash("sha256").update(readFileSync(new URL("../docs/vendor/aac-bundle-verifier.js", import.meta.url))).digest("hex");
+  assert.equal(sha, rec.sha256);
+  assert.match(rec.version, /^\d+\.\d+\.\d+$/);
+});
+
+test("nothing that reads the bundle can send it anywhere", () => {
+  const page = read("../docs/verify-a-capsule.html");
+  assert.match(page, /Content-Security-Policy" content="[^"]*connect-src 'none'/);
+  for (const file of ["../docs/vendor/bundle-check.js", "../docs/vendor/aac-bundle-verifier.js"]) {
+    assert.doesNotMatch(read(file), /\bfetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|EventSource/, file);
+  }
+  const inline = [...page.matchAll(/<script type="module" id="bundle-verify">([\s\S]*?)<\/script>/g)].map((m) => m[1]).join("\n");
+  assert.ok(inline.length > 0, "page verify script present");
+  assert.doesNotMatch(inline, /\bfetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|EventSource/);
+});
