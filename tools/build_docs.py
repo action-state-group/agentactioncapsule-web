@@ -1328,14 +1328,14 @@ const LABEL = {
   per_record_membership: "Per-record membership", disclosures: "Disclosures",
 };
 const COPY = {
-  verified: ["Verified, producer signatures included",
-    "Every strict check passed, and each record’s producer signature holds under the key the record carries. That shows the records and the checkpoint are unchanged since they were signed. It does not show who signed them, it does not cover any countersignatures or producer self-reports in the bundle, and it does not show that the agent did the right thing."],
+  verified: ["Verified: intact, and signed by the keys it carries",
+    "Every strict check passed, and each record’s producer signature holds under the key the record carries. That shows the records and the checkpoint are unchanged since they were signed. Whether those keys belong to who you expect is not checked here; use <code>capsulectl verify</code> with a pinned key. It does not cover any countersignatures or producer self-reports in the bundle, and it does not show that the agent did the right thing."],
   failed: ["Failed",
-    "At least one check failed, so this bundle does not hold together. The rows below name what failed. Do not rely on it."],
+    "At least one check failed: something in the bundle does not match what it claims. The rows below name what failed. Do not rely on it."],
   incomplete: ["Incomplete",
     "Nothing failed, but some checks could not be shown to hold (for example an unsigned record, or no signed checkpoint). This is not a pass."],
   "cannot-check": ["Can’t check signatures in this browser",
-    "This browser, or the way this page was opened, has no Ed25519 signature check, so no verdict is possible here. This is not a failure of the bundle. Open this page over https in a current Chrome, Firefox or Safari, or run <code>capsulectl verify</code>."],
+    "This browser, or the way this page was opened, cannot run the signature or digest checks this needs, so no verdict is possible here. This is not a failure of the bundle. Open this page over https in a current Chrome, Firefox or Safari, or run <code>capsulectl verify</code>."],
   "checking": ["Checking…", "Running the strict checks in this page."],
   "not-a-bundle": ["Nothing to verify", "The input is not valid JSON."],
   "not-an-evidence-bundle": ["Nothing to verify", "This is JSON, but not an Evidence Bundle (its <code>bundle_kind</code> and <code>bundle_version</code> are not those of <code>evidence-bundle/v2</code>). This is not a failed check."],
@@ -1416,10 +1416,10 @@ PAGES["verify-a-capsule"] = dict(
     js=VERIFY_BUNDLE_JS,
     body="""
 <h1>Verify a capsule</h1>
-<p class="lede">Anyone holding a capsule, an Evidence Bundle or a receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path runs the same open-source verifier. The command line checks a ledger &mdash; digests, chain links, and producer signatures. This page checks an Evidence Bundle in the browser, producer signatures included. The hosted verifier checks a receipt or signed statement &mdash; the signature and the inclusion proof.</p>
+<p class="lede">Anyone holding a capsule, an Evidence Bundle or a receipt can verify it &mdash; in the browser, on the command line, or as a library. Every path uses an open-source verifier built to the same specification. The command line checks a ledger &mdash; digests, chain links, and producer signatures. This page checks an Evidence Bundle in the browser, producer signatures included. The hosted verifier checks a receipt or signed statement &mdash; the signature and the inclusion proof.</p>
 
 <h2 id="verify-a-bundle">Verify a bundle in this page</h2>
-<p>Paste an Evidence Bundle (JSON) or choose its file. The strict verifier from the <code>agent-action-capsule</code> package runs here, in your browser. The bundle is not uploaded: the code that reads it is the vendored, hash-checked verifier plus a short script on this page, and none of it makes a network request. The page&rsquo;s content security policy also blocks <code>fetch</code> and other connections (<code>connect-src 'none'</code>).</p>
+<p>Paste an Evidence Bundle (JSON) or choose its file. The strict verifier from the <code>agent-action-capsule</code> package runs here, in your browser. The bundle is not uploaded: the code that reads it is the vendored, hash-checked verifier plus a short script on this page, and none of it makes a network request. The page&rsquo;s content security policy allows no network connections (<code>connect-src 'none'</code>).</p>
 <noscript><div class="callout">This check needs JavaScript. Without it, use <code>capsulectl verify</code> below.</div></noscript>
 <div class="vb" id="vb-form" hidden>
   <label for="vb-text" class="sr-only">Evidence Bundle JSON</label>

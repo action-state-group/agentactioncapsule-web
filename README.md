@@ -61,7 +61,7 @@ the pinned `agent-action-capsule` release (`tools/vendor/package.json` and its l
 version and SHA-256 in `docs/vendor/aac-bundle-verifier.json`. To update, change the pin, run
 `tools/vendor_verifier.sh`, and commit the result; `tools/vendor_verifier.sh --check` (CI) fails if
 the file differs from a fresh build. `docs/vendor/bundle-check.js` maps the result to the outcomes
-the page shows (verified, failed, incomplete, cannot-check, and not-a-bundle, which is no verdict). Tests: `node --test tests/` (Node 20 or later).
+the page shows (verified, failed, incomplete, cannot-check, and not-a-bundle, which is no verdict). Tests: `node --test tests/*.test.mjs` (Node 20 or later).
 
 ## Deploy to Cloud Run (gated — Steven only)
 

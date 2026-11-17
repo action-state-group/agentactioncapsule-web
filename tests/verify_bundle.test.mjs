@@ -1,4 +1,4 @@
-// Run: node --test tests/
+// Run: node --test tests/*.test.mjs
 // Fixtures are cases from vectors/bundle/strict in agent-action-capsule (ts/v0.14.0 era).
 import test from "node:test";
 import assert from "node:assert/strict";

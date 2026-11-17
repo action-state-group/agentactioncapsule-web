@@ -23,6 +23,6 @@ jobs:
         with:
           node-version: "22"
       - name: Bundle verifier tests
-        run: node --test tests/
+        run: node --test tests/*.test.mjs
       - name: Vendored verifier matches the pinned release build
         run: tools/vendor_verifier.sh --check
