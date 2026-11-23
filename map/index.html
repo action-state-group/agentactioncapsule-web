@@ -151,7 +151,7 @@
 <a class="node" href="#L-mesh" data-layer="mesh" aria-label="Mesh-LLM: The worked example: a capsules plugin on a mesh of strangers.">
 <rect class="box" x="658" y="40" width="346" height="78" rx="10"/>
 <text class="ttl" x="674" y="63">Mesh-LLM</text>
-<rect class="sc rel" x="815.9" y="50" width="172.1" height="17" rx="8.5"/><text class="sct rel" x="901.95" y="62" text-anchor="middle">released (capsules v0.1.15)</text>
+<rect class="sc rel" x="815.9" y="50" width="172.1" height="17" rx="8.5"/><text class="sct rel" x="901.95" y="62" text-anchor="middle">released (capsules v0.1.16)</text>
 <text class="lab" x="674" y="84">The worked example: a capsules plugin on a</text>
 <text class="lab" x="674" y="102">mesh of strangers.</text>
 </a>
@@ -249,7 +249,7 @@
 <p class="lbl">Specifications</p><ul class="specs">
 <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-scitt-agent-action-capsule/">draft-mih-scitt-agent-action-capsule-05</a></li>
 </ul>
-<p class="src">Status from explain/02 and build/b2, Specs; build/b5, section 5 Status: capsule-emit 0.0.11, the latest crate, as pinned by capsules v0.1.15 (v0.1.4 pinned 0.0.6), tagged live. Re-read 2026-11-06.</p>
+<p class="src">Status from explain/02 and build/b2, Specs; build/b5, section 5 Status: capsule-emit 0.0.11, the latest crate, as pinned by capsules v0.1.15 and v0.1.16 (v0.1.4 pinned 0.0.6), tagged live. Re-read 2026-11-06; the capsules pin re-read 2026-11-07 at v0.1.16.</p>
 </article>
 <article class="layer" id="L-comp">
 <h3><span class="mono n">04</span> Composition</h3>
@@ -279,7 +279,7 @@
 <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9943">RFC 9943</a> &mdash; SCITT architecture</li>
 <li><span class="kind">RFC</span> <a href="https://www.rfc-editor.org/rfc/rfc9942">RFC 9942</a> &mdash; COSE Receipts</li>
 </ul>
-<p class="src">Status from explain/05 and explain/06, Specs; build/b5, section 5 Status: checkpointed-local-log 0.4.0 as pinned by capsules v0.1.15 (v0.1.4 pinned 0.2.1; latest on crates.io 0.5.0), tagged live. Re-read 2026-11-06.</p>
+<p class="src">Status from explain/05 and explain/06, Specs; build/b5, section 5 Status: checkpointed-local-log 0.4.0 as pinned by capsules v0.1.15 and v0.1.16 (v0.1.4 pinned 0.2.1; latest on crates.io 0.5.0), tagged live. Re-read 2026-11-06; the capsules pin re-read 2026-11-07 at v0.1.16.</p>
 </article>
 <article class="layer" id="L-bil">
 <h3><span class="mono n">06</span> Bilateral + settlement</h3>
@@ -300,14 +300,14 @@
 <h3><span class="mono n">07</span> The local evidence log</h3>
 <p class="stl"><span class="stc id">Internet-Draft</span> <span class="stc rel">library released</span></p>
 <p>Keep every record you seal in an append-only log on your own disk, sign a checkpoint over it every N records or T minutes, and hand out a record with its inclusion proof and checkpoint so anyone can check it offline.</p>
-<p>The reference implementation is checkpointed-local-log (CLL), in Python, Go, TypeScript and Rust; the latest crate is 0.5.0. In the Mesh-LLM plugin v0.1.4, capsule-emit 0.0.6 supplies the log wrapper; plugin releases since v0.1.5 build checkpoints on checkpointed-local-log through capsule-emit 0.0.8 and later, and the latest, v0.1.15, pins capsule-emit 0.0.11 and checkpointed-local-log 0.4.0.</p>
+<p>The reference implementation is checkpointed-local-log (CLL), in Python, Go, TypeScript and Rust; the latest crate is 0.5.0. In the Mesh-LLM plugin v0.1.4, capsule-emit 0.0.6 supplies the log wrapper; plugin releases since v0.1.5 build checkpoints on checkpointed-local-log through capsule-emit 0.0.8 and later, and the latest, v0.1.16 (2026-11-07), pins capsule-emit 0.0.11 and checkpointed-local-log 0.4.0, as v0.1.15 did.</p>
 <p class="lbl">Pages</p><ul class="pl">
 <li><a href="../build/b3-local-log.html">build b3 · The local evidence log</a></li>
 </ul>
 <p class="lbl">Specifications</p><ul class="specs">
 <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-layer/">draft-mih-agent-evidence-layer-00</a></li>
 </ul>
-<p class="src">Status from build/b3, sections 1 and 5: CLL in four languages, latest crate 0.5.0; the Mesh-LLM plugin seals and checkpoints every exchange, live since v0.1.4 (latest release v0.1.15). Re-read 2026-11-06. The Internet-Draft chip is the draft b3 cites for what a book must supply (§8).</p>
+<p class="src">Status from build/b3, sections 1 and 5: CLL in four languages, latest crate 0.5.0; the Mesh-LLM plugin seals and checkpoints every exchange, live since v0.1.4 (latest release v0.1.16, 2026-11-07). Re-read 2026-11-06; the capsules release re-read 2026-11-07. The Internet-Draft chip is the draft b3 cites for what a book must supply (§8).</p>
 </article>
 <article class="layer" id="L-judge">
 <h3><span class="mono n">08</span> Judge + grades</h3>
@@ -338,7 +338,7 @@
 <li><span class="kind">Internet-Draft</span> <a href="https://datatracker.ietf.org/doc/draft-mih-agent-evidence-request/">draft-mih-agent-evidence-request-02</a></li>
 <li><span class="kind">Profile</span> <a href="../build/b6-personal-agents.html">Personal-Agent History Profile v0 (pre-Internet-Draft)</a></li>
 </ul>
-<p class="src">Status from build/b11, section 5 Status (re-read 2026-11-06): verdict counts and the opt-in rule built, not live; history_card/1 live (released and on by default, answered to any requester since capsules v0.1.5); the personal-agent History profile's Basic level built, not live (vectors and a Go evaluator); its Outcome level designed.</p>
+<p class="src">Status from build/b11, section 5 Status (re-read 2026-11-06 at capsules v0.1.15 and 2026-11-07 at v0.1.16): verdict counts and the opt-in rule built, not live; history_card/1 live (released and on by default, answered to any requester since capsules v0.1.5); the personal-agent History profile's Basic level built, not live (vectors and a Go evaluator); its Outcome level designed.</p>
 </article>
 <article class="layer" id="L-rep">
 <h3><span class="mono n">10</span> Reports</h3>
@@ -364,7 +364,7 @@
   <div class="layers">
 <article class="layer" id="L-mesh">
 <h3>Mesh-LLM</h3>
-<p class="stl"><span class="stc rel">released (capsules v0.1.15)</span></p>
+<p class="stl"><span class="stc rel">released (capsules v0.1.16)</span></p>
 <p>Each node seals what it served, keeps its own log, exchanges records with peers, and can send a client-marked pair to a referee. The limits page says what a verified key does and does not mean.</p>
 <p class="lbl">Pages</p><ul class="pl">
 <li><a href="../explain/10-mesh-llm.html">explain 10 · Mesh-LLM capsules plugin</a></li>
@@ -373,7 +373,7 @@
 <li><a href="../build/b1-seams.html">build b1 · The hooks the host exposes</a></li>
 <li><a href="../build/b5-portable.html">build b5 · Making it portable</a></li>
 </ul>
-<p class="src">Status from build/b5, section 5 Status: Mesh-LLM/capsules-plugin (formerly Mesh-LLM/capsules), latest release v0.1.15 (2026-11-03), tagged live; mesh-llm's default plugin list still pins v0.1.4. The plugin stays in its own repository: the pull request that would have moved it into the mesh-llm repository (2459) was closed without merging on 2026-10-22. Re-read 2026-11-06.</p>
+<p class="src">Status from build/b5, section 5 Status: Mesh-LLM/capsules-plugin (formerly Mesh-LLM/capsules), latest release v0.1.16 (2026-11-07, re-read that day), tagged live; mesh-llm's default plugin list still pins v0.1.4. The plugin stays in its own repository: the pull request that would have moved it into the mesh-llm repository (2459) was closed without merging on 2026-10-22. Re-read 2026-11-06.</p>
 </article>
 <article class="layer" id="L-pa">
 <h3>Personal agents</h3>
