@@ -21,7 +21,7 @@
         "cites": {
           "draft-mih-scitt-agent-action-capsule": "refinfo"
         },
-        "rev": "01",
+        "rev": "02",
         "stream": null,
         "title": "Multi-Source Corroboration for AI Agent Discovery"
       },
@@ -112,7 +112,7 @@
         "cites": {
           "draft-mih-scitt-agent-action-capsule": "refinfo"
         },
-        "rev": "01",
+        "rev": "02",
         "stream": null,
         "title": "Signed Permissions and Action Receipts for Automated Agents"
       },
@@ -154,10 +154,12 @@
           "167623"
         ],
         "cites": {
+          "draft-mih-sato-agent-accountability-composition": "refinfo",
           "draft-mih-scitt-agent-action-capsule": "refinfo",
-          "draft-mih-sokolov-scitt-payload-binding": "refinfo"
+          "draft-mih-scitt-checkpointed-local-log": "refinfo",
+          "draft-mih-sokolov-scitt-payload-binding": "refnorm"
         },
-        "rev": "00",
+        "rev": "01",
         "stream": null,
         "title": "Decision Provenance for SCITT: binding software releases and agent actions to the decisions behind them"
       },
@@ -175,14 +177,28 @@
         "stream": null,
         "title": "Agent Decision Commitments for Payments"
       },
+      "draft-nassar-agentproto-trail": {
+        "authors": [
+          "105791",
+          "112992",
+          "167884"
+        ],
+        "cites": {
+          "draft-mih-scitt-checkpointed-local-log": "refinfo"
+        },
+        "rev": "00",
+        "stream": null,
+        "title": "TRAIL: Tamper-evident Records for Agent Interactions and Liveness"
+      },
       "draft-nestorov-scitt-p10-underdetermination": {
         "authors": [
           "166701"
         ],
         "cites": {
-          "draft-mih-scitt-agent-action-capsule": "refinfo"
+          "draft-mih-scitt-agent-action-capsule": "refinfo",
+          "draft-mih-scitt-checkpointed-local-log": "refinfo"
         },
-        "rev": "01",
+        "rev": "02",
         "stream": null,
         "title": "P10 Underdetermination Profile: Adjudication Statements over SCITT"
       },
@@ -196,6 +212,28 @@
         "rev": "00",
         "stream": null,
         "title": "Agreement Evidence for Multi-Party Agent Negotiation"
+      },
+      "draft-pelov-bounded-agent-capabilities": {
+        "authors": [
+          "119881"
+        ],
+        "cites": {
+          "draft-mih-scitt-agent-action-capsule": "refinfo"
+        },
+        "rev": "01",
+        "stream": null,
+        "title": "Bounded Capabilities for Agent Tool Interfaces: Problem Statement"
+      },
+      "draft-pelov-rich-architecture": {
+        "authors": [
+          "119881"
+        ],
+        "cites": {
+          "draft-mih-scitt-agent-action-capsule": "refinfo"
+        },
+        "rev": "01",
+        "stream": null,
+        "title": "RICH: RESTful Interface for the Control-plane of Harnesses"
       },
       "draft-pidlisnyi-aps": {
         "authors": [
@@ -265,6 +303,17 @@
         "stream": null,
         "title": "Signed, Hash-Chained Action Receipts for AI Agents"
       },
+      "draft-sansone-axes-evidence-envelope": {
+        "authors": [
+          "165106"
+        ],
+        "cites": {
+          "draft-mih-scitt-agent-action-capsule-sel-disc": "refinfo"
+        },
+        "rev": "00",
+        "stream": null,
+        "title": "AXES: A Recomputable Evidence Envelope for Autonomous Execution"
+      },
       "draft-schrock-kintzele-grid-curtailment": {
         "authors": [
           "163567",
@@ -320,7 +369,7 @@
         "cites": {
           "draft-mih-scitt-agent-action-capsule": "refinfo"
         },
-        "rev": "01",
+        "rev": "02",
         "stream": null,
         "title": "Agent Execution Evidence: A SCITT Profile for Verifiable Records of AI Agent Runs"
       },
@@ -340,9 +389,14 @@
           "165206"
         ],
         "cites": {
-          "draft-mih-scitt-agent-action-capsule": "refinfo"
+          "draft-mih-agent-evidence-layer": "refinfo",
+          "draft-mih-agent-evidence-request": "refinfo",
+          "draft-mih-agent-settlement-records": "refinfo",
+          "draft-mih-scitt-agent-action-capsule": "refinfo",
+          "draft-mih-sokolov-scitt-payload-binding": "refinfo",
+          "draft-mih-zhang-agent-disclosure-bundle": "refinfo"
         },
-        "rev": "05",
+        "rev": "06",
         "stream": null,
         "title": "A SCITT Profile for Physical-Site Engagement Receipts"
       },
@@ -353,7 +407,7 @@
         "cites": {
           "draft-mih-scitt-agent-action-capsule": "refinfo"
         },
-        "rev": "00",
+        "rev": "02",
         "stream": null,
         "title": "Verdict Records: Results on Claims that Cite Receipts as Evidence"
       }
@@ -361,6 +415,13 @@
     "excluded": {
       "draft-bu-agentproto-security-principal-binding": {
         "draft-mih-sato-agent-accountability-composition": "shares an author with the cited draft"
+      },
+      "draft-gupta-mih-maprg-nfc-agent-evidence": {
+        "draft-mih-agent-evidence-request": "shares an author with the cited draft",
+        "draft-mih-agent-settlement-records": "shares an author with the cited draft",
+        "draft-mih-scitt-agent-action-capsule": "shares an author with the cited draft",
+        "draft-mih-scitt-checkpointed-local-log": "shares an author with the cited draft",
+        "draft-mih-zhang-agent-disclosure-bundle": "shares an author with the cited draft"
       },
       "draft-palanisamy-scitt-aac-otel": {
         "draft-mih-agent-accountability-conformance": "shares an author with the cited draft",
@@ -376,7 +437,7 @@
         "draft-mih-sato-agent-accountability-composition": "shares an author with the cited draft"
       }
     },
-    "fetched": "2026-10-29"
+    "fetched": "2026-11-07"
   },
   "drafts": {
     "draft-bryce-cose-receipts-mmr-profile": {
@@ -420,12 +481,12 @@
       "updated": "2026-10-05"
     },
     "draft-mih-agent-evidence-request": {
-      "expires": "2027-05-02",
-      "rev": "01",
+      "expires": "2027-05-04",
+      "rev": "02",
       "state": "Active",
       "stream": null,
       "title": "An Interaction Model for Requesting Verifiable Evidence",
-      "updated": "2026-10-29"
+      "updated": "2026-10-31"
     },
     "draft-mih-agent-settlement-records": {
       "expires": "2027-04-05",
@@ -436,12 +497,12 @@
       "updated": "2026-10-02"
     },
     "draft-mih-sato-agent-accountability-composition": {
-      "expires": "2027-02-17",
-      "rev": "01",
+      "expires": "2027-05-06",
+      "rev": "02",
       "state": "Active",
       "stream": null,
       "title": "Agent Accountability: Composition and Conformance",
-      "updated": "2026-08-16"
+      "updated": "2026-11-02"
     },
     "draft-mih-scitt-agent-action-capsule": {
       "expires": "2027-03-31",
@@ -467,6 +528,14 @@
       "title": "The Checkpointed Local Log (CLL)",
       "updated": "2026-10-14"
     },
+    "draft-mih-sokolov-cose-deterministic-encodings": {
+      "expires": "2027-05-02",
+      "rev": "00",
+      "state": "Active",
+      "stream": null,
+      "title": "Deterministic Encodings for COSE",
+      "updated": "2026-10-29"
+    },
     "draft-mih-sokolov-scitt-payload-binding": {
       "expires": "2027-04-29",
       "rev": "06",
@@ -476,13 +545,13 @@
       "updated": "2026-10-26"
     },
     "draft-mih-zhang-agent-disclosure-bundle": {
-      "expires": "2027-04-23",
-      "rev": "01",
+      "expires": "2027-05-05",
+      "rev": "02",
       "state": "Active",
       "stream": null,
       "title": "AAC Evidence Bundle",
-      "updated": "2026-10-20"
+      "updated": "2026-11-01"
     }
   },
-  "fetched": "2026-10-29"
+  "fetched": "2026-11-07"
 }
